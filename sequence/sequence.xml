@@ -1,0 +1,149 @@
+<!-- Example sequence.xml -->
+<!-- this is a pretty complicated example, but covers almost all of the code, so is useful for that -->
+<sequences>
+	<zone name="default">
+		<url/>
+		<pagesequence name="talentproxy">
+			<step label="Choose Business Unit/Functional Head" page="chooseManagerDocs">
+				<param name="periodId"/>
+				<param name="userType"/>
+				<param name="type" value="1"/>
+			</step>			
+		</pagesequence>
+	</zone>
+	<zone name="base">
+		<param name="periodId"/>
+		<param name="userType"/>
+	</zone>
+	<zone name="profile">
+		<url>
+			<link name="base"/>
+			<link name="profile"/>
+		</url>
+		<param name="subjectId"/>
+		<param name="sequenceId"/>
+		<param name="version"/>
+		<pagesequence name="view">
+			<step label="View" page="view"/>			
+		</pagesequence>
+		<pagesequence name="closed">
+			<step label="View" page="view">
+				<action name="back" type="exitSequence"/>
+				<action name="view_devplan" type="namedStep" step="newdevplan" page="view"/>
+				<action name="view_notes" type="namedStep" step="notes"/>
+			</step>
+		</pagesequence>
+	</zone>
+	<zone name="newdevplan">
+		<url>
+			<link name="base"/>
+			<link name="newdevplan"/>
+		</url>
+		<param name="subjectId"/>
+		<param name="version"/>
+		<pagesequence name="edit">
+			<step label="Introduction" page="welcome"/>
+			<step label="Long Term Career Goal" page="longTerm"/>
+			<step label="Identify Performance Objectives" page="objectives"/>
+			<step label="Draft Development Plan" page="need">
+				<param name="need" value="1"/>
+				<action name="add" page="need"/>
+				<action name="back" page="need"/>
+			</step>
+			<step page="priorities"/>
+			<!--<step label="- Learning &amp; development interests" page="interests"/>-->
+			<step label="Submit for Review" page="view">
+				<action name="edit" page="edit"/>
+			</step>
+			<!-- 
+				this is for pages that are not in sequence, but are accessible,
+				can have actions/params
+			-->
+			<freepage page="edit">
+				<action name="save" page="view"/>
+			</freepage>
+			<freepage page="print"/>
+		</pagesequence>
+		<pagesequence name="view">
+			<step label="View" page="view">
+				<action name="edit" page="edit"/>
+			</step>
+			<freepage page="print"/>
+			<freepage page="edit">
+				<action name="save" page="view"/>
+			</freepage>
+			<freepage page="complete">
+				<action name="back" type="exitSequence"/>
+			</freepage>
+			<freepage page="discussion">
+				<action name="back" type="backZone"/>
+			</freepage>
+		</pagesequence>
+		<pagesequence name="closed">
+			<step label="View" page="view">
+				<action name="view_profile" type="namedStep" step="profile" page="view"/>
+				<action name="view_notes" type="namedStep" step="notes" page="viewNotes"/>
+			</step>
+			<freepage page="print"/>
+		</pagesequence>
+	</zone>
+	<zone name="notes">
+		<url>
+			<link name="base"/>
+			<link name="notes"/>
+		</url>
+		<param name="sequenceId"/>
+		<param name="subjectId"/>
+		<pagesequence name="closed">
+			<step label="View" page="viewNotes">
+				<action name="view_profile" type="namedStep" step="profile" page="view"/>
+				<action name="view_devplan" type="namedStep" step="newdevplan" page="view"/>
+			</step>
+		</pagesequence>
+	</zone>
+	<zonesequence name="talentproxy">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<step name="test" zone="default" pagesequence="talentproxy"/>
+	</zonesequence>
+	<zonesequence name="profileview">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<param name="subjectId"/>
+		<param name="sequenceId"/>
+		<param name="version"/>
+		<step zone="profile" pagesequence="view"/>
+	</zonesequence>
+	<zonesequence name="devplanedit">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<param name="subjectId"/>
+		<param name="version"/>
+		<step zone="newdevplan" pagesequence="edit"/>
+	</zonesequence>
+	<zonesequence name="devplanview">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<param name="subjectId"/>
+		<param name="version"/>
+		<step zone="newdevplan" pagesequence="view"/>
+	</zonesequence>
+	<zonesequence name="devplanclosed">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<param name="subjectId"/>
+		<param name="version"/>
+		<step zone="newdevplan" pagesequence="closed"/>
+	</zonesequence>
+	<zonesequence name="executive_view">
+		<param name="periodId"/>
+		<param name="userType"/>
+		<param name="subjectId"/>
+		<param name="profileversion" mapto="version" steps="profile"/>
+		<param name="devplanversion" mapto="version" steps="newdevplan"/>
+		<param name="sequenceId" value="executive_view"/>
+		<step zone="profile" pagesequence="closed"/>
+		<step zone="newdevplan" pagesequence="closed"/>
+		<step zone="notes" pagesequence="closed"/>
+	</zonesequence>
+</sequences>
