@@ -81,7 +81,10 @@
 		Redirect(SCRIPT_URL . $URL);
 	}
 
-
+	function RedirectRef()
+	{
+		Redirect($_SERVER["HTTP_REFERER"]);
+	}
 
 	function ZoneRedirect( $url, $depth = 0 )
 	{

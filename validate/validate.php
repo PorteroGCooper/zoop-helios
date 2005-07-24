@@ -26,16 +26,22 @@ class Validator
 	function validate($value, $validate) // FOR PHP VALIDATION
 	{
 		if (!isset($validate['type']))  // if no validation type is set, validate as true
-   $result['result'] = true;
+ 			  $result['result'] = true;
 
 		$function = strtolower("validate{$validate['type']}");
 		//echo_r(get_class_methods('validate'));
 
 		// handle required right here.
 		if (isset($validate['required']) && $validate['required'] && strlen($value) < 1)
-   $result['result'] = false;
+			$result['result'] = false;
+
 		if ((!isset($validate['required']) || $validate['required'] == false) && strlen($value) < 1)
-   $result['result'] = true;
+		{
+
+			$result['result'] = true;
+			return $result;
+		}
+
 
 		// if passes the required test, run individual method
 		if(in_array($function, get_class_methods('Validator')))
@@ -442,6 +448,44 @@ class Validator
 		return "";
 	}
 
+	function validateUrl($value, $validate)
+	{
+		$result = array('message' => "Must be a properly formatted url, eg: http://domain.com/directory");
+
+		if (preg_match('/https?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]/i', $value))
+		{
+			$result['result'] = true;
+		}
+		else
+			$result['result'] = false;
+
+		return $result;
+	}
+
+	function getUrlAttr($validate)
+	{
+		$answer = "validate=\"url";
+
+		if (isset($validate['hosts']))
+		{
+			$answer .= "|{$validate['hosts']}";
+		}
+		else
+			$answer .= "|http,https";
+
+		if (isset($validate['hostOptional']) && $validate['hostOptional'])
+			$answer .= "|1";
+		else
+			$answer .= "|0";
+
+		if(!isset($validate['required']) || $validate['required'] == 0)
+		{
+			$answer .= "|bok";
+		}
+		$answer .="\"";
+		return $answer;
+	}
+
 	function getIPAttr($validate)
 	{
 		return "";
@@ -526,6 +570,124 @@ class Validator
 			return array('result' => false);
 	}
 
+	function validateDate($value, $validate)
+	{
+		if (!isset($validate['format']))
+			$validate['format'] = "universal";
+
+		switch ($validate['format'])
+		{
+			case "writeout":
+				$result = array('message' => "Must be a properly formatted date, eg: DD MMM YYYY");
+				$regex = '/(0[1-9]|[12][0-9]|3[01])[- \/.](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[- \/.](19|20)[0-9]{2}/i';
+				break;
+			case "us":
+				$result = array('message' => "Must be a properly formatted date, eg: mm/dd/yyyy");
+				$regex = '/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}/';
+				break;
+			case "european":
+				$result = array('message' => "Must be a properly formatted date, eg: dd/mm/yyyy");
+				$regex = '/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)[0-9]{2}/';
+				break;
+			case "universal":
+				$result = array('message' => "Must be a properly formatted date, eg: yyyy/mm/dd");
+				$regex = '/(19|20)[0-9]{2}[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])/';
+				break;
+			default:
+				$result = array('message' => "Must be a properly formatted date, eg: mm/dd/yyyy");
+				$regex = '/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}/';
+				break;
+		}
+
+		if (preg_match($regex, $value))
+		{
+			$result['result'] = true;
+		}
+		else
+			$result['result'] = false;
+
+		return $result;
+	}
+
+	function getDateAttr($validate)
+	{
+		return ""; // THE Fvalidate routine doesn't quite work properly
+
+		$answer = "validate=\"date";
+
+		if (!isset($validate['format']))
+			$validate['format'] = "us";
+
+		if ($validate['format'] == "writeout") // let PHP handle this
+			return "";
+
+		switch ($validate['format'])
+		{
+			case "us":
+				$answer .= "|mm/dd/yyyy";
+				break;
+			case "european":
+				$answer .= "|dd/mm/yyyy";
+				break;
+			case "universal":
+				$answer .= "|yyyy/mm/dd";
+				break;
+			default:
+				$answer .= "|mm/dd/yyyy";
+				break;
+		}
+
+		if (!isset($validate['delim']))
+			$validate['delim'] = "-";
+
+		switch ($validate['delim'])
+		{
+			case "/":
+				$answer .= "|/";
+				break;
+			case "-/":
+				$answer .= "|-/";
+				break;
+			default:
+				$answer .= "|-/";
+				break;
+		}
+
+		if (isset($validate['relation']) && isset($validate['date']))
+		{
+			switch ($validate['relation'])
+			{
+				case "none":
+					$answer .= "|0";
+					break;
+				case "before":
+					$answer .= "|1";
+					break;
+				case "beforeOn":
+					$answer .= "|2";
+					break;
+				case "after":
+					$answer .= "|3";
+					break;
+				case "afterOn":
+					$answer .= "|4";
+					break;
+				default:
+					$answer .= "|0";
+					break;
+			}
+
+			$answer .= "|{$validate['relation']}";
+		}
+
+
+		if(!isset($validate['required']) || $validate['required'] == 0)
+		{
+			$answer .= "|bok";
+		}
+		$answer .="\"";
+		return $answer;
+	}
 
 }
 ?>

@@ -53,7 +53,10 @@ function smarty_function_forms_form($params, &$smarty)
 	if (!isset($form_type))
 		$form_type = "form";  // EITHER FORM OR SHOW
 
-	$output = "<ul align=\"center\" id=\"errorsbx\"></ul><table class='$class' cellpadding=1 cellspacing=1>";
+	$output = "<ul align=\"center\" id=\"errorsbx\">";
+	if ($form->error)
+		$output .= "<li>". $form->error ."</li>";
+	$output .= "</ul><table class='$class' cellpadding=1 cellspacing=1>";
 	(isset($form->title) && $form->title) ? $output .= "<tr><th colspan='2'>$form->title</th></tr>" : "";
 
 	$editor = 1;

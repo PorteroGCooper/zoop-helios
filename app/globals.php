@@ -14,7 +14,7 @@
 //	Globals.php
 //
 //	//	these comments need to be rewritten and distributed throughout the document
-//	
+//
 //	*	REQUEST_TYPE = "HTML" or "JSRS" depending on the request type.
 //	*	SCRIPT_REF = base ref for the script (trailing /)
 //	*	SCRIPT_URL = actual URL of the script (no path_info or querystring)
@@ -38,27 +38,27 @@
 	}
 	else
 	{
-		//	add a slash to the front if it's not already there		
-		if(substr($_SERVER["PATH_INFO"],0,1) == "/") 
+		//	add a slash to the front if it's not already there
+		if(substr($_SERVER["PATH_INFO"],0,1) == "/")
 			$GLOBALS['PATH_INFO'] = $_SERVER["PATH_INFO"];
 		else
 			$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
-		
+
 	}
-	
+
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
-	
+
 	//	if $Sname ends with $PATH_INFO then strip $PATH_INFO from the end
 	if(substr($GLOBALS['Sname'], strlen($GLOBALS['PATH_INFO']) * -1) == $GLOBALS['PATH_INFO'])
 	{
 		$GLOBALS['Sname'] = substr_replace ($GLOBALS['Sname'], "", strlen($GLOBALS['PATH_INFO']) * -1);
 	}
-	
+
 	$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
 	//if (isset($PATH_INFO)) { $Sname = ereg_replace($PATH_INFO, "", $Sname); }
-	
 
-	
+
+
 /**
 *
 *	Build SCRIPT_REF and SCRIPT_URL
@@ -66,7 +66,7 @@
 *	SCRIPT_REF: base ref for the script (trailing /)
 *	SCRIPT_URL: actual URL of the script (no path_info or querystring)
 *
-**/	
+**/
 	if($_SERVER["SERVER_PORT"] == 443)
 	{
 		$preht = "https://";
@@ -75,8 +75,8 @@
 	{
 		$preht = "http://";
 	}
-	
-	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'],-1,1) != "/") 
+
+	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'],-1,1) != "/" && substr($GLOBALS['Sname'],-2)  != ".4")
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . "/");
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
@@ -85,7 +85,7 @@
 	else
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
-		
+
 		if(substr($GLOBALS['Sname'], -1, 1) == "/")
 		{
 			$GLOBALS['tSname'] = substr($GLOBALS['Sname'], 0, strlen($GLOBALS['Sname']) - 1);
@@ -94,13 +94,13 @@
 		{
 			$GLOBALS['tSname'] = $GLOBALS['Sname'];
 		}
-		
+
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("HOME_URL", dirname(SCRIPT_URL));
 		//die(SCRIPT_URL);
 	}
-	
-	
+
+
 /**
 *
 *	Build SCRIPT_REF and SCRIPT_URL
@@ -110,20 +110,20 @@
 *	RELATIVE_PATH: path to script relative to the virtual location
 *			i.e. ../../../    I'm not sure what use this is, and I'm pretty sure we don't use it in the framework anywhere
 *
-**/	
-	
+**/
+
 	define("ORIG_PATH", $GLOBALS['PATH_INFO']);
-	
+
 	define("VIRTUAL_URL", SCRIPT_URL . ORIG_PATH);
-	
+
 	$GLOBALS['PATH_ARRAY'] = explode("/", ORIG_PATH);
-	
-	//$patharg = split("/", $GLOBALS['PATH_INFO']); 
-	//explode should work fine here, might be faster, not that we care much about speed, 
+
+	//$patharg = split("/", $GLOBALS['PATH_INFO']);
+	//explode should work fine here, might be faster, not that we care much about speed,
 	//but we know explode better, he's our friend.
-	//$patharg = explode("/", $GLOBALS['PATH_INFO']); 
-	
-	$xtrapath = "";	
+	//$patharg = explode("/", $GLOBALS['PATH_INFO']);
+
+	$xtrapath = "";
 	foreach($GLOBALS['PATH_ARRAY'] as $key =>$val)
 	{
 		if ($val)
@@ -132,15 +132,15 @@
 			$xtrapath = "../" . $xtrapath;
 		}
 	}
-	
+
 	define("RELATIVE_PATH", $xtrapath);
-	
-	
+
+
 /**
 *
 *	Guess the request type( and it better be a good guess).
 *
-**/	
+**/
 	if (isset($_REQUEST['jsrsContext']) && substr($_REQUEST['jsrsContext'], 0, 7) == "phpjsrs")
 	{
 		define("REQUEST_TYPE", "JSRS");
@@ -164,18 +164,18 @@
 *
 **/
 	$GLOBALS['POSTCOPY'] = $_POST;
-	
+
 	if(defined("hide_post") && hide_post == 1)
 	{
 		unset($_POST);
 	}
-	
+
 /******** URL Rewrite example ****************\
-* 
+*
 * This is an example of the mod_rewrite commands
 * to put in your httpd.conf file to get rid of
 * index.php in the URL line.
-* 
+*
         RewriteEngine on
 
         RewriteCond   %{THE_REQUEST} !^(.*)/resources(.*)$
@@ -186,7 +186,7 @@
 
         RewriteLog logs/test-rewritelog
         RewriteLogLevel 9
-* 
+*
 * Cool, eh?  Change the paths apropriately.
 * This assumes that all your normal files are in /resources/ somewhere, including images, css, js, etc
 \******** End URL Rewrite example ************/

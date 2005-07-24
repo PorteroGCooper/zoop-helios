@@ -33,9 +33,9 @@ class checkbox extends GuiControl
 	function getValue()
 	{
 		if (isset($this->params['text']))
-			return $this->params['text'];
+			return 1;
 		else if (isset($this->params['value']))
-			return $this->params['value'];
+			return 1;
 		else
 			return 0;
 	}

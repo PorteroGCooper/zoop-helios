@@ -93,6 +93,12 @@ class form
 		}
 	}
 
+	function saveRecord($post)
+	{
+		$this->setValuesFromPost($post);
+		return $this->storeRecord($post["recordtable"], $post["recordid"]);
+	}
+
 	function setValuesFromPost($post)
 	{
 		$table = $post["recordtable"];
@@ -139,6 +145,8 @@ class form
 			$colquote = '`';
 		else
 			$colquote = '"';
+
+		$record->error = false;
 
 		if ($id == "new")
 		{
@@ -216,6 +224,7 @@ class table
 	var $wherestr = "";
 	var $order = array();
 	var $search = array("type" => "all", "value" => null, "field" => null, "wherestr" => null);
+	var $sql = "";
 		// type can be individual or all or advanced
 
 	function table($table, $db)
@@ -312,7 +321,10 @@ class table
 		if (!$this->wherestr)
 			$this->setupRequirements();
 		$this->total = $this->db->fetch_one_cell("SELECT COUNT(*) FROM $this->name $this->wherestr");
-		$this->pages = ceil($this->total / $this->limit);
+		if (is_numeric($this->limit))
+			$this->pages = ceil($this->total / $this->limit);
+		else
+			$this->pages = 0;
 	}
 
 	function setupEnv($get)
@@ -373,96 +385,104 @@ class table
 
 		foreach ($this->fields as $field)
 		{
-			$fieldname = $field->name;
-			// SETUP LIST REQUIREMENTS
-			if (isset($field->listrequirement) && $field->listrequirement)
+			if (isset($field->name))
 			{
-				if (isset($field->name))
+				$fieldname = $field->name;
+				// SETUP LIST REQUIREMENTS
+				if (isset($field->listrequirement) && $field->listrequirement)
 				{
-					if (is_array($field->listrequirement))
+					if (isset($field->name))
 					{
-						$orwhere = array();
-						foreach($field->listrequirement as $listrequirement)
+						if (is_array($field->listrequirement))
 						{
-							$orwhere[] = "$field->name = '$listrequirement'";
-						}
+							$orwhere = array();
+							foreach($field->listrequirement as $listrequirement)
+							{
+								$orwhere[] = "$field->name = '$listrequirement'";
+							}
 
-						$where[] = "(" . implode(" OR ", $orwhere) . ")";
-					}
-					else
-					$where[] = "$field->name = '$field->listrequirement'";
-				}
-			}
-			// SETUP ADVANCED SEARCH
-			if ($post) // PROCESS SEARCH QUERY AS WELL AS NORMAL QUERY
-			{
-				$this->cur = 0;  // RESET TO PAGE 0 of RECORD SET
-
-				if (isset($field->search["searchable"]) && $field->search["searchable"])
-				{
-					if ($this->search["type"] == "advanced")
-					{
-						if ($field->search["type"] != "range" && isset($post[$fieldname]))
-						{
-							$value = $post[$field->name];
+							$where[] = "(" . implode(" OR ", $orwhere) . ")";
 						}
 						else
-							$value = true;
-						$this->fields[$field->name]->search["value"] = $value;
+						$where[] = "$field->name = '$field->listrequirement'";
 					}
-					else
-					{
-						if ($field->search["type"] == "range")
-							$value = 0;
-					}
-					if ($field->search["type"] == "range")
-					{
-						$minval = $post[$field->name . "_min"];
-						$maxval = $post[$field->name . "_max"];
-						$this->fields[$field->name]->search["value_min"] = $minval;
-						$this->fields[$field->name]->search["value_max"] = $maxval;
-					}
+				}
+				// SETUP ADVANCED SEARCH
+				if ($post) // PROCESS SEARCH QUERY AS WELL AS NORMAL QUERY
+				{
+					$this->cur = 0;  // RESET TO PAGE 0 of RECORD SET
 
-					if (($value && ($this->search["type"] == "advanced" || $this->search["type"] == "all")) || ($this->search["type"] == "individual" && isset($post["searchfield"]) && $field->name == $post["searchfield"]));
+					if (isset($field->search["searchable"]) && $field->search["searchable"])
 					{
-						switch ($field->search["type"])
+						if ($this->search["type"] == "advanced")
 						{
+							if ($field->search["type"] != "range" && isset($post[$fieldname]))
+							{
+								$value = $post[$field->name];
+							}
+							else
+								$value = true;
+							$this->fields[$field->name]->search["value"] = $value;
+						}
+						else
+						{
+							if ($field->search["type"] == "range")
+								$value = 0;
+						}
+						if ($field->search["type"] == "range")
+						{
+							$minval = $post[$field->name . "_min"];
+							$maxval = $post[$field->name . "_max"];
+							$this->fields[$field->name]->search["value_min"] = $minval;
+							$this->fields[$field->name]->search["value_max"] = $maxval;
+						}
 
-							case "exact":
-								if (strlen($value) > 0)
-									$swhere[] = "$field->name = '$value'";
-								break;
-							case "index":
-								if ($value != "any" && (strlen($value) > 0))
-									$swhere[] = "$field->name = '$value'";
-								break;
-							case "contains":
-								if (strlen($value) > 0)
-									$swhere[] = "$field->name LIKE '%$value%'";
-								break;
-							case "range":
-								if (strlen($minval) > 0)
-									$swhere[] = "$field->name >= '$minval'";
-								if (strlen($maxval) > 0)
-									$swhere[] = "$field->name <= '$maxval'";
-								break;
-							case "multiple":
-								if ($value !== 1)
-								{
-									foreach ($value as $val)
+						if (($value && ($this->search["type"] == "advanced" || $this->search["type"] == "all")) || ($this->search["type"] == "individual" && isset($post["searchfield"]) && $field->name == $post["searchfield"]));
+						{
+							switch ($field->search["type"])
+							{
+
+								case "exact":
+									if (strlen($value) > 0)
+										$swhere[] = "$field->name = '$value'";
+									break;
+								case "index":
+									if ($value != "any" && (strlen($value) > 0))
+										$swhere[] = "$field->name = '$value'";
+									break;
+								case "contains":
+									if (strlen($value) > 0)
+										$swhere[] = "$field->name LIKE '%$value%'";
+									break;
+								case "range":
+									if (strlen($minval) > 0)
+										$swhere[] = "$field->name >= '$minval'";
+									if (strlen($maxval) > 0)
+										$swhere[] = "$field->name <= '$maxval'";
+									break;
+								case "multiple":
+									if ($value !== 1)
 									{
-										$mvalue[] = "$field->name = '$val'";
+										foreach ($value as $val)
+										{
+											$mvalue[] = "$field->name = '$val'";
+										}
+										if (isset($mvalue))
+										{
+											$tmpstr = implode(" OR ", $mvalue);
+											$swhere[] = " ($tmpstr) ";
+										}
 									}
-									if (isset($mvalue))
-									{
-										$tmpstr = implode(" OR ", $mvalue);
-										$swhere[] = " ($tmpstr) ";
-									}
-								}
-								break;
+									break;
+							}
 						}
 					}
 				}
+			}
+			else
+			{
+				echo("you have modified a field that doesn't exist. Here is an echo..");
+				echo_r($this->fields);
 			}
 		}
 		if (isset($swhere[0]))
@@ -516,9 +536,10 @@ class table
 		if (isset($this->direction) && ($this->direction == "ASC" || $this->direction == "DESC"))
 				$query .= " $this->direction";
 
-		if ($this->limit != -1)
+		if ($this->limit != -1 && is_numeric($this->limit))
 				$query .= " LIMIT $this->limit OFFSET $this->cur";
 
+		$this->sql = $query;
 		$results = $this->db->fetch_rows($query);
 		foreach ($results as $array)
 		{
@@ -572,6 +593,7 @@ class record
 	var $tableref;
 	var $values;
 	var $order;
+	var $error = false;
 	var $submit = "Update";
 
 
