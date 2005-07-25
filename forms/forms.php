@@ -104,7 +104,6 @@ class form
 		$table = $post["recordtable"];
 		$id = $post["recordid"];
 
-
 		foreach($post as $field => $value)
 		{
 			if (isset($this->tables->$table->records[$id]->values[$field]))
@@ -157,7 +156,7 @@ class form
 				if ($field->value)
 				{
 						$columnstring .= $colquote . $field->name . $colquote . ",";
-					$value = $this->db->escape_string(stripslashes($field->value));
+ 					$value = stripslashes($this->db->escape_string($field->value));
 					$valuestring .= "$value,";
 				}
 			}
