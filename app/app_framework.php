@@ -25,9 +25,13 @@ class framework_app extends framework
 	function framework_app()
 	{
 		// set up error reporting right quick.
+		//if output compression or buffering is on, we have to know for correct live error handling...
+		define('__zoop_error_ob_start', ob_get_level());
+		
 		error_reporting(E_ALL);
 		$debugmode = app_status;
 		//$debugmode = 'test';
+		
 
 		if(php_sapi_name() != "cli")
 		{

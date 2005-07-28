@@ -49,7 +49,7 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
-	while (ob_get_level() > 1 )
+	while (ob_get_level() > __zoop_error_ob_start )
 	{
 		ob_end_clean();
 	}
