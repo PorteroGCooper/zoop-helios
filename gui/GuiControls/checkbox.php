@@ -34,7 +34,7 @@ class checkbox extends GuiControl
 	{
 		if (isset($this->params['text']))
 			return 1;
-		else if (isset($this->params['value']))
+		else if (isset($this->params['value']) && $this->params['value'] != 0)
 			return 1;
 		else
 			return 0;

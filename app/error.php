@@ -68,15 +68,6 @@ function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 							echo 'An error has occurred.  Please report the error code above.';
 	echo '				</td>
 					</tr>';
-	/*
-	echo '			
-					<tr><td>&nbsp;</td></tr>
-					<tr>
-						<td>
-							To continue using the application please click the back button on your browser.
-						</td>
-					</tr>';
-	*/
 	echo '		</table>
 			</div>';
 	
@@ -144,29 +135,6 @@ function GetMiscErrorInfo()
 	foreach ($info as $var => $vals)
 	{
 		if (!isset($$var))
-/*
-=======
-		$type = $this->getType($errno);
-		$basedir = dirname(dirname(__file__));
-		$errfile = str_replace($basedir, "", $errfile);
-		if(php_sapi_name() != "cli")
-		{
-			//die("error string = " . $errstr . " - end of error string");
-			echo "<table style='font-size: 15px;' cellpadding=\"0\" cellspacing='0' border='0'>";
-			echo "<caption><span style='color: #FF1111;'>$type:</span>&nbsp; \"" . htmlspecialchars($errstr) . "\" in file $errfile (on line $errline)</caption>";
-			echo "<tr><td>";
-		}
-		else
-		{
-			echo("$errstr\r\n");
-		}
-		if ($backtrace === null)
-		{
-			echo fetch_backtrace();
-		}
-		else
->>>>>>> 1.9
-*/
 		{
 			global $$var;
 		}
@@ -231,12 +199,6 @@ function LogError($errno, $errstr, $errfile, $errline, $context)
 	{
 		$host = '127.0.0.1';
 		define('VIRTUAL_URL', $_SERVER["SCRIPT_NAME"]);
-/*
-=======
-		$num = $this->logError($errno, $errstr, $errfile, $errline, $context);
-		redirect(HOME_URL . "/errorTest.php?&errnum=$num");
->>>>>>> 1.9
-*/
 	}
 	
 	list($tmp, $tmp, $tmp, $num) = explode(".", $host);
@@ -272,23 +234,5 @@ function LogError($errno, $errstr, $errfile, $errline, $context)
 
 	return $errNum;
 }
-
-/*	
-function test_handler($errno, $errstr, $errfile, $errline, $context)
-{
-	if(php_sapi_name() != "cli")
-	{
-		$host = $_SERVER["SERVER_ADDR"];
-	}
-	else
-	{
-		$host = '127.0.0.1';
-		define('VIRTUAL_URL', $_SERVER["SCRIPT_NAME"]);
-	}
-	$num = $this->logError($errno, $errstr, $errfile, $errline, $context);
-	redirect(HOME_URL . "/errorTest.php?&errnum=$num");
-}
-
-*/	
 
 ?>
