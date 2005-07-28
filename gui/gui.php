@@ -98,7 +98,6 @@ class gui extends Smarty
 	//	and the second paramater isn't even being used.
 	function display($tpl_file, $base_template = 'template.tpl')
 	{
-
 		echo $this->fetch($tpl_file);
 	}
 

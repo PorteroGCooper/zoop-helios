@@ -49,12 +49,10 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
-	while (ob_get_level())
+	while (ob_get_level() > 1 )
 	{
 		ob_end_clean();
 	}
-
-	
 	$num = LogError($errno, $errstr, $errfile, $errline, $context);
 	
 	 echo ' <br />

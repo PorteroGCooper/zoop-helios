@@ -377,8 +377,8 @@ function xorDecrypt($message, $key)
 
 function echo_r($mixed)
 {
-	if(app_status == "live")
-		return;
+// 	if(app_status == "live")
+// 		return;
 
 	echo "<pre>";
 	print_r($mixed);

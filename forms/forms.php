@@ -155,8 +155,8 @@ class form
 			{
 				if ($field->value)
 				{
-						$columnstring .= $colquote . $field->name . $colquote . ",";
- 					$value = stripslashes($this->db->escape_string($field->value));
+					$columnstring .= $colquote . $field->name . $colquote . ",";
+					$value = "'" . $field->value . "'";
 					$valuestring .= "$value,";
 				}
 			}

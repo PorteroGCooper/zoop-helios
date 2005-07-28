@@ -53,7 +53,6 @@
 	{
 		$GLOBALS['Sname'] = substr_replace ($GLOBALS['Sname'], "", strlen($GLOBALS['PATH_INFO']) * -1);
 	}
-
 	$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
 	//if (isset($PATH_INFO)) { $Sname = ereg_replace($PATH_INFO, "", $Sname); }
 
@@ -76,7 +75,7 @@
 		$preht = "http://";
 	}
 
-	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'],-1,1) != "/" && substr($GLOBALS['Sname'],-2)  != ".4")
+	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . "/");
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
@@ -99,7 +98,6 @@
 		define("HOME_URL", dirname(SCRIPT_URL));
 		//die(SCRIPT_URL);
 	}
-
 
 /**
 *

@@ -106,7 +106,7 @@ function smarty_function_loadeditor($params, &$smarty)
 			break;
 		case 'SSblockeditor':
 			$editvar = "oEdit" . $editor;
-			$height > 60 ? $height : $height = 100;
+			$height > 150 ? $height : $height = 350;
 			$width > 300 ? $width : $width = 600;
 			$formpart ="<div align=\"left\">" .
 				"<textarea id=\"$name\" name=\"$name\">" .
@@ -132,7 +132,7 @@ function smarty_function_loadeditor($params, &$smarty)
 							\"Underline\",\"Strikethrough\",\"|\",\"Superscript\",\"Subscript\",\"|\",
 							\"JustifyLeft\",\"JustifyCenter\",\"JustifyRight\",\"JustifyFull\"];\r
 
-					$editvar.cmdInternalLink = \"modelessDialogShow('/~steve/supersite/index.php/InternalLinks',365,270)\";\r
+					$editvar.cmdInternalLink = \"modelessDialogShow('{$smarty->_tpl_vars['SCRIPT_URL']}/InternalLinks',365,270)\";\r
 					$editvar.REPLACE(\"$name\");\r
 				</script>\r" .
 				"</div>\r";
