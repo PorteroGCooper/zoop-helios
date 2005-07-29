@@ -9,21 +9,15 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	require_once(dirname(__file__) . "/gui.php");
-	include_once('GuiControls/GuiControl.php');
+	include_once("VFS.php");
+	include_once("VFS/sql.php");
+	include_once(dirname(__file__) . "/userfiledb.php");
 
-class framework_gui extends framework
+class component_userfiles extends component
 {
-	function framework_gui()
+	function component_userfiles()
 	{
-		$this->requireFramework('session');
-		$this->requireFramework('validate');
-	}
-
-	function init()
-	{
-		$GLOBALS['gui'] = new gui();
-		initGuiControls();
+		$this->requireComponent('db');
 	}
 }
 ?>

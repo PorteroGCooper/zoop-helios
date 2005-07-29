@@ -19,28 +19,28 @@ class zoop
 		else
 			$this->appPath = $appPath;
 
-		$this->addFramework('app');//zoop always includes app_framework
+		$this->addComponent('app');//zoop always includes app_component
 	}
 
-	function addFramework($name)
+	function addComponent($name)
 	{
-		if(!isset($this->frameworks[$name]))
+		if(!isset($this->components[$name]))
 		{
-			include_once($this->path . "/$name/{$name}_framework.php");
-			$class = "framework_{$name}";
-			$currFramework = &new $class();
-			$frameworks = &$currFramework->getRequiredFrameworks();
-			foreach($frameworks as $newname)
+			include_once($this->path . "/$name/{$name}_component.php");
+			$class = "component_{$name}";
+			$currComponent = &new $class();
+			$components = &$currComponent->getRequiredComponents();
+			foreach($components as $newname)
 			{
-				$this->addFramework($newname);
+				$this->addComponent($newname);
 			}
-			$this->frameworks[$name] = &$currFramework;
+			$this->components[$name] = &$currComponent;
 		}
 	}
 
 	function addZone($name)
 	{
-		$this->addFramework('zone');
+		$this->addComponent('zone');
 		include($this->appPath . "/zone_{$name}.php");
 	}
 
@@ -53,7 +53,7 @@ class zoop
 
 	function init()
 	{
-		foreach($this->frameworks as $name => $object)
+		foreach($this->components as $name => $object)
 		{
 			$object->init();
 		}
@@ -61,28 +61,28 @@ class zoop
 
 	function run()
 	{
-		foreach($this->frameworks as $name => $object)
+		foreach($this->components as $name => $object)
 		{
 			$object->run();
 		}
 	}
 }
 
-class framework
+class component
 {
 	var $required = array();
 
-	function framework()
+	function component()
 	{
 		//default constructor does nothing
 	}
 
-	function requireFramework($name)
+	function requireComponent($name)
 	{
 		$this->required[] = $name;
 	}
 
-	function &getRequiredFrameworks()
+	function &getRequiredComponents()
 	{
 		return $this->required;
 	}
@@ -94,7 +94,7 @@ class framework
 
 	function run()
 	{
-		//really shouldn't do anything, unless its the app_framework
+		//really shouldn't do anything, unless its the app_component
 	}
 }
 

@@ -20,18 +20,14 @@ if(isset($_SERVER["HTTP_HOST"]))
 }
 include_once(dirname(__file__) . "/utils.php");
 
-class framework_app extends framework
+class component_app extends component
 {
-	function framework_app()
+	function component_app()
 	{
 		// set up error reporting right quick.
-		//if output compression or buffering is on, we have to know for correct live error handling...
-		define('__zoop_error_ob_start', ob_get_level());
-		
 		error_reporting(E_ALL);
 		$debugmode = app_status;
 		//$debugmode = 'test';
-		
 
 		if(php_sapi_name() != "cli")
 		{

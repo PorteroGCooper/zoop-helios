@@ -14,13 +14,13 @@ include_once(dirname(__file__) . "/zone.php");
 include_once(dirname(__file__) . "/zone_sequence.php");
 
 
-class framework_zone extends framework
+class component_zone extends component
 {
-	function framework_zone()
+	function component_zone()
 	{
-		$this->requireFramework('app');
+		$this->requireComponent('app');
 		if(!defined('zone_saveinsession')  || zone_saveinsession)
-			$this->requireFramework('session');
+			$this->requireComponent('session');
 	}
 
 	function run()
@@ -50,7 +50,7 @@ class framework_zone extends framework
 				trigger_error("Please create zone_default");
 			}
 			$thsZone = &new zone_default();
-			
+
 		}
 		$thsZone->handleRequest($PATH_ARRAY);
 	}

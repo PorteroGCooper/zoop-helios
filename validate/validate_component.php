@@ -9,19 +9,18 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	require_once(dirname(__file__) . "/forms.php");
+	include_once(dirname(__file__) . '/validate.php');
 
-class framework_forms extends framework
+class component_validate extends component
 {
-	function framework_forms()
+	function component_validate()
 	{
-		$this->requireFramework('db');
-		$this->requireFramework('gui');
-		$this->requireFramework('validate');
+
 	}
 
 	function init()
 	{
+
 	}
 }
 ?>

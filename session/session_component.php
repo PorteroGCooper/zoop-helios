@@ -11,7 +11,7 @@
 
 	include_once(dirname(__file__) . "/session_handler_" . session_type . ".php");
 
-class framework_session extends framework
+class component_session extends component
 {
 	function init()
 	{

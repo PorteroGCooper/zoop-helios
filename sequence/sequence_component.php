@@ -14,18 +14,18 @@ include_once(dirname(__file__) . "/SequenceData.php");
 include_once(dirname(__file__) . "/SequenceParser.php");
 include_once(dirname(__file__) . "/ZoneSequence.php");
 
-class framework_sequence extends framework
+class component_sequence extends component
 {
-	function framework_sequence()
+	function component_sequence()
 	{
-		$this->requireFramework('session');
+		$this->requireComponent('session');
 	}
-	
+
 	function init()
 	{
 		if(defined('sequence_file'))
 		{
-			$sequenceFile = sequence_file;	
+			$sequenceFile = sequence_file;
 			global $sequenceData, $sGlobals, $PATH_ARRAY;
 			$sequences = &new SequenceParser($sequenceFile);
 			$GLOBALS['sequenceData'] = $sequences->getSequenceObj();

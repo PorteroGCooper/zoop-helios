@@ -9,19 +9,19 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	
+
 	include_once(dirname(__file__) . "/spellBase.php");
 	include_once(dirname(__file__) . "/spell.php");
 	include_once(dirname(__file__) . "/guispell.php");
-	
-class framework_spell extends framework
+
+class component_spell extends component
 {
-	function spell_framework()
+	function spell_component()
 	{
-		$this->requireFramework('db');
-		$this->requireFramework('gui');
+		$this->requireComponent('db');
+		$this->requireComponent('gui');
 	}
-	
+
 	function init()
 	{
 		if(spell_DB_separate)
@@ -34,8 +34,8 @@ class framework_spell extends framework
 			//$GLOBALS['spelldsn'] = $GLOBALS['defaultdsn'];
 			$spelldb = &$defaultdb;
 		}
-		
+
 	}
 }
-		
+
 ?>

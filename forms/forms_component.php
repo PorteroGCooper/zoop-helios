@@ -9,15 +9,19 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+	require_once(dirname(__file__) . "/forms.php");
 
-include(dirname(__file__) . "/message.php");
-
-class framework_mail extends framework
+class component_forms extends component
 {
-	function framework_mail()
+	function component_forms()
 	{
-		$this->requireFramework('gui');
+		$this->requireComponent('db');
+		$this->requireComponent('gui');
+		$this->requireComponent('validate');
+	}
+
+	function init()
+	{
 	}
 }
-
 ?>

@@ -4,7 +4,7 @@
 	include_once(dirname(__file__) . "/pdfreport.php");
 	include_once(dirname(__file__) . "/pdftable_old.php");
 	include_once(dirname(__file__) . "/PdfObject.php");
-	include_once(dirname(__file__) . "/PdfContainer.php");	
+	include_once(dirname(__file__) . "/PdfContainer.php");
 	include_once(dirname(__file__) . "/PdfTextBox.php");
 	include_once(dirname(__file__) . "/PdfTableRow.php");
 	include_once(dirname(__file__) . "/PdfTableCell.php");
@@ -14,7 +14,7 @@
 	include_once(dirname(__file__) . "/PdfLine.php");
 	include_once(dirname(__file__) . "/HTMLtoPdfObject.php");
 
-class framework_pdf extends framework
+class component_pdf extends component
 {
 }
 ?>
