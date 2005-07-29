@@ -11,12 +11,12 @@
 
 /*****************************************************************\
 	sqlite.php
-	
+
 	Purpose:	Impliment pgsql versions of the sql_whatever functions
 \*****************************************************************/
 
 //$defaultdb = &new database($defaultdsn);
-class framework_db extends framework
+class component_db extends component
 {
 	function init()
 	{
@@ -45,7 +45,7 @@ function sqlite_age($date)
 	$smon = $parts[1];
 	$sday = $parts[2];
 	$syear = $parts[0];
-	
+
 	$today = time();
 	$emon = date("m", $today);
 	$eday = date("d", $today);
@@ -54,7 +54,7 @@ function sqlite_age($date)
 	$years = floor($daysdiff / 365.25);
 	$months = floor(($daysdiff - (365.25 * $years)) / 30);
 	$days = floor(($daysdiff - (365.25 * $years) - (30 * $months)));
-	
+
 	return "$years years $months months $days days";
 }
 
@@ -87,7 +87,7 @@ function sqlite_substr($string, $pos)
 function sqlite_rand()
 {
 	return rand();
-}			
+}
 
 
 
@@ -122,7 +122,7 @@ function sqlite_rand()
 	}
 
 	function sql_insert($query)
-	{		
+	{
 		global $defaultdb;
 		$defaultdb->insert($query);
 		return sqlite_last_insert_rowid($defaultdb->db->connection);
@@ -142,18 +142,18 @@ function sqlite_rand()
 	function sql_check($query)
 	{
 		global $defaultdb;
-		return $defaultdb->check($query);		
+		return $defaultdb->check($query);
 	}
 
 	function sql_fetch_into_arrays($query)
 	{
 		global $defaultdb;
 		return $defaultdb->fetch_into_arrays($query);
-		
+
 	}
 
 	function sql_fetch_into_arrobjs($query)
-	{		
+	{
 		global $defaultdb;
 		return $defaultdb->fetch_into_arrobjs($query);
 	}
@@ -161,7 +161,7 @@ function sqlite_rand()
 	function sql_new_fetch_into_array($query)
 	{
 		global $defaultdb;
-		return $defaultdb->new_fetch_into_array($query);		
+		return $defaultdb->new_fetch_into_array($query);
 	}
 
 	function sql_fetch_into_array($inTableName, $inFieldName, $inExtra = "")
@@ -186,7 +186,7 @@ function sqlite_rand()
 	function sql_fetch_rows($inQuery, $inReturnObjects = 0)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_rows($inQuery, $inReturnObjects);		
+		return $defaultdb->fetch_rows($inQuery, $inReturnObjects);
 	}
 
 	function sql_fetch_map($inQuery, $inKeyField)
@@ -199,7 +199,7 @@ function sqlite_rand()
 	function sql_fetch_simple_map($inQuery, $inKeyField, $inValueField)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_simple_map($inQuery, $inKeyField, $inValueField);		
+		return $defaultdb->fetch_simple_map($inQuery, $inKeyField, $inValueField);
 	}
 
 
@@ -215,53 +215,53 @@ function sqlite_rand()
 		global $defaultdb;
 		return $defaultdb->fetch_one_cell($inQueryString, $inField);
 	}
-	
+
 	function &sql_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->fetch_tree($inQueryString,$rootNode,$idField,$parentField);
-	}	
-	
+	}
+
 	//	inQuerystring can be a map (php array/hashtable), and then it will use the map instead of querying the database....
 	//	This helps in making multiple calls when you need separate arrays for each parent node's children.
 	//	Might be too much of a secret hack though - at least the var name should probably be changed
-	
+
 	function &sql_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->fetch_children($inQueryString,$rootNode,$idField,$parentField);
 	}
-	
+
 	function &sql_fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->fetch_parents($inQueryString,$leafNode,$idField,$parentField);
 	}
-	
+
 	function &sql_prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->prepare_tree_query($inQueryString, $idField, $parentField);
 	}
-	
+
 	function &sql_better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
 		global $defaultdb;
 		return $defaultdb->better_fetch_tree($inQueryString,$rootNode,$idField,$parentField, $depth);
-	}	
-	
+	}
+
 	function &sql_better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->better_fetch_children($inQueryString,$rootNode,$idField,$parentField);
 	}
-	
+
 	function &sql_better_fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
 		return $defaultdb->better_fetch_parents($inQueryString,$leafNode,$idField,$parentField);
-	}	
-	
+	}
+
 	function ticks($inString)
 	{
 		if($inString == NULL)
@@ -273,7 +273,7 @@ function sqlite_rand()
 			return "'$inString'";
 		}
 	}
-	
+
 	function makeDate($Year, $Month = 1, $Day = 1)
 	{
 		if($Year == "")
@@ -284,18 +284,18 @@ function sqlite_rand()
 		{
 			if($Month == 0)
 				$Month = 1;
-			
+
 			$Month = str_pad($Month, 2, "0", STR_PAD_LEFT);
-			
+
 			if($Day == 0)
 				$Day = 1;
-			
+
 			$Day = str_pad($Day, 2, "0", STR_PAD_LEFT);
-			
+
 			$Date = "$Year-$Month-$Day";
 		}
-		
+
 		return $Date;
 	}
-	
+
 ?>

@@ -16,7 +16,7 @@
 \*****************************************************************/
 //$defaultdsn = database::makeDSN(fwDB_RDBMS, fwDB_Server, fwDB_Port, fwDB_Username, fwDB_Password, fwDB_Database);
 //$defaultdb = &new database($defaultdsn);
-class framework_db extends framework
+class component_db extends component
 {
 	function init()
 	{
