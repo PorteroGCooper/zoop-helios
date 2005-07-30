@@ -30,10 +30,8 @@ function smarty_function_loadeditor($params, &$smarty)
 {
 	global $sGlobals;
 
-  if (isset($smarty->_tpl_vars))
-  	$SCRIPT_BASE = $smarty->_tpl_vars['SCRIPT_BASE'];
-  else
-  	$SCRIPT_BASE = SCRIPT_BASE;
+isset($smarty->_tpl_vars) ? $SCRIPT_BASE = $smarty->_tpl_vars['SCRIPT_BASE'] : $SCRIPT_BASE = SCRIPT_BASE;
+isset($smarty->_tpl_vars) ? $SCRIPT_URL = $smarty->_tpl_vars['SCRIPT_URL'] : $SCRIPT_URL = SCRIPT_URL;
 
 	$width = 600;
 	$height = 100;
@@ -137,7 +135,7 @@ function smarty_function_loadeditor($params, &$smarty)
 							\"Underline\",\"Strikethrough\",\"|\",\"Superscript\",\"Subscript\",\"|\",
 							\"JustifyLeft\",\"JustifyCenter\",\"JustifyRight\",\"JustifyFull\"];\r
 
-					$editvar.cmdInternalLink = \"modelessDialogShow('{$smarty->_tpl_vars['SCRIPT_URL']}/InternalLinks',365,270)\";\r
+					$editvar.cmdInternalLink = \"modelessDialogShow('{$SCRIPT_URL}/InternalLinks',365,270)\";\r
 					$editvar.css=\"{$SCRIPT_BASE}/public/resources/css/SSS.css\";\r
 					$editvar.REPLACE(\"$name\");\r
 				</script>\r" .
