@@ -18,6 +18,7 @@
 //	*	REQUEST_TYPE = "HTML" or "JSRS" depending on the request type.
 //	*	SCRIPT_REF = base ref for the script (trailing /)
 //	*	SCRIPT_URL = actual URL of the script (no path_info or querystring)
+//	*	SCRIPT_BASE = the location of where the script is located
 //	*	VIRTUAL_URL = Full URL to the current page.
 //	*	ORIG_PATH = $PATH_INFO varible
 //	*	RELATIVE_PATH = path to script relative to the virtual location
@@ -77,13 +78,16 @@
 
 	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
 	{
+
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . "/");
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("HOME_URL", SCRIPT_URL);
+		define("SCRIPT_BASE", SCRIPT_URL);
 	}
 	else
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
+		define("SCRIPT_BASE",$preht . $_SERVER["HTTP_HOST"] . substr($GLOBALS['Sname'],0, strrpos($GLOBALS['Sname'], "/")));
 
 		if(substr($GLOBALS['Sname'], -1, 1) == "/")
 		{

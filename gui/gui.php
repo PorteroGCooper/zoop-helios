@@ -59,6 +59,7 @@ class gui extends Smarty
 			$this->assign("VIRTUAL_URL", SCRIPT_URL . ORIG_PATH);
 			$this->assign("BASE_HREF", SCRIPT_REF);
 			$this->assign("SCRIPT_URL", SCRIPT_URL);
+			$this->assign("SCRIPT_BASE", SCRIPT_BASE);
 		}
 
 		if (defined("app_default_title")) 	$this->assign("title", app_default_title);
