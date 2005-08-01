@@ -33,22 +33,30 @@ function smarty_function_loadmanager($params, &$smarty)
 //  echo_r($smarty);
 
 	$conf = "default";
-	$user_id = '';
+	$id = '';
 
 	foreach ($params as $_key=>$_value) {
 		switch ($_key) {
 			case 'conf':
 			case 'value':
 			case 'name':
-			case 'user_id':
-			$$_key = $_value;
-			break;
+			case 'id':
+				$$_key = $_value;
+				break;
 		}
 	}
 
+	// SECURITY MEASURE SO SOMEONE LOGGED IN CAN'T CHANGE THE FUNCTION CALL AND EDIT SOMEONE ELSES FILES
+
+	if (defined("company_id"))
+		$id = company_id;
+	elseif(isset($smarty->_tpl_vars['company_id']))
+		$id = $smarty->_tpl_vars['company_id'];
+	elseif(isset($smarty->_tpl_vars['id']))
+		$id = $smarty->_tpl_vars['id'];
 
 	$formpart =  "<input type=\"text\" id=\"$name\" class=\"selectFile\" value=\"". htmlspecialchars($value) ."\" name=\"$name\" />\r";
-	$formpart .= "<input type=\"button\" name=\"select_$name\" value=\" File \" onclick=\"ImageSelector.select('$name','$conf', '$user_id');\"/>\r";
+	$formpart .= "<input type=\"button\" name=\"select_$name\" value=\" File \" onclick=\"ImageSelector.select('$name','$conf', '$id');\"/>\r";
 
 
 	return $formpart;
