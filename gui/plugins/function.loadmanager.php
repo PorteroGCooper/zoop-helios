@@ -33,20 +33,19 @@ function smarty_function_loadmanager($params, &$smarty)
 //  echo_r($smarty);
 
 	$conf = "default";
-	$id = '';
+	$path = '';
 
 	foreach ($params as $_key=>$_value) {
 		switch ($_key) {
 			case 'conf':
 			case 'value':
 			case 'name':
-			case 'id':
 			case 'path':
 				$$_key = $_value;
 				break;
 		}
 	}
-	
+
 	$formpart =  "<input type=\"text\" id=\"$name\" class=\"selectFile\" value=\"". htmlspecialchars($value) ."\" name=\"$name\" />\r";
 	$formpart .= "<input type=\"button\" name=\"select_$name\" value=\" File \" onclick=\"ImageSelector.select('$name','$conf', '$path');\"/>\r";
 
