@@ -57,15 +57,21 @@
 		var $allowed_children = array();	// These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
 		var $allowed_parents = array();	// These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
 
-		var $urlVarNames = array();
+		var $zoneParamNames = array();
 
 		var $returnPaths = array();
 
-		var $allowed_remote_post = array();  /* ADDED BY SPF - MAY 05 -
+		
+		/* ADDED BY SPF - MAY 05 -
 								   * extra security, require by default the post must be recieved by
 								   * the page of the same name, this is for exceptions
 								   */
-
+		/* replaced with a open by default, restrict as requested
+			rjl 8/25/2005 */
+		//var $allowed_remote_post = array();  
+		var $restricted_remote_post = array();
+								   
+		
 		var $origins = array();
 
 		var $url = "";
@@ -222,7 +228,7 @@
 			}
 
 			// CHECK THE ZONE TO SEE IF ANY VARIABLES ARE IN THE PATH.
-			if($urlVarNames = $this->getUrlVarNames())
+			if($urlVarNames = $this->getZoneParamNames())
 			{
 				foreach ($urlVarNames as $index => $varName)
 				{
@@ -342,10 +348,8 @@
 			else
 			{
 //  	            		echo_r($curPath);
-
 				if ( $_SERVER["REQUEST_METHOD"] == "POST" && $this->_checkAllowedPost($curPath))
-			    	{
-
+			    {
 					if (method_exists($this, "post" . $curPath))
 					{
 							$funcName = "post" . $curPath;
@@ -358,10 +362,12 @@
 					}
 					else if(method_exists($this, "page" . $curPath))
 					{
+						//$funcName = "page" . $curPAth;
 						$this->initPages($inPath);
+						//$this->$funcName($inPath);
 						$this->closePages($inPath);
 						$this->closePosts($inPath);
-						redirect($_SERVER["URL"]);
+						redirect($_SERVER["REQUEST_URI"]);
 					}
 				}
 				if (method_exists($this, "page" . $curPath))
@@ -386,8 +392,11 @@
 		//  THIS FUNCTION CHECKS TO MAKE SURE THAT THE CURRENT PAGE IS THE SAME AS THE REFERRING PAGE
 		//  OR THAT THE CURRENT PAGE IS PERMITTED TO HAVE REMOTE POSTING
 		//  SPF - MAY 05
+		
+		//  Restricting should not be the default behavior, as this breaks compatibility, and is not
+		//	expected. rjl 8/25/2005
 
-			if (in_array($curPath, $this->allowed_remote_post))
+			if (!in_array($curPath, $this->restricted_remote_post))
 				return true;
 
 			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
@@ -618,22 +627,43 @@
 			// This function is run after any page or post function in the zone.
 		}
 
+		function getZoneParamNames()
+		{
+			return $this->zoneParamNames;
+		}
+		
+		//deprecated...
 		function getUrlVarNames()
 		{
-			return $this->urlVarNames;
+			bug("called deprecated function: getUrlVarNames(), use getZoneParamNames()");
+			return $this->zoneParamNames;
 		}
 
+		function setZoneParams($inParamNames)
+		{
+			return $this->zoneParamNames = $inParamNames;
+		}
+		
+		//deprecated
 		function setUrlVarNames($inUrlVarNames)
 		{
-			return $this->urlVarNames = $inUrlVarNames;
+			bug("called deprecated function: setUrlVarNames(), use setZoneParamNames()");
+			return $this->zoneParamNames = $inUrlVarNames;
 		}
 
-		function getUrlVars()
+		function getZoneParams()
 		{
 			global $gUrlVars;
 			return $gUrlVars;
 		}
-
+		
+		//deprecated
+		function getUrlVars()
+		{
+			bug("called deprecated function: getUrlVars(), use getZoneParams()");
+			global $gUrlVars;
+			return $gUrlVars;
+		}
 
 		/**
 		 * Return an array of parent(s) for this zone.
@@ -655,78 +685,11 @@
 
 		}
 
-		/**
-		 * I hate this function, and it should not be used.
-		 * This is a recursive function to step through all parents and return a valid path.
-		 * This function will let you know if you're missing anything too.
-		 *
-		 * recommended usage:
-		 * $this->getMyPath();
-		 * put this in the initZone() function for the zone you're working in and add an echo for more info.
-		 *
-		 */
-		/**
-		function getMyPath($translate = false, $use_script_url = true)
-		{
-			bug("This function is a bug.");
-			$path = '';
-
-			// For performance no need to keep regetting them.
-			static $urlVars;
-			static $my_path;
-			if ($my_path) return $my_path;
-
-			// Process new
-			if (!isset($urlVars)) $urlVars = $this->getUrlVars();
-
-			if ($this->parent AND $this->zonename != '@ROOT')
-			{
-				// Recursively call this function to all parents
-				$path = $this->parent->getMyPath($translate, $use_script_url);
-			}
-			// If the object has no parent set, still include it
-			if ($translate) $path .= 'zone_';
-			if (!$this->zonename) $this->zonename = substr(get_class($this), 5);
-			$path .= $this->zonename . '/';
-
-			if ($this->parent AND $this->zonename != '@ROOT')
-			{
-
-				foreach ($this->getUrlVarNames() as $name)
-				{
-					if (!isset($urlVars[$name]))
-					{
-						// This will be hit if an exptected urlvar is missing.  Only color code for debugging/translation else give expected var name
-						if ($translate)
-						{
-							trigger_error ('Zone ' . $this->zonename . " requires $name<BR>", E_USER_NOTICE);
-							$path .= '<font color="red">' . $name . '</font>/';
-						} else {
-							$path .= $name . '/';
-						}
-					} else {
-						// The expected variable is in place and all is good
-						if ($translate)
-						{
-							$path .= $name . '/';
-						} else {
-							$path .= $urlVars[$name] . '/';
-						}
-					}
-				}
-			} else {
-				if ($use_script_url) $path = SCRIPT_URL;
-				$path .= '/';
-			}
-			return $my_path = $path;
-		}
-		*/
-
 		//should return an url to this zone
 		function getZoneUrl($depth = 0)//this function should return a complete url, not a path
 		{
 			global $gZoneUrls;
-			return $gZoneUrls[$depth];
+			return SCRIPT_URL . $gZoneUrls[$depth];
 		}
 
 		//should return an app path to this zone
@@ -741,7 +704,7 @@
 		{
 			BaseRedirect( $this->url . "/" . $inUrl);
 		}
-
+		
 		//gets all the paths that were passed as get variables to this zone(macro zone sequencing function)
 		function getReturnPaths()
 		{

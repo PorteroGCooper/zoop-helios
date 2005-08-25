@@ -814,7 +814,7 @@ function getPostHTMLArray($inName)
 	return $answer;
 }
 
-$allowed_tags = array(
+$GLOBALS['allowed_tags'] = array(
 	"p",
 	"root",
 	"table",
@@ -827,9 +827,10 @@ $allowed_tags = array(
 	"a",
 	"br",
 	"nobr",
+	"",
 );
 
-$allowed_attributes = array(
+$GLOBALS['allowed_attributes'] = array(
 	"class",
 	"align",
 	"valign",
@@ -854,10 +855,11 @@ function __VerifyHTMLTree($html)
 function __VerifyHTMLTree_ex(&$htmltree)
 {
 	global $allowed_tags, $allowed_attributes;
+	
 	foreach($htmltree->children as $key => $childtree)
 	{
 		if(in_array($htmltree->children[$key]->name, $allowed_tags))
-			__VerifyHTMLTree($htmltree->children[$key]);
+			__VerifyHTMLTree_ex($htmltree->children[$key]);
 		else
 			unset($htmltree->children[$key]);
 	}

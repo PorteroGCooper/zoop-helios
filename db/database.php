@@ -687,8 +687,8 @@ class database
 
 	function escape_string($inString)
 	{
-		$result = $this->db->escapeSimple($inString);
-		return $this->db->quoteSmart($result);
+		//$result = $this->db->escapeSimple($inString);
+		return $this->db->quoteSmart($inString);
 	}
 }
 ?>

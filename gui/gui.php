@@ -26,7 +26,7 @@ class gui extends Smarty
    		$this->template_dir = gui_base;
 		$this->setCompileDir(app_temp_dir . "/gui");
 
-		if (defined(strip_html))
+		if (defined("strip_html") && strip_html)
 		{
 			$this->autoload_filters = array('pre' => array("strip_html"));
 		}
