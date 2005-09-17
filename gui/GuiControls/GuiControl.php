@@ -140,10 +140,10 @@ function &getGuiControl($type, $name, $useGlobal = true)
 			return $controls[$type][$name];
 		}
 	}
-	if(file_exists(zoop_dir . "/gui/GuiControls/$type.php"))
-		include_once(zoop_dir . "/gui/GuiControls/$type.php");
-	else if(file_exists(app_dir . "/GuiControls/$type.php"))
+	if(file_exists(app_dir . "/GuiControls/$type.php"))
 		include_once(app_dir . "/GuiControls/$type.php");
+	else if(file_exists(zoop_dir . "/gui/GuiControls/$type.php"))
+		include_once(zoop_dir . "/gui/GuiControls/$type.php");
 	else
 		trigger_error("Please Implement a $type Control and place it in " .
 					app_dir . "/GuiControls/$type.php" . " or " .

@@ -35,7 +35,7 @@ class gui extends Smarty
 			$this->autoload_filters = array();
 		}
 
-		$this->plugins_dir = array(dirname(__file__) . "/plugins", app_dir . "/guiplugins");
+		$this->plugins_dir = array(app_dir . "/guiplugins", dirname(__file__) . "/plugins");
 
 		if(defined("gui_look") )
 		{

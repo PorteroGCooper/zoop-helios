@@ -1418,5 +1418,94 @@ function HTML2Txt($inHTML)
 }
 
 
+function seconds_to_time($seconds, $return = "array")
+{
+	$months = 0;
+	$days = 0;
+	$hours = 0;
+	$minutes = 0;
+
+	while ($seconds >= 60) {
+		if ($seconds >= 2629743.83) {
+		$months = floor($seconds / 2629743.83);
+		$seconds = $seconds - ($months * 2629743.83);
+		} elseif ($seconds >= 86400) {
+		// there is more than 1 day
+		$days = floor($seconds / 86400);
+		$seconds = $seconds - ($days * 86400);
+		} elseif ($seconds >= 3600) {
+		$hours = floor($seconds / 3600);
+		$seconds = $seconds - ($hours * 3600);
+		} elseif ($seconds >= 60) {
+		$minutes = floor($seconds / 60);
+		$seconds = $seconds - ($minutes * 60);
+		}
+	}
+
+	if ($return == 'string')
+	{
+		$string = "";
+
+		if ($months != 0)
+			$string .= "$months months, ";
+		if ($days != 0)
+			$string .= "$days days, ";
+		if ($hours != 0)
+			$string .= "$hours hours, ";
+		if ($minutes != 0)
+			$string .= "$minutes minutes, ";
+		if ($seconds != 0)
+			$string .= "$seconds seconds";
+		if ($string == "")
+			$string = "0";
+
+	return $string;
+	}
+
+	if ($return == "abbr")
+	{
+		if ($seconds < 10)
+			$string = ":0$seconds";
+		else
+			$string = ":$seconds";
+
+		$string = "$minutes" . $string;
+
+		if ($hours != 0)
+			$string = "$hours:" . $string;
+
+		if ($days != 0)
+			$string = "$days D " . $string;
+
+		if ($months != 0)
+			$string = "$months M " . $string;
+
+		return $string;
+
+	}
+
+	return array('months' => $months, 'days' => $days, 'hours' => $hours, 'minutes' => $minutes, 'seconds' => $seconds);
+}
+
+function fuzzy_seconds_to_time($seconds)
+{
+	$timearray = seconds_to_time($seconds);
+
+	if ($timearray['months'] != 0)
+		return "~{$timearray['months']} months";
+
+	if ($timearray['days'] != 0)
+		return "~{$timearray['days']} days";
+
+	if ($timearray['hours'] != 0)
+		return "~{$timearray['hours']} hours";
+
+	if ($timearray['minutes'] != 0)
+		return "~{$timearray['minutes']} minutes";
+
+	if ($timearray['seconds'] != 0)
+		return "{$timearray['seconds']} seconds";
+}
+
 
 ?>

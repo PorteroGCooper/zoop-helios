@@ -30,8 +30,6 @@ function smarty_function_loadmanager($params, &$smarty)
 {
 	global $sGlobals;
 
-//  echo_r($smarty);
-
 	$conf = "default";
 	$path = '';
 
@@ -52,8 +50,4 @@ function smarty_function_loadmanager($params, &$smarty)
 
 	return $formpart;
 }
-
-
-/* vim: set expandtab: */
-
 ?>
