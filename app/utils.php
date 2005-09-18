@@ -614,6 +614,10 @@ function urlEncodeArray($array, $keyname = '') {
 
 function BUG($desc = "")
 {
+
+	if (show_warnings == false)
+		return;
+
 	if(app_status == "dev")
 	{
 		$functioninfo = debug_backtrace();
@@ -855,7 +859,7 @@ function __VerifyHTMLTree($html)
 function __VerifyHTMLTree_ex(&$htmltree)
 {
 	global $allowed_tags, $allowed_attributes;
-	
+
 	foreach($htmltree->children as $key => $childtree)
 	{
 		if(in_array($htmltree->children[$key]->name, $allowed_tags))
