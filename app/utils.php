@@ -88,7 +88,7 @@
 
 	function ZoneRedirect( $url, $depth = 0 )
 	{
-		BaseRedirect( zone::getZoneUrl($depth) . $url);
+		Redirect( zone::getZoneUrl($depth) . $url);
 	}
 
 
