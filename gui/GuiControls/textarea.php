@@ -54,7 +54,9 @@ class TextArea extends GuiControl
 		$name = $this->getName();
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
-		$html .= "<textarea name=\"{$name}[text]\" $attrs>$value</textarea>";
+		$label = $this->getLabelName();
+
+		$html .= "<textarea name=\"{$label}\" id=\"{$label}\" $attrs>$value</textarea>";
 
 		if(isset($this->params['errorState']))
 		{

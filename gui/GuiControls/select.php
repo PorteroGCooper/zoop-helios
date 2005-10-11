@@ -9,9 +9,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+include_once(zoop_dir . "/gui/plugins/function.html_options.php");
+
 class select extends GuiControl
 {
-
 	function setValue($value)
 	{
 		$this->params['text'] = $value;
@@ -22,8 +23,16 @@ class select extends GuiControl
 		return array('validate');
 	}
 
+	function view()
+	{
+
+		$value = $this->getValue();
+		return $this->params['index'][$value];
+	}
+
 	function render()
 	{
+		global $gui;
 		if (!isset($this->params['index']))
 			return 'you need to specify an index for this guiControl';
 
@@ -57,12 +66,15 @@ class select extends GuiControl
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		$html .=  "<select name=\"{$label}\" $attrs>\r" ;
-		foreach ($this->params['index'] as $pval => $label)
-		{
-			$pval == $value ? $selected = " selected " : $selected = " ";
-			$html .=  "<option value=\"$pval\" label=\"$label\" $selected>$label</option>\r" ;
-		}
+		$html .=  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
+
+		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), &$gui);
+
+// 		foreach ($this->params['index'] as $pval => $label)
+// 		{
+// 			$pval == $value ? $selected = " selected " : $selected = " ";
+// 			$html .=  "<option value=\"$pval\" label=\"$label\" $selected>$label</option>\r" ;
+// 		}
 		$html .=  "</select>\r";
 
 		if(isset($this->params['errorState']))

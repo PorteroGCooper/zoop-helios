@@ -306,6 +306,11 @@ class GuiControl
 		return $html;
 	}
 
+	function view()
+	{
+		return $this->getValue();
+	}
+
 	function getLabelName()
 	{
 		$label = $this->getName() . "[value]";

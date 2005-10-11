@@ -103,42 +103,51 @@ function smarty_function_forms_form($params, &$smarty)
 			}
 			else
 			{
-				switch ($type) {
-					case 'text':
-					case 'password':
-					case 'textarea':
-					case 'editor':
-					case 'fulleditor':
-					case 'minieditor':
-					case 'blockeditor':
-						$formpart = $value;
-						break;
-					case 'select':
-						foreach ($index as $pval => $label)
-						{
-							$pval == $value ? $selected = " selected " : $selected = " ";
-							if ($selected == " selected ") $formpart = "$label\r";
 
-						}
-						break;
-					case 'multiple':
-						$formpart = "<select width=\"$width\" name=\"$name" . "[]\" id=\"$name\" multiple>";
-						foreach ($index as $pval => $label)
-						{
-							isset($value[$pval]) ? $selected = " selected " : $selected = " ";
-							$formpart .= "<option value=\"$pval\" label=\"$label\" $selected>$label</option>";
-						}
-						$formpart .= "</select>";
-						break;
-					case 'checkbox':
-						if ($value)
-     							$formpart = 'On';
-     						else
-     							$formpart = 'Off';
-					default:
-						$formpart = $value;
-				}
-				$labelname = "";
+				$control = &getGuiControl($type, $name);
+				$control->setParam('value', $value);
+				$control->setParam('index', $index);
+				$control->setParams($field->description->html);
+				$labelname = $control->getLabelName();
+				$formpart = $control->view();
+
+
+// 				switch ($type) {
+// 					case 'text':
+// 					case 'password':
+// 					case 'textarea':
+// 					case 'editor':
+// 					case 'fulleditor':
+// 					case 'minieditor':
+// 					case 'blockeditor':
+// 						$formpart = $value;
+// 						break;
+// 					case 'select':
+// 						foreach ($index as $pval => $label)
+// 						{
+// 							$pval == $value ? $selected = " selected " : $selected = " ";
+// 							if ($selected == " selected ") $formpart = "$label\r";
+//
+// 						}
+// 						break;
+// 					case 'multiple':
+// 						$formpart = "<select width=\"$width\" name=\"$name" . "[]\" id=\"$name\" multiple>";
+// 						foreach ($index as $pval => $label)
+// 						{
+// 							isset($value[$pval]) ? $selected = " selected " : $selected = " ";
+// 							$formpart .= "<option value=\"$pval\" label=\"$label\" $selected>$label</option>";
+// 						}
+// 						$formpart .= "</select>";
+// 						break;
+// 					case 'checkbox':
+// 						if ($value)
+//      							$formpart = 'On';
+//      						else
+//      							$formpart = 'Off';
+// 					default:
+// 						$formpart = $value;
+// 				}
+// 				$labelname = "";
 
 			}
 

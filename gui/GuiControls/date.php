@@ -51,10 +51,10 @@ class date extends GuiControl
 		$name = $this->getName();
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
+		$label = $this->getLabelName();
 
 
-
-		$html .= "<input name=\"{$name}[text]\" $attrs value=\"$value\" id=\"{$name}\" onfocus=\"show_Calendar(id);\">"; // type=\"{$this->params['type']}\"
+		$html .= "<input name=\"{$label}\" $attrs value=\"$value\" id=\"{$label}\" onfocus=\"show_Calendar(id);\">"; // type=\"{$this->params['type']}\"
 		$html .= "<img src=\"public/resources/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$name}');\" style=\"cursor:pointer;\">";
 
 		$html .= file_get_contents(app_dir . "/public/resources/js/datechooser/cal_div.htm");

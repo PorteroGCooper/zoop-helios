@@ -82,7 +82,7 @@ class text extends GuiControl
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		$html .= "<input name=\"{$label}\" $attrs value=\"$value\">"; // type=\"{$this->params['type']}\"
+		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\">"; // type=\"{$this->params['type']}\"
 
 // 		echo_r($this->params);
 		if(isset($this->params['errorState']))
