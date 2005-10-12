@@ -158,6 +158,18 @@ class component_db extends component
 		return $defaultdb->fetch_one_cell($inQueryString, $inField);
 	}
 
+	function &sql_prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
+	{
+		global $defaultdb;
+		return $defaultdb->prepare_tree_query($inQueryString, $idField, $parentField);
+	}
+
+	function &sql_better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
+	{
+		global $defaultdb;
+		return $defaultdb->better_fetch_tree($inQueryString,$rootNode,$idField,$parentField, $depth);
+	}
+
 	function &sql_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
@@ -172,6 +184,12 @@ class component_db extends component
 	{
 		global $defaultdb;
 		return $defaultdb->fetch_children($inQueryString,$rootNode,$idField,$parentField);
+	}
+
+	function &sql_better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
+	{
+		global $defaultdb;
+		return $defaultdb->better_fetch_children($inQueryString,$rootNode,$idField,$parentField);
 	}
 
 	function &sql_fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")

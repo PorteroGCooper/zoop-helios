@@ -819,6 +819,7 @@ function getPostHTMLArray($inName)
 }
 
 $GLOBALS['allowed_tags'] = array(
+	"div",
 	"p",
 	"root",
 	"table",
@@ -865,7 +866,9 @@ function __VerifyHTMLTree_ex(&$htmltree)
 		if(in_array($htmltree->children[$key]->name, $allowed_tags))
 			__VerifyHTMLTree_ex($htmltree->children[$key]);
 		else
+		{
 			unset($htmltree->children[$key]);
+		}
 	}
 	foreach($htmltree->attributes as $key => $value)
 	{
