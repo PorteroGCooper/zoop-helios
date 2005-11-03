@@ -51,13 +51,15 @@ class form
 		$this->tables->$table->records[$id] = new record ($table, $id, $idfield, &$this->db);
 	}
 
-	function passRecord($table, $id)
+	function &passRecord($table, $id)
 	{
 		if (!isset($this->tables->$table->records[$id]))
 				$this->grabRecord($table, $id);
 		$this->tables->$table->records[$id]->order = &$this->tables->$table->order;
 
-	return $this->tables->$table->records[$id];
+		$var =& $this->tables->$table->records[$id];
+
+		return $var;
 	}
 
 

@@ -133,11 +133,14 @@ function smarty_function_forms_search($params, &$smarty)
 								foreach ($field->index as $val => $index)
 								{
 									$selected = "";
-									foreach ($field->search["value"] as $passedInValue)
+									if (isset($field->search["value"]))
 									{
-										if ($passedInValue == $val)
+										foreach ($field->search["value"] as $passedInValue)
 										{
-											$selected = " selected ";
+											if ($passedInValue == $val)
+											{
+												$selected = " selected ";
+											}
 										}
 									}
 									$opput .= "<option value=\"$val\" $selected>$index</option>\r";

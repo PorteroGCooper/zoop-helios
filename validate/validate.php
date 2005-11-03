@@ -9,7 +9,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once("Validate.php");
+// include_once("Validate.php");
 
 class Validator
 {
@@ -17,7 +17,18 @@ class Validator
 	{
 		$function = strtolower("get{$validate['type']}Attr");
 		//echo_r(get_class_methods('validate'));
-		if(in_array($function, get_class_methods('Validator')))
+/*		if(in_array($function, get_class_methods('Validator')))
+			return Validator::$function($validate);
+		else
+			trigger_error("No known validation for {$validate['type']}");
+*/			
+		$validatorArray = get_class_methods('Validator');
+		$newvalidatorArray = array();
+		foreach ($validatorArray as $key => $validatorElement)
+		{
+			$newvalidatorArray[$key] = strtolower($validatorElement);
+		}
+		if(in_array(strtolower($function), $newvalidatorArray))
 			return Validator::$function($validate);
 		else
 			trigger_error("No known validation for {$validate['type']}");
@@ -43,11 +54,23 @@ class Validator
 		}
 
 
-		// if passes the required test, run individual method
+/*		// if passes the required test, run individual method
 		if(in_array($function, get_class_methods('Validator')))
 			return Validator::$function($value, $validate);
 		else
 			trigger_error("No known validation for {$validate['type']}");
+*/
+		$validatorarray = get_class_methods('Validator');
+		$newvalidatorArray = array();
+		foreach ($validatorarray as $key => $validatorElement)
+		{
+			$newvalidatorArray[$key] = strtolower($validatorElement);
+		}
+		if(in_array(strtolower($function), $newvalidatorArray))
+			return Validator::$function($value, $validate);
+		else
+			trigger_error("No known validation for {$validate['type']}");
+
 	}
 
 	function getPhoneAttr($validate) // FOR JS VALIDATION

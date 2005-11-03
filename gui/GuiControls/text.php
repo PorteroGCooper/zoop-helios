@@ -9,26 +9,9 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+
 class text extends GuiControl
 {
-/*  Here is an example of creating a specific validation routine for a guicontrol,
-	though a general use one has already been created that is quite good, you
-	may need to write a specific one for a specific need.
-********************************
-	function validate()
-	{
-//		die("textvalidate");
-		$errorState = parent::validate();
-//		echo_r($errorState);
-//		die();
-		if($errorState !== true)
-		{
-			$errorState['text'] = 'Invalid';
-			$errorState['value'] = $this->getValue();
-		}
-		return $errorState;
-	}
-*/
 
 	function setValue($value)
 	{
@@ -82,9 +65,8 @@ class text extends GuiControl
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\">"; // type=\"{$this->params['type']}\"
+		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\">";
 
-// 		echo_r($this->params);
 		if(isset($this->params['errorState']))
 		{
 			$errorState = $this->params['errorState'];

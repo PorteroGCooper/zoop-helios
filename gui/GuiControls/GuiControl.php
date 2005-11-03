@@ -140,6 +140,9 @@ function &getGuiControl($type, $name, $useGlobal = true)
 			return $controls[$type][$name];
 		}
 	}
+
+	$type = strtolower($type);
+
 	if(file_exists(app_dir . "/GuiControls/$type.php"))
 		include_once(app_dir . "/GuiControls/$type.php");
 	else if(file_exists(zoop_dir . "/gui/GuiControls/$type.php"))

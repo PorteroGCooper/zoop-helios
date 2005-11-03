@@ -31,13 +31,14 @@ include_once(dirname(__file__) . "/function.guicontrol.php");
 function smarty_function_forms_form($params, &$smarty)
 {
 
-
+	$cols = 1;
 	$class = "";
 	foreach ($params as $_key=>$_value) {
 		switch ($_key) {
 			case 'form':
 			case 'class':
 			case 'form_type':
+			case 'cols':
 			$$_key = $_value;
 			break;
 		}
@@ -56,10 +57,25 @@ function smarty_function_forms_form($params, &$smarty)
 	$output = "<ul align=\"center\" id=\"errorsbx\">";
 	if ($form->error)
 		$output .= "<li>". $form->error ."</li>";
-	$output .= "</ul><table class='$class' cellpadding=1 cellspacing=1>";
-	(isset($form->title) && $form->title) ? $output .= "<tr><th colspan='2'>$form->title</th></tr>" : "";
+	$output .= "</ul><table class='$class' cellpadding=2 cellspacing=2 border=0>";
+	(isset($form->title) && $form->title) ? $output .= "<tr><th colspan=$cols>$form->title</th></tr>" : "";
 
+	$output .= "<tr><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
+
+	$totalshow = 0;
+	foreach ($form->order as $fieldname)
+	{
+		$field = &$form->values[$fieldname];
+		if ($field->description->formshow)
+			$totalshow++;
+	}
+
+	if ($cols != 1)
+		$break = intval($totalshow / $cols);
+	else
+		$break = 10000000;
 	$editor = 1;
+	$counter = 0;
 	foreach ($form->order as $fieldname)
 	{
 		$field = &$form->values[$fieldname];
@@ -110,57 +126,27 @@ function smarty_function_forms_form($params, &$smarty)
 				$control->setParams($field->description->html);
 				$labelname = $control->getLabelName();
 				$formpart = $control->view();
-
-
-// 				switch ($type) {
-// 					case 'text':
-// 					case 'password':
-// 					case 'textarea':
-// 					case 'editor':
-// 					case 'fulleditor':
-// 					case 'minieditor':
-// 					case 'blockeditor':
-// 						$formpart = $value;
-// 						break;
-// 					case 'select':
-// 						foreach ($index as $pval => $label)
-// 						{
-// 							$pval == $value ? $selected = " selected " : $selected = " ";
-// 							if ($selected == " selected ") $formpart = "$label\r";
-//
-// 						}
-// 						break;
-// 					case 'multiple':
-// 						$formpart = "<select width=\"$width\" name=\"$name" . "[]\" id=\"$name\" multiple>";
-// 						foreach ($index as $pval => $label)
-// 						{
-// 							isset($value[$pval]) ? $selected = " selected " : $selected = " ";
-// 							$formpart .= "<option value=\"$pval\" label=\"$label\" $selected>$label</option>";
-// 						}
-// 						$formpart .= "</select>";
-// 						break;
-// 					case 'checkbox':
-// 						if ($value)
-//      							$formpart = 'On';
-//      						else
-//      							$formpart = 'Off';
-// 					default:
-// 						$formpart = $value;
-// 				}
-// 				$labelname = "";
-
 			}
 
 		$output .= "<tr>";
 		$output .= "<td valign=\"top\">" . "<label for=\"$labelname\">\r";
 		(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
 		$output .= $field->description->label . ":</label></td>\r";
-		$output .= "<td>" . $formpart . "</td>\r";
+		$output .= "<td valign=\"top\">" . $formpart . "</td>\r";
 		$output .= "</tr>";
+
+
+		if ($counter == $break)
+		{
+			$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
+			$counter = -1;
+		}
+		$counter++;
+
 		}
 
         }
-        $output .= "</table>";
+        $output .= "</table></td></tr></table>";
 
 	  if ($form_type == "form")
 	  {
