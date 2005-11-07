@@ -60,7 +60,7 @@ function smarty_function_forms_form($params, &$smarty)
 	$output .= "</ul><table class='$class' cellpadding=2 cellspacing=2 border=0>";
 	(isset($form->title) && $form->title) ? $output .= "<tr><th colspan=$cols>$form->title</th></tr>" : "";
 
-	$output .= "<tr><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
+	$output .= "<tr><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%' style=\"border-collapse: collapse;\">";
 
 	$totalshow = 0;
 	foreach ($form->order as $fieldname)
@@ -129,10 +129,10 @@ function smarty_function_forms_form($params, &$smarty)
 			}
 
 		$output .= "<tr>";
-		$output .= "<td valign=\"top\">" . "<label for=\"$labelname\">\r";
+		$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\">\r";
 		(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
 		$output .= $field->description->label . ":</label></td>\r";
-		$output .= "<td valign=\"top\">" . $formpart . "</td>\r";
+		$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
 		$output .= "</tr>";
 
 
