@@ -55,7 +55,6 @@ $table_id = randomstring();
 
 $ctable =& $form->tables->$table;
 
-
 if ($ctable->pages > 1)
 	$sort_type = "forms";
 

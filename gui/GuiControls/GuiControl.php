@@ -132,6 +132,7 @@ function &parseControlData(&$controlData)
 
 function &getGuiControl($type, $name, $useGlobal = true)
 {
+	$filename = strtolower($type).".php";
 	if($useGlobal)
 	{
 		global $controls;
@@ -140,17 +141,14 @@ function &getGuiControl($type, $name, $useGlobal = true)
 			return $controls[$type][$name];
 		}
 	}
-
-	$type = strtolower($type);
-
-	if(file_exists(app_dir . "/GuiControls/$type.php"))
-		include_once(app_dir . "/GuiControls/$type.php");
-	else if(file_exists(zoop_dir . "/gui/GuiControls/$type.php"))
-		include_once(zoop_dir . "/gui/GuiControls/$type.php");
+	if(file_exists(app_dir . "/GuiControls/$filename"))
+		include_once(app_dir . "/GuiControls/$filename");
+	else if(file_exists(zoop_dir . "/gui/GuiControls/$filename"))
+		include_once(zoop_dir . "/gui/GuiControls/$filename");
 	else
 		trigger_error("Please Implement a $type Control and place it in " .
-					app_dir . "/GuiControls/$type.php" . " or " .
-					zoop_dir . "/gui/GuiControls/$type.php");
+					app_dir . "/GuiControls/$filename" . " or " .
+					zoop_dir . "/gui/GuiControls/$filename");
 	if($useGlobal)
 	{
 		$controls[$type][$name] = &new $type($name);
