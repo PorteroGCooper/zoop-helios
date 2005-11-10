@@ -250,7 +250,7 @@ if (!isset($form->tables->$table))
 			$output .= $path;
 			$output .= "?start=";
 			$output .= ($ctable->cur - $ctable->limit);
-			$output .="\"><</a>";
+			$output .="\" class=\"pages\">&#171; Previous</a>";
 		}
 		$output .= "</td>";
 		$output .= "<td align=\"center\" width=\"33%\">&nbsp;";
@@ -267,7 +267,7 @@ if (!isset($form->tables->$table))
 			$output .= $path;
 			$output .= "?start=";
 			$output .= ($ctable->cur + $ctable->limit);
-			$output .="\">></a>";
+			$output .="\" class=\"pages\">Next &#187;</a>";
 		}
 		$output .= "</td></tr>";
 	}
