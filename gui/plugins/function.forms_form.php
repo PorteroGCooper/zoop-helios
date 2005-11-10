@@ -63,13 +63,16 @@ function smarty_function_forms_form($params, &$smarty)
 	$output .= "<tr><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%' style=\"border-collapse: collapse;\">";
 
 	$totalshow = 0;
+
 	foreach ($form->order as $fieldname)
 	{
-		$field = &$form->values[$fieldname];
-		if ($field->description->formshow)
-			$totalshow++;
+		if (isset($form->values[$fieldname]))
+		{
+			$field = &$form->values[$fieldname];
+			if (isset($field->description->formshow) && $field->description->formshow)
+				$totalshow++;
+		}
 	}
-
 	if ($cols != 1)
 		$break = intval($totalshow / $cols);
 	else
@@ -78,71 +81,74 @@ function smarty_function_forms_form($params, &$smarty)
 	$counter = 0;
 	foreach ($form->order as $fieldname)
 	{
-		$field = &$form->values[$fieldname];
-
-		if ($field->description->formshow)
+		if (isset($form->values[$fieldname]))
 		{
-			$name = $field->name;
-			$value = $field->value;
-			$type = isset($field->description->html['type']) ? $field->description->html['type'] : 'text';
-			$index = $field->description->index;
+			$field = &$form->values[$fieldname];
 
-			if ($form_type == "form")
+			if ($field->description->formshow)
 			{
-				if ((strlen($field->value) == 0) && (isset($field->description->default) && strlen($field->description->default)))
+				$name = $field->name;
+				$value = $field->value;
+				$type = isset($field->description->html['type']) ? $field->description->html['type'] : 'text';
+				$index = $field->description->index;
+
+				if ($form_type == "form")
 				{
-					$value = $field->description->default;
-				}
+					if ((strlen($field->value) == 0) && (isset($field->description->default) && strlen($field->description->default)))
+					{
+						$value = $field->description->default;
+					}
 
-				$control = &getGuiControl($type, $name);
-				if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor')		// No need for htmlspecialchars function to run.
-					$control->setParam('value', $value);
+					$control = &getGuiControl($type, $name);
+					if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor')		// No need for htmlspecialchars function to run.
+						$control->setParam('value', $value);
+					else
+						$control->setParam('value', htmlspecialchars($value));
+
+					if (isset($field->description->validation))
+						$control->setParam('validate', $field->description->validation);
+					$control->setParam('index', $index);
+					$control->setParams($field->description->html);
+
+					switch ($type) {   // for establishing type specific options
+						case 'editor':
+						case 'fulleditor':
+						case 'minieditor':
+							$control->setParam('editor', $editor);
+							$editor++;
+							break;
+					}
+					$labelname = $control->getLabelName();
+					$formpart = $control->render();
+					$formpart .= "\r";
+				}
 				else
-					$control->setParam('value', htmlspecialchars($value));
+				{
 
-				if (isset($field->description->validation))
-					$control->setParam('validate', $field->description->validation);
-				$control->setParam('index', $index);
-				$control->setParams($field->description->html);
-
-				switch ($type) {   // for establishing type specific options
-					case 'editor':
-					case 'fulleditor':
-					case 'minieditor':
-						$control->setParam('editor', $editor);
-						$editor++;
-						break;
+					$control = &getGuiControl($type, $name);
+					$control->setParam('value', $value);
+					$control->setParam('index', $index);
+					$control->setParams($field->description->html);
+					$labelname = $control->getLabelName();
+					$formpart = $control->view();
 				}
-				$labelname = $control->getLabelName();
-				$formpart = $control->render();
-				$formpart .= "\r";
-			}
-			else
+
+			$output .= "<tr>";
+			$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\">\r";
+			(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
+			$output .= $field->description->label . ":</label></td>\r";
+			$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
+			$output .= "</tr>";
+
+
+			if ($counter == $break)
 			{
-
-				$control = &getGuiControl($type, $name);
-				$control->setParam('value', $value);
-				$control->setParam('index', $index);
-				$control->setParams($field->description->html);
-				$labelname = $control->getLabelName();
-				$formpart = $control->view();
+				$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
+				$counter = -1;
 			}
+			$counter++;
 
-		$output .= "<tr>";
-		$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\">\r";
-		(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
-		$output .= $field->description->label . ":</label></td>\r";
-		$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
-		$output .= "</tr>";
-
-
-		if ($counter == $break)
-		{
-			$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
-			$counter = -1;
-		}
-		$counter++;
-
+			}
 		}
 
         }
