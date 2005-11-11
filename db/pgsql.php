@@ -27,45 +27,52 @@ class component_db extends component
 	function sql_begin_transaction( $Db = -1 )
 	{
 		global $defaultdb;
-		return $defaultdb->begin_transaction();
+  		$return = $defaultdb->begin_transaction();
+  		return $return;
 	}
 
 	function sql_commit_transaction( $Db = -1 )
 	{
 		global $defaultdb;
-		return $defaultdb->commit_transaction();
+  		$return = $defaultdb->commit_transaction();
+  		return $return;
 	}
 
 	function sql_rollback_transaction( $Db = -1 )
 	{
 		global $defaultdb;
-		return $defaultdb->rollback_transaction();
+  		$return = $defaultdb->rollback_transaction();
+  		return $return;
 	}
 
 	function sql_query( $inQueryString, $Db = -1 )
 	{
 		global $defaultdb;
-		return $defaultdb->query($inQueryString);
+  		$return = $defaultdb->query($inQueryString);
+  		return $return;
 	}
 
 	function sql_get_fields($table)
 	{
 		global $defaultdb;
-		return $defaultdb->get_fields($table);
+  		$return = $defaultdb->get_fields($table);
+  		return $return;
 	}
 
 	function sql_insert($query, $sequence)
 	{
 		global $defaultdb;
 		$result = $defaultdb->insert($query);
-		return $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
+  		$return = $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
+  		return $return;
 	}
 
 
 	function sql_fetch_sequence( $sequence )
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_sequence($sequence);
+  		$return = $defaultdb->fetch_sequence($sequence);
+  		return $return;
 	}
 
 	///////////////////////////////////////////////
@@ -75,20 +82,23 @@ class component_db extends component
 	function sql_check($query)
 	{
 		global $defaultdb;
-		return $defaultdb->check($query);
+  		$return = $defaultdb->check($query);
+  		return $return;
 	}
 
 	function sql_fetch_into_arrays($query)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_into_arrays($query);
+  		$return = $defaultdb->fetch_into_arrays($query);
+  		return $return;
 
 	}
 
 	function sql_fetch_into_arrobjs($query)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_into_arrobjs($query);
+  		$return = $defaultdb->fetch_into_arrobjs($query);
+  		return $return;
 	}
 
 
@@ -103,77 +113,89 @@ class component_db extends component
 		global $defaultdb;
 		//	the database clas should also create fetch_column and depricate
 		//	new_fetch_into_array
-		return $defaultdb->new_fetch_into_array($query);
+  		$return = $defaultdb->new_fetch_into_array($query);
+  		return $return;
 	}
 
 	function sql_fetch_into_array($inTableName, $inFieldName, $inExtra = "")
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_into_array($inTableName, $inFieldName, $inExtra);
+  		$return = $defaultdb->fetch_into_array($inTableName, $inFieldName, $inExtra);
+  		return $return;
 	}
 
 
 	function sql_fetch_one($inQueryString)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_one($inQueryString);
+  		$return = $defaultdb->fetch_one($inQueryString);
+  		return $return;
 	}
 
 	function sql_fetch_assoc($inQuery)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_assoc($inQuery);
+  		$return = $defaultdb->fetch_assoc($inQuery);
+  		return $return;
 	}
 
 	function sql_fetch_rows($inQuery, $inReturnObjects = 0)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_rows($inQuery, $inReturnObjects);
+  		$return = $defaultdb->fetch_rows($inQuery, $inReturnObjects);
+  		return $return;
 	}
 
 	function sql_fetch_map($inQuery, $inKeyField)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_map($inQuery,$inKeyField);
+  		$return = $defaultdb->fetch_map($inQuery,$inKeyField);
+  		return $return;
 	}
 
 
 	function sql_fetch_simple_map($inQuery, $inKeyField, $inValueField)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_simple_map($inQuery, $inKeyField, $inValueField);
+  		$return = $defaultdb->fetch_simple_map($inQuery, $inKeyField, $inValueField);
+  		return $return;
 	}
 
 
 	function &sql_fetch_complex_map($inQuery, $inKeyField)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_complex_map($inQuery, $inKeyField);
+  		$return = $defaultdb->fetch_complex_map($inQuery, $inKeyField);
+  		return $return;
 	}
 
 
 	function sql_fetch_one_cell($inQueryString, $inField = 0)
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_one_cell($inQueryString, $inField);
+  		$return = $defaultdb->fetch_one_cell($inQueryString, $inField);
+  		return $return;
 	}
 
 	function &sql_prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
-		return $defaultdb->prepare_tree_query($inQueryString, $idField, $parentField);
+  		$return = $defaultdb->prepare_tree_query($inQueryString, $idField, $parentField);
+  		return $return;
 	}
 
 	function &sql_better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
 		global $defaultdb;
-		return $defaultdb->better_fetch_tree($inQueryString,$rootNode,$idField,$parentField, $depth);
+  		$return = $defaultdb->better_fetch_tree($inQueryString,$rootNode,$idField,$parentField, $depth);
+  		return $return;
 	}
 
 	function &sql_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_tree($inQueryString,$rootNode,$idField,$parentField);
+  		$return = $defaultdb->fetch_tree($inQueryString,$rootNode,$idField,$parentField);
+  		return $return;
 	}
 
 	//	inQuerystring can be a map (php array/hashtable), and then it will use the map instead of querying the database....
@@ -183,25 +205,29 @@ class component_db extends component
 	function &sql_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_children($inQueryString,$rootNode,$idField,$parentField);
+  		$return = $defaultdb->fetch_children($inQueryString,$rootNode,$idField,$parentField);
+  		return $return;
 	}
 
 	function &sql_better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
 		global $defaultdb;
-		return $defaultdb->better_fetch_children($inQueryString,$rootNode,$idField,$parentField);
+  		$return = $defaultdb->better_fetch_children($inQueryString,$rootNode,$idField,$parentField);
+  		return $return;
 	}
 
 	function &sql_fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
 	{
 		global $defaultdb;
-		return $defaultdb->fetch_parents($inQueryString,$leafNode,$idField,$parentField);
+  		$return = $defaultdb->fetch_parents($inQueryString,$leafNode,$idField,$parentField);
+  		return $return;
 	}
 
 	function sql_get_table_info($Table)
 	{
 		global $defaultdb;
-		return $defaultdb->get_table_info($Table);
+  		$return = $defaultdb->get_table_info($Table);
+  		return $return;
 	}
 
 	function ticks($inString)
@@ -219,7 +245,8 @@ class component_db extends component
 	function sql_escape_string($inString)
 	{
 		global $defaultdb;
-		return $defaultdb->escape_string($inString);
+  		$return = $defaultdb->escape_string($inString);
+  		return $return;
 	}
 
 	function makeDate($Year, $Month = 1, $Day = 1)

@@ -620,7 +620,7 @@ class database
 		{
 			$objects = $this->prepare_tree_query($inQueryString, $idField);
 		}
-		markprofile();
+
 		if(is_array($rootNode))
 		{
 			foreach($rootNode as $node)
