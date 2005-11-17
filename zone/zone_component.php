@@ -17,7 +17,7 @@
 
 include_once(dirname(__file__) . "/zone.php");
 include_once(dirname(__file__) . "/zone_sequence.php");
-include_once(dirname(__file__) . "/zone_zoopjs.php");
+include_once(dirname(__file__) . "/zone_zoopfile.php");
 
 class component_zone extends component
 {
