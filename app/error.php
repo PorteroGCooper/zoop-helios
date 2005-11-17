@@ -1,4 +1,13 @@
 <?
+/**
+* Error handling
+* 
+* This file includes the functions necessary for pretty error handling in zoop.
+* 
+* @package app
+* @subpackage error
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -9,7 +18,9 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
+/**
+* print verbose errors.
+*/
 function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $backtrace = null)
 {
 	$type = GetErrorType($errno);

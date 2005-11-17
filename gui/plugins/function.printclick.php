@@ -1,5 +1,9 @@
 <?
-
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
 /*
  * Smarty plugin
  * -------------------------------------------------------------

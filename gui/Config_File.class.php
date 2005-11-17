@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Config_File class.
  *

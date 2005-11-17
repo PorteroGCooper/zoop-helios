@@ -10,8 +10,8 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * Smarty plugin
- * @package Smarty
+ * Zoop Smarty plugin
+ * @package gui
  * @subpackage plugins
  */
 
@@ -277,7 +277,7 @@ return $output;
 }
 
 
-function randomstring() {
+function __randomstring() {
 	// RANDOM KEY PARAMETERS
 	$keychars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	$length = rand(8,40);
@@ -288,7 +288,7 @@ function randomstring() {
 	{
 	$randkey .= substr($keychars, rand(1, strlen($keychars) ), 1);
 	}
-return $randkey;
+	return $randkey;
 }
 
 /* vim: set expandtab: */

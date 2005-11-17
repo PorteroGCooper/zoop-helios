@@ -1,4 +1,13 @@
 <?
+/**
+* set up global constants and variables
+* 
+* splites up the path info, prepares other variables for the application.
+* 
+* @package app
+* @subpackage globals
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //

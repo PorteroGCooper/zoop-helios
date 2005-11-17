@@ -1,4 +1,10 @@
 <?
+/**
+* @package pdf
+*/
+/**
+* @package pdf
+*/
 class PdfImage extends PdfObject
 {
 	var $image;

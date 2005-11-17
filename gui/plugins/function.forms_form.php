@@ -11,8 +11,8 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * Smarty plugin
- * @package Smarty
+ * Zoop Smarty plugin
+ * @package gui
  * @subpackage plugins
  */
 

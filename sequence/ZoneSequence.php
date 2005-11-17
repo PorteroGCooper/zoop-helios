@@ -1,4 +1,7 @@
 <?
+/**
+* @package sequence
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -26,7 +29,9 @@
 //everything else should be handled(well) by zone_sequence
 //look there for examples
 
-
+/**
+* @package sequence
+*/
 class ZoneSequence
 {
 	function ZoneSequence($sequenceName)

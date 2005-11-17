@@ -1,4 +1,8 @@
 <?
+/**
+* @category zoop
+* @package forms
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -9,8 +13,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	require_once(dirname(__file__) . "/forms.php");
-
+require_once(dirname(__file__) . "/forms.php");
+/**
+* @package forms
+*/
 class component_forms extends component
 {
 	function component_forms()

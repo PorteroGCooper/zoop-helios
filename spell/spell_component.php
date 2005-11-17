@@ -1,4 +1,8 @@
 <?
+/**
+* @category zoop
+* @package spell
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,7 +17,9 @@
 	include_once(dirname(__file__) . "/spellBase.php");
 	include_once(dirname(__file__) . "/spell.php");
 	include_once(dirname(__file__) . "/guispell.php");
-
+/**
+* @package spell
+*/
 class component_spell extends component
 {
 	function spell_component()

@@ -1,4 +1,7 @@
 <?
+/**
+* @package sequence
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,7 +16,9 @@
 //this is the place to look if you want file format information, but good luck
 //figuring it out. I wrote it in a day, alright?
 
-
+/**
+* @package sequence
+*/
 class SequenceParser
 {
 	function sequenceParser($filename = 'sequence.xml')

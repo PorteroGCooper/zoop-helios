@@ -1,4 +1,7 @@
 <?
+/**
+* @package pdf
+*/
 
 define("PdfTableCell_align_center", 0);
 define("PdfTableCell_align_left", 1);
@@ -11,7 +14,9 @@ define("pdf_align_right", 2);
 define("PdfTableCell_valign_bottom", 3);
 define("PdfTableCell_valign_top", 4);
 define("PdfTableCell_valign_middle", 5);
-
+/**
+* @package pdf
+*/
 class PdfTableCell extends PdfContainer
 {
 	// most of these functions are just placeholders, waiting to be overriden in the classes that inherit from this object

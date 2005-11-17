@@ -1,4 +1,12 @@
 <?
+/**
+* mssql sql_* functions
+* 
+* This file is out of sync with the rest. Please copy from pgsql.php, and 
+* modify this file as necessary.
+* @package db
+* @subpackage mssql
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //

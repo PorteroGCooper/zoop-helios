@@ -1,4 +1,8 @@
 <?
+/**
+* @category zoop
+* @package mail
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //

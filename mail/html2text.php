@@ -70,6 +70,7 @@
 *  @author Jon Abernathy <jon@chuggnutt.com>
 *  @version 0.6.1
 *  @since PHP 4.0.2
+* @package mail
 */
 class html2text
 {

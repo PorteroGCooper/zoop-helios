@@ -1,4 +1,8 @@
 <?
+/**
+* @package db
+* @subpackage database
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -437,7 +441,7 @@ class database
 		return $answer;
 	}
 
-	function &better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
+	function &better_fetch_tree( &$inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		if(!is_array($inQueryString))
 		{

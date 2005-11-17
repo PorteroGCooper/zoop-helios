@@ -1,4 +1,10 @@
 <?
+/**
+* @package pdf
+*/
+/**
+* @package pdf
+*/
 class PdfObject
 {
 	// most of these functions are just placeholders, waiting to be overriden in the classes that inherit from this object

@@ -1,4 +1,8 @@
 <?
+/**
+* @package db
+* @subpackage sqlite
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -9,13 +13,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/*****************************************************************\
-	sqlite.php
-
-	Purpose:	Impliment pgsql versions of the sql_whatever functions
-\*****************************************************************/
-
-//$defaultdb = &new database($defaultdsn);
+/**
+* @package db
+* @subpackage mysql
+*/
 class component_db extends component
 {
 	function init()

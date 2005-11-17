@@ -1,8 +1,13 @@
 <?
+/**
+* @package pdf
+*/
 	define("kPdf_default_page_width", 8.5 * 72);
 	define("kPdf_default_page_height", 11 * 72);
 	define("kPdf_default_text_size", 12);
-	
+/**
+* @package pdf
+*/	
 	class pdfreport
 	{
 		var $curPage;

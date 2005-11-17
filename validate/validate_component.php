@@ -1,4 +1,7 @@
 <?
+/**
+* @package storage
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -10,7 +13,9 @@
 // FOR A PARTICULAR PURPOSE.
 
 	include_once(dirname(__file__) . '/validate.php');
-
+/**
+* @package storage
+*/
 class component_validate extends component
 {
 	function component_validate()

@@ -1,4 +1,13 @@
 <?
+/**
+* XMLRPC classes
+* 
+* These classes allow you to have easy xml-rpc handling in your zones.
+* 
+* @package app
+* @subpackage xmlrpc
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //

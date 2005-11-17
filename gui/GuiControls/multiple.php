@@ -1,4 +1,8 @@
 <?
+/**
+* @package gui
+* @subpackage guicontrol
+*/
 include_once(dirname(__file__) . "/select.php");
 class multiple extends select
 {

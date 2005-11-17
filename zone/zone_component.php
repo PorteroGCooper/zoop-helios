@@ -1,4 +1,9 @@
 <?
+/**
+* @category zoop
+* @package zone
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,7 +17,7 @@
 
 include_once(dirname(__file__) . "/zone.php");
 include_once(dirname(__file__) . "/zone_sequence.php");
-
+include_once(dirname(__file__) . "/zone_zoopjs.php");
 
 class component_zone extends component
 {

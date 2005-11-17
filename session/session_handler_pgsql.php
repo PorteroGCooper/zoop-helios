@@ -40,23 +40,12 @@
  *
  * @author  Jon Parise <jon@php.net>
  * @version 2.1, 02/10/2003
- *
+ * @package session
  * $Id: session_handler_pgsql.php,v 1.5 2004/09/23 05:00:52 rick Exp $
  */
 
-//	-- Make sure PHP is configured for our custom session handler.
-//
-///	This actually doesnt' matter.  Setting it to user will force you to use
-//		a custom session handler.  Leaving it as "files" though will still
-//		allow you to set your own custom session handler.
-
-//assert(ini_get('session.save_handler') == 'user');
-
 /* Get the name of the session table.  Default to 'php_sessions'. */
-//if($pgsql_session_table = ini_get('session.save_path'))
-//{
 $pgsql_session_table = 'php_sessions';
-//}
 
 /* Global PostgreSQL database connection handle. */
 $pgsql_session_handle = null;

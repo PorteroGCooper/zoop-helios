@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
 /*======================================================================*\
     Function: smarty_make_better_timestamp
     Purpose:  used by other smarty functions to make a timestamp

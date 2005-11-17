@@ -1,5 +1,10 @@
 <?
-
+/**
+* @package pdf
+*/
+/**
+* @package pdf
+*/
 class PdfTable extends PdfContainer
 {
 	var $cellPadding;

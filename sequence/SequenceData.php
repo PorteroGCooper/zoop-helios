@@ -1,4 +1,7 @@
 <?
+/**
+* @package sequence
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -11,6 +14,9 @@
 
 //This class merely holds the xml data and gives some convenience functions used by ZoneSequence
 //to get at the xml data.
+/**
+* @package sequence
+*/
 class SequenceData
 {
 	function SequenceData(&$zonelist, &$sequencelist)

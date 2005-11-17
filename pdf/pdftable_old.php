@@ -1,6 +1,11 @@
 <?
+/**
+* @package pdf
+*/
 	define("kPdfTabe_default_cell_padding", 5);
-	
+/**
+* @package pdf
+*/	
 	class pdftable_old
 	{
 		var $pdfReport;

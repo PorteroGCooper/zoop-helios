@@ -1,4 +1,7 @@
 <?
+/**
+* @package storage
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -9,9 +12,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
 define_once('filestorage_root', '');
-
+/**
+* @package storage
+*/
 class FileStorage extends Storage
 {
 	function FileStorage($basePath = filestorage_root)

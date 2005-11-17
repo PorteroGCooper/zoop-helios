@@ -1,5 +1,17 @@
 <?
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+/**
+* Main component file for component_app
+* 
+* Class to initialize the app component. This is the main component in zoop, 
+* and should almost always be included. Almost all of the other components depend
+* on this one.
+* @category zoop
+* @package app
+* @subpackage component_app
+*/
+
+
+//Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -9,6 +21,13 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**#@+
+* include subpackages
+* 
+*/
+/**
+* include error handling
+*/
 include_once(dirname(__file__) . "/error.php");
 include_once(dirname(__file__) . "/xmlrpcClasses.php");
 
@@ -18,7 +37,10 @@ if(isset($_SERVER["HTTP_HOST"]))
 	include_once(dirname(__file__) . "/globals.php");
 }
 include_once(dirname(__file__) . "/utils.php");
-
+/**#@-*/
+/**
+* @package app
+*/
 class component_app extends component
 {
 	function component_app()

@@ -1,4 +1,7 @@
 <?
+/**
+* @package pdf
+*/
 class RotatePdf extends Cpdf 
 {
 	

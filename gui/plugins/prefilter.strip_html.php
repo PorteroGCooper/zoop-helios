@@ -1,4 +1,9 @@
 <?
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
 function smarty_prefilter_strip_html($tpl_source, &$smarty)
 {
 	//die("here");

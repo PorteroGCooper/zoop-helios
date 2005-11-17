@@ -1,5 +1,9 @@
 <?
-
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
 function smarty_function_tree($params, &$smarty, $print_result = true)
 {
     extract($params);

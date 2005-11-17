@@ -9,6 +9,12 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
+ 
 /*
  * Smarty plugin
  * -------------------------------------------------------------

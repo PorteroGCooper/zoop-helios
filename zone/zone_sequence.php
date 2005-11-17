@@ -1,4 +1,8 @@
 <?
+/**
+* @package zone
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -15,6 +19,32 @@
 		{
 			global $sequenceStack;
 			return isset($sequenceStack);
+		}
+		
+		function isInSequence($sequenceId, $pageName)
+		{
+			global $currentSequence, $currentSequenceStep;
+			if(isset($currentSequence))
+			{
+				if($currentSequence->pageInSequence($currentSequenceStep, $pageName))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		function isCurrentSequence($allowedSequences)
+		{
+			global $currentSequence;
+			if(is_array($allowedSequences))
+			{
+				return in_array($currentSequence->getCurrentPageSequence(), $allowedSequences);
+			}
+			else
+			{
+				return $currentSequence->getName() == $allowedSequences;
+			}
 		}
 		
 		function &getCurrentSequence()

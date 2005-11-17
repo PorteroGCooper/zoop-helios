@@ -1,4 +1,8 @@
 <?
+/**
+* @package gui
+* @subpackage guicontrol
+*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -8,7 +12,9 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-
+/**
+* read the post/session data for gui controls
+*/
 function initGuiControls()
 {
 	global $controlData;
@@ -128,8 +134,6 @@ function &parseControlData(&$controlData)
 	return $controls;
 }
 
-
-
 function &getGuiControl($type, $name, $useGlobal = true)
 {
 	$filename = strtolower($type).".php";
@@ -161,6 +165,10 @@ function &getGuiControl($type, $name, $useGlobal = true)
 	}
 }
 
+/**
+* @package gui
+* @subpackage guicontrol
+*/
 class GuiControl
 {
 	var $params;

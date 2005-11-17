@@ -1,4 +1,8 @@
 <?
+/**
+* @category zoop
+* @package pdf
+*/
 	include_once(dirname(__file__) . "/class.pdf.php");
 	include_once(dirname(__file__) . "/RotatePdf.php");
 	include_once(dirname(__file__) . "/pdfreport.php");
@@ -13,7 +17,9 @@
 	include_once(dirname(__file__) . "/PdfCircle.php");
 	include_once(dirname(__file__) . "/PdfLine.php");
 	include_once(dirname(__file__) . "/HTMLtoPdfObject.php");
-
+/**
+* @package pdf
+*/
 class component_pdf extends component
 {
 }

@@ -1,4 +1,11 @@
 <?
+/**
+* Utilities file
+* 
+* @package app
+* @subpackage utils
+*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -9,49 +16,75 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+* write to a log
+* 
+* Append $content to $filename.
+* 
+* @param string $content message to be written
+* @param string $filename filename to write to
+*/
+function logwrite($content, $filename = '/tmp/phplog')
+{
 
-
-	function logwrite($content, $filename = '/tmp/phplog')
-	{
-
-		// In our example we're opening $filename in append mode.
-		// The file pointer is at the bottom of the file hence
-		// that's where $somecontent will go when we fwrite() it.
-		if (!$handle = fopen($filename, 'a')) {
-			echo "Cannot open file ($filename)";
-			exit;
-		}
-
-		// Write $somecontent to our opened file.
-		if (fwrite($handle, $content) === FALSE) {
-			echo "Cannot write to file ($filename)";
-			exit;
-		}
-
-		//echo "Success, wrote ($somecontent) to file ($filename)";
-
-		fclose($handle);
-
+	// In our example we're opening $filename in append mode.
+	// The file pointer is at the bottom of the file hence
+	// that's where $somecontent will go when we fwrite() it.
+	if (!$handle = fopen($filename, 'a')) {
+		echo "Cannot open file ($filename)";
+		exit;
 	}
+
+	// Write $somecontent to our opened file.
+	if (fwrite($handle, $content) === FALSE) {
+		echo "Cannot write to file ($filename)";
+		exit;
+	}
+
+	//echo "Success, wrote ($somecontent) to file ($filename)";
+
+	fclose($handle);
+
+}
 
 ///////////////////////////////////////////////////////
 //
-//	Function: Redirect( $URL )
+//	Function: Redirect( $URL , $redirectType)
 //
 //		Terminates program execution and redirects the
 //	client's browser to specified URL.  WHERE:
 //
 //		$URL -	URL to redirect the client to.
+//		$redirectType - method of redirection
 //
 ///////////////////////////////////////////////////////
 
 
+define("HEADER_REDIRECT", 1);
+define("JS_REDIRECT", 2);
 
-	function Redirect( $URL )
+/**
+* redirect to an URL
+* 
+* redirect to $URL using method $redirectType and terminate the program.
+* 
+* @param string $URL Full url, http://example.com
+* @param integer $redirectType possible values are {@link HEADER_REDIRECT} and {@link JS_REDIRECT}
+*/
+function Redirect( $URL, $redirectType = HEADER_REDIRECT)
+{
+	switch($redirectType)
 	{
-		header("location: $URL");
-		exit();
+		case HEADER_REDIRECT:
+			header("location: $URL");
+		case JS_REDIRECT: 
+			echo("<script>window.location = \"$URL\";</script>");
+		default:
+			trigger_error("unknown redirect type");
 	}
+	exit();
+}
+	
 
 ///////////////////////////////////////////////////////
 //
@@ -62,123 +95,60 @@
 //
 ///////////////////////////////////////////////////////
 
-	function RedirectBoS()
-	{
-		Redirect(SCRIPT_REF);
-	}
+/**
+* redirect to the base of the applicatoin
+* 
+* redirect using method $redirectType
+* 
+* @param integer $redirectType
+* @uses Redirect
+*/
+function RedirectBoS($redirectType = HEADER_REDIRECT)
+{
+	Redirect(SCRIPT_REF, $redirectType);
+}
 
-///////////////////////////////////////////////////////
-//
-//	Function: BaseRedirect( $URL )
-//
-//		Terminates program execution and redirects the
-//	client's browser to the URL relative to the script.
-//
-///////////////////////////////////////////////////////
+/**
+* redirect within the application
+* 
+* Redirect to SCRIPT_URL . $URL, for example:
+* 
+* BaseRedirect("/login") redirects to http://example.com/index.php/login
+* 
+* @param string $URL path info to an url within the application. Starts with "/"
+* @param integer $redirectType
+* @uses Redirect
+*/
+function BaseRedirect( $URL , $redirectType = HEADER_REDIRECT)
+{
+	Redirect(SCRIPT_URL . $URL, $redirectType);
+}
 
-	function BaseRedirect( $URL )
-	{
-		Redirect(SCRIPT_URL . $URL);
-	}
+/**
+* redirect to the referring page
+* 
+* Redirect to HTTP_REFERER
+* 
+* @uses Redirect
+*/
+function RedirectRef()
+{
+	Redirect($_SERVER["HTTP_REFERER"]);
+}
 
-	function RedirectRef()
-	{
-		Redirect($_SERVER["HTTP_REFERER"]);
-	}
+/**
+* redirect to a zone path
+* 
+* Redirect to a path($url) based on the current zone
+* 
+* @deprecated use zone::zoneRedirect() instead
+* @uses Redirect
+*/
+function ZoneRedirect( $url, $depth = 0 )
+{
+	Redirect( zone::getZoneUrl($depth) . $url);
+}
 
-	function ZoneRedirect( $url, $depth = 0 )
-	{
-		Redirect( zone::getZoneUrl($depth) . $url);
-	}
-
-
-/*********************************************************************\
-	function: toNumeric
-
-	purpose: removes all non-numeric characters
-\*********************************************************************/
-
-	function toNumeric( $number )
-	{
-		$tmp = $number;
-		$tmp2 = "";
-
-		while ($tmp2 != $tmp)
-		{
-			$tmp2 = $tmp;
-			$tmp = ereg_replace("[^0-9.]+", "", $tmp2);
-		}
-
-		return($tmp);
-	}
-
-
-	/**
-	 *
-	 * @access public
-	 * @return void
-	 **/
-	function valid( $mixed )
-	{
-		if (!isset($mixed) || strlen($mixed) == 0)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-
-/*********************************************************************\
-	function: formatCurrency
-
-	purpose: accepts a numeric input, returns number formated to 2 decimals
-\*********************************************************************/
-
-	function formatCurrency( $number )
-	{
-		return sprintf( "%.2f", $number );
-	}
-
-
-/*********************************************************************\
-	function: formatMemory
-
-	purpose: accepts a numeric input, returns 23b, 1.42Kb, or 1.44Mb
-\*********************************************************************/
-
-	function formatMemory( $number )
-	{
-		$sp = "b";
-
-		if ($number > 1024)
-		{
-			$number /= 1024;
-
-			if ($number > 1024)
-			{
-				$number /= 1024;
-
-				if ($number > 1024)
-				{
-					$number /= 1024;
-					$sp = "Gb";
-				}
-				else
-				{
-					$sp ="Mb";
-				}
-			}
-			else
-			{
-				$sp ="Kb";
-			}
-		}
-
-		return sprintf( "%.2f", $number ) . " $sp";
-	}
 
 	function checkValidDate( $datestring )
 	{
@@ -257,47 +227,6 @@ if($dst)
 
 		return $timeString;
 	}
-
-/*********************************************************************\
-	function: formatMemoryHTML
-
-	purpose: accepts a numeric input, returns 23b, 1.42Kb, or 1.44Mb
-			Puts each in a <span class="{b/kb/mb/gb}"> tag
-\*********************************************************************/
-
-	function formatMemoryHTML( $number )
-	{
-		$sp = "b";
-
-		if ($number > 1024)
-		{
-			$number /= 1024;
-
-			if ($number > 1024)
-			{
-				$number /= 1024;
-
-				if ($number > 1024)
-				{
-					$number /= 1024;
-					$sp = "Gb";
-				}
-				else
-				{
-					$sp ="Mb";
-				}
-			}
-			else
-			{
-				$sp ="Kb";
-			}
-		}
-
-		$spt = strtolower($sp);
-
-		return "<span class=\"$spt\">" . sprintf( "%.2f", $number ) . " $sp</span>";
-	}
-
 
 /*********************************************************************\
 	function: formatCCN
@@ -385,6 +314,13 @@ function echo_r($mixed)
 	echo "</pre>";
 }
 
+function dump_r($mixed)
+{
+	echo("<pre>");
+	var_dump($mixed);
+	echo("</pre>");
+}
+
 	/**
 	 *
 	 * @access public
@@ -393,15 +329,12 @@ function echo_r($mixed)
 	function fetch_r($mixed)
 	{
 		ob_start();
-
 		print_r($mixed);
-
 		$tmp = ob_get_contents();
-
 		ob_end_clean();
+
 		return $tmp;
 	}
-
 
 	function &MapArray(&$transformee, &$transformer)
 	{
@@ -421,14 +354,7 @@ function validEmailAddress ($email)
 {
 	if (eregi("[_\.0-9a-z-]+@[0-9a-z][-0-9a-z\.]+", $email, $check))
 	{
-//		if (getmxrr($check[1] . "." . $check[2], $temp))
-//		{
-			return true;
-//		}
-//		else
-//		{
-//			return false;
-//		}
+		return true;
 	}
 	else
 	{
@@ -583,16 +509,14 @@ function fetch_backtrace($full = false)
 	return $backtrace;
 }
 
+//deprecated
+//user ksort or krsort instead
 function array_sortonkeys($inArray, $forward = 1)
 {
-	$array = array_flip($inArray);
-
 	if($forward)
-		asort($array);
+		ksort($inArray);
 	else
-		arsort($array);
-
-	return array_flip($array);
+		krsort($inArray);
 }
 
 function urlEncodeArray($array, $keyname = '') {
@@ -614,7 +538,6 @@ function urlEncodeArray($array, $keyname = '') {
 
 function BUG($desc = "")
 {
-
 	if (show_warnings == false)
 		return;
 
@@ -637,108 +560,6 @@ function echo_backtrace($full = false)
 	echo fetch_backtrace($full);
 }
 
-
-
-function GetFreeBlocks($inTop, $inBottom, &$inPlaced, $inSlotHeight)
-{
-	$openSpace->top = $inTop;
-	$openSpace->bottom = $inBottom;
-	$openSpaces[] = $openSpace;
-
-	if( isset($inPlaced) )
-	{
-		foreach($inPlaced as $placedKey => $placedItem)
-		{
-			$subTop = $placedItem->top;
-			$subBottom = $placedItem->bottom;
-
-			$newOpens = array();
-
-			foreach($openSpaces as $key => $thisSpace)
-			{
-				//	it ends above the top
-				if($subBottom > $thisSpace->top)
-				{
-					$openSpace->top = $thisSpace->top;
-					$openSpace->bottom = $thisSpace->bottom;
-					$newOpens[] = $openSpace;
-
-//						echo "1<br>";
-				}
-				//	it starts below the bottom
-				else if($subTop < $thisSpace->bottom)
-				{
-					$openSpace->top = $thisSpace->top;
-					$openSpace->bottom = $thisSpace->bottom;
-					$newOpens[] = $openSpace;
-
-					// do nothing
-//						echo "2<br>";
-				}
-				//	it starts below the top
-				else if($subTop < $thisSpace->top)
-				{
-					$openSpace->top = $thisSpace->top;
-					$openSpace->bottom = $subTop;
-					$newOpens[] = $openSpace;
-
-//						echo "3<br>";
-
-					//	it's entirely in the space
-					if($subBottom > $thisSpace->bottom)
-					{
-						$openSpace->top = $subBottom;;
-						$openSpace->bottom = $thisSpace->bottom;
-						$newOpens[] = $openSpace;
-
-//							echo "3.5<br>";
-					}
-
-
-				}
-				//	it starts above the top but ends below the top
-				else
-				{
-					if($subBottom > $thisSpace->bottom)
-					{
-						$openSpace->top = $subBottom;;
-						$openSpace->bottom = $thisSpace->bottom;
-						$newOpens[] = $openSpace;
-					}
-					else
-					{
-					}
-				}
-			}
-			$openSpaces = $newOpens;
-		}
-	}
-
-	$slots = array();
-
-	$slotHeight = $inSlotHeight;
-
-	foreach($openSpaces as $key => $openSpace)
-	{
-		//	calculate the number of slots in this open space
-
-		$nSlots = floor( ($openSpace->top - $openSpace->bottom) / ($slotHeight) );
-
-		//	calculate the extra space were going to have at the bottom
-
-		$extra = ($openSpace->top - $openSpace->bottom) % ($slotHeight);
-
-
-		for($i = 0; $i < $nSlots; $i++)
-		{
-			//$slots[] = $openSpace->top - ($i * $slotHeight) - ($slotHeight / 2) - ($extra / 2);
-			$slots[] = $openSpace->top - ($i * $slotHeight);
-		}
-	}
-
-	return $slots;
-}
-
 //this function is dangerous, and shouldn't be used generally
 function getRawPost()
 {
@@ -751,6 +572,7 @@ function GetPostIsset($inName)
 	global $POSTCOPY;
 	return isset($POSTCOPY[$inName]);
 }
+
 //	This returns 0 or 1
 function GetPostCheckbox($inName)
 {
@@ -768,7 +590,8 @@ function GetPostString($inName)
 		return false;
 }
 
-//this should eventually check the html for javascript....
+//this strips javascript and any tags not in $allowed_tags from HTML
+//see __verifyHTMLTree below
 function GetPostHTML($inName)
 {
 	//reduce the HTML we get to acceptable HTML
@@ -894,7 +717,6 @@ function VerifyText($inText)
 	else
 		return $inText;
 }
-
 
 function br2nl($text) {
    $text = str_replace("<br />\n", "\r\n", $text);
@@ -1125,6 +947,7 @@ function getPostKeys()
 	return array_keys($POSTCOPY);
 }
 
+//reads a key(for authentication between apps) from the shared key file.
 function get_shared_key()
 {
 	$file = fopen(shared_key_path, "r");
@@ -1149,28 +972,18 @@ function get_key($type)
 	}
 }
 
-
 function RequireCondition($bool)
 {
 	if(!$bool)
 	{
 		if(defined("app_login_page"))
 		{
+			//should dev be redirected?
 			if(app_status != 'dev')
 			{
 				trigger_error("Condition Failed");
 				die();
 			}
-			global $eHandlerObject;
-
-			if(app_status != 'dev')
-				$eHandlerObject->logError("undefined", "Failed Require", "see backtrace", "see backtrace", "");
-
-			if(app_status == 'live')
-			{
-				session_destroy();
-			}
-
 			redirect(app_login_page);
 		}
 		else
@@ -1220,18 +1033,16 @@ function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
 
 function file_set_contents($inFilename, $inContents)
 {
-   if(!$handle = fopen($inFilename, 'w'))
-   {
-		 trigger_error("Cannot open file ($filename)");
-   }
-
-   // Write $somecontent to our opened file.
-   if (fwrite($handle, $inContents) === FALSE)
-   {
-	   trigger_error("Cannot write to file ($filename)");
-   }
-
-   fclose($handle);
+	if(!$handle = fopen($inFilename, 'w'))
+	{
+		trigger_error("Cannot open file ($filename)");
+	}
+	if (fwrite($handle, $inContents) === FALSE)
+	{
+		trigger_error("Cannot write to file ($filename)");
+	}
+	
+	fclose($handle);
 }
 
 
@@ -1261,7 +1072,6 @@ function Decrypt($key, $input)
 //
 //	cli stuff
 //
-
 function RunCommand($inCommand)
 {
 	$command = $inCommand;
@@ -1269,7 +1079,6 @@ function RunCommand($inCommand)
 	echo $command;
 	passthru($command);
 }
-
 
 function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodEnd = NULL)
 {
@@ -1312,6 +1121,7 @@ function &GetCompletionStatus($statusItemName)
 	return $status;
 }
 
+//make a case statement that return $mapfield[$field] for sql
 function sqlMap($field, $mapfield)
 {
 	$sql = "case $field ";
@@ -1323,7 +1133,7 @@ function sqlMap($field, $mapfield)
 	return $sql;
 }
 
-
+//make any directories required for $filename
 function mkdir_r($filename)
 {
 	str_replace("\\",'/', $filename);
@@ -1513,6 +1323,4 @@ function fuzzy_seconds_to_time($seconds)
 	if ($timearray['seconds'] != 0)
 		return "{$timearray['seconds']} seconds";
 }
-
-
 ?>
