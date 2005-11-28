@@ -50,8 +50,10 @@ class text extends GuiControl
 						$attrs[] = "$parameter=\"$value\"";
 					break;
 				case 'readonly':
+				case 'disabled':
 					if ($value)
 						$attrs[] = "readonly=\"true\"";
+					break;
 				case 'validate':
 					$attrs[] = $this->getValidationAttr($this->params['validate']);
 					break;

@@ -48,6 +48,8 @@ class select extends GuiControl
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 				case 'size':
+				case 'onChange':
+				case 'onBlur':
 					if ($value != '')
 						$attrs[] = "$parameter=\"$value\"";
 					break;
@@ -59,9 +61,6 @@ class select extends GuiControl
 				case 'multiple':
 					if ($value)
 						$attrs[] = "multiple=\"true\"";
-			/*	case 'validate':    // CAN'T PERFORM JS VALIDATION ON SELECTS
-					$attrs[] = $this->getValidationAttr($this->params['validate']);
-					break; */
 			}
 		}
 
@@ -74,11 +73,6 @@ class select extends GuiControl
 
 		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), &$gui);
 
-// 		foreach ($this->params['index'] as $pval => $label)
-// 		{
-// 			$pval == $value ? $selected = " selected " : $selected = " ";
-// 			$html .=  "<option value=\"$pval\" label=\"$label\" $selected>$label</option>\r" ;
-// 		}
 		$html .=  "</select>\r";
 
 		if(isset($this->params['errorState']))
