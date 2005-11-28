@@ -1,7 +1,7 @@
 <?php
 /**
-* serve pehppy javascript files
-* 
+* serve zoop javascript files
+*
 * @package zone
 */
 class zone_zoopfile extends zone

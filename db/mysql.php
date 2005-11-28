@@ -12,11 +12,6 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-
-/**
-* @package db
-* @subpackage mysql
-*/
 class component_db extends component
 {
 	function init()
