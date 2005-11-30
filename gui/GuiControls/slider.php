@@ -73,17 +73,18 @@ class slider extends GuiControl
 				case 'range':
 					$attrs[] = "$parameter" . ':$R(' . $value . ')';
 					break;
+				case 'default':
+					if (empty($this->params['sliderValue']))
+						$attrs[] = "sliderValue:$value";
+					break;
 				case 'index':
 					if (is_array($value))
 						$attrs[] = "values:[" . implode(",", array_keys($value))  . "]";
 					else
 						$attrs[] = "values:[" . $value . "]";
 					break;
-
 			}
 		}
-
-
 
 		$attrs = implode(',', $attrs);
 		$name = $this->getName();

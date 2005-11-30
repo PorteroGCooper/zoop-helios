@@ -122,6 +122,37 @@ class gui extends Smarty
 		Smarty::_smarty_include($params);
 	}
 
+	/**
+	* assigns values to template variables
+	*
+	* @param string $tpl_var the template variable name(s)
+	* @param mixed $value the value to assign
+	*/
+	function assign($tpl_var, $value = null)
+	{
+			if ($tpl_var != '')
+				$this->_tpl_vars[$tpl_var] = $value;
+
+	}
+
+	/**
+	* assigns an array of values to template variables
+	*
+	* @param array $tpl_var the template variable name(s)
+	*
+	*/
+
+	function assign_array($tpl_var)
+	{
+		foreach ($tpl_var as $key => $val)
+		{
+			if ($key != '') {
+				$this->_tpl_vars[$key] = $val;
+			}
+		}
+
+	}
+
 	// A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLIER
 	function generate($inBodytpl, $inSidebartpl, $inMenutpl, $title = app_default_title, $inCss = "styles.css")
 	{
