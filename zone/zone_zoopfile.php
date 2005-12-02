@@ -21,16 +21,16 @@ class zone_zoopfile extends zone
 		header('Expires: ');
 		header('Last-Modified: ' . $mdate);
 		if(isset($headers['If-Modified-Since']))
-                {
-                        if(strtotime($headers['If-Modified-Since']) == $mtime)
-                        {
-                                //send 304
-                                header('Pragma: ', true, 304);
+		{
+			if(strtotime($headers['If-Modified-Since']) == $mtime)
+			{
+				//send 304
+				header('Pragma: ', true, 304);
 				die();
-                                //echo_r($headers);
-                        }
+				//echo_r($headers);
+			}
 		}
-		header('Content-type: ' . mime_content_type($jsfile));
+		header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
 		header('Content-length: ' . filesize($jsfile));
 		include($jsfile);
 		die();

@@ -78,7 +78,7 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 		case HEADER_REDIRECT:
 			header("location: $URL");
 		case JS_REDIRECT: 
-			echo("<script>window.location = \"$URL\";</script>");
+			echo("<script>window.location.href = \"$URL\";</script>");
 		default:
 			trigger_error("unknown redirect type");
 	}
@@ -665,6 +665,7 @@ $GLOBALS['allowed_attributes'] = array(
 	"href",
 	"src",
 	"target",
+	"style"
 );
 
 function __VerifyHTMLTree($html)
