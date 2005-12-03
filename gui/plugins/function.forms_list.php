@@ -51,7 +51,7 @@ function smarty_function_forms_list($params, &$smarty)
 		}
 	}
 
-$table_id = randomstring();
+$table_id = __randomstring();
 
 $ctable =& $form->tables->$table;
 
