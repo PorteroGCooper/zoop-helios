@@ -1,7 +1,7 @@
 <?
 /**
 * Utilities file
-* 
+*
 * @package app
 * @subpackage utils
 */
@@ -18,9 +18,9 @@
 
 /**
 * write to a log
-* 
+*
 * Append $content to $filename.
-* 
+*
 * @param string $content message to be written
 * @param string $filename filename to write to
 */
@@ -65,9 +65,9 @@ define("JS_REDIRECT", 2);
 
 /**
 * redirect to an URL
-* 
+*
 * redirect to $URL using method $redirectType and terminate the program.
-* 
+*
 * @param string $URL Full url, http://example.com
 * @param integer $redirectType possible values are {@link HEADER_REDIRECT} and {@link JS_REDIRECT}
 */
@@ -77,14 +77,14 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 	{
 		case HEADER_REDIRECT:
 			header("location: $URL");
-		case JS_REDIRECT: 
+		case JS_REDIRECT:
 			echo("<script>window.location.href = \"$URL\";</script>");
 		default:
 			trigger_error("unknown redirect type");
 	}
 	exit();
 }
-	
+
 
 ///////////////////////////////////////////////////////
 //
@@ -97,9 +97,9 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 
 /**
 * redirect to the base of the applicatoin
-* 
+*
 * redirect using method $redirectType
-* 
+*
 * @param integer $redirectType
 * @uses Redirect
 */
@@ -110,11 +110,11 @@ function RedirectBoS($redirectType = HEADER_REDIRECT)
 
 /**
 * redirect within the application
-* 
+*
 * Redirect to SCRIPT_URL . $URL, for example:
-* 
+*
 * BaseRedirect("/login") redirects to http://example.com/index.php/login
-* 
+*
 * @param string $URL path info to an url within the application. Starts with "/"
 * @param integer $redirectType
 * @uses Redirect
@@ -126,9 +126,9 @@ function BaseRedirect( $URL , $redirectType = HEADER_REDIRECT)
 
 /**
 * redirect to the referring page
-* 
+*
 * Redirect to HTTP_REFERER
-* 
+*
 * @uses Redirect
 */
 function RedirectRef()
@@ -138,9 +138,9 @@ function RedirectRef()
 
 /**
 * redirect to a zone path
-* 
+*
 * Redirect to a path($url) based on the current zone
-* 
+*
 * @deprecated use zone::zoneRedirect() instead
 * @uses Redirect
 */
@@ -1042,7 +1042,7 @@ function file_set_contents($inFilename, $inContents)
 	{
 		trigger_error("Cannot write to file ($filename)");
 	}
-	
+
 	fclose($handle);
 }
 
@@ -1225,14 +1225,31 @@ function StreamCSV($inData, $inFilename, $inColumns = NULL)
 	echo implode("\r\n", $lines);
 }
 
+/**
+* return a random element of an array
+*
+* @param array $inArray to return a random element
+*/
+function randElement($inArray)
+{
+	$tmp = mt_rand(0, count($inArray) - 1);
 
+	$keys = array_keys($inArray);
+	$key = $keys[$tmp];
+
+	return $inArray[$key];
+}
+
+/**
+* convert html to fairly readable text
+*
+* @param string $inHTML
+*/
 function HTML2Txt($inHTML)
 {
-
 	$txt = br2nl($inHTML);
 
 	return strip_tags($inText);
-
 }
 
 
