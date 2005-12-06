@@ -1239,6 +1239,69 @@ function randElement($inArray)
 
 	return $inArray[$key];
 }
+/**
+* return a given number of random nonduplicate elements of an array
+*
+* @param array $inArray to return a random element
+* @param int $number of random elements to return
+*/
+function randElements($inArray, $num)
+{
+	if ($num > count($inArray))
+		$num = count($inArray);
+
+	$tmpkeys = mrand(0, count($inArray) - 1, $num);
+
+	$keys = array_keys($inArray);
+
+	$returnarray = array();
+
+	foreach($tmpkeys as $tkey)
+	{
+		$key = $keys[$tkey];
+		$returnarray[] = $inArray[$key];
+	}
+
+	return $returnarray;
+}
+
+/**
+* Multiple Unique Random Numbers
+*
+* @usage array mrand ( int min, int max, int count [, int strlen ] )
+*/
+function mrand($l,$h,$t,$len=false){
+
+	if($l>$h){$a=$l;$b=$h;$h=$a;$l=$b;}
+	if( (($h-$l)+1)<$t || $t<=0 )return false;
+
+    	$n = array();
+
+	if($len>0)
+	{
+
+		if(strlen($h)<$len && strlen($l)<$len)return false;
+		if(strlen($h-1)<$len && strlen($l-1)<$len && $t>1)return false;
+
+		while(count($n)<$t)
+		{
+			$x = mt_rand($l,$h);
+			if(!in_array($x,$n) && strlen($x) == $len)$n[] = $x;
+		}
+
+	}else{
+
+		while(count($n)<$t)
+		{
+			$x = mt_rand($l,$h);
+			if(!in_array($x,$n))$n[] = $x;
+		}
+	}
+
+	return $n;
+}
+
+
 
 /**
 * convert html to fairly readable text
