@@ -118,9 +118,12 @@ function &parseControlData(&$controlData)
 					else
 					{
 						$viewState = unserialize(gzuncompress(base64_decode($value)));
-						foreach($viewState as $stateName => $stateValue)
+						if (is_array($viewState))
 						{
-							$controls[$type][$name]->setParam($stateName,  $stateValue);
+							foreach($viewState as $stateName => $stateValue)
+							{
+								$controls[$type][$name]->setParam($stateName,  $stateValue);
+							}
 						}
 					}
 				}

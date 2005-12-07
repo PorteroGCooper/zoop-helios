@@ -76,7 +76,7 @@ class text extends GuiControl
 		if(isset($this->params['errorState']))
 		{
 			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
+			$html .=" <br><span style=\"color: red;\">The value \"{$errorState['value']}\" {$errorState['text']} </span>";
 		}
 
 		return $html;

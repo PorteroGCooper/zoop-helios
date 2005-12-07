@@ -3,7 +3,7 @@
 * Zoop Guicontrol
 * @package gui
 * @subpackage guicontrol
-* 
+*
 */
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -22,7 +22,7 @@ class checkbox extends GuiControl
 		if(isset($this->params['validate']))
 		{
 
-			if (isset($this->params['validate']['require']) && $this->params['validate']['required'] == true)
+			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
 			{
 				$value = $this->getValue();
 				if (!$value)

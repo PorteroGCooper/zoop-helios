@@ -14,7 +14,7 @@
  * @package gui
  * @subpackage plugins
  */
- 
+
 /*
  * Smarty plugin
  * -------------------------------------------------------------
@@ -25,9 +25,9 @@
  */
 function smarty_function_guicontrol($params, &$smarty)
 {
-	if(isset($params['from']))
+	if(isset($params['guicontrol']))
 	{
-		$control = $params['from'];
+		$control = $params['guicontrol'];
 	}
 	else
 	{
@@ -39,7 +39,6 @@ function smarty_function_guicontrol($params, &$smarty)
 			$echo = $params['echo'];
 		else
 			$echo = true;
-
 
 	foreach($params as $key => $value)
 	{

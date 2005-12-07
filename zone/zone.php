@@ -18,7 +18,7 @@
 	$GLOBALS['gZoneUrls'] = array();
 /**
 * zone class.
-* 
+*
 * <p>Extend this class any time you need
 * a new section on your site.	 File names
 * should be "zone_{zonename}.php" and
@@ -30,7 +30,7 @@
 * and if a class member function of each
 * name exists (/path = path) information
 * and will automatically execute</p>
-* 
+*
 * rmb 7-20-2001
 * @package zone
 */
@@ -63,17 +63,17 @@
 
 		var $returnPaths = array();
 
-		
+
 		/* ADDED BY SPF - MAY 05 -
 								   * extra security, require by default the post must be recieved by
 								   * the page of the same name, this is for exceptions
 								   */
 		/* replaced with a open by default, restrict as requested
 			rjl 8/25/2005 */
-		//var $allowed_remote_post = array();  
+		//var $allowed_remote_post = array();
 		var $restricted_remote_post = array();
-								   
-		
+
+
 		var $origins = array();
 
 		var $url = "";
@@ -93,15 +93,15 @@
 		* if $wildcards == true then the path /these/are/parameters
 		* will be sent to (page/post)Default w/out looking for a
 		* pagethese function.
-		* 
+		*
 		* @access public
 		*
 		**/
 		var $wildcards = false;
 
 		/**
-		* zone has urlvars 
-		* 
+		* zone has urlvars
+		*
 		*
 		* if $urlvars == <num of levels> then the fw will look for variables
 		* in the path immediately after the name of this class up to <num> levels
@@ -117,7 +117,7 @@
 			* instances is that each class instance exists in sessions.
 			* So $this->Var1 in /user/12 and $this->Var1 in /user/3
 		* are different.
-		* 
+		*
 		* @access public
 		**/
 
@@ -276,15 +276,17 @@
 
 		function _checkFuncs($curPath, $inPath)
 		{
-
 			if (REQUEST_TYPE == "XMLRPC")
 			{
 				return $this->_xmlrpcDispatch($curPath, $inPath);
 			}
 			else
 			{
+
 				if ( $_SERVER["REQUEST_METHOD"] == "POST" && $this->_checkAllowedPost($curPath))
 			    {
+
+
 					if (method_exists($this, "post" . $curPath))
 					{
 						$funcName = "post" . $curPath;
@@ -325,7 +327,7 @@
 		//  THIS FUNCTION CHECKS TO MAKE SURE THAT THE CURRENT PAGE IS THE SAME AS THE REFERRING PAGE
 		//  OR THAT THE CURRENT PAGE IS PERMITTED TO HAVE REMOTE POSTING
 		//  SPF - MAY 05
-		
+
 		//  Restricting should not be the default behavior, as this breaks compatibility, and is not
 		//	expected. rjl 8/25/2005
 
@@ -355,7 +357,7 @@
 			//		parents
 
 			if ( 	class_exists($var2) && (
-						count($this->allowed_children) < 1 
+						count($this->allowed_children) < 1
 						|| in_array($zoneName, $this->allowed_children) ))
 			{
 				//	create the new zone object if it does not exist
@@ -368,7 +370,7 @@
 
 				// check to see if this is an allowed parent for the class we just created
 
-				if (	count($this->_zone[$zoneName]->allowed_parents) > 0 
+				if (	count($this->_zone[$zoneName]->allowed_parents) > 0
 						&& !in_array($this->zonetype, $this->_zone[$zoneName]->allowed_parents))
 				{
 					return false;
@@ -470,7 +472,7 @@
 		{
 			return $this->zoneParamNames;
 		}
-		
+
 		//deprecated...
 		function getUrlVarNames()
 		{
@@ -482,7 +484,7 @@
 		{
 			return $this->zoneParamNames = $inParamNames;
 		}
-		
+
 		//deprecated
 		function setUrlVarNames($inUrlVarNames)
 		{
@@ -495,7 +497,7 @@
 			global $gUrlVars;
 			return $gUrlVars;
 		}
-		
+
 		//deprecated
 		function getUrlVars()
 		{

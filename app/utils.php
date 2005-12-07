@@ -1247,6 +1247,9 @@ function randElement($inArray)
 */
 function randElements($inArray, $num)
 {
+	if (count($inArray) == 0)
+		return $inArray;
+
 	if ($num > count($inArray))
 		$num = count($inArray);
 

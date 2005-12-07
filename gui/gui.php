@@ -65,6 +65,8 @@ class gui extends Smarty
 			$this->assign("SCRIPT_BASE", SCRIPT_BASE);
 		}
 
+		$this->assign("app_dir", app_dir);
+
 		if (defined("app_default_title")) 	$this->assign("title", app_default_title);
 		if (defined("public_web_path"))  $this->assign("public_web_path", public_web_path);
 
