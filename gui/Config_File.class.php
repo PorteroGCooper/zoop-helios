@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Config_File class.
  *
@@ -17,14 +18,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @link http://smarty.php.net/
- * @version 2.6.8
+ * @version 2.6.10
  * @copyright Copyright: 2001-2005 New Digital Group, Inc.
  * @author Andrei Zmievski <andrei@php.net>
  * @access public
  * @package Smarty
  */
 
-/* $Id: Config_File.class.php,v 1.77 2005/02/03 15:14:43 mohrt Exp $ */
+/* $Id: Config_File.class.php,v 1.80 2005/07/18 15:22:41 messju Exp $ */
 
 /**
  * Config file reading class
@@ -104,7 +105,7 @@ class Config_File {
      * @param string $var_name (optional) variable to get info for
      * @return string|array a value or array of values
      */
-    function &get($file_name, $section_name = NULL, $var_name = NULL)
+    function get($file_name, $section_name = NULL, $var_name = NULL)
     {
         if (empty($file_name)) {
             $this->_trigger_error_msg('Empty config file name');
