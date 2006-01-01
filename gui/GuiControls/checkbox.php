@@ -78,6 +78,7 @@ class checkbox extends GuiControl
 						$attrs[] = "$parameter=\"$value\"";
 					break;
 				case 'readonly':
+				case 'disabled':
 					if ($value)
 						$attrs[] = "readonly=\"true\"";
 				case 'width':

@@ -49,6 +49,11 @@ class TextArea extends GuiControl
 					if ($value != '')
 						$attrs[] = "rows\='$value'";
 					break;
+				case 'readonly':
+				case 'disabled':
+					if ($value)
+						$attrs[] = "disabled=\"true\"";
+					break;
 				case 'validate':
 					$attrs[] = $this->getValidationAttr($this->params['validate']);
 					break;
