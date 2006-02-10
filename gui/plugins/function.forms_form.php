@@ -134,7 +134,10 @@ function smarty_function_forms_form($params, &$smarty)
 				}
 
 			$output .= "<tr>";
-			$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\">\r";
+			$titlestr = "";
+			if ($field->description->title)
+				$titlestr = "title=\"{$field->description->title}\"";
+			$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\" $titlestr>\r";
 			(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
 			$output .= $field->description->label . ":</label></td>\r";
 			$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
