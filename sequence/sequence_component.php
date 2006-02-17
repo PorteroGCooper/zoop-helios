@@ -14,9 +14,9 @@
 // FOR A PARTICULAR PURPOSE.
 
 
-include_once(dirname(__file__) . "/SequenceData.php");
-include_once(dirname(__file__) . "/SequenceParser.php");
-include_once(dirname(__file__) . "/ZoneSequence.php");
+include(dirname(__file__) . "/SequenceData.php");
+include(dirname(__file__) . "/SequenceParser.php");
+include(dirname(__file__) . "/ZoneSequence.php");
 
 class component_sequence extends component
 {

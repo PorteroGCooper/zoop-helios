@@ -14,10 +14,10 @@
 // FOR A PARTICULAR PURPOSE.
 
 	require_once('DB.php');
-	include_once(dirname(__file__) . "/database.php");
-	include_once(dirname(__file__) . "/" . db_RDBMS . ".php");
-	include_once(dirname(__file__) . "/ComplexUpdate.php");
-	include_once(dirname(__file__) . "/ComplexInsert.php");
-	
+	include(dirname(__file__) . "/database.php");
+	include(dirname(__file__) . "/" . db_RDBMS . ".php");
+	include(dirname(__file__) . "/ComplexUpdate.php");
+	include(dirname(__file__) . "/ComplexInsert.php");
+
 
 ?>

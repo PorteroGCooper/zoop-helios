@@ -14,7 +14,7 @@
 
 	include_once("VFS.php");
 	include_once("VFS/sql.php");
-	include_once(dirname(__file__) . "/userfiledb.php");
+	include(dirname(__file__) . "/userfiledb.php");
 /**
 * @package storage
 */

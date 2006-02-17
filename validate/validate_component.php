@@ -12,7 +12,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	include_once(dirname(__file__) . '/validate.php');
+	include(dirname(__file__) . '/validate.php');
 /**
 * @package storage
 */

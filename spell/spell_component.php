@@ -14,9 +14,9 @@
 // FOR A PARTICULAR PURPOSE.
 
 
-	include_once(dirname(__file__) . "/spellBase.php");
-	include_once(dirname(__file__) . "/spell.php");
-	include_once(dirname(__file__) . "/guispell.php");
+	include(dirname(__file__) . "/spellBase.php");
+	include(dirname(__file__) . "/spell.php");
+	include(dirname(__file__) . "/guispell.php");
 /**
 * @package spell
 */

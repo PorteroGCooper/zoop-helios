@@ -3,7 +3,7 @@
 * @category zoop
 * @package zoop
 */
- 
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -31,7 +31,7 @@ class zoop
 	{
 		if(!isset($this->components[$name]))
 		{
-			include_once($this->path . "/$name/{$name}_component.php");
+			include($this->path . "/$name/{$name}_component.php");
 			$class = "component_{$name}";
 			$currComponent = &new $class();
 			$components = &$currComponent->getRequiredComponents();
@@ -53,7 +53,7 @@ class zoop
 	{
 		$file = $this->appPath . "/objects/$name.php";
 		if (file_exists($file))
-		include_once($file);
+		include($file);
 	}
 
 	function init()

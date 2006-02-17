@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	include_once(dirname(__file__) . "/session_handler_" . session_type . ".php");
+	include(dirname(__file__) . "/session_handler_" . session_type . ".php");
 
 class component_session extends component
 {

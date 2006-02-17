@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-require_once(dirname(__file__) . "/forms.php");
+require(dirname(__file__) . "/forms.php");
 /**
 * @package forms
 */

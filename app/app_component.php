@@ -1,8 +1,8 @@
 <?
 /**
 * Main component file for component_app
-* 
-* Class to initialize the app component. This is the main component in zoop, 
+*
+* Class to initialize the app component. This is the main component in zoop,
 * and should almost always be included. Almost all of the other components depend
 * on this one.
 * @category zoop
@@ -23,20 +23,20 @@
 
 /**#@+
 * include subpackages
-* 
+*
 */
 /**
 * include error handling
 */
-include_once(dirname(__file__) . "/error.php");
-include_once(dirname(__file__) . "/xmlrpcClasses.php");
+include(dirname(__file__) . "/error.php");
+include(dirname(__file__) . "/xmlrpcClasses.php");
 
 if(isset($_SERVER["HTTP_HOST"]))
 {
 	//globals.php only deals with http variables.
-	include_once(dirname(__file__) . "/globals.php");
+	include(dirname(__file__) . "/globals.php");
 }
-include_once(dirname(__file__) . "/utils.php");
+include(dirname(__file__) . "/utils.php");
 /**#@-*/
 /**
 * @package app
@@ -48,11 +48,11 @@ class component_app extends component
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());
-		
+
 		error_reporting(E_ALL);
 		$debugmode = app_status;
 		//$debugmode = 'test';
-		
+
 
 		if(php_sapi_name() != "cli")
 		{

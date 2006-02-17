@@ -13,8 +13,8 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	require_once(dirname(__file__) . "/gui.php");
-	include_once('GuiControls/GuiControl.php');
+	require(dirname(__file__) . "/gui.php");
+	include('GuiControls/GuiControl.php');
 
 class component_gui extends component
 {
