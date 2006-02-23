@@ -23,7 +23,7 @@ class component_session extends component
 		{
 			session_cache_limiter($HTTP_GET_VARS["cache_limiter"]);
 		}
-
+		session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);
 		# starting sessions
 		session_start();
 
