@@ -31,7 +31,7 @@ class component_zone extends component
 	function run()
 	{
 		global $PATH_ARRAY;
-		if(!defined('zone_saveinsession')  || zone_saveinsession)
+		if(defined('zone_saveinsession')  && zone_saveinsession)
 		{
 			if (!isset($_SESSION["thsZone"]))
 			{

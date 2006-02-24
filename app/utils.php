@@ -656,6 +656,7 @@ $GLOBALS['allowed_tags'] = array(
 	"br",
 	"nobr",
 	"",
+	"img",
 );
 
 $GLOBALS['allowed_attributes'] = array(
@@ -1406,5 +1407,10 @@ function fuzzy_seconds_to_time($seconds)
 
 	if ($timearray['seconds'] != 0)
 		return "{$timearray['seconds']} seconds";
+}
+
+function define_once($name, $value){
+	if(!defined($name))
+		define($name, $value);
 }
 ?>

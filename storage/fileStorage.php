@@ -43,9 +43,8 @@ class FileStorage extends Storage
 		if(is_uploaded_file($tempFile))
 		{
 			mkdir_r($this->basePath . $newPath);
-			if(!move_uploaded_file($this->basePath . $newPath, $tempFile))
-				echo("badness");
-			
+			if(!move_uploaded_file($tempFile, $this->basePath . $newPath))
+				trigger_error("Could not save uploaded file");
 			return true;
 		}
 		
@@ -56,6 +55,24 @@ class FileStorage extends Storage
 	function getFile($path)
 	{
 		return file_get_contents($this->basePath . $path);
+	}
+	
+	function listDir($path)
+	{
+		$answer = array();
+		$path = $this->basePath . $path;
+		if(is_dir($path))
+		{
+			$dir = opendir($path);
+			while(($file = readdir($dir)) !== false)
+			{
+				if($file[0] != '.')
+					$answer[] = $file;
+			}
+			return $answer;
+		}
+		else 
+			return array();
 	}
 }
 ?>
