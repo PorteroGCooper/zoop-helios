@@ -16,6 +16,8 @@
 
 class zoop
 {
+	var $init = array();
+
 	function zoop($appPath = NULL)
 	{
 		$this->path = dirname(__file__);
@@ -60,7 +62,11 @@ class zoop
 	{
 		foreach($this->components as $name => $object)
 		{
-			$object->init();
+			if(!isset($this->init[$name]) || !$this->init[$name])
+			{
+				$object->init();
+				$this->init[$name] = true;
+			}
 		}
 	}
 

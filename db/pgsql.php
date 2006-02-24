@@ -13,20 +13,15 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/**
-* @package db
-* @subpackage mysql
-*/
-class component_db extends component
-{
-	function init()
+	function sql_connect()
 	{
-		$GLOBALS['defaultdb'] = &new database(database::makeDSN(db_RDBMS, db_Server, db_Port, db_Username, db_Password, db_Database));
+		if ($GLOBALS['defaultdb'] == NULL)
+			$GLOBALS['defaultdb'] = &new database(database::makeDSN(db_RDBMS, db_Server, db_Port, db_Username, db_Password, db_Database));
 	}
-}
 
 	function sql_begin_transaction( $Db = -1 )
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->begin_transaction();
   		return $return;
@@ -34,6 +29,7 @@ class component_db extends component
 
 	function sql_commit_transaction( $Db = -1 )
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->commit_transaction();
   		return $return;
@@ -41,6 +37,7 @@ class component_db extends component
 
 	function sql_rollback_transaction( $Db = -1 )
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->rollback_transaction();
   		return $return;
@@ -48,6 +45,7 @@ class component_db extends component
 
 	function sql_query( $inQueryString, $Db = -1 )
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->query($inQueryString);
   		return $return;
@@ -55,6 +53,7 @@ class component_db extends component
 
 	function sql_get_fields($table)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->get_fields($table);
   		return $return;
@@ -62,15 +61,16 @@ class component_db extends component
 
 	function sql_insert($query, $sequence)
 	{
+		sql_connect();
 		global $defaultdb;
 		$result = $defaultdb->insert($query);
   		$return = $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
   		return $return;
 	}
 
-
 	function sql_fetch_sequence( $sequence )
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_sequence($sequence);
   		return $return;
@@ -82,6 +82,7 @@ class component_db extends component
 
 	function sql_check($query)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->check($query);
   		return $return;
@@ -89,6 +90,7 @@ class component_db extends component
 
 	function sql_fetch_into_arrays($query)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_into_arrays($query);
   		return $return;
@@ -97,6 +99,7 @@ class component_db extends component
 
 	function sql_fetch_into_arrobjs($query)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_into_arrobjs($query);
   		return $return;
@@ -111,6 +114,7 @@ class component_db extends component
 
 	function sql_fetch_column($query)
 	{
+		sql_connect();
 		global $defaultdb;
 		//	the database clas should also create fetch_column and depricate
 		//	new_fetch_into_array
@@ -120,6 +124,7 @@ class component_db extends component
 
 	function sql_fetch_into_array($inTableName, $inFieldName, $inExtra = "")
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_into_array($inTableName, $inFieldName, $inExtra);
   		return $return;
@@ -128,6 +133,7 @@ class component_db extends component
 
 	function sql_fetch_one($inQueryString)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_one($inQueryString);
   		return $return;
@@ -135,6 +141,7 @@ class component_db extends component
 
 	function sql_fetch_assoc($inQuery)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_assoc($inQuery);
   		return $return;
@@ -142,6 +149,7 @@ class component_db extends component
 
 	function sql_fetch_rows($inQuery, $inReturnObjects = 0)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_rows($inQuery, $inReturnObjects);
   		return $return;
@@ -149,30 +157,31 @@ class component_db extends component
 
 	function sql_fetch_map($inQuery, $inKeyField)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_map($inQuery,$inKeyField);
   		return $return;
 	}
 
-
 	function sql_fetch_simple_map($inQuery, $inKeyField, $inValueField)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_simple_map($inQuery, $inKeyField, $inValueField);
   		return $return;
 	}
 
-
 	function &sql_fetch_complex_map($inQuery, $inKeyField)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_complex_map($inQuery, $inKeyField);
   		return $return;
 	}
 
-
 	function sql_fetch_one_cell($inQueryString, $inField = 0)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_one_cell($inQueryString, $inField);
   		return $return;
@@ -180,6 +189,7 @@ class component_db extends component
 
 	function &sql_prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->prepare_tree_query($inQueryString, $idField, $parentField);
   		return $return;
@@ -187,6 +197,7 @@ class component_db extends component
 
 	function &sql_better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->better_fetch_tree($inQueryString,$rootNode,$idField,$parentField, $depth);
   		return $return;
@@ -194,6 +205,7 @@ class component_db extends component
 
 	function &sql_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_tree($inQueryString,$rootNode,$idField,$parentField);
   		return $return;
@@ -205,6 +217,7 @@ class component_db extends component
 
 	function &sql_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_children($inQueryString,$rootNode,$idField,$parentField);
   		return $return;
@@ -212,6 +225,7 @@ class component_db extends component
 
 	function &sql_better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->better_fetch_children($inQueryString,$rootNode,$idField,$parentField);
   		return $return;
@@ -219,6 +233,7 @@ class component_db extends component
 
 	function &sql_fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->fetch_parents($inQueryString,$leafNode,$idField,$parentField);
   		return $return;
@@ -226,6 +241,7 @@ class component_db extends component
 
 	function sql_get_table_info($Table)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->get_table_info($Table);
   		return $return;
@@ -245,6 +261,7 @@ class component_db extends component
 
 	function sql_escape_string($inString)
 	{
+		sql_connect();
 		global $defaultdb;
   		$return = $defaultdb->escape_string($inString);
   		return $return;

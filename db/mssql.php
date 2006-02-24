@@ -1,9 +1,9 @@
 <?
 /**
 * mssql sql_* functions
-* 
-* This file is out of sync with the rest. Please copy from pgsql.php, and 
-* modify this file as necessary.
+*
+* This file is out of sync with the rest. Please copy from pgsql.php, and
+* modify this file as necessary. Sorry, none of us use mssql to test it.
 * @package db
 * @subpackage mssql
 */

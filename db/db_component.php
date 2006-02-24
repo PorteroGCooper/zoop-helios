@@ -12,12 +12,15 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-
-	require_once('DB.php');
-	include(dirname(__file__) . "/database.php");
-	include(dirname(__file__) . "/" . db_RDBMS . ".php");
-	include(dirname(__file__) . "/ComplexUpdate.php");
-	include(dirname(__file__) . "/ComplexInsert.php");
-
-
+class component_db extends component
+{
+	function init()
+	{
+		require_once('DB.php');
+		include(dirname(__file__) . "/database.php");
+		include(dirname(__file__) . "/" . db_RDBMS . ".php");
+		include(dirname(__file__) . "/ComplexUpdate.php");
+		include(dirname(__file__) . "/ComplexInsert.php");
+	}
+}
 ?>
