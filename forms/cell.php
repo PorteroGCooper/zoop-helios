@@ -1,9 +1,9 @@
 <?
 /**
 * @category zoop
-* @package db
+* @package forms
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2006 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -12,21 +12,17 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-class component_db extends component
-{
-	function init()
-	{
-		require_once('DB.php');
-		include(dirname(__file__) . "/database.php");
-		include(dirname(__file__) . "/" . db_RDBMS . ".php");
-		include(dirname(__file__) . "/ComplexUpdate.php");
-		include(dirname(__file__) . "/ComplexInsert.php");
-	}
 
-	function run()
+class cell
+{
+	var $name;
+	var $value;
+	var $description;
+
+	function cell($name, $value)
 	{
-		if (defined(sql_connect) && sql_connect)
-			sql_connect();
+		$this->name = $name;
+		$this->value = $value;
 	}
 }
 ?>

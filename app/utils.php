@@ -1134,28 +1134,54 @@ function sqlMap($field, $mapfield)
 	$sql .= "else '' end";
 	return $sql;
 }
-
-//make any directories required for $filename
+ /**
+  *  Create directories required for $filename recursively
+  *  using mkdirr.
+  *
+  * @param       string   $pathname    The filename you want to create a directory for.
+  * @return      bool     Returns TRUE on success, FALSE on failure
+  */
 function mkdir_r($filename)
 {
 	str_replace("\\",'/', $filename);
-	$dir = explode("/", $filename);
+	$dir = explode(DIRECTORY_SEPARATOR, $filename);
 	array_pop($dir);
-	$path = "";
-	for($i=0; $i < count($dir); $i++)
-	{
-		$path .= $dir[$i] . "/";
-		if(!is_dir($path))
-		{
-			mkdir($path,0770);
-			chmod($path,0770);
-		}
-	}
+	$path = implode(DIRECTORY_SEPARATOR, $dir);
 
-	$dirName = implode("/", $dir);
-
-	assert(is_dir($dirName));
+	return mkdirr($path, 0770);
 }
+
+ /**
+  * Create a directory structure recursively
+  *
+  * @author      Aidan Lister <aidan@php.net>
+  * @version     1.0.0
+  * @link        http://aidanlister.com/repos/v/function.mkdirr.php
+  * @param       string   $pathname    The directory structure to create
+  * @return      bool     Returns TRUE on success, FALSE on failure
+  */
+ function mkdirr($pathname, $mode = null)
+ {
+     // Check if directory already exists
+     if (is_dir($pathname) || empty($pathname)) {
+         return true;
+     }
+
+     // Ensure a file does not already exist with the same name
+     if (is_file($pathname)) {
+         trigger_error('mkdirr() File exists', E_USER_WARNING);
+         return false;
+     }
+
+     // Crawl up the directory tree
+     $next_pathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
+     if (mkdirr($next_pathname, $mode)) {
+         if (!file_exists($pathname)) {
+             return mkdir($pathname, $mode);
+         }
+     }
+     return false;
+ }
 
 
 // INPUT :

@@ -133,7 +133,7 @@ function smarty_function_forms_search($params, &$smarty)
 								foreach ($field->index as $val => $index)
 								{
 									$selected = "";
-									if (isset($field->search["value"]))
+									if (isset($field->search["value"]) && is_array($field->search["value"]))
 									{
 										foreach ($field->search["value"] as $passedInValue)
 										{

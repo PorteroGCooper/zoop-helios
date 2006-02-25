@@ -14,6 +14,15 @@
 // FOR A PARTICULAR PURPOSE.
 
 require(dirname(__file__) . "/forms.php");
+require(dirname(__file__) . "/table.php");
+require(dirname(__file__) . "/record.php");
+require(dirname(__file__) . "/field.php");
+require(dirname(__file__) . "/cell.php");
+
+require_once('Cache/Lite.php');
+require_once("XML/Serializer.php");
+
+
 /**
 * @package forms
 */

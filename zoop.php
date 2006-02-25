@@ -64,6 +64,7 @@ class zoop
 		{
 			if(!isset($this->init[$name]) || !$this->init[$name])
 			{
+				$this->includeConfig($name);
 				$object->init();
 				$this->init[$name] = true;
 			}
@@ -76,6 +77,13 @@ class zoop
 		{
 			$object->run();
 		}
+	}
+
+	function includeConfig($name)
+	{
+		$name = strtolower($name);
+		if (file_exists($this->appPath . "/config/$name.php"))
+			include($this->appPath . "/config/$name.php");
 	}
 }
 

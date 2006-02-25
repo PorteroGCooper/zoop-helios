@@ -13,12 +13,14 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	include(dirname(__file__) . "/session_handler_" . session_type . ".php");
+
 
 class component_session extends component
 {
 	function init()
 	{
+		include(dirname(__file__) . "/session_handler_" . session_type . ".php");
+
 		if (isset($HTTP_GET_VARS["cache_limiter"]))
 		{
 			session_cache_limiter($HTTP_GET_VARS["cache_limiter"]);
