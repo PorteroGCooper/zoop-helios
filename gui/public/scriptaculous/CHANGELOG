@@ -1,3 +1,116 @@
+*V1.5.3*
+
+* Change version number to V1.5.3, prepare Rakefile
+
+* Remove unneeded height restoring in Effect.BlindDown as that is handled internally by the restoreAfterFinish option to Effect.Scale, fixes #3667 [thx Ross Lawley]
+
+* Added Ajax.InPlaceCollectionEditor which uses a SELECT element instead of a text field (see test/functional/ajax_inplacecollectioneditor_test.html for usage), #3491 [thx anna]
+
+* Enable in place editor to use RJS (implements a new evalScripts option for the in place editor), #3490 [thx Richard Livsey]
+
+* Added Sortable.setSequence to programmatically reorder a Sortable, #3711 [thx Mike A. Owens]
+
+* Added unit test for #3732 (currently fails due to Prototype #3877) [thx michal]
+
+* Fix span positioning for sliders with ranges not starting at 0, fixes #3731 [thx michal]
+
+* Make name option on Sortable.serialize work again, fixes #3873
+
+* Make dragging cancel only on ESC key, not on any key, fixes #3817
+
+* Fix Rakefile for V1.5.2
+
+*V1.5.2*
+
+* Change version number to V1.5.2
+
+* Fix a wrong parameter in dragdrop.js, fixes #3555
+
+* Fix two typos in effects.js, fixes #3481 [thx jtolds]
+
+* Add assertEnumEqual for unit testing (from Prototype SVN trunk) [Sam Stephenson]
+
+* Add Sortable.sequence method to extract the current sequence of a Sortable as an array, fixes #3675 [thx sphivo]
+
+* Add limit option to effect queues to limit the maximum number of effects in a queue, new unit tests for scoped effect queues, fixes #3498 [thx Abdur-Rahman Advany]
+
+* Fix Element.collectTextNodesIgnoreClass to correctly filter child nodes, fixes #3380 [thx lam]
+
+* Fix a condition where OPTION elements could cause unwanted dragging on Draggables, fixes #3441 [thx tom]
+
+* Fix a crash because of an IE bug in Effect.SlideDown, fixes #3192 [thx Rob Mayhew]
+
+* Added experimental auto-scroll option to Draggables and Sortables, activate with scroll: 'id_of_scroll_container_element'.
+  Note: needs testing, call syntax might change
+  See test/functional/dragdrop3_test.html for usage/demo
+
+* Added activate method to Autocompleter that allows you to trigger the suggestions through other means than user input [DHH]
+
+*V1.5.1*
+
+* Add select option to Autocompleter to optionally use textnodes from elements with a specific CSS class (see test/functional/ajax_autocompleter_test.html for usage)
+
+* In-place editor: add ok/cancel visibility options and onblur() submission, fixes #3233 [thx pulsation]
+  Note: currently, blur form submission breaks the cancel link functionality, if enabled
+
+* Added Effect.toggle for slide, blind and appear/fade effects, fixes #2704 [thx Azad]
+
+* Added selective component loading to scriptaculous.js, see test/unit/loading_test.html for usage [thx David Zülke]
+
+* Added local/scoped effect queues [thx David Zülke]
+
+* New core effect Effect.Move that can do absolute/relative movement [thx David Zülke]
+
+* Make default effects options modifyable globally by setting Effect.DefaultOptions
+
+* Make Draggables recognize top/left CSS properties defined in an external stylesheet, fixes #3205 [thx ansonparker]
+
+* Fixed draggables starting to drag even if mouse button was released with no movement, [thx topfunky]
+
+* Updated the README to reflect final status
+
+*V1.5.0*
+
+* Prepared for V1.5.0 final
+
+* Update lib/prototype.js to Prototype 1.4.0 final
+
+*V1.5.0_rc6*
+
+* Update lib/prototype.js to Prototype 1.4.0_rc4
+
+* Fix Effect.SlideDown/SlideUp on Internet Explorer, includes a change to Effect.Scale, (should) fix #2962 and others, [thx wyldeone]
+
+* Make Draggables that are reverting cancel the default revert effect when they are dragged again while reverting, fixes #3188, [thx maverick]
+
+* Fix a problem with a wrong reference in Effect.Pulsate, fixes #3184, [thx cyx_]
+
+* Fix Sortable.findElements for XHTML in Gecko, fixes #3081, [thx fgnass]
+
+* Fix a problem with the slider getting NaN results when clicking directly on the track, fixes #3020, [thx rectalogic]
+
+* Fix a problem with Safari not doing sub-pixel rendering when setting opacity to 1 with Element.setOpacity
+
+* Fix slider to make handle width/height count for track length, fixes #3040, fixes #3017, [thx buggedcom]
+
+* Added Basic unit test for Effect.inspect
+
+* Fix Effect.multiple to deal correctly with delays
+
+* Safeguard Effect.Base.render to only do updates when Effect is in running state, fixes #2912
+
+* Added inspect method to Effect.Base
+
+* Added functional test for DOM-based UL sortables #3016
+
+* Added offset option to Effect.ScrollTo
+
+* More effects.js/dragdrop.js refactoring
+
+* Refactoring and optimizations for effects (not complete yet)
+
+* Refactoring and optimizations for Draggables/Droppables/Sortables (not complete yet)
+
 *V1.5.0_rc5*
 
 * Make Droppables.remove accept DOM IDs in addition to elements
