@@ -351,6 +351,8 @@
 		{
 			$var2 = "zone_" . $zoneName;
 
+// 			$this->include_zone($var2);
+
 			//	if the class exists and this zone has no allowed children or this is one of the allowed children
 			//		not the easiest thing to follow but I guess it needs to be done this way since the object
 			//		hasn't been instantiated yet.  Maybe a static method would be better here for getting the allowed
@@ -389,6 +391,7 @@
 			{
 				return false;
 			}
+
 		}
 
 		function _xmlrpcDispatch($curPath, $inPath)
@@ -433,6 +436,46 @@
 			else
 			{
 				return false;
+			}
+		}
+
+		/**
+		* If you don't store the zone in the session (defined in config.php),
+		* Then the zone can be included dynamically.
+		* This is useful if many requests would only use one or two zones.
+		* If you use this do not include zones in includes.php other than default.
+		* @since Version 1.2
+		* @param string $name name of zone
+		*/
+// 		function include_zone($name)
+// 		{
+// 			if(!isset($this->included['zones'][$name]))
+// 			{
+// 				if (file_exists(app_dir . "/" . $name . ".php"))
+// 					include(app_dir . "/" . $name . ".php");
+// 				$this->included['zones'][$name] = 1;
+// 			}
+// 		}
+
+		/**
+		* Useful if one is not storing the zones in the session (defined in config.php),
+		* for storing zone variables in the session without the overhead of the entire session.
+		* also used for retriving that variable from the session.
+		* @since Version 1.2
+		* @param string $name name of variable
+		* @param mixed $value value to store in variable
+		* @return mixed
+		*/
+		function session($name, $value = NULL)
+		{
+			global $sGlobals;
+			if($value === NULL)
+			{
+					return $sGlobals->zones[$this->zonename][$name];
+			}
+			else
+			{
+					$sGlobals->zones[$this->zonename][$name] = $value;
 			}
 		}
 

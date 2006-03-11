@@ -26,25 +26,7 @@
 */
 function logwrite($content, $filename = '/tmp/phplog')
 {
-
-	// In our example we're opening $filename in append mode.
-	// The file pointer is at the bottom of the file hence
-	// that's where $somecontent will go when we fwrite() it.
-	if (!$handle = fopen($filename, 'a')) {
-		echo "Cannot open file ($filename)";
-		exit;
-	}
-
-	// Write $somecontent to our opened file.
-	if (fwrite($handle, $content) === FALSE) {
-		echo "Cannot write to file ($filename)";
-		exit;
-	}
-
-	//echo "Success, wrote ($somecontent) to file ($filename)";
-
-	fclose($handle);
-
+	append_to_file($filename, $content);
 }
 
 ///////////////////////////////////////////////////////
@@ -58,7 +40,6 @@ function logwrite($content, $filename = '/tmp/phplog')
 //		$redirectType - method of redirection
 //
 ///////////////////////////////////////////////////////
-
 
 define("HEADER_REDIRECT", 1);
 define("JS_REDIRECT", 2);
@@ -77,10 +58,13 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 	{
 		case HEADER_REDIRECT:
 			header("location: $URL");
+			break;
 		case JS_REDIRECT:
 			echo("<script>window.location.href = \"$URL\";</script>");
+			break;
 		default:
 			trigger_error("unknown redirect type");
+			break;
 	}
 	exit();
 }
@@ -150,27 +134,30 @@ function ZoneRedirect( $url, $depth = 0 )
 }
 
 
-	function checkValidDate( $datestring )
+function checkValidDate( $datestring )
+{
+	$dt = $datestring;
+	$dt = ereg_replace('([0-9]*)-([0-9]*)-([0-9]*)','\1/\2/\3', $dt);
+	$dt = ereg_replace('([0-9]*)\.([0-9]*)\.([0-9]*)','\2/\1/\3', $dt);
+
+	$tdt = strtotime($dt);
+
+	if ($tdt === -1)
 	{
-		$dt = $datestring;
-		$dt = ereg_replace('([0-9]*)-([0-9]*)-([0-9]*)','\1/\2/\3', $dt);
-		$dt = ereg_replace('([0-9]*)\.([0-9]*)\.([0-9]*)','\2/\1/\3', $dt);
-
-		$tdt = strtotime($dt);
-
-		if ($tdt === -1)
-		{
-			return false;
-		}
-		else
-		{
-			return $tdt;
-		}
+		return false;
 	}
+	else
+	{
+		return $tdt;
+	}
+}
 
 /**************
 find the current timezone.....
 **************/
+/*
+JOHN WHAT IS THIS, IT WAS JUST SITTING OUTSIDE OF ANY FUNCTION
+*/
 $tz = date('T');
 $dst = date('Z');
 if($dst)
@@ -178,62 +165,63 @@ if($dst)
 	$tz = str_replace('D', 'S', $tz);
 }
 
-	function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
+function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
+{
+	if(strstr($inFormatString, "%") === false)
 	{
-		if(strstr($inFormatString, "%") === false)
-		{
-			//bug("We need to make sure that $inFormatString string uses %'s");
-			trigger_error("The Formating string that has been passed into the FormatPostgresDate() function is formated incorrectly.
-			It must follow the formating convention from the Date.php class. For Example: D M j, Y becomes %a %b %e, %Y ");
-		}
-		//	this should actually parse in the hours, minutes and seconds too
-		//		but I don't need them right now.
-		$date = &new Date();
-		if($inPostgresDate != 0)
-		{
-			global $tz;
-			$timeparts = split("-|:| |\\.", $inPostgresDate);
+		//bug("We need to make sure that $inFormatString string uses %'s");
+		trigger_error("The Formating string that has been passed into the FormatPostgresDate() function is formated incorrectly.
+		It must follow the formating convention from the Date.php class. For Example: D M j, Y becomes %a %b %e, %Y ");
+	}
+	//	this should actually parse in the hours, minutes and seconds too
+	//		but I don't need them right now.
+	$date = &new Date();
+	if($inPostgresDate != 0)
+	{
+		global $tz;
+		$timeparts = split("-|:| |\\.", $inPostgresDate);
 
-			$year = $timeparts[0];
-			$month = $timeparts[1];
-			$day = $timeparts[2];
-			$date->setYear($year);
-			$date->setMonth($month);
-			$date->setDay($day);
+		$year = $timeparts[0];
+		$month = $timeparts[1];
+		$day = $timeparts[2];
+		$date->setYear($year);
+		$date->setMonth($month);
+		$date->setDay($day);
 
-			if(isset($timeparts[3]))
-			{
-				$hours = $timeparts[3];
-				$minutes = $timeparts[4];
-				$seconds = $timeparts[5];
-				$date->setHour($hours);
-				$date->setMinute($minutes);
-				$date->setSecond($seconds);
-			}
-
-			$date->setTZ(new Date_TimeZone($tz));
-		}
-		if($inTimeZone != NULL)
+		if(isset($timeparts[3]))
 		{
-			$date->convertTZ(new Date_TimeZone($inTimeZone));
+			$hours = $timeparts[3];
+			$minutes = $timeparts[4];
+			$seconds = $timeparts[5];
+			$date->setHour($hours);
+			$date->setMinute($minutes);
+			$date->setSecond($seconds);
 		}
 
-		$timeString = $date->format($inFormatString);
-
-		/*
-		$timestamp = mktime ( 0, 0, 0,  $month, $day, $year);
-		$timeString = date($inFormatString, $timestamp);
-		*/
-
-		return $timeString;
+		$date->setTZ(new Date_TimeZone($tz));
+	}
+	if($inTimeZone != NULL)
+	{
+		$date->convertTZ(new Date_TimeZone($inTimeZone));
 	}
 
-/*********************************************************************\
-	function: formatCCN
+	$timeString = $date->format($inFormatString);
 
-	purpose: prints 4885666547985421 as 4885-6665-4798-5421
-\*********************************************************************/
+	/*
+	$timestamp = mktime ( 0, 0, 0,  $month, $day, $year);
+	$timeString = date($inFormatString, $timestamp);
+	*/
 
+	return $timeString;
+}
+
+
+/**
+* prints 48856665XXXX5421 as 4885-6665-XXXX-5421
+*
+* @param string $ccn Credit Card Number to Format
+* @return string Formatted Credit Card Number
+*/
 	function formatCCN( $ccn )
 	{
 		$output = substr($ccn, 0, 4) . "-" . substr($ccn, 4, 4) . "-" . substr($ccn, 8, 4) . "-" . substr($ccn, 12, 4);
@@ -241,14 +229,12 @@ if($dst)
 		return $output;
 	}
 
-
-/*********************************************************************\
-	function: processArray
-
-	purpose: 	accepts an array and a function, then processes all
-				values recursively with the function.
-\*********************************************************************/
-
+/**
+* accepts an array and a function, then processes all values recursively with the function.
+*
+* @param array $arr
+* @param function $function
+*/
 	function processArray( $arr, $function )
 	{
 		if (gettype($arr) != "array")
@@ -303,7 +289,12 @@ function xorDecrypt($message, $key)
 
 	return $enc;
 }
-
+/**
+* simply puts "<pre>" tags around the print_r call so the formatting looks good in a browser.
+*
+* @param mixed $mixed
+* @param function $function
+*/
 function echo_r($mixed)
 {
 // 	if(app_status == "live")
@@ -321,34 +312,34 @@ function dump_r($mixed)
 	echo("</pre>");
 }
 
-	/**
-	 *
-	 * @access public
-	 * @return void
-	 **/
-	function fetch_r($mixed)
-	{
-		ob_start();
-		print_r($mixed);
-		$tmp = ob_get_contents();
-		ob_end_clean();
+/**
+*
+* @access public
+* @return void
+**/
+function fetch_r($mixed)
+{
+	ob_start();
+	print_r($mixed);
+	$tmp = ob_get_contents();
+	ob_end_clean();
 
-		return $tmp;
+	return $tmp;
+}
+
+function &MapArray(&$transformee, &$transformer)
+{
+	$result = array();
+	foreach($transformee as $key => $val)
+	{
+		if(isset($transformer[ $val ]))
+			$result[ $key ] = $transformer[ $val ];
+		else
+			$result[ $key ] = NULL;
 	}
 
-	function &MapArray(&$transformee, &$transformer)
-	{
-		$result = array();
-		foreach($transformee as $key => $val)
-		{
-			if(isset($transformer[ $val ]))
-				$result[ $key ] = $transformer[ $val ];
-			else
-				$result[ $key ] = NULL;
-		}
-
-		return $result;
-	}
+	return $result;
+}
 
 function validEmailAddress ($email)
 {
@@ -973,7 +964,12 @@ function get_key($type)
 		trigger_error("$string is not defined");
 	}
 }
-
+ /**
+  * Useful when programming or debugging.
+  * Require input to be true, error triggered if not true.
+  *
+  * @param       bool   $bool    The conditional value
+  */
 function RequireCondition($bool)
 {
 	if(!$bool)
@@ -1032,10 +1028,17 @@ function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
 	return $answer;
 }
 
-
-function file_set_contents($inFilename, $inContents)
+ /**
+  * Opens / Creates a file ($inFilename) and places $inContents into it
+  * If you are using PHP 5 you could alternatively use file_put_contents instead as it is a native function now.
+  *
+  * @param       string   $inFilename    	The absolute location of the file
+  * @param       string   $inContents    	The contents to put into file
+  * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
+  */
+function file_set_contents($inFilename, $inContents, $mode = 'w')
 {
-	if(!$handle = fopen($inFilename, 'w'))
+	if(!$handle = fopen($inFilename, $mode))
 	{
 		trigger_error("Cannot open file ($filename)");
 	}
@@ -1043,11 +1046,41 @@ function file_set_contents($inFilename, $inContents)
 	{
 		trigger_error("Cannot write to file ($filename)");
 	}
-
 	fclose($handle);
 }
 
+ /**
+  * Opens / Creates a file ($inFilename) and appends $inContents to the end of it
+  *
+  * @param       string   $inFilename    	The absolute location of the file
+  * @param       string   $inContents    	The contents to append to the file
+  */
+function append_to_file($inFilename, $inContents)
+{
+	file_set_contents($inFilename, $inContents, 'a');
+}
 
+ /**
+  * Opens / Creates a file ($inFilename) and all necessary directories to it, then places $inContents into it
+  *
+  * @param       string   $inFilename    	The absolute location of the file
+  * @param       string   $inContents    	The contents to put into file
+  * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
+  */
+function file_write($inFilename, $inContents, $mode = 'w')
+{
+	if (mkdir_r($inFilename))
+		file_set_contents($inFilename, $inContents, $mode);
+}
+
+ /**
+  * Apply an Encryption on Input
+  * To be used with Decrypt
+  *
+  * @param       string   $key    The key to encrypt $input with
+  * @param       string   $input    The value to encrypt
+  * @return      string   The encrypted data
+  */
 function Encrypt($key, $input)
 {
 	$td = mcrypt_module_open (MCRYPT_TripleDES, "", MCRYPT_MODE_ECB, "");
@@ -1059,7 +1092,14 @@ function Encrypt($key, $input)
 	return $encrypted_data;
 }
 
-
+ /**
+  * Decrypt data for usage
+  * To be used with Encrypt
+  *
+  * @param       string   $key     The key to decrypt $input with (the same as the key it was encrypted with)
+  * @param       string   $input   The Encrypted value to decrypt
+  * @return      string   The decrypted data
+  */
 function Decrypt($key, $input)
 {
 	$td = mcrypt_module_open(MCRYPT_TripleDES, "", MCRYPT_MODE_ECB, "");
@@ -1160,7 +1200,7 @@ function mkdir_r($filename)
   * @param       string   $pathname    The directory structure to create
   * @return      bool     Returns TRUE on success, FALSE on failure
   */
- function mkdirr($pathname, $mode = null)
+ function mkdirr($pathname, $mode = 0770)
  {
      // Check if directory already exists
      if (is_dir($pathname) || empty($pathname)) {

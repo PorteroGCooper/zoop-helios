@@ -19,11 +19,6 @@ class form
 	var $db;
 	var $dbconnname;
 
-	function form()
-	{
-		mkdirr(app_temp_dir . '/cache/forms/');
-	}
-
 	function sql_connect($dbconnname)
 	{
 		if (!isset($GLOBALS[$dbconnname]) && $dbconnname == 'defaultdb')

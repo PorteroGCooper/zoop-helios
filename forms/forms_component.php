@@ -37,6 +37,7 @@ class component_forms extends component
 
 	function init()
 	{
+		mkdirr(app_temp_dir . '/cache/forms/', 0770);
 	}
 }
 ?>

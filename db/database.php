@@ -21,9 +21,12 @@ class database
 	{
 
 		$options = array(
-	    	'debug'       => 2,
-//	    	'portability' => DB_PORTABILITY_NONE,//stupid dumb hacks that pear tries to use, turn it off.
+	    	'debug'       => 2
 		);
+
+		if (defined('db_persistent'))
+			$options['persistent'] = db_persistent;
+
 		$this->dsn = &$dsn;
 		$this->db = DB::connect($dsn, $options);
 		if(DB::isError($this->db))
@@ -115,7 +118,6 @@ class database
 
 	function query( $inQueryString, $Db = -1 )
 	{
-
 		$this->verifyQuery($inQueryString);
 		$result = $this->db->query($inQueryString);
 		if(DB::isError($result))
