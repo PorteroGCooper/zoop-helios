@@ -1,9 +1,9 @@
 <?
 /**
 * set up global constants and variables
-* 
+*
 * splites up the path info, prepares other variables for the application.
-* 
+*
 * @package app
 * @subpackage globals
 */
@@ -111,6 +111,8 @@
 		define("HOME_URL", dirname(SCRIPT_URL));
 		//die(SCRIPT_URL);
 	}
+
+		define("BASE_HREF", SCRIPT_REF);
 
 /**
 *

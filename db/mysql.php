@@ -67,6 +67,13 @@
 		return sql_fetch_one_cell('select last_insert_id()');
 	}
 
+	function sql_insert_array($inArray, $table)
+	{
+		sql_connect();
+		global $defaultdb;
+  		$return = $defaultdb->insert_array($inArray, $table);
+		return $return;
+	}
 
 	function sql_fetch_sequence( $sequence )
 	{

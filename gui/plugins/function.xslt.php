@@ -15,7 +15,7 @@
 function smarty_function_xslt($params, &$this)
 {
 	$xh = xslt_create();
-	
+
 	$arguments = array();
 	if (isset($params["xml"]))
 	{
@@ -26,7 +26,7 @@ function smarty_function_xslt($params, &$this)
 	{
 		$xmlfile = $params["xmlfile"];
 	}
-	
+
 	if (isset($params["xsl"]))
 	{
 		$arguments["/_xsl"] = $params["xsl"];
@@ -36,12 +36,12 @@ function smarty_function_xslt($params, &$this)
 	{
 		$xslfile = $params["xslfile"];
 	}
-	
+
 	if (isset($params["base"]))
 	{
-		xslt_set_base ( $xh, $params["base"] )
+		xslt_set_base ( $xh, $params["base"] );
 	}
-	
+
     echo xslt_process($xh, $xmlfile, $xslfile, NULL, $arguments);
 	xslt_free($xh);
 }

@@ -129,6 +129,13 @@ function sqlite_rand()
 		return sqlite_last_insert_rowid($defaultdb->db->connection);
 	}
 
+	function sql_insert_array($inArray, $table)
+	{
+		sql_connect();
+		global $defaultdb;
+  		$return = $defaultdb->insert_array($inArray, $table);
+		return $return;
+	}
 
 	function sql_fetch_sequence( $sequence )
 	{

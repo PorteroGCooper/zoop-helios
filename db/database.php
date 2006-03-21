@@ -137,6 +137,30 @@ class database
 		return $this->db->query($query);
 	}
 
+/**
+* Take a Associated Array and Table name and insert the array's values into the database.
+* Array should be in the format $arrayname['fieldname'] => value
+*
+* @param array $inArray the array to be inserted
+* @param string $tablename the name of the table to insert the array into
+*/
+	function insert_array($inArray, $tablename)
+	{
+		foreach ($inArray as $field => $value)
+		{
+			$fields[] = $this->escape_identifier($field);
+			$values[] = $this->escape_string($value);
+		}
+
+		$fieldstr = implode(",", $fields);
+		$valuestr = implode(",", $values);
+		$tablename = $this->escape_identifier($tablename);
+
+		$query = "INSERT INTO $tablename ($fieldstr) VALUES ($valuestr)";
+
+		return $this->insert($query);
+	}
+
 	function fetch_sequence( $sequence )
 	{
 		return $this->db->getOne("select nextval('\"$sequence\"'::text)");
@@ -693,8 +717,12 @@ class database
 
 	function escape_string($inString)
 	{
-		//$result = $this->db->escapeSimple($inString);
 		return $this->db->quoteSmart($inString);
+	}
+
+	function escape_identifier($inString)
+	{
+		return $this->db->quoteIdentifier($inString);
 	}
 }
 ?>
