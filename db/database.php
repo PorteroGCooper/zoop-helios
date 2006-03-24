@@ -141,6 +141,8 @@ class database
 * Take a Associated Array and Table name and insert the array's values into the database.
 * Array should be in the format $arrayname['fieldname'] => value
 *
+* This function will escape <b>Everything</b> so please don't escape before hand.
+*
 * @param array $inArray the array to be inserted
 * @param string $tablename the name of the table to insert the array into
 */
@@ -161,15 +163,50 @@ class database
 		return $this->insert($query);
 	}
 
+/**
+* Take a Associated Array and Table name, and Primary Key name and Id and update the database with the values in the array.
+* Array should be in the format $arrayname['fieldname'] => value
+*
+* This function will escape <b>Everything</b> so please don't escape before hand.
+*
+* @param array $inArray the array to be inserted
+* @param string $tablename the name of the table to insert the array into
+* @param string $primarykey the name of the primary key field
+* @param string $id of the primary key
+*/
+	function update_array($inArray, $tablename, $primarykey, $primarykeyvalue)
+	{
+		foreach ($inArray as $field => $value)
+		{
+			$updateStr = "";
+			$updateStr .= $this->escape_identifier($field);
+			$updateStr .= "=";
+			$updateStr .= $this->escape_string($value);
+
+			$updateArray[] = $updateStr;
+		}
+
+		$newupdateStr = implode(",", $updateArray);
+		$tablename = $this->escape_identifier($tablename);
+		$primarykey = $this->escape_identifier($primarykey);
+		$primarykeyvalue = $this->escape_string($primarykeyvalue);
+
+		$query = "UPDATE $tablename SET $newupdateStr WHERE $primarykey = $primarykeyvalue";
+
+ 		return $this->query($query);
+	}
+
 	function fetch_sequence( $sequence )
 	{
 		return $this->db->getOne("select nextval('\"$sequence\"'::text)");
 	}
 
-	///////////////////////////////////////////////
-	//	Query returns true if rows are returned  //
-	///////////////////////////////////////////////
-
+/**
+* returns true if rows are returned
+*
+* @param string $query the query for the database
+* @return boolean
+*/
 	function check($query)
 	{
 		$result = $this->db->query($query);
@@ -236,7 +273,12 @@ class database
 		return $result;;
 	}
 
-
+/**
+* Use this function to get a record from the database. It will be returned as an array with the key as the fieldname and the value as the value.
+*
+* @param string $query the query for the database
+* @return associative array in the form [fieldname] => value;
+*/
 	function fetch_one($inQueryString)
 	{
 		$result = $this->db->query($inQueryString);
@@ -261,7 +303,14 @@ class database
 
 		return $row;
 	}
-
+/**
+* Use this function to get a record, or multiple records from the database.
+* It will be returned as a two dimensional array. The first dimension will be an array with the key being the value of the primary key in each record.
+* The second dimension would be identical to that returned from fetch_one but without the primary key.
+*
+* @param string $query the query for the database
+* @return associative array in the form [primarykeyvalue][fieldname] => value;
+*/
 	function fetch_assoc($inQuery)
 	{
 		$this->verifyQuery($inQuery);

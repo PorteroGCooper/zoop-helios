@@ -325,7 +325,7 @@ class GuiControl
 
 	function getLabelName()
 	{
-		$label = $this->getName() . "[value]";
+		$label = $this->getName();
 		return $label;
 	}
 

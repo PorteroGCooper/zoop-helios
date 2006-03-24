@@ -183,6 +183,40 @@
 		unset($_POST);
 	}
 
+/**
+*
+*	Defining the Allowed Tags for the post filtering functions.
+*
+**/
+
+$GLOBALS['allowed_tags'] = array(
+	"div",
+	"p",
+	"root",
+	"table",
+	"tr",
+	"td",
+	"span",
+	"ul",
+	"ol",
+	"li",
+	"a",
+	"br",
+	"nobr",
+	"",
+	"img",
+);
+
+$GLOBALS['allowed_attributes'] = array(
+	"class",
+	"align",
+	"valign",
+	"href",
+	"src",
+	"target",
+	"style"
+);
+
 /******** URL Rewrite example ****************\
 *
 * This is an example of the mod_rewrite commands

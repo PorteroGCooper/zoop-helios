@@ -22,12 +22,6 @@ class text extends GuiControl
 		$this->params['text'] = $value;
 	}
 
-	function getLabelName()
-	{
-		$label = $this->getName() . "[text]";
-		return $label;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');

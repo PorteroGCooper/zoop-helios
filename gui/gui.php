@@ -134,7 +134,6 @@ class gui extends Smarty
 	{
 			if ($tpl_var != '')
 				$this->_tpl_vars[$tpl_var] = $value;
-
 	}
 
 	/**
@@ -152,7 +151,6 @@ class gui extends Smarty
 				$this->_tpl_vars[$key] = $val;
 			}
 		}
-
 	}
 
 	// A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLIER

@@ -75,6 +75,14 @@
 		return $return;
 	}
 
+	function sql_update_array($inArray, $table, $primarykey, $primarykeyvalue)
+	{
+		sql_connect();
+		global $defaultdb;
+  		$return = $defaultdb->update_array($inArray, $table, $primarykey, $primarykeyvalue);
+		return $return;
+	}
+
 	function sql_fetch_sequence( $sequence )
 	{
 		sql_connect();
@@ -137,7 +145,6 @@
   		$return = $defaultdb->fetch_into_array($inTableName, $inFieldName, $inExtra);
   		return $return;
 	}
-
 
 	function sql_fetch_one($inQueryString)
 	{

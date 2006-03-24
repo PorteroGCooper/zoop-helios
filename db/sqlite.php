@@ -137,6 +137,14 @@ function sqlite_rand()
 		return $return;
 	}
 
+	function sql_update_array($inArray, $table, $primarykey, $primarykeyvalue)
+	{
+		sql_connect();
+		global $defaultdb;
+  		$return = $defaultdb->update_array($inArray, $table, $primarykey, $primarykeyvalue);
+		return $return;
+	}
+
 	function sql_fetch_sequence( $sequence )
 	{
 		global $defaultdb;

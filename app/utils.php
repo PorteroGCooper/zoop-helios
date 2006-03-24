@@ -60,7 +60,7 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 			header("location: $URL");
 			break;
 		case JS_REDIRECT:
-			echo("<script>window.location.href = \"$URL\";</script>");
+			echo("<script language=\"JavaScript\" type=\"text/javascript\"><!-- top.location.href = \"$URL\"; --></script>");
 			break;
 		default:
 			trigger_error("unknown redirect type");
@@ -389,7 +389,6 @@ function markprofile($running_total = 0)
 	}
 }
 
-
 function fetch_backtrace($full = false)
 {
 	if (function_exists("debug_backtrace"))
@@ -551,114 +550,40 @@ function echo_backtrace($full = false)
 	echo fetch_backtrace($full);
 }
 
-//this function is dangerous, and shouldn't be used generally
-function getRawPost()
+/**
+* A better stripslashes function. This one checks to see if magic_quotes_gpc is on
+* and stripsslashes only when it is on.
+* Also works on Arrays
+*
+* @author ferik100 at flexis dot com dot br   posted to php.net (public domain)
+* @param string $str
+* @return string
+*/
+function strip_gpc_slashes ($input)
 {
-	global $POSTCOPY;
-	return $POSTCOPY;
-}
-
-function GetPostIsset($inName)
-{
-	global $POSTCOPY;
-	return isset($POSTCOPY[$inName]);
-}
-
-//	This returns 0 or 1
-function GetPostCheckbox($inName)
-{
-	global $POSTCOPY;
-	return isset( $POSTCOPY[$inName] ) ? 1 : 0;
-}
-
-//	This returns the raw unfiltered contents of a post variable
-function GetPostString($inName)
-{
-	global $POSTCOPY;
-	if( isset($POSTCOPY["$inName"]) )
-		return $POSTCOPY["$inName"];
-	else
-		return false;
-}
-
-//this strips javascript and any tags not in $allowed_tags from HTML
-//see __verifyHTMLTree below
-function GetPostHTML($inName)
-{
-	//reduce the HTML we get to acceptable HTML
-	global $POSTCOPY;
-
-	if(!defined('filter_input') || filter_input)
+	if ( !get_magic_quotes_gpc() || ( !is_string($input) && !is_array($input) ) )
 	{
-		$html = $POSTCOPY[$inName];
-		return __verifyHTMLTree($html);
+		return $input;
 	}
-	else
-	{
-		$answer = $POSTCOPY[$inName];
-	}
-	return $answer;
-}
 
-function getPostHTMLArray($inName)
-{
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
+	if ( is_string($input) )
 	{
-		foreach($inName as $key)
+		$output = stripslashes($input);
+	}
+	elseif ( is_array($input) )
+	{
+		$output = array();
+		foreach ($input as $key => $val)
 		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
+		$new_key = stripslashes($key);
+		$new_val = strip_gpc_slashes($val);
+		$output[$new_key] = $new_val;
 		}
 	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			$answer[$key] = verifyText($text);
-		}
-	}
-	return $answer;
+
+	return $output;
 }
 
-$GLOBALS['allowed_tags'] = array(
-	"div",
-	"p",
-	"root",
-	"table",
-	"tr",
-	"td",
-	"span",
-	"ul",
-	"ol",
-	"li",
-	"a",
-	"br",
-	"nobr",
-	"",
-	"img",
-);
-
-$GLOBALS['allowed_attributes'] = array(
-	"class",
-	"align",
-	"valign",
-	"href",
-	"src",
-	"target",
-	"style"
-);
 
 function __VerifyHTMLTree($html)
 {
@@ -717,55 +642,6 @@ function br2nl($text) {
    return $text;
 }
 
-//	This strips all html from the variable then returns it
-function GetPostText($inName)
-{
-	global $POSTCOPY;
-	if( isset($POSTCOPY[$inName]) )
-		return VerifyTextOrArray($POSTCOPY["$inName"]);
-	else
-		return false;
-}
-
-function getPostTextArray($inName)
-{
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			if (is_array($text))
-			{
-				$answer[$key] = VerifyTextOrArray($text);
-			}
-			else
-			{
-				$answer[$key] = verifyText($text);
-			}
-		}
-	}
-
-	return $answer;
-}
 
 function VerifyTextOrArray($array)
 {
@@ -798,146 +674,6 @@ function VerifyInt($inNumber)
 		return '';
 	assert( is_numeric($inNumber));
 	return (integer)$inNumber;
-}
-
-//	This makes sure that it is an integer and casts it as such
-function GetPostInt($inName)
-{
-	global $POSTCOPY;
-	if( isset($POSTCOPY["$inName"]) )
-	{
-		return verifyInt($POSTCOPY["$inName"]);
-	}
-	else
-		return false;
-}
-
-function GetPostIntArray($inName)
-{
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			$answer[$key] = verifyInt($text);
-		}
-	}
-	return $answer;
-}
-
-function GetPostIntTree($inName)
-{
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	return __getPostIntTree($post);
-}
-
-function __GetPostIntTree($post)
-{
-	$answer = array();
-	if(is_array($post))
-	{
-		foreach($post as $key => $val)
-		{
-			$answer[$key] = __getPostIntTree($val);
-		}
-		return $answer;
-	}
-	else
-	{
-		return verifyInt($post);
-	}
-}
-
-function GetPostTextTree($inName)
-	{
-		global $POSTCOPY;
-		$answer = array();
-		$post = $POSTCOPY;
-		if(is_array($inName))
-		{
-			foreach($inName as $key)
-			{
-				if(isset($post[$key]))
-					$post = $post[$key];
-				else
-					return false;
-			}
-		}
-		else
-		{
-			if(isset($post[$inName]))
-				$post = $post[$inName];
-			else
-				return false;
-		}
-		return __getPostTextTree($post);
-	}
-
-function __GetPostTextTree($post)
-{
-	$answer = array();
-	if(is_array($post))
-	{
-		foreach($post as $key => $val)
-		{
-			$answer[$key] = __getPostTextTree($val);
-		}
-		return $answer;
-	}
-	else
-	{
-		return verifyText($post);
-	}
-}
-
-function unsetPost($inName)
-{
-	global $POSTCOPY;
-	unset($POSTCOPY[$inName]);
-}
-
-function getPostKeys()
-{
-	global $POSTCOPY;
-	return array_keys($POSTCOPY);
 }
 
 //reads a key(for authentication between apps) from the shared key file.
@@ -1293,7 +1029,7 @@ function StreamCSV($inData, $inFilename, $inColumns = NULL)
 }
 
 /**
-* return a random element of an array
+* return a random element's value within an array
 *
 * @param array $inArray to return a random element
 */
@@ -1349,28 +1085,29 @@ function mrand($l,$h,$t,$len=false){
 
 	if($len>0)
 	{
-
 		if(strlen($h)<$len && strlen($l)<$len)return false;
 		if(strlen($h-1)<$len && strlen($l-1)<$len && $t>1)return false;
 
 		while(count($n)<$t)
 		{
 			$x = mt_rand($l,$h);
-			if(!in_array($x,$n) && strlen($x) == $len)$n[] = $x;
+			if(!in_array($x,$n) && strlen($x) == $len)
+				$n[] = $x;
 		}
 
-	}else{
-
+	}
+	else
+	{
 		while(count($n)<$t)
 		{
 			$x = mt_rand($l,$h);
-			if(!in_array($x,$n))$n[] = $x;
+			if(!in_array($x,$n))
+				$n[] = $x;
 		}
 	}
 
 	return $n;
 }
-
 
 
 /**

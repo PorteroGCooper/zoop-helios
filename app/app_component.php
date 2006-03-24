@@ -37,6 +37,7 @@ if(isset($_SERVER["HTTP_HOST"]))
 	include(dirname(__file__) . "/globals.php");
 }
 include(dirname(__file__) . "/utils.php");
+include(dirname(__file__) . "/post_utils.php");
 /**#@-*/
 /**
 * @package app
