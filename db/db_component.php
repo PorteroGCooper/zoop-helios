@@ -19,6 +19,7 @@ class component_db extends component
 		require_once('DB.php');
 		include(dirname(__file__) . "/database.php");
 		include(dirname(__file__) . "/" . db_RDBMS . ".php");
+		include(dirname(__file__) . "/db_utils.php");
 		include(dirname(__file__) . "/ComplexUpdate.php");
 		include(dirname(__file__) . "/ComplexInsert.php");
 	}

@@ -43,6 +43,9 @@ function initGuiControls()
 	if(isset($controlData))
 	{
 		$validate = true;
+
+		loadChildControls($controlData);
+
 		$GLOBALS['controls'] = &parseControlData($controlData);
 
 		foreach($GLOBALS['controls'] as $type => $controlSet)
@@ -89,9 +92,39 @@ function initGuiControls()
 	}
 }
 
+function loadChildControls(&$controlData)
+{
+	foreach ($controlData as $type)
+	{
+		foreach ($type as $name)
+		{
+			if (is_array($name))
+			{
+				foreach ($name as $paramname => $value)
+				{
+					if ($paramname == 'controlsList')
+					{
+						$childControlList = unserialize(gzuncompress(base64_decode($value)));
+						foreach ($childControlList as $ccontrol)
+						{
+							includeGuiControl($ccontrol);
+						}
+					}
+
+					if ($paramname == 'controls')
+					{
+						loadChildControls($value);
+					}
+				}
+			}
+		}
+	}
+}
+
 function &parseControlData(&$controlData)
 {
 	$controls = array();
+
 	foreach($controlData as $type => $controlset)
 	{
 		foreach($controlset as $name => $controlitems)
@@ -117,7 +150,7 @@ function &parseControlData(&$controlData)
 						$controls[$type][$name]->setParam($paramname,  $value);
 					else
 					{
-						$viewState = unserialize(gzuncompress(base64_decode($value)));
+						$viewState = $controls[$type][$name]->decode($value);
 						if (is_array($viewState))
 						{
 							foreach($viewState as $stateName => $stateValue)
@@ -134,12 +167,12 @@ function &parseControlData(&$controlData)
 			}
 		}
 	}
+
 	return $controls;
 }
 
 function &getGuiControl($type, $name, $useGlobal = true)
 {
-	$filename = strtolower($type).".php";
 	if($useGlobal)
 	{
 		global $controls;
@@ -148,14 +181,9 @@ function &getGuiControl($type, $name, $useGlobal = true)
 			return $controls[$type][$name];
 		}
 	}
-	if(file_exists(app_dir . "/GuiControls/$filename"))
-		include_once(app_dir . "/GuiControls/$filename");
-	else if(file_exists(zoop_dir . "/gui/GuiControls/$filename"))
-		include_once(zoop_dir . "/gui/GuiControls/$filename");
-	else
-		trigger_error("Please Implement a $type Control and place it in " .
-					app_dir . "/GuiControls/$filename" . " or " .
-					zoop_dir . "/gui/GuiControls/$filename");
+
+	includeGuiControl($type);
+
 	if($useGlobal)
 	{
 		$controls[$type][$name] = &new $type($name);
@@ -166,6 +194,20 @@ function &getGuiControl($type, $name, $useGlobal = true)
 		$control = &new $type($name);
 		return $control;
 	}
+}
+
+function includeGuiControl($type)
+{
+	$filename = strtolower($type).".php";
+
+	if(file_exists(app_dir . "/GuiControls/$filename"))
+		include_once(app_dir . "/GuiControls/$filename");
+	else if(file_exists(zoop_dir . "/gui/GuiControls/$filename"))
+		include_once(zoop_dir . "/gui/GuiControls/$filename");
+	else
+		trigger_error("Please Implement a $type Control and place it in " .
+					app_dir . "/GuiControls/$filename" . " or " .
+					zoop_dir . "/gui/GuiControls/$filename");
 }
 
 /**
@@ -303,13 +345,20 @@ class GuiControl
 
 	function renderViewState()
 	{
-		$viewState = $this->getViewState();
-		$viewState = serialize($viewState);
-		$viewState = gzcompress($viewState);
-		$viewState = base64_encode($viewState);
+		$viewState = $this->encode($this->getViewState());
 		$name = $this->getName();
 		$html = "<input type=\"hidden\" name=\"{$name}[viewState]\" value=\"$viewState\">";
 		return $html;
+	}
+
+	function encode($value)
+	{
+		return base64_encode(gzcompress(serialize($value)));
+	}
+
+	function decode($string)
+	{
+		return unserialize(gzuncompress(base64_decode($string)));
 	}
 
 	function render()

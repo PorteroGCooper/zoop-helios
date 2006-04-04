@@ -129,22 +129,6 @@ function sqlite_rand()
 		return sqlite_last_insert_rowid($defaultdb->db->connection);
 	}
 
-	function sql_insert_array($inArray, $table)
-	{
-		sql_connect();
-		global $defaultdb;
-  		$return = $defaultdb->insert_array($inArray, $table);
-		return $return;
-	}
-
-	function sql_update_array($inArray, $table, $primarykey, $primarykeyvalue)
-	{
-		sql_connect();
-		global $defaultdb;
-  		$return = $defaultdb->update_array($inArray, $table, $primarykey, $primarykeyvalue);
-		return $return;
-	}
-
 	function sql_fetch_sequence( $sequence )
 	{
 		global $defaultdb;

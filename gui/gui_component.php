@@ -15,6 +15,7 @@
 
 	require(dirname(__file__) . "/gui.php");
 	include('GuiControls/GuiControl.php');
+	include('GuiControls/GuiContainer.php');
 
 class component_gui extends component
 {

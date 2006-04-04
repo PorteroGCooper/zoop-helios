@@ -137,65 +137,6 @@ class database
 		return $this->db->query($query);
 	}
 
-/**
-* Take a Associated Array and Table name and insert the array's values into the database.
-* Array should be in the format $arrayname['fieldname'] => value
-*
-* This function will escape <b>Everything</b> so please don't escape before hand.
-*
-* @param array $inArray the array to be inserted
-* @param string $tablename the name of the table to insert the array into
-*/
-	function insert_array($inArray, $tablename)
-	{
-		foreach ($inArray as $field => $value)
-		{
-			$fields[] = $this->escape_identifier($field);
-			$values[] = $this->escape_string($value);
-		}
-
-		$fieldstr = implode(",", $fields);
-		$valuestr = implode(",", $values);
-		$tablename = $this->escape_identifier($tablename);
-
-		$query = "INSERT INTO $tablename ($fieldstr) VALUES ($valuestr)";
-
-		return $this->insert($query);
-	}
-
-/**
-* Take a Associated Array and Table name, and Primary Key name and Id and update the database with the values in the array.
-* Array should be in the format $arrayname['fieldname'] => value
-*
-* This function will escape <b>Everything</b> so please don't escape before hand.
-*
-* @param array $inArray the array to be inserted
-* @param string $tablename the name of the table to insert the array into
-* @param string $primarykey the name of the primary key field
-* @param string $id of the primary key
-*/
-	function update_array($inArray, $tablename, $primarykey, $primarykeyvalue)
-	{
-		foreach ($inArray as $field => $value)
-		{
-			$updateStr = "";
-			$updateStr .= $this->escape_identifier($field);
-			$updateStr .= "=";
-			$updateStr .= $this->escape_string($value);
-
-			$updateArray[] = $updateStr;
-		}
-
-		$newupdateStr = implode(",", $updateArray);
-		$tablename = $this->escape_identifier($tablename);
-		$primarykey = $this->escape_identifier($primarykey);
-		$primarykeyvalue = $this->escape_string($primarykeyvalue);
-
-		$query = "UPDATE $tablename SET $newupdateStr WHERE $primarykey = $primarykeyvalue";
-
- 		return $this->query($query);
-	}
-
 	function fetch_sequence( $sequence )
 	{
 		return $this->db->getOne("select nextval('\"$sequence\"'::text)");

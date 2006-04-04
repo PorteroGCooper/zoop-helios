@@ -584,7 +584,6 @@ function strip_gpc_slashes ($input)
 	return $output;
 }
 
-
 function __VerifyHTMLTree($html)
 {
 	require_once('XML/Tree.php');
@@ -635,7 +634,12 @@ function VerifyText($inText)
 	else
 		return $inText;
 }
-
+/**
+* Companion to nl2br, convert "<br>" tags to new line characters
+*
+* @param string $text
+* @return string
+*/
 function br2nl($text) {
    $text = str_replace("<br />\n", "\r\n", $text);
    $text = str_replace("<br>\n", "\r\n", $text);
@@ -874,7 +878,6 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
 	file_set_contents(app_status_dir . "/" . $statusItemName, "$start $end $goodEnd");
 }
 
-
 function &GetCompletionStatus($statusItemName)
 {
 	$data = file_get_contents(app_status_dir . "/" . $statusItemName);
@@ -899,17 +902,6 @@ function &GetCompletionStatus($statusItemName)
 	return $status;
 }
 
-//make a case statement that return $mapfield[$field] for sql
-function sqlMap($field, $mapfield)
-{
-	$sql = "case $field ";
-	foreach ($mapfield as $key => $value)
-	{
-		$sql .= "when $key then ". sql_escape_string($value) . " ";
-	}
-	$sql .= "else '' end";
-	return $sql;
-}
  /**
   *  Create directories required for $filename recursively
   *  using mkdirr.
@@ -973,7 +965,7 @@ function HexToRgb($pHexColor)
 	if (!(strpos ($pHexColor, "#") === FALSE))
 	{
 		$pHexColor = str_replace ("#", "", $pHexColor);
-		for ($l_counter=0; $l_counter<3; $l_counter++)
+		for ($l_counter=0; $l_counter < 3; $l_counter++)
 		{
 			$l_temp = substr($pHexColor, 2*$l_counter, 2);
 			$l_returnarray[$l_counter] = 16 * hexdec(substr($l_temp, 0, 1)) + hexdec(substr($l_temp, 1, 1));

@@ -67,22 +67,6 @@
 		return sql_fetch_one_cell('select last_insert_id()');
 	}
 
-	function sql_insert_array($inArray, $table)
-	{
-		sql_connect();
-		global $defaultdb;
-  		$return = $defaultdb->insert_array($inArray, $table);
-		return $return;
-	}
-
-	function sql_update_array($inArray, $table, $primarykey, $primarykeyvalue)
-	{
-		sql_connect();
-		global $defaultdb;
-  		$return = $defaultdb->update_array($inArray, $table, $primarykey, $primarykeyvalue);
-		return $return;
-	}
-
 	function sql_fetch_sequence( $sequence )
 	{
 		sql_connect();
