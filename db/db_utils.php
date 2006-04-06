@@ -58,7 +58,7 @@ function db_insert_array($inArray, $tablename)
 
 	$fieldstr = implode(",", $fields);
 	$valuestr = implode(",", $values);
-	$tablename = $defaultdb->escape_identifier($tablename);
+	$tablename = $defaultdb->escape_tablename($tablename);
 
 	$query = "INSERT INTO $tablename ($fieldstr) VALUES ($valuestr)";
 
@@ -92,7 +92,7 @@ function db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue)
 	}
 
 	$newupdateStr = implode(",", $updateArray);
-	$tablename = $defaultdb->escape_identifier($tablename);
+	$tablename = $defaultdb->escape_tablename($tablename);
 	$primarykey = $defaultdb->escape_identifier($primarykey);
 	$primarykeyvalue = $defaultdb->escape_string($primarykeyvalue);
 

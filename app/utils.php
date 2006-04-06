@@ -305,6 +305,18 @@ function echo_r($mixed)
 	echo "</pre>";
 }
 
+/**
+* die() doesn't do a good job of dumping objects and arrays. this one does what die should...
+*
+* @param mixed $mixed
+* @param function $function
+*/
+function die_r($mixed)
+{
+	echo_r($mixed);
+	die();
+}
+
 function dump_r($mixed)
 {
 	echo("<pre>");

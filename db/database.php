@@ -714,5 +714,15 @@ class database
 	{
 		return $this->db->quoteIdentifier($inString);
 	}
+	
+	function escape_tablename($inString)
+	{
+		$name = explode(".", $inString);
+		foreach($name as $part)
+		{
+			$newname[] = $this->db->quoteIdentifier($part);
+		}
+		return implode('.', $newname);
+	}
 }
 ?>
