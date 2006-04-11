@@ -17,11 +17,6 @@ include_once(zoop_dir . "/gui/plugins/function.html_options.php");
 
 class select extends GuiControl
 {
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');
@@ -29,9 +24,12 @@ class select extends GuiControl
 
 	function view()
 	{
-
 		$value = $this->getValue();
-		return $this->params['index'][$value];
+
+		if (isset($this->params['index'][$value]))
+			return $this->params['index'][$value];
+		else
+			return $value;
 	}
 
 	function render()

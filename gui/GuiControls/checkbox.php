@@ -38,17 +38,10 @@ class checkbox extends GuiControl
 
 	function getValue()
 	{
-		if (isset($this->params['text']))
-			return 1;
-		else if (isset($this->params['value']) && $this->params['value'] != 0)
+		if (isset($this->params['value']) && $this->params['value'] != 0)
 			return 1;
 		else
 			return 0;
-	}
-
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
 	}
 
 	function getPersistentParams()

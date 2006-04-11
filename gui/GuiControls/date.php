@@ -3,7 +3,7 @@
 * Zoop Guicontrol
 * @package gui
 * @subpackage guicontrol
-* 
+*
 */
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,12 +17,6 @@
 
 class date extends GuiControl
 {
-
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');

@@ -15,12 +15,6 @@
 
 class TextArea extends GuiControl
 {
-
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');

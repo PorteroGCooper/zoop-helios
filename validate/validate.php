@@ -14,30 +14,23 @@
 
 /**
 * @package validate
-* 
+*
 * @author  Steve Francia webmaster@supernerd.com
-* @static 
+* @static
 */
 class Validator
 {
 	function getAttr($validate) // FOR JS VALIDATION
 	{
 		$function = strtolower("get{$validate['type']}Attr");
-		//echo_r(get_class_methods('validate'));
-		/*
-		if(in_array($function, get_class_methods('Validator')))
-			return Validator::$function($validate);
-		else
-			trigger_error("No known validation for {$validate['type']}");
-		*/
+
 		$validatorArray = get_class_methods('Validator');
 		foreach ($validatorArray as $key => $validatorElement)
 			$validatorArray[$key] = strtolower($validatorElement);
 		if (in_array($function, $validatorArray))
 			return Validator::$function($validate);
 		else
-			trigger_error("No known validation for {$validate['type']}");
-
+			return ""; // Not every Validation function has a javascript counterpart.
 	}
 
 	function validate($value, $validate) // FOR PHP VALIDATION
@@ -59,13 +52,6 @@ class Validator
 			return $result;
 		}
 
-
-/*		// if passes the required test, run individual method
-/*		if(in_array($function, get_class_methods('Validator')))
-			return Validator::$function($value, $validate);
-		else
-			trigger_error("No known validation for {$validate['type']}");
-*/
 		$validatorArray = get_class_methods('Validator');
 		foreach ($validatorArray as $key => $validatorElement)
 			$validatorArray[$key] = strtolower($validatorElement);
@@ -133,9 +119,14 @@ class Validator
 	{
 
 		!isset($validate['min']) ? $validate['min'] = 0 : $validate['min'];
-		!isset($validate['max']) ? $validate['max'] = 10000000 : $validate['max'];
+		!isset($validate['max']) ? $validate['max'] = false : $validate['max'];
 
-		$result = array('message' => "Must be between {$validate['min']} and {$validate['max']} characters long");
+		if ($validate['max'] == false)
+			$result = array('message' => "Must be longer than {$validate['min']} characters.");
+		elseif ($validate['min'] == 0)
+			$result = array('message' => "Must be shorter than {$validate['max']}characters.");
+		else
+			$result = array('message' => "Must be between {$validate['min']} and {$validate['max']} characters long");
 		if (strlen($value) >= $validate['min'] && strlen($value) <= $validate['max'])
 			$result['result'] = true;
 		else
@@ -185,16 +176,22 @@ class Validator
 		return $answer;
 	}
 
-	function validateInt($value, $validate)
+	function validateInt($value, $validate = array())
 	{
 		$result = array('message' => "Must be an integer");
 
 		if (is_numeric($value) && preg_match('/\\b\\d+\\b/', $value))
 		{
 			if (isset($validate['min']) && $value < $validate['min'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", larger than {$validate['min']}";
+			}
 			elseif (isset($validate['max']) && $value > $validate['max'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", smaller than {$validate['max']}";
+			}
 			else
 				$result['result'] = true;
 		}
@@ -224,16 +221,22 @@ class Validator
 		return $answer;
 	}
 
-	function validateFloat($value, $validate)
+	function validateFloat($value, $validate = array())
 	{
 		$result = array('message' => "Must be a numeric value");
 
 		if (is_numeric($value) && preg_match('/[-+]?\\b(?:[0-9]*\\.)?[0-9]+\\b/', $value))
 		{
 			if (isset($validate['min']) && $value < $validate['min'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", larger than {$validate['min']}";
+			}
 			elseif (isset($validate['max']) && $value > $validate['max'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", smaller than {$validate['max']}";
+			}
 			else
 				$result['result'] = true;
 		}
@@ -258,16 +261,22 @@ class Validator
 		return $answer;
 	}
 
-	function validateNumeric($value, $validate)
+	function validateNumeric($value, $validate = array())
 	{
 		$result = array('message' => "Must be a numeric value");
 
 		if (is_numeric($value))
 		{
 			if (isset($validate['min']) && $value < $validate['min'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", larger than {$validate['min']}";
+			}
 			elseif (isset($validate['max']) && $value > $validate['max'])
+			{
 				$result['result'] = false;
+				$result['message'] .=  ", smaller than {$validate['max']}";
+			}
 			else
 				$result['result'] = true;
 		}
@@ -361,9 +370,16 @@ class Validator
 		return $answer;
 	}
 
-	function validateAlphaNumeric($value, $validate) // Could write, but already done in JS
+	function validateAlphaNumeric($value, $validate = array())
 	{
-		$result['result'] = true;
+		$result = array('message' => "Must be an AlphaNumeric value (no symbols)");
+
+		if (preg_match('/\\A[\\w\\s]+\\z/', $value)) {
+			$result['result'] = true;
+		} else {
+			$result['result'] = false;
+		}
+
    		return $result;
 	}
 
@@ -379,7 +395,7 @@ class Validator
 		return $answer;
 	}
 
-	function validateMoney($value, $validate)
+	function validateMoney($value, $validate = array())
 	{
 		$result = array('message' => "Must be a value of money (numeric)");
 		if (preg_match('/\\b[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?\\b/', $value))
@@ -404,7 +420,7 @@ class Validator
 		return $answer;
 	}
 
-	function validateZip($value, $validate) // VALIDATES US OR CANADA
+	function validateZip($value, $validate = array()) // VALIDATES US OR CANADA
 	{
 		$result = array('message' => "Must be a properly formatted US or Canadian zip code");
 
@@ -440,7 +456,7 @@ class Validator
 		return $answer;
 	}
 
-	function validateEmail($value, $validate)
+	function validateEmail($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted valid email address, eg: user@domain.com");
 
@@ -454,7 +470,7 @@ class Validator
 		return $result;
 	}
 
-	function validateDomain($value, $validate)
+	function validateDomain($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted domain, eg: domain.com");
 
@@ -473,7 +489,7 @@ class Validator
 		return "";
 	}
 
-	function validateUrl($value, $validate)
+	function validateUrl($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted url, eg: http://domain.com/directory");
 
@@ -516,7 +532,7 @@ class Validator
 		return "";
 	}
 
-	function validateIP($value, $validate)
+	function validateIP($value, $validate = array())
 	{
 		$result = array('message' => "Must be a ip address in the format XXX.XXX.XXX.XXX");
 
@@ -537,7 +553,7 @@ class Validator
 		//return Validator::getRegExpAttr($validate);
 	}
 
-	function validatePassword($value, $validate) // AT LEAST 6 DIGITS, 1 UC, 2LC, 1 NUMERAL
+	function validatePassword($value, $validate = array()) // AT LEAST 6 DIGITS, 1 UC, 2LC, 1 NUMERAL
 	{
 		$result = array('message' => "Must be a secure password consisting of 1 UC, 2 LC and 1 Num, no shorter than 6 characters");
 		if (preg_match('/\\A(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])\\S{6,}\\z/', $value))
@@ -556,7 +572,7 @@ class Validator
 		return "";
 	}
 
-	function validateSSN($value, $validate)
+	function validateSSN($value, $validate = array())
 	{
 		$result = array('message' => "Must be a valid US Social Security Number");
 		if (preg_match('/\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b/', $value))
@@ -595,7 +611,7 @@ class Validator
 			return array('result' => false);
 	}
 
-	function validateDate($value, $validate)
+	function validateDate($value, $validate = array())
 	{
 		if (!isset($validate['format']))
 			$validate['format'] = "universal";

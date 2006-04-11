@@ -3,7 +3,7 @@
 * Zoop Guicontrol
 * @package gui
 * @subpackage guicontrol
-* 
+*
 */
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -19,12 +19,6 @@ include_once(dirname(__file__) . "/../plugins/function.loadeditor.php");
 
 class editor extends GuiControl
 {
-
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');

@@ -3,7 +3,7 @@
 * Zoop Guicontrol
 * @package gui
 * @subpackage guicontrol
-* 
+*
 */
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,7 +17,6 @@
 
 class email extends GuiControl
 {
-
 	function validate()
 	{
 		return true;
@@ -32,11 +31,6 @@ class email extends GuiControl
 			$email = "";
 		return $email;
 
-	}
-
-	function setValue($value)
-	{
-		$this->params['value'] = $value;
 	}
 
 	function getLabelName()

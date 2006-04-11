@@ -15,11 +15,6 @@
 
 class slider extends GuiControl
 {
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');
@@ -27,7 +22,6 @@ class slider extends GuiControl
 
 	function view()
 	{
-
 		$value = $this->getValue();
 		return $this->params['index'][$value];
 	}
