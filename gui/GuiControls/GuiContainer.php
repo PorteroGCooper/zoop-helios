@@ -25,15 +25,18 @@ class GuiContainer extends GuiControl
 	{
 		$valid = true;
 
-		foreach ($this->params['controls'] as $control)
+		foreach ($this->params['controls'] as $type => $typeobj)
 		{
-			$validate = $control->validate();
-
-			if ($validate !== true)
+			foreach ($typeobj as $control)
 			{
- 				$varray[$control->name] = $validate;
- 				$control->setParam('errorState', $validate);
-				$valid = false;
+				$validate = $control->validate();
+
+				if ($validate !== true)
+				{
+					$varray[$control->name] = $validate;
+					$control->setParam('errorState', $validate);
+					$valid = false;
+				}
 			}
 		}
 
@@ -41,31 +44,6 @@ class GuiContainer extends GuiControl
 			return $valid;
 		else
 			return array('text' => "This form failed validation, please examine and correct.", "value" => $varray);
-	}
-
-	function renderViewState()
-	{
-		$html = parent::renderViewState();
-
-		$controlsList = $this->encode($this->getControlsList());
-		$name = $this->getName();
-		$html .= "<input type=\"hidden\" name=\"{$name}[controlsList]\" value=\"$controlsList\">";
-
-		return $html;
-	}
-
-	function getControlsList()
-	{
-		$list = array();
-
-		foreach ( $this->getParam('controls') as $control)
-
-		{
-			$type = $control->params['type'];
-			$list[$type] = $type;
-		}
-
-		return $list;
 	}
 }
 ?>

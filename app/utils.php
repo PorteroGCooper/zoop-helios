@@ -293,7 +293,6 @@ function xorDecrypt($message, $key)
 * simply puts "<pre>" tags around the print_r call so the formatting looks good in a browser.
 *
 * @param mixed $mixed
-* @param function $function
 */
 function echo_r($mixed)
 {
@@ -309,21 +308,35 @@ function echo_r($mixed)
 * die() doesn't do a good job of dumping objects and arrays. this one does what die should...
 *
 * @param mixed $mixed
-* @param function $function
 */
 function die_r($mixed)
 {
 	echo_r($mixed);
 	die();
 }
-
+/**
+* simply puts "<pre>" tags around the var_dump call so the formatting looks good in a browser.
+*
+* @param mixed $mixed
+*/
 function dump_r($mixed)
 {
 	echo("<pre>");
 	var_dump($mixed);
 	echo("</pre>");
 }
-
+/**
+* draws a div with a colored border around an echo_r call. Very useful to keep track of multiple echo_r calls.
+*
+* @param mixed $mixed
+* @param string $color any acceptable color string that works with css
+*/
+function show_r($mixed, $color = "#000000")
+{
+	echo "<div align=\"left\" style=\"border: 1px solid $color;\">";
+	echo_r($mixed);
+	echo "</div>";
+}
 /**
 *
 * @access public

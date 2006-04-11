@@ -96,23 +96,16 @@ function initGuiControls()
 
 function loadChildControls(&$controlData)
 {
-	foreach ($controlData as $type)
+	foreach ($controlData as $type => $typeobj)
 	{
-		foreach ($type as $name)
+		includeGuiControl($type);
+
+		foreach ($typeobj as $name)
 		{
 			if (is_array($name))
 			{
 				foreach ($name as $paramname => $value)
 				{
-					if ($paramname == 'controlsList')
-					{
-						$childControlList = unserialize(gzuncompress(base64_decode($value)));
-						foreach ($childControlList as $ccontrol)
-						{
-							includeGuiControl($ccontrol);
-						}
-					}
-
 					if ($paramname == 'controls')
 					{
 						loadChildControls($value);
@@ -125,13 +118,11 @@ function loadChildControls(&$controlData)
 
 function &parseControlData(&$controlData)
 {
-	$controls = array();
-
 	foreach($controlData as $type => $controlset)
 	{
 		foreach($controlset as $name => $controlitems)
 		{
-			$controls[$type][$name] = getGuiControl($type, $name, false);
+			$controls[$type][$name] = &getGuiControl($type, $name, true);
 
 			if(is_array($controlitems))
 			{
@@ -139,7 +130,10 @@ function &parseControlData(&$controlData)
 				{
 					if($paramname == 'controls')
 					{
+						if (isset($childControls))
+							unset($childControls);
 						$childControls = &parseControlData($value);
+
 						foreach($childControls as $childType => $childSet)
 						{
 							foreach($childSet as $child)
@@ -171,9 +165,14 @@ function &parseControlData(&$controlData)
 				// SHOULD PROBABLY BE REMOVED AFTER MORE TESTING OCCURS
 				$controls[$type][$name]->setValue($controlitems);
 			}
+
+			// We have reached this point but still need to assign the newly POSTED controls into their proper location.
+			if (isset($childControls))
+			{
+				$controls[$type][$name]->params['controls'] = $childControls;
+			}
 		}
 	}
-
 	return $controls;
 }
 
