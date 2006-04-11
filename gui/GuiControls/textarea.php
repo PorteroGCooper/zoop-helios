@@ -43,11 +43,11 @@ class TextArea extends GuiControl
 					break;
 				case 'width': // alias for cols
 					if ($value != '')
-						$attrs[] = "cols\='$value'";
+						$attrs[] = "cols='$value'";
 					break;
 				case 'height': // alias for rows
 					if ($value != '')
-						$attrs[] = "rows\='$value'";
+						$attrs[] = "rows='$value'";
 					break;
 				case 'readonly':
 				case 'disabled':

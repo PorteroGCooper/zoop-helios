@@ -72,7 +72,7 @@ class form
 		return $var;
 	}
 
-	function deleteRecord ($table, $id, $type = 0)
+	function deleteRecord ($table, $id, $type = false)
 	{
 		$dbconnname = $this->dbconnname;
 		global $$dbconnname;
@@ -80,7 +80,10 @@ class form
 		$idfield = $this->passIdfield($table);
 
 		if (isset($this->tables->$table->deletedfield))
+		{
 			$deletedfield = $this->tables->$table->deletedfield;
+			$type = 1;
+		}
 
 		if ($type == 0) # This means actually Delete the record
 			$query = "DELETE FROM $table WHERE $idfield = $id";
@@ -150,6 +153,8 @@ class form
 	function storeRecord($table, $id)
 	{
 		$dbconnname = $this->dbconnname;
+
+		$this->sql_connect($dbconnname);
 
 		global $$dbconnname;
 

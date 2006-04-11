@@ -26,7 +26,7 @@ class component_db extends component
 
 	function run()
 	{
-		if (defined(sql_connect) && sql_connect)
+		if (defined('sql_connect') && sql_connect)
 			sql_connect();
 	}
 }

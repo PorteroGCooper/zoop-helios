@@ -18,11 +18,11 @@
 function initGuiControls()
 {
 	global $controlData;
+
 	$GLOBALS['controlData'] = NULL;
 	$GLOBALS['controls'] = NULL;
 	if($_SERVER["REQUEST_METHOD"] == 'POST')
 	{
-
 		$post = getRawPost();
 
 		if(isset($post['controls']))
@@ -85,8 +85,10 @@ function initGuiControls()
 				foreach($controllist as $name => $control)
 				{
 					$_SESSION['controls'][$type][$name]['viewState'] = base64_encode(gzcompress(serialize($control->getParams())));
+					$_SESSION['controls'][$type][$name]['value'] = $control->getValue();
 				}
 			}
+
 			redirect(VIRTUAL_URL);
 		}
 	}
@@ -147,7 +149,9 @@ function &parseControlData(&$controlData)
 						}
 					}
 					else if($paramname != 'viewState')
+					{
 						$controls[$type][$name]->setParam($paramname,  $value);
+					}
 					else
 					{
 						$viewState = $controls[$type][$name]->decode($value);
@@ -163,6 +167,8 @@ function &parseControlData(&$controlData)
 			}
 			else
 			{
+				// I DON'T THINK THIS EVER OCCURS?? SPF 4/9/06
+				// SHOULD PROBABLY BE REMOVED AFTER MORE TESTING OCCURS
 				$controls[$type][$name]->setValue($controlitems);
 			}
 		}
@@ -277,11 +283,14 @@ class GuiControl
 	{
 		if(isset($this->params['validate']))
 		{
-
 			if (!isset($this->params['validate']['type'])) // make sure essential elements are set
 			{
 				if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
+				{
 						$this->params['validate']['type'] = 'length';
+						$this->params['validate']['min'] = 1;
+						$this->params['validate']['required'] = true;
+				}
 				else
 					return true;
 			}
@@ -299,6 +308,14 @@ class GuiControl
 			}
 		}
 		return true;
+	}
+
+	function getErrorStatus()
+	{
+		if (isset($this->params['errorState']))
+			return false;
+		else
+			return true;
 	}
 
 	function getValidationAttr($validate)
@@ -335,12 +352,21 @@ class GuiControl
 
 	function getValue()
 	{
-		if (isset($this->params['text']))
-			return $this->params['text'];
-		elseif (isset($this->params['value']))
+		if (isset($this->params['value']))
 			return $this->params['value'];
 		else
 			return;
+	}
+
+	function setValue($value, $force = false)
+	{
+		if (!$force)
+		{
+			if (!isset($this->params['value']) || !$this->getErrorStatus())
+				$this->setParam('value', $value);
+		}
+		else
+			$this->setParam('value', $value);
 	}
 
 	function renderViewState()
@@ -374,7 +400,7 @@ class GuiControl
 
 	function getLabelName()
 	{
-		$label = $this->getName();
+		$label = $this->getName() . "[value]";
 		return $label;
 	}
 
@@ -394,5 +420,4 @@ class GuiControl
 		return $viewState;
 	}
 }
-
 ?>

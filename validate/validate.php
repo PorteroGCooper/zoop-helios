@@ -1,6 +1,6 @@
 <?
 /**
-* @package storage
+* @package validate
 */
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -12,9 +12,11 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-// include_once("Validate.php");
 /**
-* @package storage
+* @package validate
+* 
+* @author  Steve Francia webmaster@supernerd.com
+* @static 
 */
 class Validator
 {

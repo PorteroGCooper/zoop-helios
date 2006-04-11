@@ -13,6 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+require(dirname(__file__) . "/forms2.php");
 require(dirname(__file__) . "/forms.php");
 require(dirname(__file__) . "/table.php");
 require(dirname(__file__) . "/record.php");

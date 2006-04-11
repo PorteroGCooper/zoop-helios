@@ -100,10 +100,11 @@ function smarty_function_forms_form($params, &$smarty)
 					}
 
 					$control = &getGuiControl($type, $name);
+
 					if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor')		// No need for htmlspecialchars function to run.
-						$control->setParam('value', $value);
+						$control->setValue($value);
 					else
-						$control->setParam('value', htmlspecialchars($value));
+						$control->setValue(htmlspecialchars($value));
 
 					if (isset($field->description->validation))
 						$control->setParam('validate', $field->description->validation);
@@ -133,27 +134,25 @@ function smarty_function_forms_form($params, &$smarty)
 					$formpart = $control->view();
 				}
 
-			$output .= "<tr>";
-			$titlestr = "";
-			if ($field->description->title)
-				$titlestr = "title=\"{$field->description->title}\"";
-			$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\" $titlestr>\r";
-			(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
-			$output .= $field->description->label . ":</label></td>\r";
-			$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
-			$output .= "</tr>";
+				$output .= "<tr>";
+				$titlestr = "";
+				if ($field->description->title)
+					$titlestr = "title=\"{$field->description->title}\"";
+				$output .= "<td valign=\"top\" class=\"labelcell\">" . "<label for=\"$labelname\" $titlestr>\r";
+				(isset($field->description->validation['required']) && $field->description->validation['required'] && $form_type == "form" ) ? $output .= "<span style=\"color:red;\">*</span>" : "";
+				$output .= $field->description->label . ":</label></td>\r";
+				$output .= "<td valign=\"top\" class=\"fieldcell\">" . $formpart . "</td>\r";
+				$output .= "</tr>";
 
 
-			if ($counter == $break)
-			{
-				$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
-				$counter = -1;
-			}
-			$counter++;
-
+				if ($counter == $break)
+				{
+					$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
+					$counter = -1;
+				}
+				$counter++;
 			}
 		}
-
         }
         $output .= "</table></td></tr></table>";
 
@@ -168,5 +167,4 @@ function smarty_function_forms_form($params, &$smarty)
 
 
 /* vim: set expandtab: */
-
 ?>

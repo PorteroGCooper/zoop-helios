@@ -16,12 +16,6 @@
 
 class text extends GuiControl
 {
-
-	function setValue($value)
-	{
-		$this->params['text'] = $value;
-	}
-
 	function getPersistentParams()
 	{
 		return array('validate');
@@ -29,9 +23,10 @@ class text extends GuiControl
 
 	function render()
 	{
-		$html = $this->renderViewState();
 		$attrs = array();
 		$Sattrs = array();
+
+		$html = "";
 
 		foreach ($this->params as $parameter => $value)
 		{
@@ -72,6 +67,8 @@ class text extends GuiControl
 			$errorState = $this->params['errorState'];
 			$html .=" <br><span style=\"color: red;\">The value \"{$errorState['value']}\" {$errorState['text']} </span>";
 		}
+
+		$html = $this->renderViewState() . $html;
 
 		return $html;
 	}

@@ -17,6 +17,7 @@ class database
 {
 	var $db = null;
 	var $transaction = 0;
+
 	function database($dsn)
 	{
 
@@ -714,7 +715,7 @@ class database
 	{
 		return $this->db->quoteIdentifier($inString);
 	}
-	
+
 	function escape_tablename($inString)
 	{
 		$name = explode(".", $inString);

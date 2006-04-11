@@ -324,8 +324,9 @@ class table
 			}
 			else
 			{
-				echo("you have modified a field that doesn't exist. Here is an echo..");
-				echo_r($this->fields);
+				echo("you have modified a field that doesn't exist. Here is an echo of that field");
+				echo_r($field);
+				echo_backtrace();
 			}
 		}
 		if (isset($swhere[0]))
