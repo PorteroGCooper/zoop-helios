@@ -15,8 +15,24 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * checkbox
+ *
+ * @uses GuiControl
+ * @package
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class checkbox extends GuiControl
 {
+	/**
+	 * validate
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function validate()
 	{
 		if(isset($this->params['validate']))
@@ -36,19 +52,40 @@ class checkbox extends GuiControl
 		return true;
 	}
 
+	/**
+	 * getValue
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getValue()
 	{
-		if (isset($this->params['value']) && $this->params['value'] != 0)
+		if (isset($this->params['value']) && $this->params['value'])
+		{
+
 			return 1;
+		}
 		else
 			return 0;
 	}
 
+	/**
+	 * getPersistentParams
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getPersistentParams()
 	{
 		return array('validate');
 	}
 
+	/**
+	 * render
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function render()
 	{
 		$html = $this->renderViewState();

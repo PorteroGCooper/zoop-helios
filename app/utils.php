@@ -70,17 +70,8 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 }
 
 
-///////////////////////////////////////////////////////
-//
-//	Function: RedirectBoS( )
-//
-//		Terminates program execution and redirects the
-//	client's browser to the base URL of the script.
-//
-///////////////////////////////////////////////////////
-
 /**
-* redirect to the base of the applicatoin
+* redirect to the base of the application
 *
 * redirect using method $redirectType
 *
@@ -134,6 +125,13 @@ function ZoneRedirect( $url, $depth = 0 )
 }
 
 
+/**
+ * checkValidDate 
+ * 
+ * @param mixed $datestring 
+ * @access public
+ * @return void
+ */
 function checkValidDate( $datestring )
 {
 	$dt = $datestring;
@@ -165,6 +163,15 @@ if($dst)
 	$tz = str_replace('D', 'S', $tz);
 }
 
+/**
+ * FormatPostgresDate 
+ * 
+ * @param mixed $inPostgresDate 
+ * @param mixed $inFormatString 
+ * @param mixed $inTimeZone 
+ * @access public
+ * @return void
+ */
 function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
 {
 	if(strstr($inFormatString, "%") === false)
@@ -252,13 +259,15 @@ function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = nul
 		}
 	}
 
-/*********************************************************************\
-	function: xorEncrypt
-
-	purpose: 	accepts a message and an 8 bit binary key
-				returns the message encrypted.
-\*********************************************************************/
-
+/**
+ * xorEncrypt 
+ *
+ * accepts a message and an 8 bit binary key and returns the message encrypted.
+ * @param mixed $message 
+ * @param mixed $key 
+ * @access public
+ * @return void
+ */
 function xorEncrypt($message, $key)
 {
     $enc = "";
@@ -271,13 +280,15 @@ function xorEncrypt($message, $key)
 	return $enc;
 }
 
-/*********************************************************************\
-	function: xorDecrypt
-
-	purpose: 	accepts a message and an 8 bit binary key
-				returns the message decrypted.
-\*********************************************************************/
-
+/**
+ * xorDecrypt 
+ *
+ * 	accepts a message and an 8 bit binary key and returns the message decrypted 
+ * @param mixed $message 
+ * @param mixed $key 
+ * @access public
+ * @return void
+ */
 function xorDecrypt($message, $key)
 {
     $enc = "";
@@ -352,6 +363,14 @@ function fetch_r($mixed)
 	return $tmp;
 }
 
+/**
+ * &MapArray 
+ * 
+ * @param mixed $transformee 
+ * @param mixed $transformer 
+ * @access public
+ * @return void
+ */
 function &MapArray(&$transformee, &$transformer)
 {
 	$result = array();
@@ -366,6 +385,13 @@ function &MapArray(&$transformee, &$transformer)
 	return $result;
 }
 
+/**
+ * validEmailAddress 
+ * 
+ * @param mixed $email 
+ * @access public
+ * @return void
+ */
 function validEmailAddress ($email)
 {
 	if (eregi("[_\.0-9a-z-]+@[0-9a-z][-0-9a-z\.]+", $email, $check))
@@ -378,12 +404,25 @@ function validEmailAddress ($email)
 	}
 }
 
+/**
+ * getmicrotime 
+ * 
+ * @access public
+ * @return void
+ */
 function getmicrotime()
 {
 	list($usec, $sec) = explode(" ",microtime());
 	return ((float)$usec + (float)$sec);
 }
 
+/**
+ * markprofile 
+ * 
+ * @param int $running_total 
+ * @access public
+ * @return void
+ */
 function markprofile($running_total = 0)
 {
 	if(app_status == 'dev')
@@ -414,6 +453,13 @@ function markprofile($running_total = 0)
 	}
 }
 
+/**
+ * fetch_backtrace 
+ * 
+ * @param mixed $full 
+ * @access public
+ * @return void
+ */
 function fetch_backtrace($full = false)
 {
 	if (function_exists("debug_backtrace"))
@@ -524,8 +570,15 @@ function fetch_backtrace($full = false)
 	return $backtrace;
 }
 
-//deprecated
-//user ksort or krsort instead
+/**
+ * array_sortonkeys 
+ * 
+ * @param mixed $inArray 
+ * @param int $forward 
+ * @deprecated use ksort or krsort instead
+ * @access public
+ * @return void
+ */
 function array_sortonkeys($inArray, $forward = 1)
 {
 	if($forward)
@@ -534,6 +587,14 @@ function array_sortonkeys($inArray, $forward = 1)
 		krsort($inArray);
 }
 
+/**
+ * urlEncodeArray 
+ * 
+ * @param mixed $array 
+ * @param string $keyname 
+ * @access public
+ * @return void
+ */
 function urlEncodeArray($array, $keyname = '') {
 	$str = '';
 	foreach ($array as $key => $val) {
@@ -551,6 +612,13 @@ function urlEncodeArray($array, $keyname = '') {
 }
 
 
+/**
+ * BUG 
+ * 
+ * @param string $desc 
+ * @access public
+ * @return void
+ */
 function BUG($desc = "")
 {
 	if (show_warnings == false)
@@ -570,6 +638,13 @@ function BUG($desc = "")
 	}
 }
 
+/**
+ * echo_backtrace 
+ * 
+ * @param mixed $full 
+ * @access public
+ * @return void
+ */
 function echo_backtrace($full = false)
 {
 	echo fetch_backtrace($full);
@@ -609,6 +684,13 @@ function strip_gpc_slashes ($input)
 	return $output;
 }
 
+/**
+ * __VerifyHTMLTree 
+ * 
+ * @param mixed $html 
+ * @access protected
+ * @return void
+ */
 function __VerifyHTMLTree($html)
 {
 	require_once('XML/Tree.php');
@@ -622,6 +704,13 @@ function __VerifyHTMLTree($html)
 	return substr($answer, 15, strlen($answer) - 31);
 }
 
+/**
+ * __VerifyHTMLTree_ex 
+ * 
+ * @param mixed $htmltree 
+ * @access protected
+ * @return void
+ */
 function __VerifyHTMLTree_ex(&$htmltree)
 {
 	global $allowed_tags, $allowed_attributes;
@@ -651,6 +740,13 @@ function __VerifyHTMLTree_ex(&$htmltree)
 	}
 }
 
+/**
+ * VerifyText 
+ * 
+ * @param mixed $inText 
+ * @access public
+ * @return void
+ */
 function VerifyText($inText)
 {
 	$inText = br2nl($inText);
@@ -659,6 +755,7 @@ function VerifyText($inText)
 	else
 		return $inText;
 }
+
 /**
 * Companion to nl2br, convert "<br>" tags to new line characters
 *
@@ -672,6 +769,13 @@ function br2nl($text) {
 }
 
 
+/**
+ * VerifyTextOrArray 
+ * 
+ * @param mixed $array 
+ * @access public
+ * @return void
+ */
 function VerifyTextOrArray($array)
 {
 	if (!is_array($array))
@@ -695,6 +799,13 @@ function VerifyTextOrArray($array)
 	return $return;
 }
 
+/**
+ * VerifyInt 
+ * 
+ * @param mixed $inNumber 
+ * @access public
+ * @return void
+ */
 function VerifyInt($inNumber)
 {
 	if(defined('filter_input') && !filter_input)
@@ -705,7 +816,13 @@ function VerifyInt($inNumber)
 	return (integer)$inNumber;
 }
 
-//reads a key(for authentication between apps) from the shared key file.
+/**
+ * get_shared_key 
+ * 
+ * reads a key(for authentication between apps) from the shared key file.
+ * @access public
+ * @return void
+ */
 function get_shared_key()
 {
 	$file = fopen(shared_key_path, "r");
@@ -714,6 +831,13 @@ function get_shared_key()
 	return $key;
 }
 
+/**
+ * get_key 
+ * 
+ * @param mixed $type 
+ * @access public
+ * @return void
+ */
 function get_key($type)
 {
 	$string = "{$type}_key_path";
@@ -734,6 +858,8 @@ function get_key($type)
   * Require input to be true, error triggered if not true.
   *
   * @param       bool   $bool    The conditional value
+  * @access public
+  * @return void
   */
 function RequireCondition($bool)
 {
@@ -756,6 +882,17 @@ function RequireCondition($bool)
 	}
 }
 
+/**
+ * remoteObjectCall 
+ * 
+ * @param mixed $url 
+ * @param mixed $object 
+ * @param mixed $constparams 
+ * @param mixed $method 
+ * @param mixed $methodparams 
+ * @access public
+ * @return void
+ */
 function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
 {
 	$key = get_shared_key();
@@ -800,6 +937,8 @@ function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
   * @param       string   $inFilename    	The absolute location of the file
   * @param       string   $inContents    	The contents to put into file
   * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
+  * @access public
+  * @return void
   */
 function file_set_contents($inFilename, $inContents, $mode = 'w')
 {
@@ -879,6 +1018,13 @@ function Decrypt($key, $input)
 //
 //	cli stuff
 //
+/**
+ * RunCommand 
+ * 
+ * @param mixed $inCommand 
+ * @access public
+ * @return void
+ */
 function RunCommand($inCommand)
 {
 	$command = $inCommand;
@@ -887,6 +1033,16 @@ function RunCommand($inCommand)
 	passthru($command);
 }
 
+/**
+ * SetCompletionStatus 
+ * 
+ * @param mixed $statusItemName 
+ * @param mixed $start 
+ * @param mixed $end 
+ * @param mixed $goodEnd 
+ * @access public
+ * @return void
+ */
 function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodEnd = NULL)
 {
 	$oldStatus = GetCompletionStatus($statusItemName);
@@ -903,6 +1059,13 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
 	file_set_contents(app_status_dir . "/" . $statusItemName, "$start $end $goodEnd");
 }
 
+/**
+ * &GetCompletionStatus 
+ * 
+ * @param mixed $statusItemName 
+ * @access public
+ * @return void
+ */
 function &GetCompletionStatus($statusItemName)
 {
 	$data = file_get_contents(app_status_dir . "/" . $statusItemName);
@@ -977,12 +1140,15 @@ function mkdir_r($filename)
  }
 
 
-// INPUT :
-// $pHexColor : ie #339933
-// OUTPUT :
-// return rgb array
-// Source : Rini Setiadarma, http://www.oodie.com/
-
+/**
+ * HexToRgb 
+ * 
+ * @author Rini Setiadarma
+ * @link   http://www.oodie.com/
+ * @param  string $pHexColor 
+ * @access public
+ * @return array rgb array
+ */
 function HexToRgb($pHexColor)
 {
 
@@ -1000,8 +1166,16 @@ function HexToRgb($pHexColor)
 }
 
 
-//	give this funtion a 2 dimentional array and it will stream out a csv file to the browser
-
+/**
+ * StreamCSV 
+ *
+ * give this funtion a 2 dimentional array and it will stream out a csv file to the browser
+ * @param mixed $inData 
+ * @param mixed $inFilename 
+ * @param mixed $inColumns 
+ * @access public
+ * @return void
+ */
 function StreamCSV($inData, $inFilename, $inColumns = NULL)
 {
 	$lines = array();
@@ -1140,6 +1314,14 @@ function HTML2Txt($inHTML)
 }
 
 
+/**
+ * seconds_to_time 
+ * 
+ * @param mixed $seconds 
+ * @param string $return 
+ * @access public
+ * @return void
+ */
 function seconds_to_time($seconds, $return = "array")
 {
 	$months = 0;
@@ -1209,6 +1391,13 @@ function seconds_to_time($seconds, $return = "array")
 	return array('months' => $months, 'days' => $days, 'hours' => $hours, 'minutes' => $minutes, 'seconds' => $seconds);
 }
 
+/**
+ * fuzzy_seconds_to_time 
+ * 
+ * @param mixed $seconds 
+ * @access public
+ * @return void
+ */
 function fuzzy_seconds_to_time($seconds)
 {
 	$timearray = seconds_to_time($seconds);
@@ -1229,6 +1418,15 @@ function fuzzy_seconds_to_time($seconds)
 		return "{$timearray['seconds']} seconds";
 }
 
+/**
+ * define_once 
+ *
+ * use instead of define to insure that the the $name is not being redefined 
+ * @param mixed $name 
+ * @param mixed $value 
+ * @access public
+ * @return void
+ */
 function define_once($name, $value){
 	if(!defined($name))
 		define($name, $value);

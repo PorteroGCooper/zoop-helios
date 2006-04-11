@@ -17,13 +17,35 @@
 
 include_once(dirname(__file__) . "/../plugins/function.loadeditor.php");
 
+/**
+ * editor 
+ * 
+ * @uses GuiControl
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class editor extends GuiControl
 {
+	/**
+	 * getPersistentParams 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getPersistentParams()
 	{
 		return array('validate');
 	}
 
+	/**
+	 * render 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function render()
 	{
 		global $smarty;

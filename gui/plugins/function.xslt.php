@@ -4,7 +4,7 @@
  * @package gui
  * @subpackage plugins
  */
-/*
+/**
  * Smarty plugin
  * -------------------------------------------------------------
  * Type:     function

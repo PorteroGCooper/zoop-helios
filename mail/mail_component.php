@@ -16,8 +16,24 @@
 
 include(dirname(__file__) . "/message.php");
 
+/**
+ * component_mail 
+ * 
+ * @uses component
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class component_mail extends component
 {
+	/**
+	 * component_mail 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function component_mail()
 	{
 		$this->requireComponent('gui');

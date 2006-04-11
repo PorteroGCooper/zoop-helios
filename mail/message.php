@@ -18,8 +18,27 @@ require_once 'Mail.php';
 * @package mail
 * @todo -c Remove reliance on html2text(uses GPL).
 */
+
+/**
+ * message 
+ * 
+ * @uses gui
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @author John Lesueur
+ * @author Rick Gigger
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class message extends gui
 {
+	/**
+	 * message 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function message()
 	{
 		$this->Smarty();
@@ -41,6 +60,18 @@ class message extends gui
 		$this->assign("strings", $strings);
 	}
 
+	/**
+	 * send 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $inTemplateName 
+	 * @param string $inType 
+	 * @access public
+	 * @return void
+	 */
 	function send($from, $to, $cc, $subject, $inTemplateName, $inType = "text")
 	{
 		$body = $this->fetch(fw_gui_messages . "/" . $inTemplateName);
@@ -63,11 +94,35 @@ class message extends gui
 	}
 
 	//	this is mostly just for debugging
+	/**
+	 * display 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $inTemplateName 
+	 * @param string $inType 
+	 * @access public
+	 * @return void
+	 */
 	function display($from, $to, $cc, $subject, $inTemplateName, $inType = "text")
 	{
 		gui::display(fw_gui_messages . "/" . $inTemplateName);
 	}
 
+	/**
+	 * sendEmail 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $body 
+	 * @param string $type 
+	 * @access public
+	 * @return void
+	 */
 	function sendEmail($from, $to, $cc, $subject, $body, $type = "text")
 	{
 
@@ -145,14 +200,47 @@ class message extends gui
  		$tmp = $mail->send($to, $hdrs, $body);
 	}
 
+	/**
+	 * sendTextEmail 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $body 
+	 * @access public
+	 * @return void
+	 */
 	function sendTextEmail($from, $to, $cc, $subject, $body)
 	{
 		message::sendEmail($from, $to, $cc, $subject, $body, "text");
 	}
+	/**
+	 * sendHTMLEmail 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $body 
+	 * @access public
+	 * @return void
+	 */
 	function sendHTMLEmail($from, $to, $cc, $subject, $body)
 	{
 		message::sendEmail($from, $to, $cc, $subject, $body, "html");
 	}
+	/**
+	 * sendMultipartEmail 
+	 * 
+	 * @param mixed $from 
+	 * @param mixed $to 
+	 * @param mixed $cc 
+	 * @param mixed $subject 
+	 * @param mixed $body 
+	 * @access public
+	 * @return void
+	 */
 	function sendMultipartEmail($from, $to, $cc, $subject, $body)
 	{
 		message::sendEmail($from, $to, $cc, $subject, $body, "multipart");

@@ -13,19 +13,93 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * record
+ *
+ * @package
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class record
 {
+	/**
+	 * id
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $id;
+	/**
+	 * dbconnname
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $dbconnname;
+	/**
+	 * table
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $table;
+	/**
+	 * idfield
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $idfield;
+	/**
+	 * tableref
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $tableref;
+	/**
+	 * values
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $values;
+	/**
+	 * order
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $order;
+	/**
+	 * error
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $error = false;
+	/**
+	 * submit
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $submit = "Update";
 
 
+	/**
+	 * record
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
+	 * @param mixed $idfield
+	 * @param mixed $dbconnname
+	 * @param string $array
+	 * @access public
+	 * @return void
+	 */
 	function record($table, $id, $idfield, $dbconnname, $array = "")
 	{
 		global $$dbconnname;
@@ -96,6 +170,12 @@ class record
 // 		$$dbconnname = &$db;
 // 	}
 
+	/**
+	 * xmlExport
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function xmlExport()
 	{
 		if (substr($this->idfield, -3) == "_id")

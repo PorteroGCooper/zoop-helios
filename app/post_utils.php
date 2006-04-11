@@ -4,6 +4,7 @@
 *
 * @package app
 * @subpackage post_utils
+* @author John Lesueur
 */
 
 // Copyright (c) 2005 Supernerd LLC and Contributors.
@@ -92,6 +93,13 @@ function GetPostHTML($inName)
 	return $answer;
 }
 
+/**
+ * getPostHTMLArray 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function getPostHTMLArray($inName)
 {
 	global $POSTCOPY;
@@ -139,6 +147,13 @@ function GetPostText($inName)
 		return false;
 }
 
+/**
+ * getPostTextArray 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function getPostTextArray($inName)
 {
 	global $POSTCOPY;
@@ -196,6 +211,13 @@ function GetPostInt($inName)
 		return false;
 }
 
+/**
+ * GetPostIntArray 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function GetPostIntArray($inName)
 {
 	global $POSTCOPY;
@@ -228,6 +250,13 @@ function GetPostIntArray($inName)
 	return $answer;
 }
 
+/**
+ * GetPostIntTree 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function GetPostIntTree($inName)
 {
 	global $POSTCOPY;
@@ -253,6 +282,13 @@ function GetPostIntTree($inName)
 	return __getPostIntTree($post);
 }
 
+/**
+ * __GetPostIntTree 
+ * 
+ * @param mixed $post 
+ * @access protected
+ * @return void
+ */
 function __GetPostIntTree($post)
 {
 	$answer = array();
@@ -270,6 +306,13 @@ function __GetPostIntTree($post)
 	}
 }
 
+/**
+ * GetPostTextTree 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function GetPostTextTree($inName)
 	{
 		global $POSTCOPY;
@@ -295,6 +338,13 @@ function GetPostTextTree($inName)
 		return __getPostTextTree($post);
 	}
 
+/**
+ * __GetPostTextTree 
+ * 
+ * @param mixed $post 
+ * @access protected
+ * @return void
+ */
 function __GetPostTextTree($post)
 {
 	$answer = array();
@@ -312,12 +362,25 @@ function __GetPostTextTree($post)
 	}
 }
 
+/**
+ * unsetPost 
+ * 
+ * @param mixed $inName 
+ * @access public
+ * @return void
+ */
 function unsetPost($inName)
 {
 	global $POSTCOPY;
 	unset($POSTCOPY[$inName]);
 }
 
+/**
+ * getPostKeys 
+ * 
+ * @access public
+ * @return void
+ */
 function getPostKeys()
 {
 	global $POSTCOPY;

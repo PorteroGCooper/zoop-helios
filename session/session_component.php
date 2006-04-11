@@ -15,8 +15,24 @@
 
 
 
+/**
+ * component_session 
+ * 
+ * @uses component
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class component_session extends component
 {
+	/**
+	 * init 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function init()
 	{
 		include(dirname(__file__) . "/session_handler_" . session_type . ".php");

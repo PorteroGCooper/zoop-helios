@@ -12,8 +12,24 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+/**
+ * component_db 
+ * 
+ * @uses component
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class component_db extends component
 {
+	/**
+	 * init 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function init()
 	{
 		require_once('DB.php');
@@ -24,6 +40,12 @@ class component_db extends component
 		include(dirname(__file__) . "/ComplexInsert.php");
 	}
 
+	/**
+	 * run 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function run()
 	{
 		if (defined('sql_connect') && sql_connect)

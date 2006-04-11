@@ -13,12 +13,47 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * cell 
+ * 
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class cell
 {
+	/**
+	 * name 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $name;
+	/**
+	 * value 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $value;
+	/**
+	 * description 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $description;
 
+	/**
+	 * cell 
+	 * 
+	 * @param mixed $name 
+	 * @param mixed $value 
+	 * @access public
+	 * @return void
+	 */
 	function cell($name, $value)
 	{
 		$this->name = $name;

@@ -13,32 +13,181 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * table
+ *
+ * @package
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class table
 {
+	/**
+	 * idfield
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $idfield;
+	/**
+	 * name
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $name;
+	/**
+	 * dbconnname
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $dbconnname;
+	/**
+	 * sequence
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $sequence;
+	/**
+	 * listlink
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $listlink = "edit";
+	/**
+	 * zone
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $zone = "default";
+	/**
+	 * id_location
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $id_location = "page"; // can be page or zone
+	/**
+	 * fields
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $fields;
+	/**
+	 * records
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $records;
+	/**
+	 * limit
+	 *
+	 * @var float
+	 * @access public
+	 */
 	var $limit = 25; # LIMIT OF -1 GIVES YOU ALL THE RECORDS
+	/**
+	 * cur
+	 *
+	 * @var float
+	 * @access public
+	 */
 	var $cur = 0;
+	/**
+	 * total
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $total;
+	/**
+	 * pages
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $pages;
+	/**
+	 * sort
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $sort;
+	/**
+	 * direction
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $direction = "ASC";
+	/**
+	 * deleteColumn
+	 *
+	 * @var float
+	 * @access public
+	 */
 	var $deleteColumn = 0;
+	/**
+	 * deletelink
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $deletelink = "delete";
+	/**
+	 * deletefield
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $deletefield = "deleted";
+	/**
+	 * wherestr
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $wherestr = "";
+	/**
+	 * order
+	 *
+	 * @var array
+	 * @access public
+	 */
 	var $order = array();
+	/**
+	 * search
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $search = array("type" => "all", "value" => null, "field" => null, "wherestr" => null);
+	/**
+	 * sql
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $sql = "";
 		// type can be individual or all or advanced
 
+	/**
+	 * table
+	 *
+	 * @param mixed $table
+	 * @param mixed $dbconnname
+	 * @access public
+	 * @return void
+	 */
 	function table($table, $dbconnname)
 	{
 		$this->name = $table;
@@ -128,6 +277,12 @@ class table
 		}
 	}
 
+	/**
+	 * searchClear
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function searchClear()
 	{
 		unset($this->search["value"]);
@@ -139,11 +294,26 @@ class table
 		$this->setAll("search['value_max']", null);
 	}
 
+	/**
+	 * setDbconnname
+	 *
+	 * @param mixed $dbconnname
+	 * @access public
+	 * @return void
+	 */
 	function setDbconnname($dbconnname)
 	{
 		$this->dbconnname = $dbconnname;
 	}
 
+	/**
+	 * setAll
+	 *
+	 * @param mixed $param
+	 * @param mixed $val
+	 * @access public
+	 * @return void
+	 */
 	function setAll($param, $val)
 	{
 		if (isset($this->fields))
@@ -156,6 +326,12 @@ class table
 		}
 	}
 
+	/**
+	 * getTotal
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getTotal()
 	{
 		$dbconnname = $this->dbconnname;
@@ -170,6 +346,13 @@ class table
 			$this->pages = 0;
 	}
 
+	/**
+	 * setupEnv
+	 *
+	 * @param mixed $get
+	 * @access public
+	 * @return void
+	 */
 	function setupEnv($get)
 	{
 		if (isset($get["sort"]))
@@ -204,6 +387,12 @@ class table
 		}
 	}
 
+	/**
+	 * setupRequirements
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function setupRequirements()
 	{
 		if (isset($_POST))
@@ -397,6 +586,12 @@ class table
 		}
 	}
 
+	/**
+	 * xmlExport
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function xmlExport()
 	{
 		$root = $this->name;
@@ -414,6 +609,13 @@ class table
 		return $XML;
 	}
 
+	/**
+	 * reorder
+	 *
+	 * @param mixed $array
+	 * @access public
+	 * @return void
+	 */
 	function reorder($array = false)
 	{
 		if ($array)

@@ -15,6 +15,13 @@
 /**
 * read the post/session data for gui controls
 */
+
+/**
+ * initGuiControls
+ *
+ * @access public
+ * @return void
+ */
 function initGuiControls()
 {
 	global $controlData;
@@ -94,6 +101,13 @@ function initGuiControls()
 	}
 }
 
+/**
+ * loadChildControls
+ *
+ * @param mixed $controlData
+ * @access public
+ * @return void
+ */
 function loadChildControls(&$controlData)
 {
 	foreach ($controlData as $type => $typeobj)
@@ -116,6 +130,13 @@ function loadChildControls(&$controlData)
 	}
 }
 
+/**
+ * &parseControlData
+ *
+ * @param mixed $controlData
+ * @access public
+ * @return void
+ */
 function &parseControlData(&$controlData)
 {
 	foreach($controlData as $type => $controlset)
@@ -176,6 +197,15 @@ function &parseControlData(&$controlData)
 	return $controls;
 }
 
+/**
+ * &getGuiControl
+ *
+ * @param mixed $type
+ * @param mixed $name
+ * @param mixed $useGlobal
+ * @access public
+ * @return void
+ */
 function &getGuiControl($type, $name, $useGlobal = true)
 {
 	if($useGlobal)
@@ -201,6 +231,13 @@ function &getGuiControl($type, $name, $useGlobal = true)
 	}
 }
 
+/**
+ * includeGuiControl
+ *
+ * @param mixed $type
+ * @access public
+ * @return void
+ */
 function includeGuiControl($type)
 {
 	$filename = strtolower($type).".php";
@@ -221,27 +258,73 @@ function includeGuiControl($type)
 */
 class GuiControl
 {
+	/**
+	 * params
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $params;
+	/**
+	 * persistent
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $persistent;
+	/**
+	 * parent
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	var $parent;
 
+	/**
+	 * GuiControl
+	 *
+	 * @param mixed $name
+	 * @access public
+	 * @return void
+	 */
 	function GuiControl($name)
 	{
 		$this->name = $name;
 		$this->persistent = $this->getPersistentParams();
 	}
 
+	/**
+	 * getPersistentParams
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getPersistentParams()
 	{
 		trigger_error("Please implement a getPersistentParams that returns an array of the names of
 				all parameters that must be persistent across requests.");
 	}
 
+	/**
+	 * setParam
+	 *
+	 * @param mixed $name
+	 * @param mixed $value
+	 * @access public
+	 * @return void
+	 */
 	function setParam($name, $value)
 	{
 		$this->params[$name] = $value;
 	}
 
+	/**
+	 * setParams
+	 *
+	 * @param mixed $valueArray
+	 * @access public
+	 * @return void
+	 */
 	function setParams($valueArray)
 	{
 		foreach($valueArray as $name => $value)
@@ -250,11 +333,25 @@ class GuiControl
 		}
 	}
 
+	/**
+	 * setParent
+	 *
+	 * @param mixed $parent
+	 * @access public
+	 * @return void
+	 */
 	function setParent($parent)
 	{
 		$this->parent = $parent;
 	}
 
+	/**
+	 * getParam
+	 *
+	 * @param mixed $name
+	 * @access public
+	 * @return void
+	 */
 	function getParam($name)
 	{
 		if (isset($this->params[$name]))
@@ -263,11 +360,23 @@ class GuiControl
 			return;
 	}
 
+	/**
+	 * getParams
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getParams()
 	{
 		return $this->params;
 	}
 
+	/**
+	 * getName
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getName()
 	{
 		$type = get_class($this);
@@ -278,6 +387,12 @@ class GuiControl
 			return "{$this->parent}[controls][$type][{$this->name}]";
 	}
 
+	/**
+	 * validate
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function validate()
 	{
 		if(isset($this->params['validate']))
@@ -309,6 +424,12 @@ class GuiControl
 		return true;
 	}
 
+	/**
+	 * getErrorStatus
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getErrorStatus()
 	{
 		if (isset($this->params['errorState']))
@@ -317,6 +438,13 @@ class GuiControl
 			return true;
 	}
 
+	/**
+	 * getValidationAttr
+	 *
+	 * @param mixed $validate
+	 * @access public
+	 * @return void
+	 */
 	function getValidationAttr($validate)
 	{
 		if (isset($validate['required']) && $validate['required'] == true && !isset($validate['type']))
@@ -331,6 +459,13 @@ class GuiControl
 			return '';
 		}
 	}
+	/**
+	 * setRequired
+	 *
+	 * @param mixed $req
+	 * @access public
+	 * @return void
+	 */
 	function setRequired($req = true)
 	{
 		$this->params['validate']['required'] = $req;
@@ -339,16 +474,37 @@ class GuiControl
 			setValidationType('length');
 	}
 
+	/**
+	 * setValidationType
+	 *
+	 * @param mixed $type
+	 * @access public
+	 * @return void
+	 */
 	function setValidationType($type)
 	{
 		$this->params['validate']['type'] = $type;
  	}
 
+ 	/**
+ 	 * setValidationParam
+ 	 *
+ 	 * @param mixed $name
+ 	 * @param mixed $value
+ 	 * @access public
+ 	 * @return void
+ 	 */
  	function setValidationParam($name, $value)
  	{
 		$this->params['validate'][$name] = $value;
  	}
 
+	/**
+	 * getValue
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getValue()
 	{
 		if (isset($this->params['value']))
@@ -357,6 +513,14 @@ class GuiControl
 			return;
 	}
 
+	/**
+	 * setValue
+	 *
+	 * @param mixed $value
+	 * @param mixed $force
+	 * @access public
+	 * @return void
+	 */
 	function setValue($value, $force = false)
 	{
 		if (!$force)
@@ -368,6 +532,12 @@ class GuiControl
 			$this->setParam('value', $value);
 	}
 
+	/**
+	 * renderViewState
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function renderViewState()
 	{
 		$viewState = $this->encode($this->getViewState());
@@ -376,38 +546,82 @@ class GuiControl
 		return $html;
 	}
 
+	/**
+	 * encode
+	 *
+	 * @param mixed $value
+	 * @access public
+	 * @return void
+	 */
 	function encode($value)
 	{
 		return base64_encode(gzcompress(serialize($value)));
 	}
 
+	/**
+	 * decode
+	 *
+	 * @param mixed $string
+	 * @access public
+	 * @return void
+	 */
 	function decode($string)
 	{
 		return unserialize(gzuncompress(base64_decode($string)));
 	}
 
+	/**
+	 * render
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function render()
 	{
 		$html = "Please implement a Render function for " . get_class($this);
 		return $html;
 	}
 
+	/**
+	 * view
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function view()
 	{
 		return $this->getValue();
 	}
 
+	/**
+	 * getLabelName
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getLabelName()
 	{
 		$label = $this->getName() . "[value]";
 		return $label;
 	}
 
+	/**
+	 * display
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function display()
 	{
 		echo ($this->render(true));
 	}
 
+	/**
+	 * getViewState
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function getViewState()
 	{
 		$viewState = array();

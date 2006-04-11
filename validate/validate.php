@@ -1,7 +1,4 @@
 <?
-/**
-* @package validate
-*/
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -11,15 +8,34 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-
 /**
-* @package validate
-*
-* @author  Steve Francia webmaster@supernerd.com
-* @static
-*/
+ * Validator
+ *
+ * Validator is intended to provide a standard means of validating types for the Zoop Framework.
+ * This validation is used by the guicontrols, forms and numerous other things to provide consistent validation.
+ * Validator provides validation functions for both php based validation, and generating validation instructions to a javascript validation library.
+ * php functions are named validateType
+ * js instruction functions are named getTypeAttr
+ *
+ * @package validate
+ * @version $id$
+ * @static
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class Validator
 {
+	/**
+	 * getAttr
+	 *
+	 * validate wrapper for the functions in this class.
+	 * the validate array must have 'type' => $type set for this to work.
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getAttr($validate) // FOR JS VALIDATION
 	{
 		$function = strtolower("get{$validate['type']}Attr");
@@ -33,6 +49,16 @@ class Validator
 			return ""; // Not every Validation function has a javascript counterpart.
 	}
 
+	/**
+	 * validate wrapper for the functions in this class.
+	 *
+	 * the validate array must have 'type' => $type set for this to work.
+	 *
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return array
+	 */
 	function validate($value, $validate) // FOR PHP VALIDATION
 	{
 		if (!isset($validate['type']))  // if no validation type is set, validate as true
@@ -61,6 +87,13 @@ class Validator
 			trigger_error("No known validation for {$validate['type']}");
 	}
 
+	/**
+	 * getPhoneAttr
+	 *
+	 * @param array $validate accepts format => strict and required => true
+	 * @access public
+  	 * @return string
+	 */
 	function getPhoneAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"phone";
@@ -84,6 +117,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validatePhone
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validatePhone($value, $validate) // FOR PHP VALIDATION
 	{
 		$result = array('message' => "Must be a properly formatted (US) phone number with areacode, eg: 800-555-5555");
@@ -95,6 +136,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getLengthAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getLengthAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"length";
@@ -115,6 +163,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateLength
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateLength($value, $validate) // FOR PHP VALIDATION
 	{
 
@@ -135,6 +191,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getEqualToAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getEqualToAttr($validate) // FOR JS VALIDATION
 	{
 		if (!isset($validate['equal_id']))
@@ -149,6 +212,14 @@ class Validator
 		$answer .="\"";
 		return $answer;
 	}
+	/**
+	 * validateEqualTo
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateEqualTo($value, $validate)
 	{
 		// THIS ONE ONLY PERFORMED IN JAVASCRIPT
@@ -156,6 +227,13 @@ class Validator
   		return $result;
 	}
 
+	/**
+	 * getIntAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getIntAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"number|0";
@@ -176,6 +254,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateInt
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateInt($value, $validate = array())
 	{
 		$result = array('message' => "Must be an integer");
@@ -201,6 +287,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getFloatAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getFloatAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"number|1";
@@ -221,6 +314,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateFloat
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateFloat($value, $validate = array())
 	{
 		$result = array('message' => "Must be a numeric value");
@@ -246,6 +347,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getNumericAttr
+	 *
+	 * @param array $validate
+	 * @access public
+	 * @return string
+	 */
 	function getNumericAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"numeric";
@@ -261,6 +369,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateNumeric
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+	 * @return array
+	 */
 	function validateNumeric($value, $validate = array())
 	{
 		$result = array('message' => "Must be a numeric value");
@@ -286,7 +402,14 @@ class Validator
 		return $result;
 	}
 
-	function getAlphaNumericAttr($validate) // FOR JS VALIDATION
+    /**
+     * getAlphaNumericAttr
+     *
+     * @param array $validate
+     * @access public
+     * @return array
+     */
+    function getAlphaNumericAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"alnum";
 
@@ -370,6 +493,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateAlphaNumeric
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+	 * @return array
+	 */
 	function validateAlphaNumeric($value, $validate = array())
 	{
 		$result = array('message' => "Must be an AlphaNumeric value (no symbols)");
@@ -383,6 +514,13 @@ class Validator
    		return $result;
 	}
 
+	/**
+	 * getMoneyAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getMoneyAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"money";
@@ -395,6 +533,15 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	* validateMoney
+	*
+	* Validates String to see if it is formatted as money
+	* @param mixed $value The value to be validated.
+	* @param array $validate
+	* @access public
+	* @return array
+	*/
 	function validateMoney($value, $validate = array())
 	{
 		$result = array('message' => "Must be a value of money (numeric)");
@@ -408,6 +555,13 @@ class Validator
    		return $result;
 	}
 
+	/**
+	 * getZipAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getZipAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"zip";
@@ -420,6 +574,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateZip
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateZip($value, $validate = array()) // VALIDATES US OR CANADA
 	{
 		$result = array('message' => "Must be a properly formatted US or Canadian zip code");
@@ -434,6 +596,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getEmailAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getEmailAttr($validate) // FOR JS VALIDATION
 	{
 		$answer = "validate=\"email";
@@ -456,6 +625,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateEmail
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateEmail($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted valid email address, eg: user@domain.com");
@@ -470,6 +647,14 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * validateDomain
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateDomain($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted domain, eg: domain.com");
@@ -484,11 +669,26 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getDomainAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getDomainAttr($validate)
 	{
 		return "";
 	}
 
+	/**
+	 * validateUrl
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateUrl($value, $validate = array())
 	{
 		$result = array('message' => "Must be a properly formatted url, eg: http://domain.com/directory");
@@ -503,6 +703,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getUrlAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getUrlAttr($validate)
 	{
 		$answer = "validate=\"url";
@@ -527,11 +734,14 @@ class Validator
 		return $answer;
 	}
 
-	function getIPAttr($validate)
-	{
-		return "";
-	}
-
+	/**
+	 * validateIP
+	 *
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+ 	 * @return array
+	 */
 	function validateIP($value, $validate = array())
 	{
 		$result = array('message' => "Must be a ip address in the format XXX.XXX.XXX.XXX");
@@ -546,6 +756,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getPasswordAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getPasswordAttr($validate)
 	{
 		return "";
@@ -553,6 +770,14 @@ class Validator
 		//return Validator::getRegExpAttr($validate);
 	}
 
+	/**
+	 * validatePassword
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validatePassword($value, $validate = array()) // AT LEAST 6 DIGITS, 1 UC, 2LC, 1 NUMERAL
 	{
 		$result = array('message' => "Must be a secure password consisting of 1 UC, 2 LC and 1 Num, no shorter than 6 characters");
@@ -567,11 +792,26 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getSSNAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function getSSNAttr($validate)
 	{
 		return "";
 	}
 
+	/**
+	 * validateSSN
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateSSN($value, $validate = array())
 	{
 		$result = array('message' => "Must be a valid US Social Security Number");
@@ -585,6 +825,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * 	function getRegExpAttr($validate) // FOR JS VALIDATION
+	 *
+	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getRegExpAttr($validate) // FOR JS VALIDATION // ONLY WORKS ON TEXT
 	{
 		$answer = "validate=\"custom";
@@ -603,6 +850,14 @@ class Validator
 		return $answer;
 	}
 
+	/**
+	 * validateRegExp
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateRegExp($value, $validate)
 	{
 		if (preg_match($validate['regExp'], $value))
@@ -611,6 +866,14 @@ class Validator
 			return array('result' => false);
 	}
 
+	/**
+	 * validateDate
+	 *
+  	 * @param mixed $value The value to be validated.
+	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
 	function validateDate($value, $validate = array())
 	{
 		if (!isset($validate['format']))
@@ -650,6 +913,13 @@ class Validator
 		return $result;
 	}
 
+	/**
+	 * getDateAttr
+	 *
+  	 * @param array $validate
+	 * @access public
+  	 * @return string
+	 */
 	function getDateAttr($validate)
 	{
 		return ""; // THE Fvalidate routine doesn't quite work properly

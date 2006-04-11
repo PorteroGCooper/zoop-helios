@@ -34,33 +34,118 @@
 * rmb 7-20-2001
 * @package zone
 */
+
+	/**
+	 * zone 
+	 * 
+	 * @package 
+	 * @version $id$
+	 * @copyright 1997-2006 Supernerd LLC
+	 * @author Richard Bateman
+	 * @author John Lesueur
+	 * @author Steve Francia <webmaster@supernerd.com> 
+	 * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+	 */
 	class zone
 	{
         //////////////////////////////////////////////////////////////
         //  These are variables each instance uses to track itself  //
         //////////////////////////////////////////////////////////////
 
+		/**
+		 * error 
+		 * 
+		 * @var string
+		 * @access public
+		 */
 		var $error = "";		// The last error message recorded.
+		/**
+		 * errornum 
+		 * 
+		 * @var float
+		 * @access public
+		 */
 		var $errornum = 0;
 
+		/**
+		 * zonename 
+		 * 
+		 * @var string
+		 * @access public
+		 */
 		var $zonename = "";		/* This will contain the pathname of this zone.
 								 * It will also contain the variable if urlvars
 								 * is enabled for this class.
 								 */
+
+		/**
+		 * zonetype 
+		 * 
+		 * @var string
+		 * @access public
+		 */
 		var $zonetype = "";		// this will always contain the name of this zone
 
+		/**
+		 * urlvar 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
+		/**
+		 * urlzone 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $urlzone = array();		// this is a legacy variable that should be left alone
 
+		/**
+		 * parent 
+		 * 
+		 * @var mixed
+		 * @access public
+		 */
 		var $parent = null;		// Reference to the parent of this zone
 
+		/**
+		 * _zone 
+		 * 
+		 * @var array
+		 * @access protected
+		 */
 		var $_zone = array();	// array of subclasses for this zone
 
+		/**
+		 * allowed_children 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $allowed_children = array();	// These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
+		/**
+		 * allowed_parents 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $allowed_parents = array();	// These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
 
+		/**
+		 * zoneParamNames 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $zoneParamNames = array();
 
+		/**
+		 * returnPaths 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $returnPaths = array();
 
 
@@ -71,11 +156,29 @@
 		/* replaced with a open by default, restrict as requested
 			rjl 8/25/2005 */
 		//var $allowed_remote_post = array();
+		/**
+		 * restricted_remote_post 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $restricted_remote_post = array();
 
 
+		/**
+		 * origins 
+		 * 
+		 * @var array
+		 * @access public
+		 */
 		var $origins = array();
 
+		/**
+		 * url 
+		 * 
+		 * @var string
+		 * @access public
+		 */
 		var $url = "";
         //////////////////////////////////////////////////////////////
         //  These are settings that will be overridden by subclass  //
@@ -121,7 +224,19 @@
 		* @access public
 		**/
 
+        	/**
+        	 * urlvars 
+        	 * 
+        	 * @var mixed
+        	 * @access public
+        	 */
         	var $urlvars = false;
+		/**
+		 * urlzones 
+		 * 
+		 * @var mixed
+		 * @access public
+		 */
 		var $urlzones = false;
 
 		/*
@@ -135,6 +250,13 @@
 		}
 
 
+		/**
+		 * handleRequest 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function handleRequest( $inPath )
 		{
 			global $gAlias;
@@ -274,6 +396,14 @@
 			}
 		}
 
+		/**
+		 * _checkFuncs 
+		 * 
+		 * @param mixed $curPath 
+		 * @param mixed $inPath 
+		 * @access protected
+		 * @return void
+		 */
 		function _checkFuncs($curPath, $inPath)
 		{
 			if (REQUEST_TYPE == "XMLRPC")
@@ -322,6 +452,13 @@
 			}
 		}
 
+		/**
+		 * _checkAllowedPost 
+		 * 
+		 * @param mixed $curPath 
+		 * @access protected
+		 * @return void
+		 */
 		function _checkAllowedPost($curPath)
 		{
 		//  THIS FUNCTION CHECKS TO MAKE SURE THAT THE CURRENT PAGE IS THE SAME AS THE REFERRING PAGE
@@ -347,6 +484,14 @@
 				return false;
 		}
 
+		/**
+		 * _checkZone 
+		 * 
+		 * @param mixed $zoneName 
+		 * @param mixed $inPath 
+		 * @access protected
+		 * @return void
+		 */
 		function _checkZone($zoneName, $inPath)
 		{
 			$var2 = "zone_" . $zoneName;
@@ -394,6 +539,14 @@
 
 		}
 
+		/**
+		 * _xmlrpcDispatch 
+		 * 
+		 * @param mixed $curPath 
+		 * @param mixed $inPath 
+		 * @access protected
+		 * @return void
+		 */
 		function _xmlrpcDispatch($curPath, $inPath)
 		{
 			if (method_exists($this, "xmlrpc" . $curPath))
@@ -479,6 +632,13 @@
 			}
 		}
 
+		/**
+		 * pageDefault 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function pageDefault($inPath)
 		{
 			// This function should be overridden to be the default function (in case there is either A: no path info, or B: no matching function or class for the path";
@@ -486,55 +646,122 @@
 			die("You haven't overridden pagedefault!");
 		}
 
+		/**
+		 * initZone 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function initZone($inPath)
 		{
 			// This function should be overridden in each zone if you would like code to execute each time it hits the zone's handleRequest function.
 		}
 
+		/**
+		 * closeZone 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function closeZone($inPath)
 		{
 			// This function should be overridden in each zone if you would like code to execute each time before it leaves the zone's handleRequest function.
 		}
 
+		/**
+		 * initPages 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function initPages($inPath)
 		{
 			// This function is run before any page or post function in the zone.
 		}
 
+		/**
+		 * closePages 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function closePages($inPath)
 		{
 			// This function is run after any page or post function in the zone.
 		}
 
+		/**
+		 * closePosts 
+		 * 
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
 		function closePosts($inPath)
 		{
 			// This function is run after any page or post function in the zone.
 		}
 
+		/**
+		 * getZoneParamNames 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getZoneParamNames()
 		{
 			return $this->zoneParamNames;
 		}
 
 		//deprecated...
+		/**
+		 * getUrlVarNames 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getUrlVarNames()
 		{
 			bug("called deprecated function: getUrlVarNames(), use getZoneParamNames()");
 			return $this->zoneParamNames;
 		}
 
+		/**
+		 * setZoneParams 
+		 * 
+		 * @param mixed $inParamNames 
+		 * @access public
+		 * @return void
+		 */
 		function setZoneParams($inParamNames)
 		{
 			return $this->zoneParamNames = $inParamNames;
 		}
 
 		//deprecated
+		/**
+		 * setUrlVarNames 
+		 * 
+		 * @param mixed $inUrlVarNames 
+		 * @access public
+		 * @return void
+		 */
 		function setUrlVarNames($inUrlVarNames)
 		{
 			bug("called deprecated function: setUrlVarNames(), use setZoneParamNames()");
 			return $this->zoneParamNames = $inUrlVarNames;
 		}
 
+		/**
+		 * getZoneParams 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getZoneParams()
 		{
 			global $gUrlVars;
@@ -542,6 +769,12 @@
 		}
 
 		//deprecated
+		/**
+		 * getUrlVars 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getUrlVars()
 		{
 			bug("called deprecated function: getUrlVars(), use getZoneParams()");
@@ -552,7 +785,20 @@
 		/**
 		 * Return an array of parent(s) for this zone.
 		 */
+		/**
+		 * getMyParents 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getMyParents() {
+			/**
+			 * parent_zones 
+			 * 
+			 * @static
+			 * @var mixed
+			 * @access public
+			 */
 			static $parent_zones;
 			if ($parent_zones) return ($parent_zones);
 			foreach ($this->allowed_parents as $zone) {
@@ -565,11 +811,24 @@
 			return $parent_zones;
 		}
 
+		/**
+		 * initParents 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function initParents() {
 
 		}
 
 		//should return an url to this zone
+		/**
+		 * getZoneUrl 
+		 * 
+		 * @param int $depth 
+		 * @access public
+		 * @return void
+		 */
 		function getZoneUrl($depth = 0)//this function should return a complete url, not a path
 		{
 			global $gZoneUrls;
@@ -577,6 +836,13 @@
 		}
 
 		//should return an app path to this zone
+		/**
+		 * getZonePath 
+		 * 
+		 * @param int $depth 
+		 * @access public
+		 * @return void
+		 */
 		function getZonePath($depth = 0)//use this function from now on, until we fix the function above
 		{
 			global $gZoneUrls;
@@ -584,17 +850,39 @@
 		}
 
 		//should redirect us in the zone to the page $inUrl
+		/**
+		 * zoneRedirect 
+		 * 
+		 * @param string $inUrl 
+		 * @param mixed $redirectType 
+		 * @access public
+		 * @return void
+		 */
 		function zoneRedirect( $inUrl = '', $redirectType = HEADER_REDIRECT)
 		{
 			BaseRedirect( $this->url . "/" . $inUrl, $redirectType);
 		}
 
+		/**
+		 * hideNext 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function hideNext()
 		{
 			global $gui;
 			$gui->showNext = 0;
 		}
 
+		/**
+		 * guiAssign 
+		 * 
+		 * @param mixed $templateVarName 
+		 * @param mixed $varValue 
+		 * @access public
+		 * @return void
+		 */
 		function guiAssign($templateVarName, $varValue)
 		{
 			global $gui;
@@ -602,6 +890,13 @@
 			$gui->assign($templateVarName, $varValue);
 		}
 
+		/**
+		 * guiDisplay 
+		 * 
+		 * @param mixed $inTemplateName 
+		 * @access public
+		 * @return void
+		 */
 		function guiDisplay($inTemplateName)
 		{
 			global $gui;

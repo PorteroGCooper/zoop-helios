@@ -2,6 +2,7 @@
 /**
 * Utilities file
 *
+* @author Steve Francia webmaster@supernerd.com
 * @package db
 * @subpackage db_utils
 */

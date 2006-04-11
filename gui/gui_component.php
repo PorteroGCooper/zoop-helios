@@ -17,14 +17,36 @@
 	include('GuiControls/GuiControl.php');
 	include('GuiControls/GuiContainer.php');
 
+/**
+ * component_gui 
+ * 
+ * @uses component
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class component_gui extends component
 {
+	/**
+	 * component_gui 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function component_gui()
 	{
 		$this->requireComponent('session');
 		$this->requireComponent('validate');
 	}
 
+	/**
+	 * init 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function init()
 	{
 		$GLOBALS['gui'] = new gui();

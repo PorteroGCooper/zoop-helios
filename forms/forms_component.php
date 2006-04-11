@@ -29,6 +29,12 @@ require_once("XML/Serializer.php");
 */
 class component_forms extends component
 {
+	/**
+	 * component_forms 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function component_forms()
 	{
 		$this->requireComponent('db');
@@ -36,6 +42,12 @@ class component_forms extends component
 		$this->requireComponent('validate');
 	}
 
+	/**
+	 * init 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function init()
 	{
 		mkdirr(app_temp_dir . '/cache/forms/', 0770);

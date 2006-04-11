@@ -14,8 +14,24 @@
 
 require_once(dirname(__file__) . "/Smarty.class.php");
 
+/**
+ * gui 
+ * 
+ * @uses Smarty
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class gui extends Smarty
 {
+	/**
+	 * gui 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function gui()
 	{
 		global $sGlobals;
@@ -76,6 +92,13 @@ class gui extends Smarty
 		$this->debugging = 1;
 	}
 
+	/**
+	 * setCompileDir 
+	 * 
+	 * @param mixed $inDir 
+	 * @access public
+	 * @return void
+	 */
 	function setCompileDir($inDir)
 	{
 		$this->compile_dir = $inDir;
@@ -90,6 +113,17 @@ class gui extends Smarty
 
 					This function is used by display.
 	\*======================================================================*/
+	
+	/**
+	 * fetch 
+	 * 
+	 * @param mixed $tpl_file 
+	 * @param mixed $cache_id 
+	 * @param mixed $compile_id 
+	 * @param mixed $display 
+	 * @access public
+	 * @return void
+	 */
 	function fetch($tpl_file, $cache_id = null, $compile_id = null, $display = false)
 	{
 		if (defined("gui_look") )
@@ -102,6 +136,14 @@ class gui extends Smarty
 
 	//	what is the point of this function. It isn't adding anything to the base class function
 	//	and the second paramater isn't even being used.
+	/**
+	 * display 
+	 * 
+	 * @param mixed $tpl_file 
+	 * @param string $base_template 
+	 * @access public
+	 * @return void
+	 */
 	function display($tpl_file, $base_template = 'template.tpl')
 	{
 		echo $this->fetch($tpl_file);
@@ -114,7 +156,15 @@ class gui extends Smarty
 					If that constant exists then included files need to be
 					looked for in the fw_gui_look sub dir.
     \*======================================================================*/
-    function _smarty_include($params)
+   
+	/**
+	 * _smarty_include 
+	 * 
+	 * @param mixed $params 
+	 * @access protected
+	 * @return void
+	 */
+	function _smarty_include($params)
 	{
 		if (defined("gui_look") )
 		{
@@ -143,6 +193,13 @@ class gui extends Smarty
 	*
 	*/
 
+	/**
+	 * assign_array 
+	 * 
+	 * @param mixed $tpl_var 
+	 * @access public
+	 * @return void
+	 */
 	function assign_array($tpl_var)
 	{
 		foreach ($tpl_var as $key => $val)
@@ -154,6 +211,17 @@ class gui extends Smarty
 	}
 
 	// A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLIER
+	/**
+	 * generate 
+	 * 
+	 * @param mixed $inBodytpl 
+	 * @param mixed $inSidebartpl 
+	 * @param mixed $inMenutpl 
+	 * @param mixed $title 
+	 * @param string $inCss 
+	 * @access public
+	 * @return void
+	 */
 	function generate($inBodytpl, $inSidebartpl, $inMenutpl, $title = app_default_title, $inCss = "styles.css")
 	{
 
@@ -166,6 +234,12 @@ class gui extends Smarty
 		$this->display("main.tpl");
 	}
 
+	/**
+	 * assignbrowser 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function assignbrowser()
     	{
 		$browser = $_SERVER['HTTP_USER_AGENT'];

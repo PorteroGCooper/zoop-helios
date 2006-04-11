@@ -19,8 +19,24 @@ include(dirname(__file__) . "/zone.php");
 include(dirname(__file__) . "/zone_sequence.php");
 include(dirname(__file__) . "/zone_zoopfile.php");
 
+/**
+ * component_zone 
+ * 
+ * @uses component
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class component_zone extends component
 {
+	/**
+	 * component_zone 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function component_zone()
 	{
 		$this->requireComponent('app');
@@ -28,6 +44,12 @@ class component_zone extends component
 			$this->requireComponent('session');
 	}
 
+	/**
+	 * run 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function run()
 	{
 		global $PATH_ARRAY;

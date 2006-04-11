@@ -28,6 +28,14 @@
 
 include_once(dirname(__file__) . "/function.guicontrol.php");
 
+/**
+ * smarty_function_forms_form
+ *
+ * @param mixed $params
+ * @param mixed $smarty
+ * @access public
+ * @return void
+ */
 function smarty_function_forms_form($params, &$smarty)
 {
 
@@ -64,6 +72,9 @@ function smarty_function_forms_form($params, &$smarty)
 
 	$totalshow = 0;
 
+	if (!is_array($form->order))
+		$form->order = implode(",", $form->order);
+
 	foreach ($form->order as $fieldname)
 	{
 		if (isset($form->values[$fieldname]))
@@ -73,6 +84,8 @@ function smarty_function_forms_form($params, &$smarty)
 				$totalshow++;
 		}
 	}
+
+
 	if ($cols != 1)
 		$break = intval($totalshow / $cols);
 	else

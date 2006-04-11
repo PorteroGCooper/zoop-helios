@@ -13,12 +13,46 @@
 // FOR A PARTICULAR PURPOSE.
 */
 
+/**
+ * form 
+ * 
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class form
 {
+	/**
+	 * tables 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $tables;
+	/**
+	 * db 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $db;
+	/**
+	 * dbconnname 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $dbconnname;
 
+	/**
+	 * sql_connect 
+	 * 
+	 * @param mixed $dbconnname 
+	 * @access public
+	 * @return void
+	 */
 	function sql_connect($dbconnname)
 	{
 		if (!isset($GLOBALS[$dbconnname]) && $dbconnname == 'defaultdb')
@@ -27,6 +61,14 @@ class form
 			trigger_error("You should have established a connection prior to this call if you are not using the defaultdb");
 	}
 
+	/**
+	 * initTable 
+	 * 
+	 * @param mixed $table 
+	 * @param string $dbconnname 
+	 * @access public
+	 * @return void
+	 */
 	function initTable($table, $dbconnname = 'defaultdb')
 	{
 		$this->sql_connect($dbconnname);
@@ -40,6 +82,13 @@ class form
  			$this->tables->$table->setDbconnname($dbconnname);
 	}
 
+	/**
+	 * passIdfield 
+	 * 
+	 * @param mixed $table 
+	 * @access public
+	 * @return void
+	 */
 	function passIdfield($table)
 	{
 		if (!isset($this->tables->$table))
@@ -48,6 +97,14 @@ class form
 		return $this->tables->$table->idfield;
 	}
 
+	/**
+	 * grabRecord 
+	 * 
+	 * @param mixed $table 
+	 * @param mixed $id 
+	 * @access public
+	 * @return void
+	 */
 	function grabRecord($table,  $id)
 	{
 		if (isset($this->tables->$table->records->$id))
@@ -61,6 +118,14 @@ class form
 		$this->tables->$table->records[$id] = new record ($table, $id, $idfield, $this->dbconnname);
 	}
 
+	/**
+	 * &passRecord 
+	 * 
+	 * @param mixed $table 
+	 * @param mixed $id 
+	 * @access public
+	 * @return void
+	 */
 	function &passRecord($table, $id)
 	{
 		if (!isset($this->tables->$table->records[$id]))
@@ -72,6 +137,15 @@ class form
 		return $var;
 	}
 
+	/**
+	 * deleteRecord 
+	 * 
+	 * @param mixed $table 
+	 * @param mixed $id 
+	 * @param mixed $type 
+	 * @access public
+	 * @return void
+	 */
 	function deleteRecord ($table, $id, $type = false)
 	{
 		$dbconnname = $this->dbconnname;
@@ -94,6 +168,14 @@ class form
 		$$dbconnname->query($query);
 	}
 
+	/**
+	 * DescIntoFields 
+	 * 
+	 * @param mixed $table 
+	 * @param mixed $id 
+	 * @access public
+	 * @return void
+	 */
 	function DescIntoFields($table, $id)
 	{
 		if (isset($this->tables->$table->records[$id]->values) && is_array($this->tables->$table->records[$id]->values))
@@ -110,6 +192,13 @@ class form
 		}
 	}
 
+	/**
+	 * saveRecord 
+	 * 
+	 * @param mixed $post 
+	 * @access public
+	 * @return void
+	 */
 	function saveRecord($post)
 	{
 		$dbconnname = $this->dbconnname;
@@ -120,6 +209,13 @@ class form
 		return $this->storeRecord($post["recordtable"], $post["recordid"]);
 	}
 
+	/**
+	 * setValuesFromPost 
+	 * 
+	 * @param mixed $post 
+	 * @access public
+	 * @return void
+	 */
 	function setValuesFromPost($post)
 	{
 		$table = $post["recordtable"];
@@ -150,6 +246,14 @@ class form
 		}
 	}
 
+	/**
+	 * storeRecord 
+	 * 
+	 * @param mixed $table 
+	 * @param mixed $id 
+	 * @access public
+	 * @return void
+	 */
 	function storeRecord($table, $id)
 	{
 		$dbconnname = $this->dbconnname;

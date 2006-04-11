@@ -18,11 +18,23 @@
 */
 class component_validate extends component
 {
+	/**
+	 * component_validate 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function component_validate()
 	{
 
 	}
 
+	/**
+	 * init 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function init()
 	{
 

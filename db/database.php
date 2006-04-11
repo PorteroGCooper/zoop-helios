@@ -13,11 +13,42 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * database 
+ * 
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @author John Lesusur
+ * @author Rick Gigger
+ * @author Richard Bateman
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class database
 {
+	/**
+	 * db 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	var $db = null;
+	/**
+	 * transaction 
+	 * 
+	 * @var float
+	 * @access public
+	 */
 	var $transaction = 0;
 
+	/**
+	 * database 
+	 * 
+	 * @param mixed $dsn 
+	 * @access public
+	 * @return void
+	 */
 	function database($dsn)
 	{
 
@@ -37,11 +68,24 @@ class database
 		$this->db->setFetchMode(DB_FETCHMODE_ASSOC);
 	}
 
+	/**
+	 * getDSN 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getDSN()
 	{
 		return $this->dsn;
 	}
 
+	/**
+	 * verifyQuery 
+	 * 
+	 * @param mixed $inQuery 
+	 * @access public
+	 * @return void
+	 */
 	function verifyQuery($inQuery)
 	{
 		if(defined("verify_queries") && verify_queries)
@@ -68,6 +112,18 @@ class database
 		}
 	}
 
+	/**
+	 * makeDSN 
+	 * 
+	 * @param mixed $dbtype 
+	 * @param mixed $host 
+	 * @param mixed $port 
+	 * @param mixed $username 
+	 * @param mixed $password 
+	 * @param mixed $database 
+	 * @access public
+	 * @return void
+	 */
 	function makeDSN($dbtype, $host, $port, $username, $password, $database)
 	{
 		return array(
@@ -84,6 +140,12 @@ class database
 	   );
 	}
 
+	/**
+	 * begin_transaction 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function begin_transaction( )
 	{
 		if($this->transaction == 0)
@@ -91,6 +153,12 @@ class database
 		$this->transaction++;
 	}
 
+	/**
+	 * commit_transaction 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function commit_transaction( )
 	{
 		$this->transaction--;
@@ -98,6 +166,12 @@ class database
 			$this->db->query("END");
 	}
 
+	/**
+	 * rollback_transaction 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function rollback_transaction( )
 	{
 		$this->transaction--;
@@ -105,6 +179,13 @@ class database
 			$this->db->query("ROLLBACK");
 	}
 
+	/**
+	 * error 
+	 * 
+	 * @param mixed $result 
+	 * @access public
+	 * @return void
+	 */
 	function error($result)
 	{
 		while ($this->transaction)
@@ -117,6 +198,14 @@ class database
 		die();
 	}
 
+	/**
+	 * query 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $Db 
+	 * @access public
+	 * @return void
+	 */
 	function query( $inQueryString, $Db = -1 )
 	{
 		$this->verifyQuery($inQueryString);
@@ -128,16 +217,37 @@ class database
 		return $result;
 	}
 
+	/**
+	 * get_fields 
+	 * 
+	 * @param mixed $table 
+	 * @access public
+	 * @return void
+	 */
 	function get_fields($table)
 	{
 		return $this->db->tableInfo($table);
 	}
 
+	/**
+	 * insert 
+	 * 
+	 * @param mixed $query 
+	 * @access public
+	 * @return void
+	 */
 	function insert($query)
 	{
 		return $this->db->query($query);
 	}
 
+	/**
+	 * fetch_sequence 
+	 * 
+	 * @param mixed $sequence 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_sequence( $sequence )
 	{
 		return $this->db->getOne("select nextval('\"$sequence\"'::text)");
@@ -170,6 +280,13 @@ class database
 		}
 	}
 
+	/**
+	 * fetch_into_arrays 
+	 * 
+	 * @param mixed $query 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_into_arrays($query)
 	{
 		$result = $this->db->getAll($query, array(), DB_FETCHMODE_ASSOC | DB_FETCHMODE_FLIPPED);
@@ -180,6 +297,13 @@ class database
 		return $result;
 	}
 
+	/**
+	 * fetch_into_arrobjs 
+	 * 
+	 * @param mixed $query 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_into_arrobjs($query)
 	{
 		$this->verifyQuery($query);
@@ -193,6 +317,13 @@ class database
 		return $result;
 	}
 
+	/**
+	 * new_fetch_into_array 
+	 * 
+	 * @param mixed $query 
+	 * @access public
+	 * @return void
+	 */
 	function new_fetch_into_array($query)
 	{
 		$this->verifyQuery($query);
@@ -204,6 +335,15 @@ class database
 		return $result;
 	}
 
+	/**
+	 * fetch_into_array 
+	 * 
+	 * @param mixed $inTableName 
+	 * @param mixed $inFieldName 
+	 * @param string $inExtra 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_into_array($inTableName, $inFieldName, $inExtra = "")
 	{
 		bug("please change this to a query and use new_fetch_into_array");
@@ -265,6 +405,14 @@ class database
 		return $result;
 	}
 
+	/**
+	 * fetch_rows 
+	 * 
+	 * @param mixed $inQuery 
+	 * @param int $inReturnObjects 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_rows($inQuery, $inReturnObjects = 0)
 	{
 		$this->verifyQuery($inQuery);
@@ -284,6 +432,14 @@ class database
 		return $rows;
 	}
 
+	/**
+	 * &fetch_map 
+	 * 
+	 * @param mixed $inQuery 
+	 * @param mixed $inKeyField 
+	 * @access public
+	 * @return void
+	 */
 	function &fetch_map($inQuery, $inKeyField)
 	{
 		$this->verifyQuery($inQuery);
@@ -333,6 +489,15 @@ class database
 	}
 
 
+	/**
+	 * fetch_simple_map 
+	 * 
+	 * @param mixed $inQuery 
+	 * @param mixed $inKeyField 
+	 * @param mixed $inValueField 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_simple_map($inQuery, $inKeyField, $inValueField)
 	{
 		$this->verifyQuery($inQuery);
@@ -371,6 +536,14 @@ class database
 	}
 
 
+	/**
+	 * &fetch_complex_map 
+	 * 
+	 * @param mixed $inQuery 
+	 * @param mixed $inKeyField 
+	 * @access public
+	 * @return void
+	 */
 	function &fetch_complex_map($inQuery, $inKeyField)
 	{
 		$this->verifyQuery($inQuery);
@@ -416,6 +589,14 @@ class database
 	}
 
 
+	/**
+	 * fetch_one_cell 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param int $inField 
+	 * @access public
+	 * @return void
+	 */
 	function fetch_one_cell($inQueryString, $inField = 0)
 	{
 		$result = $this->db->query($inQueryString, array(), DB_FETCHMODE_ORDERED);
@@ -445,6 +626,15 @@ class database
 		return $row[$inField];
 	}
 
+	/**
+	 * &prepare_tree_query 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
 	{
 		$map = &$this->fetch_map($inQueryString, $idField);
@@ -458,6 +648,16 @@ class database
 		return $answer;
 	}
 
+	/**
+	 * &better_fetch_tree 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $rootNode 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &better_fetch_tree( &$inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		if(!is_array($inQueryString))
@@ -498,6 +698,16 @@ class database
 		return $tree;
 	}
 
+	/**
+	 * &fetch_tree 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $rootNode 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		if(is_array($inQueryString))
@@ -527,6 +737,16 @@ class database
 		return $tree;
 	}
 
+	/**
+	 * &__sql_append_children 
+	 * 
+	 * @param mixed $rootObject 
+	 * @param mixed $objects 
+	 * @param mixed $idField 
+	 * @param mixed $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &__sql_append_children(&$rootObject, $objects, $idField, $parentField)
 	{
 		foreach($objects as $object)
@@ -542,6 +762,17 @@ class database
 		return $rootObject;
 	}
 
+	/**
+	 * &__sql_better_append_children 
+	 * 
+	 * @param mixed $rootObjectId 
+	 * @param mixed $objects 
+	 * @param mixed $idField 
+	 * @param mixed $parentField 
+	 * @param mixed $depth 
+	 * @access public
+	 * @return void
+	 */
 	function &__sql_better_append_children(&$rootObjectId, &$objects, $idField, $parentField, $depth = -1)
 	{
 		if($depth != 0)
@@ -564,6 +795,16 @@ class database
 	//	This helps in making multiple calls when you need separate arrays for each parent node's children.
 	//	Might be too much of a secret hack though - at least the var name should probably be changed
 
+	/**
+	 * &fetch_children 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $rootNode 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
 	{
 		//	get the set of rows that we are dealing with.  It shoudld contain all of the rows that could possibly
@@ -629,6 +870,17 @@ class database
 	//	This helps in making multiple calls when you need separate arrays for each parent node's children.
 	//	Might be too much of a secret hack though - at least the var name should probably be changed
 
+	/**
+	 * &better_fetch_children 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $rootNode 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @param mixed $depth 
+	 * @access public
+	 * @return void
+	 */
 	function &better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
 	{
 		//	get the set of rows that we are dealing with.  It shoudld contain all of the rows that could possibly
@@ -664,6 +916,16 @@ class database
 		return $children;
 	}
 
+	/**
+	 * _fetch_children 
+	 * 
+	 * @param mixed $children 
+	 * @param mixed $objects 
+	 * @param mixed $id 
+	 * @param mixed $depth 
+	 * @access protected
+	 * @return void
+	 */
 	function _fetch_children(&$children, &$objects, $id, $depth = -1)
 	{
 		if(isset($objects['parent'][$id]) && ($depth != 0))
@@ -676,6 +938,16 @@ class database
 		}
 	}
 
+	/**
+	 * &fetch_parents 
+	 * 
+	 * @param mixed $inQueryString 
+	 * @param mixed $leafNode 
+	 * @param string $idField 
+	 * @param string $parentField 
+	 * @access public
+	 * @return void
+	 */
 	function &fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
 	{
 		//	get the set of rows that we are dealing with.  It should contain all of the rows that could possibly
@@ -695,6 +967,13 @@ class database
 		return $parents;
 	}
 
+	/**
+	 * get_table_info 
+	 * 
+	 * @param mixed $inTable 
+	 * @access public
+	 * @return void
+	 */
 	function get_table_info($inTable)
 	{
 		$result = $this->db->tableinfo($inTable);
@@ -706,16 +985,37 @@ class database
 		return $result;
 	}
 
+	/**
+	 * escape_string 
+	 * 
+	 * @param mixed $inString 
+	 * @access public
+	 * @return void
+	 */
 	function escape_string($inString)
 	{
 		return $this->db->quoteSmart($inString);
 	}
 
+	/**
+	 * escape_identifier 
+	 * 
+	 * @param mixed $inString 
+	 * @access public
+	 * @return void
+	 */
 	function escape_identifier($inString)
 	{
 		return $this->db->quoteIdentifier($inString);
 	}
 
+	/**
+	 * escape_tablename 
+	 * 
+	 * @param mixed $inString 
+	 * @access public
+	 * @return void
+	 */
 	function escape_tablename($inString)
 	{
 		$name = explode(".", $inString);

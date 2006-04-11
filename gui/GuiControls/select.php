@@ -15,13 +15,35 @@
 
 include_once(zoop_dir . "/gui/plugins/function.html_options.php");
 
+/**
+ * select 
+ * 
+ * @uses GuiControl
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class select extends GuiControl
 {
+	/**
+	 * getPersistentParams 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getPersistentParams()
 	{
 		return array('validate');
 	}
 
+	/**
+	 * view 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function view()
 	{
 		$value = $this->getValue();
@@ -32,6 +54,12 @@ class select extends GuiControl
 			return $value;
 	}
 
+	/**
+	 * render 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function render()
 	{
 		global $gui;

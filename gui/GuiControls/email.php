@@ -15,13 +15,35 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * email 
+ * 
+ * @uses GuiControl
+ * @package 
+ * @version $id$
+ * @copyright 1997-2006 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 class email extends GuiControl
 {
+	/**
+	 * validate 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function validate()
 	{
 		return true;
 	}
 
+	/**
+	 * getValue 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getValue()
 	{
 
@@ -33,17 +55,35 @@ class email extends GuiControl
 
 	}
 
+	/**
+	 * getLabelName 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getLabelName()
 	{
 		$label = $this->getName() . "[controls][text][email][text]";
 		return $label;
 	}
 
+	/**
+	 * getPersistentParams 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function getPersistentParams()
 	{
 		return array('validate');
 	}
 
+	/**
+	 * render 
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function render()
 	{
 		$html = $this->renderViewState();
