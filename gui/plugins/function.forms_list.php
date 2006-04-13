@@ -78,11 +78,17 @@ if ($class == "" || $class == " ")
 if (!isset($form->tables->$table))
 	return "";
 
+	$output = "<ul></ul><table cellpadding=0 cellspacing=0 border=0><tr><td colspan=\"3\">";
+	$output .= "<table class='$class' cellpadding='1' cellspacing='1' border='0'><tr>";
+
+	if (isset($form->tables->$table->title))
+		$output .= "<th>" . $form->tables->$table->title . "</th></tr><tr>";
+
 	if ($sort_type == 'js')
-		$output = "<table><tr><td colspan=\"3\"><table class='$class' cellpadding='0' cellspacing='0' border='0'><tr><Td><table  id='$table_id' class='sortable' cellpadding=1 cellspacing=1>";
+		$output .= "<TD><table  id='$table_id' class='sortable' cellpadding=1 cellspacing=1>";
 	else
-		$output = "<table><tr><td colspan=\"3\"><table class='$class' cellpadding='0' cellspacing='0' border='0'><tr><Td><table  id='$table_id' cellpadding=1 cellspacing=1>";
-	//class='$class'
+		$output .= "<TD><table  id='$table_id' cellpadding=1 cellspacing=1>";
+
 
 	if ($sort_type == 'js')  // OUTPUT THE COLUMN DATATYPE FOR JS SORTING
 	{

@@ -126,9 +126,9 @@ function ZoneRedirect( $url, $depth = 0 )
 
 
 /**
- * checkValidDate 
- * 
- * @param mixed $datestring 
+ * checkValidDate
+ *
+ * @param mixed $datestring
  * @access public
  * @return void
  */
@@ -164,11 +164,11 @@ if($dst)
 }
 
 /**
- * FormatPostgresDate 
- * 
- * @param mixed $inPostgresDate 
- * @param mixed $inFormatString 
- * @param mixed $inTimeZone 
+ * FormatPostgresDate
+ *
+ * @param mixed $inPostgresDate
+ * @param mixed $inFormatString
+ * @param mixed $inTimeZone
  * @access public
  * @return void
  */
@@ -260,11 +260,11 @@ function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = nul
 	}
 
 /**
- * xorEncrypt 
+ * xorEncrypt
  *
  * accepts a message and an 8 bit binary key and returns the message encrypted.
- * @param mixed $message 
- * @param mixed $key 
+ * @param mixed $message
+ * @param mixed $key
  * @access public
  * @return void
  */
@@ -281,11 +281,11 @@ function xorEncrypt($message, $key)
 }
 
 /**
- * xorDecrypt 
+ * xorDecrypt
  *
- * 	accepts a message and an 8 bit binary key and returns the message decrypted 
- * @param mixed $message 
- * @param mixed $key 
+ * 	accepts a message and an 8 bit binary key and returns the message decrypted
+ * @param mixed $message
+ * @param mixed $key
  * @access public
  * @return void
  */
@@ -342,7 +342,7 @@ function dump_r($mixed)
 * @param mixed $mixed
 * @param string $color any acceptable color string that works with css
 */
-function show_r($mixed, $color = "#000000")
+function show_r($mixed, $color = "blue")
 {
 	echo "<div align=\"left\" style=\"border: 1px solid $color;\">";
 	echo_r($mixed);
@@ -364,10 +364,10 @@ function fetch_r($mixed)
 }
 
 /**
- * &MapArray 
- * 
- * @param mixed $transformee 
- * @param mixed $transformer 
+ * &MapArray
+ *
+ * @param mixed $transformee
+ * @param mixed $transformer
  * @access public
  * @return void
  */
@@ -386,9 +386,9 @@ function &MapArray(&$transformee, &$transformer)
 }
 
 /**
- * validEmailAddress 
- * 
- * @param mixed $email 
+ * validEmailAddress
+ *
+ * @param mixed $email
  * @access public
  * @return void
  */
@@ -405,8 +405,8 @@ function validEmailAddress ($email)
 }
 
 /**
- * getmicrotime 
- * 
+ * getmicrotime
+ *
  * @access public
  * @return void
  */
@@ -417,9 +417,9 @@ function getmicrotime()
 }
 
 /**
- * markprofile 
- * 
- * @param int $running_total 
+ * markprofile
+ *
+ * @param int $running_total
  * @access public
  * @return void
  */
@@ -454,9 +454,9 @@ function markprofile($running_total = 0)
 }
 
 /**
- * fetch_backtrace 
- * 
- * @param mixed $full 
+ * fetch_backtrace
+ *
+ * @param mixed $full
  * @access public
  * @return void
  */
@@ -571,10 +571,10 @@ function fetch_backtrace($full = false)
 }
 
 /**
- * array_sortonkeys 
- * 
- * @param mixed $inArray 
- * @param int $forward 
+ * array_sortonkeys
+ *
+ * @param mixed $inArray
+ * @param int $forward
  * @deprecated use ksort or krsort instead
  * @access public
  * @return void
@@ -588,10 +588,10 @@ function array_sortonkeys($inArray, $forward = 1)
 }
 
 /**
- * urlEncodeArray 
- * 
- * @param mixed $array 
- * @param string $keyname 
+ * urlEncodeArray
+ *
+ * @param mixed $array
+ * @param string $keyname
  * @access public
  * @return void
  */
@@ -613,9 +613,9 @@ function urlEncodeArray($array, $keyname = '') {
 
 
 /**
- * BUG 
- * 
- * @param string $desc 
+ * BUG
+ *
+ * @param string $desc
  * @access public
  * @return void
  */
@@ -639,9 +639,9 @@ function BUG($desc = "")
 }
 
 /**
- * echo_backtrace 
- * 
- * @param mixed $full 
+ * echo_backtrace
+ *
+ * @param mixed $full
  * @access public
  * @return void
  */
@@ -685,9 +685,9 @@ function strip_gpc_slashes ($input)
 }
 
 /**
- * __VerifyHTMLTree 
- * 
- * @param mixed $html 
+ * __VerifyHTMLTree
+ *
+ * @param mixed $html
  * @access protected
  * @return void
  */
@@ -705,9 +705,9 @@ function __VerifyHTMLTree($html)
 }
 
 /**
- * __VerifyHTMLTree_ex 
- * 
- * @param mixed $htmltree 
+ * __VerifyHTMLTree_ex
+ *
+ * @param mixed $htmltree
  * @access protected
  * @return void
  */
@@ -741,9 +741,9 @@ function __VerifyHTMLTree_ex(&$htmltree)
 }
 
 /**
- * VerifyText 
- * 
- * @param mixed $inText 
+ * VerifyText
+ *
+ * @param mixed $inText
  * @access public
  * @return void
  */
@@ -770,9 +770,9 @@ function br2nl($text) {
 
 
 /**
- * VerifyTextOrArray 
- * 
- * @param mixed $array 
+ * VerifyTextOrArray
+ *
+ * @param mixed $array
  * @access public
  * @return void
  */
@@ -800,9 +800,9 @@ function VerifyTextOrArray($array)
 }
 
 /**
- * VerifyInt 
- * 
- * @param mixed $inNumber 
+ * VerifyInt
+ *
+ * @param mixed $inNumber
  * @access public
  * @return void
  */
@@ -817,8 +817,8 @@ function VerifyInt($inNumber)
 }
 
 /**
- * get_shared_key 
- * 
+ * get_shared_key
+ *
  * reads a key(for authentication between apps) from the shared key file.
  * @access public
  * @return void
@@ -832,9 +832,9 @@ function get_shared_key()
 }
 
 /**
- * get_key 
- * 
- * @param mixed $type 
+ * get_key
+ *
+ * @param mixed $type
  * @access public
  * @return void
  */
@@ -883,13 +883,13 @@ function RequireCondition($bool)
 }
 
 /**
- * remoteObjectCall 
- * 
- * @param mixed $url 
- * @param mixed $object 
- * @param mixed $constparams 
- * @param mixed $method 
- * @param mixed $methodparams 
+ * remoteObjectCall
+ *
+ * @param mixed $url
+ * @param mixed $object
+ * @param mixed $constparams
+ * @param mixed $method
+ * @param mixed $methodparams
  * @access public
  * @return void
  */
@@ -1019,9 +1019,9 @@ function Decrypt($key, $input)
 //	cli stuff
 //
 /**
- * RunCommand 
- * 
- * @param mixed $inCommand 
+ * RunCommand
+ *
+ * @param mixed $inCommand
  * @access public
  * @return void
  */
@@ -1034,12 +1034,12 @@ function RunCommand($inCommand)
 }
 
 /**
- * SetCompletionStatus 
- * 
- * @param mixed $statusItemName 
- * @param mixed $start 
- * @param mixed $end 
- * @param mixed $goodEnd 
+ * SetCompletionStatus
+ *
+ * @param mixed $statusItemName
+ * @param mixed $start
+ * @param mixed $end
+ * @param mixed $goodEnd
  * @access public
  * @return void
  */
@@ -1060,9 +1060,9 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
 }
 
 /**
- * &GetCompletionStatus 
- * 
- * @param mixed $statusItemName 
+ * &GetCompletionStatus
+ *
+ * @param mixed $statusItemName
  * @access public
  * @return void
  */
@@ -1141,11 +1141,11 @@ function mkdir_r($filename)
 
 
 /**
- * HexToRgb 
- * 
+ * HexToRgb
+ *
  * @author Rini Setiadarma
  * @link   http://www.oodie.com/
- * @param  string $pHexColor 
+ * @param  string $pHexColor
  * @access public
  * @return array rgb array
  */
@@ -1167,12 +1167,12 @@ function HexToRgb($pHexColor)
 
 
 /**
- * StreamCSV 
+ * StreamCSV
  *
  * give this funtion a 2 dimentional array and it will stream out a csv file to the browser
- * @param mixed $inData 
- * @param mixed $inFilename 
- * @param mixed $inColumns 
+ * @param mixed $inData
+ * @param mixed $inFilename
+ * @param mixed $inColumns
  * @access public
  * @return void
  */
@@ -1315,10 +1315,10 @@ function HTML2Txt($inHTML)
 
 
 /**
- * seconds_to_time 
- * 
- * @param mixed $seconds 
- * @param string $return 
+ * seconds_to_time
+ *
+ * @param mixed $seconds
+ * @param string $return
  * @access public
  * @return void
  */
@@ -1392,9 +1392,9 @@ function seconds_to_time($seconds, $return = "array")
 }
 
 /**
- * fuzzy_seconds_to_time 
- * 
- * @param mixed $seconds 
+ * fuzzy_seconds_to_time
+ *
+ * @param mixed $seconds
  * @access public
  * @return void
  */
@@ -1419,11 +1419,11 @@ function fuzzy_seconds_to_time($seconds)
 }
 
 /**
- * define_once 
+ * define_once
  *
- * use instead of define to insure that the the $name is not being redefined 
- * @param mixed $name 
- * @param mixed $value 
+ * use instead of define to insure that the the $name is not being redefined
+ * @param mixed $name
+ * @param mixed $value
  * @access public
  * @return void
  */

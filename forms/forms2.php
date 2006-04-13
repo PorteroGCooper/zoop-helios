@@ -103,7 +103,7 @@ class form2
 	 *
 	 * Set a table based parameter
 	 *
-	 * @param mixed $name
+	 * @param string $name
 	 * @param mixed $value
 	 * @access public
 	 * @return void
@@ -111,6 +111,22 @@ class form2
 	function setParam($name, $value)
 	{
 		$this->table->$name = $value;
+	}
+
+	/**
+	 * setInnerParam
+	 *
+	 * Set a table based inner parameter
+	 *
+	 * @param string $name
+	 * @param string $innername
+	 * @param mixed $value
+	 * @access public
+	 * @return void
+	 */
+	function setInnerParam($name, $innername, $value)
+	{
+		$this->table->$name[$innername] = $value;
 	}
 
 	/**
@@ -449,6 +465,7 @@ class form2
 	 */
 	function setTitle($title)
 	{
+		$this->table->title = $title;
 		$this->record->title = $title;
 	}
 
@@ -501,6 +518,48 @@ class form2
 		$this->table->direction = $direction;
 	}
 
+	/**
+	 * returns the current Form
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function &returnForm()
+	{
+		return $this->form;
+	}
 
+	/**
+	 * returns the current Table
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function &returnTable()
+	{
+		return $this->table;
+	}
+
+	/**
+	 * returns the current Record
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function &returnRecord()
+	{
+		return $this->record;
+	}
+
+	/**
+	 * returns the current TableName
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function &returnTableName()
+	{
+		return $this->tablename;
+	}
 }
 ?>

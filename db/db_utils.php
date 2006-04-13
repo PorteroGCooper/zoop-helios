@@ -63,7 +63,9 @@ function db_insert_array($inArray, $tablename)
 
 	$query = "INSERT INTO $tablename ($fieldstr) VALUES ($valuestr)";
 
-	return $defaultdb->insert($query);
+	$id = sql_insert($query);
+
+	return $id;
 }
 
 /**

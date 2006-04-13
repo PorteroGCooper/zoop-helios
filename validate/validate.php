@@ -65,15 +65,18 @@ class Validator
  			  $result['result'] = true;
 
 		$function = strtolower("validate{$validate['type']}");
-		//echo_r(get_class_methods('validate'));
 
 		// handle required right here.
 		if (isset($validate['required']) && $validate['required'] && strlen($value) < 1)
+		{
+			$result['message'] = "This field is required";
 			$result['result'] = false;
+			return $result;
+
+		}
 
 		if ((!isset($validate['required']) || $validate['required'] == false) && strlen($value) < 1)
 		{
-
 			$result['result'] = true;
 			return $result;
 		}
@@ -173,7 +176,6 @@ class Validator
 	 */
 	function validateLength($value, $validate) // FOR PHP VALIDATION
 	{
-
 		!isset($validate['min']) ? $validate['min'] = 0 : $validate['min'];
 		!isset($validate['max']) ? $validate['max'] = false : $validate['max'];
 
@@ -183,8 +185,11 @@ class Validator
 			$result = array('message' => "Must be shorter than {$validate['max']}characters.");
 		else
 			$result = array('message' => "Must be between {$validate['min']} and {$validate['max']} characters long");
-		if (strlen($value) >= $validate['min'] && strlen($value) <= $validate['max'])
+
+		if (strlen($value) >= $validate['min'] && (strlen($value) <= $validate['max'] || $validate['max'] === false))
+		{
 			$result['result'] = true;
+		}
 		else
 			$result['result'] = false;
 
@@ -864,6 +869,27 @@ class Validator
 			return array('result' => true);
 		else
 			return array('result' => false);
+	}
+
+	/**
+	 * validateDbUnique
+	 * This function checks the database to see if a value already exists. Uses the default db.
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
+	function validateDbUnique($value, $validate)
+	{
+		$result['message'] = "is already in use, please choose another one";
+
+		if (sql_check("SELECT username from {$validate['table']} where {$validate['field']}=\"$value\""))
+			$result['result'] = false;
+		else
+			$result['result'] = true;
+
+		return $result;
 	}
 
 	/**
