@@ -13,10 +13,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once(zoop_dir . "/gui/plugins/function.html_options.php");
+include_once(zoop_dir . "/gui/plugins/function.html_radios.php");
 
 /**
- * select
+ * radio
  *
  * @uses GuiControl
  * @package
@@ -25,7 +25,7 @@ include_once(zoop_dir . "/gui/plugins/function.html_options.php");
  * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
-class select extends GuiMultiValue
+class radio extends GuiControl
 {
 	/**
 	 * getPersistentParams
@@ -36,6 +36,22 @@ class select extends GuiMultiValue
 	function getPersistentParams()
 	{
 		return array('validate');
+	}
+
+	/**
+	 * view
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function view()
+	{
+		$value = $this->getValue();
+
+		if (isset($this->params['index'][$value]))
+			return $this->params['index'][$value];
+		else
+			return $value;
 	}
 
 	/**
@@ -53,24 +69,24 @@ class select extends GuiMultiValue
 		$html = $this->renderViewState();
 		$attrs = array();
 
+
+		$smartyParams = array('options' => $this->params['index']);
+
 		foreach ($this->params as $parameter => $value)
 		{
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
-				case 'size':
-				case 'onChange':
-				case 'onBlur':
 					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
+						$smartyParams[$parameter] = "$value";
 					break;
 				case 'readonly':
 				case 'disabled':
 					if ($value)
-						$attrs[] = "disabled=\"true\"";
+						$smartyParams['disabled']="true";
 					break;
-				case 'multiple':
-					if ($value)
-						$attrs[] = "multiple=\"true\"";
+				case 'separator':
+					$smartyParams['separator'] = $value;
+					break;
 			}
 		}
 
@@ -79,14 +95,10 @@ class select extends GuiMultiValue
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		if (isset($this->params['multiple']) && $this->params['multiple'])
-			$label .= "[]";
+		$smartyParams['selected'] = $value;
+		$smartyParams['name'] = $label;
 
-		$html .=  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
-
-		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), &$gui);
-
-		$html .=  "</select>\r";
+		$html .= smarty_function_html_radios($smartyParams, &$gui);
 
 		if(isset($this->params['errorState']))
 		{

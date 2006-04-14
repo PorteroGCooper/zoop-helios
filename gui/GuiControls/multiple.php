@@ -11,7 +11,7 @@ class multiple extends select
 		$this->params['multiple'] = 1;
 		if (!isset($this->params['size']))
 			$this->params['size'] = 4;
-	return parent::render();
+		return parent::render();
 	}
 }
 ?>

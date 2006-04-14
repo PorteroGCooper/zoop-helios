@@ -15,20 +15,20 @@
 
 
 /**
- * text 
- * 
+ * text
+ *
  * @uses GuiControl
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class text extends GuiControl
 {
 	/**
-	 * getPersistentParams 
-	 * 
+	 * getPersistentParams
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -38,8 +38,8 @@ class text extends GuiControl
 	}
 
 	/**
-	 * render 
-	 * 
+	 * render
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -50,31 +50,32 @@ class text extends GuiControl
 
 		$html = "";
 
-		foreach ($this->params as $parameter => $value)
-		{
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
-				case 'title':
-				case 'maxlength':
-				case 'size':
-				case 'type':
-					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
-					break;
-				case 'readonly':
-				case 'disabled':
-					if ($value)
-						$attrs[] = "readonly=\"true\"";
-					break;
-				case 'validate':
-					$attrs[] = $this->getValidationAttr($this->params['validate']);
-					break;
-				case 'width':
-				case 'height':
-					if ($value != '')
-						$Sattrs[] = "$parameter:$value;";
-					break;
+		if (isset($this->params) && !empty($this->params))
+			foreach ($this->params as $parameter => $value)
+			{
+				switch ($parameter) {   // Here we setup specific parameters that will go into the html
+					case 'title':
+					case 'maxlength':
+					case 'size':
+					case 'type':
+						if ($value != '')
+							$attrs[] = "$parameter=\"$value\"";
+						break;
+					case 'readonly':
+					case 'disabled':
+						if ($value)
+							$attrs[] = "readonly=\"true\"";
+						break;
+					case 'validate':
+						$attrs[] = $this->getValidationAttr($this->params['validate']);
+						break;
+					case 'width':
+					case 'height':
+						if ($value != '')
+							$Sattrs[] = "$parameter:$value;";
+						break;
+				}
 			}
-		}
 
 		$name = $this->getName();
 		$value = $this->getValue();

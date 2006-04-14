@@ -16,22 +16,23 @@
 	require(dirname(__file__) . "/gui.php");
 	include('GuiControls/GuiControl.php');
 	include('GuiControls/GuiContainer.php');
+	include('GuiControls/GuiMultiValue.php');
 
 /**
- * component_gui 
- * 
+ * component_gui
+ *
  * @uses component
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component_gui extends component
 {
 	/**
-	 * component_gui 
-	 * 
+	 * component_gui
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -42,8 +43,8 @@ class component_gui extends component
 	}
 
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @access public
 	 * @return void
 	 */

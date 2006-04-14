@@ -197,6 +197,37 @@ class Validator
 	}
 
 	/**
+	 * validateQuantity
+	 * Validate the number of elements in an array
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
+	function validateQuantity($value, $validate)
+	{
+		!isset($validate['min']) ? $validate['min'] = 0 : $validate['min'];
+		!isset($validate['max']) ? $validate['max'] = false : $validate['max'];
+
+		if ($validate['max'] == false)
+			$result = array('message' => "You must select at least {$validate['min']}.");
+		elseif ($validate['min'] == 0)
+			$result = array('message' => "You must select at most {$validate['max']}.");
+		else
+			$result = array('message' => "You must select between {$validate['min']} and {$validate['max']}, inclusive.");
+
+		if (count($value) >= $validate['min'] && (count($value) <= $validate['max'] || $validate['max'] === false))
+		{
+			$result['result'] = true;
+		}
+		else
+			$result['result'] = false;
+
+		return $result;
+	}
+
+	/**
 	 * getEqualToAttr
 	 *
   	 * @param array $validate
