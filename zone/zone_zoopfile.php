@@ -23,9 +23,9 @@ class zone_zoopfile extends zone
 {
 
 	/**
-	 * pageDefault 
-	 * 
-	 * @param mixed $inPath 
+	 * pageDefault
+	 *
+	 * @param mixed $inPath
 	 * @access public
 	 * @return void
 	 */
@@ -60,6 +60,15 @@ class zone_zoopfile extends zone
 		while(!feof($file)){
 			print fread($file, 1024 * 8);
 		} // while
+	}
+
+	function pageCaptchaImage($inPath)
+	{
+		$file = app_dir . '/tmp/captcha/' . $inPath[1];
+		$mtime = filemtime($file);
+ 		header("Content-type: image/jpeg");
+		include($file);
+		die();
 	}
 }
 

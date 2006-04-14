@@ -978,6 +978,31 @@ function file_write($inFilename, $inContents, $mode = 'w')
 }
 
  /**
+  * Deletes all files from a directory last modified longer than $seconds ago.
+  *
+  * @param       string   $path	    	The directory
+  * @param       string   $seconds    	number of seconds old
+  */
+function CleanDirectory($path, $seconds)
+{
+	if($handle = opendir($path))
+	{
+		$ts = time();
+		while($file = readdir($handle))
+		{
+			if($file != "." && $file != ".." && filemtime($path ."/$file") < ($ts - $seconds))
+			{
+ 				unlink($path.$file);
+			}
+		}
+		closedir($handle);
+		return true;
+	}
+	else
+		return false;
+}
+
+ /**
   * Apply an Encryption on Input
   * To be used with Decrypt
   *
