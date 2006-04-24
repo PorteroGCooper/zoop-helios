@@ -1335,7 +1335,7 @@ function HTML2Txt($inHTML)
 {
 	$txt = br2nl($inHTML);
 
-	return strip_tags($inText);
+	return strip_tags($txt);
 }
 
 
