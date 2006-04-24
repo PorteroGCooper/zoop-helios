@@ -137,13 +137,13 @@ function loadChildControls(&$controlData)
  * @access public
  * @return void
  */
-function &parseControlData(&$controlData)
+function &parseControlData(&$controlData, $useGlobals = true)
 {
 	foreach($controlData as $type => $controlset)
 	{
 		foreach($controlset as $name => $controlitems)
 		{
-			$controls[$type][$name] = &getGuiControl($type, $name, true);
+			$controls[$type][$name] = &getGuiControl($type, $name, $useGlobals);
 
 			if(is_array($controlitems))
 			{
@@ -153,7 +153,7 @@ function &parseControlData(&$controlData)
 					{
 						if (isset($childControls))
 							unset($childControls);
-						$childControls = &parseControlData($value);
+						$childControls = &parseControlData($value, false);
 
 						foreach($childControls as $childType => $childSet)
 						{
