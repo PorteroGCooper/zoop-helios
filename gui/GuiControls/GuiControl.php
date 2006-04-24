@@ -184,6 +184,7 @@ function &parseControlData(&$controlData, $useGlobals = true)
 			{
 				// I DON'T THINK THIS EVER OCCURS?? SPF 4/9/06
 				// SHOULD PROBABLY BE REMOVED AFTER MORE TESTING OCCURS
+				bug("error in parseControlData this shouldn't occur");
 				$controls[$type][$name]->setValue($controlitems);
 			}
 

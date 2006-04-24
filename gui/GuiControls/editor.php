@@ -18,20 +18,20 @@
 include_once(dirname(__file__) . "/../plugins/function.loadeditor.php");
 
 /**
- * editor 
- * 
+ * editor
+ *
  * @uses GuiControl
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class editor extends GuiControl
 {
 	/**
-	 * getPersistentParams 
-	 * 
+	 * getPersistentParams
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -41,8 +41,8 @@ class editor extends GuiControl
 	}
 
 	/**
-	 * render 
-	 * 
+	 * render
+	 *
 	 * @access public
 	 * @return void
 	 */
