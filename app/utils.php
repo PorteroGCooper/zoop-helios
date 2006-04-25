@@ -964,6 +964,36 @@ function append_to_file($inFilename, $inContents)
 	file_set_contents($inFilename, $inContents, 'a');
 }
 
+
+ /**
+  * Opens / Creates a file ($inFilename) and dumps the value of an array, variable or object into it.
+  * Useful for debugging purposes when doing operations that cannot write to the screen (like handling ajax posts).
+  *
+  * @param       string   $inFilename    	The absolute location of the file
+  * @param       mixed    $inValue    	The variable to dump into to the file
+  * @param       string   $mode    		Append mode, defaults to 'a' (open and append to the bottom)
+  */
+function dump_to_file($inFilename, $inValue, $mode = 'a')
+{
+	$string = var_dump_ret($inValue);
+	file_set_contents($inFilename, $string, $mode);
+}
+
+ /**
+  * Returns the output from var_dump to a string instead of to the screen.
+  *
+  * @param       mixed    $inValue    	The variable to dump.
+  */
+function var_dump_ret($mixed)
+{
+	ob_start();
+	var_dump($mixed);
+	$content = ob_get_contents();
+	ob_end_clean();
+	return $content;
+}
+
+
  /**
   * Opens / Creates a file ($inFilename) and all necessary directories to it, then places $inContents into it
   *

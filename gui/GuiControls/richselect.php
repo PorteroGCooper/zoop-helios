@@ -71,7 +71,7 @@ class richselect extends guicontrol
 		$html = $this->renderViewState();
 		$width = "180";
 		$height = 22;
-// 		$onclick = "";
+ 		$onclick = "";
 
 		$name = $this->getName();
 		$value = $this->getValue();
@@ -84,12 +84,12 @@ class richselect extends guicontrol
 		if (isset($this->params['height']))
 			$height = $this->params['height'];
 
-// 		if (isset($this->params['onclick']))
-// 			$onclick = $this->params['onclick'];
+ 		if (isset($this->params['onclick']))
+ 			$onclick = $this->params['onclick'];
 
 		$html .= "
 			<div style=\"position:relative; width: {$width}px;\" class=\"b\">
-				<div  onclick=\"new Effect.toggle('" .$label. "_dd','BLIND'); return false;\" style=\"background : white; border : #D0D0D0 inset 2px; width : $newwidth"."px; height: {$height}px; padding:2px; cursor:default;\" class=\"c\">
+				<div  onclick=\"new Effect.toggle('" .$label. "_dd','BLIND', {duration: 0.20}); return false;\" style=\"background : white; border : #D0D0D0 inset 2px; width : $newwidth"."px; height: {$height}px; padding:2px; cursor:default;\" class=\"c\">
 					<div id=\"$label"."_holder\" style=\"float: left;\" class=\"d\">";
 					isset($this->params['index'][$value]) ? $html .= $this->params['index'][$value] : $html.= "<br>";
 					$html .= "
@@ -104,7 +104,7 @@ class richselect extends guicontrol
 
 				foreach ($this->params['index'] as $optval => $optlabel)
 				{
-					$html .= "<div onclick=\"$('$label').value = '$optval'; $('$label"."_holder').innerHTML = this.innerHTML; new Effect.toggle('$label"."_dd','BLIND'); return false;\" style=\"cursor:pointer\" class=\"ddi\">$optlabel</div>";
+					$html .= "<div onclick=\"$('$label').value = '$optval'; $('$label"."_holder').innerHTML = this.innerHTML; new Effect.toggle('$label"."_dd','BLIND'); ".$onclick." return false;\" style=\"cursor:pointer\" class=\"ddi\">$optlabel</div>";
 				}
 				$html .= "
 				</div>

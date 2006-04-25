@@ -33,6 +33,7 @@ class zone_zoopfile extends zone
 	{
 		array_shift($inPath);
 		$module = array_shift($inPath);
+
 		$jsfile = zoop_dir . '/' . $module . '/public/' . implode('/', $inPath);
 		$mtime = filemtime($jsfile);
 		$headers = getallheaders();
@@ -71,4 +72,4 @@ class zone_zoopfile extends zone
 		die();
 	}
 }
-
+?>
