@@ -14,42 +14,42 @@
 */
 
 /**
- * form 
- * 
- * @package 
+ * form
+ *
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class form
 {
 	/**
-	 * tables 
-	 * 
+	 * tables
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $tables;
 	/**
-	 * db 
-	 * 
+	 * db
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $db;
 	/**
-	 * dbconnname 
-	 * 
+	 * dbconnname
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $dbconnname;
 
 	/**
-	 * sql_connect 
-	 * 
-	 * @param mixed $dbconnname 
+	 * sql_connect
+	 *
+	 * @param mixed $dbconnname
 	 * @access public
 	 * @return void
 	 */
@@ -62,10 +62,10 @@ class form
 	}
 
 	/**
-	 * initTable 
-	 * 
-	 * @param mixed $table 
-	 * @param string $dbconnname 
+	 * initTable
+	 *
+	 * @param mixed $table
+	 * @param string $dbconnname
 	 * @access public
 	 * @return void
 	 */
@@ -83,9 +83,9 @@ class form
 	}
 
 	/**
-	 * passIdfield 
-	 * 
-	 * @param mixed $table 
+	 * passIdfield
+	 *
+	 * @param mixed $table
 	 * @access public
 	 * @return void
 	 */
@@ -98,10 +98,10 @@ class form
 	}
 
 	/**
-	 * grabRecord 
-	 * 
-	 * @param mixed $table 
-	 * @param mixed $id 
+	 * grabRecord
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
 	 * @access public
 	 * @return void
 	 */
@@ -119,10 +119,10 @@ class form
 	}
 
 	/**
-	 * &passRecord 
-	 * 
-	 * @param mixed $table 
-	 * @param mixed $id 
+	 * &passRecord
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
 	 * @access public
 	 * @return void
 	 */
@@ -138,11 +138,11 @@ class form
 	}
 
 	/**
-	 * deleteRecord 
-	 * 
-	 * @param mixed $table 
-	 * @param mixed $id 
-	 * @param mixed $type 
+	 * deleteRecord
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
+	 * @param mixed $type
 	 * @access public
 	 * @return void
 	 */
@@ -169,10 +169,10 @@ class form
 	}
 
 	/**
-	 * DescIntoFields 
-	 * 
-	 * @param mixed $table 
-	 * @param mixed $id 
+	 * DescIntoFields
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
 	 * @access public
 	 * @return void
 	 */
@@ -193,9 +193,9 @@ class form
 	}
 
 	/**
-	 * saveRecord 
-	 * 
-	 * @param mixed $post 
+	 * saveRecord
+	 *
+	 * @param mixed $post
 	 * @access public
 	 * @return void
 	 */
@@ -210,9 +210,9 @@ class form
 	}
 
 	/**
-	 * setValuesFromPost 
-	 * 
-	 * @param mixed $post 
+	 * setValuesFromPost
+	 *
+	 * @param mixed $post
 	 * @access public
 	 * @return void
 	 */
@@ -247,10 +247,10 @@ class form
 	}
 
 	/**
-	 * storeRecord 
-	 * 
-	 * @param mixed $table 
-	 * @param mixed $id 
+	 * storeRecord
+	 *
+	 * @param mixed $table
+	 * @param mixed $id
 	 * @access public
 	 * @return void
 	 */
@@ -285,7 +285,7 @@ class form
 				if ($field->value)
 				{
 					$columnstring .= $colquote . $field->name . $colquote . ",";
-					$value = "'" . $field->value . "'";
+					$value = "'" . $this->escapeValue($field->value) . "'";
 					$valuestring .= "$value,";
 				}
 			}
@@ -311,7 +311,7 @@ class form
 				if ($field->value == null)
 					$setpart .= $colquote . $field->name . $colquote  . "= null,";
 				else
-					$setpart .= $colquote . $field->name . $colquote  . "='" . $field->value ."',";
+					$setpart .= $colquote . $field->name . $colquote  . "='" . $this->escapeValue($field->value) ."',";
 			}
 
 			$setpart = substr($setpart, 0, -1);
@@ -320,9 +320,16 @@ class form
 			$id = $$dbconnname->db->quoteSmart($id);
 
 			$query = "UPDATE $table set $setpart where $idfield = $id";
+
 			$$dbconnname->query($query);
 			return $returnid;
 		}
+	}
+
+	function escapeValue($value)
+	{
+		$escapedValue = preg_replace('/(\'|\\\')/', "\\\\'", $value);
+		return $escapedValue;
 	}
  }
 ?>

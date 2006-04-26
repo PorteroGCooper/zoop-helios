@@ -104,7 +104,7 @@ class richselect extends guicontrol
 
 				foreach ($this->params['index'] as $optval => $optlabel)
 				{
-					$html .= "<div onclick=\"$('$label').value = '$optval'; $('$label"."_holder').innerHTML = this.innerHTML; new Effect.toggle('$label"."_dd','BLIND'); ".$onclick." return false;\" style=\"cursor:pointer\" class=\"ddi\">$optlabel</div>";
+					$html .= "<div onclick=\"$('$label').value = '$optval'; $('$label"."_holder').innerHTML = this.innerHTML; new Effect.toggle('$label"."_dd','BLIND', {duration: 0.20}); ".$onclick." return false;\" style=\"cursor:pointer\" class=\"ddi\">$optlabel</div>";
 				}
 				$html .= "
 				</div>
