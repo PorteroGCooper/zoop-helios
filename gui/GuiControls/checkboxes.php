@@ -171,6 +171,9 @@ class checkboxes extends GuiMultiValue
 				case 'separator':
 					$smartyParams['separator'] = $value;
 					break;
+				case 'onClick':
+					$smartyParams['onClick'] = $value;
+					break;
 			}
 		}
 
