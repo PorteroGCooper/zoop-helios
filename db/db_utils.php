@@ -124,6 +124,8 @@ function db_save_array($inArray, $tablename, $primarykey, $primarykeyvalue)
 			db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue);
 			$return = $primarykeyvalue;
 		}
+
+		return $return;
 }
 
 
