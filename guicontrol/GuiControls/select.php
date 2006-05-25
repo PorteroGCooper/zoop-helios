@@ -84,7 +84,7 @@ class select extends GuiMultiValue
 
 		$html .=  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
 
-		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), &$gui);
+		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
 
 		$html .=  "</select>\r";
 

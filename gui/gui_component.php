@@ -12,12 +12,12 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
-
+/*
 	require(dirname(__file__) . "/gui.php");
 	include('GuiControls/GuiControl.php');
 	include('GuiControls/GuiContainer.php');
 	include('GuiControls/GuiMultiValue.php');
-
+*/
 /**
  * component_gui
  *
@@ -51,7 +51,12 @@ class component_gui extends component
 	function init()
 	{
 		$GLOBALS['gui'] = new gui();
-		initGuiControls();
+	}
+	
+	function getIncludes()
+	{
+		return array("gui" => dirname(__file__) . "/gui.php");
+						
 	}
 }
 ?>

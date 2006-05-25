@@ -14,11 +14,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
-include(dirname(__file__) . "/zone.php");
-include(dirname(__file__) . "/zone_sequence.php");
-include(dirname(__file__) . "/zone_zoopfile.php");
-
 /**
  * component_zone 
  * 
@@ -43,6 +38,16 @@ class component_zone extends component
 		if(!defined('zone_saveinsession')  || zone_saveinsession)
 			$this->requireComponent('session');
 	}
+	
+	function getIncludes()
+	{
+		return array(
+						"zone" => dirname(__file__) . "/zone.php",
+						"zone_sequence" => dirname(__file__) . "/zone_sequence.php",
+						"zone_zoopfile" => dirname(__file__) . "/zone_zoopfile.php"
+					);
+	}
+
 
 	/**
 	 * run 

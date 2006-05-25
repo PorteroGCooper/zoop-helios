@@ -14,6 +14,18 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+if(!defined('zoop_autoload') || zoop_autoload)
+{
+	function __autoload($name)
+	{
+		global $zoop;
+		if($zoop->autoLoad($name))
+			return true;
+		else
+			return false;//trigger_error("class $name not registered with the \$zoop object, try \$zoop->include(\"$name\",\"<fileName>\")");
+	}
+}
+
 /**
  * zoop 
  * 
@@ -66,6 +78,7 @@ class zoop
 			$class = "component_{$name}";
 			$currComponent = &new $class();
 			$components = &$currComponent->getRequiredComponents();
+			$this->addIncludes($currComponent->getIncludes());
 			foreach($components as $newname)
 			{
 				$this->addComponent($newname);
@@ -84,7 +97,8 @@ class zoop
 	function addZone($name)
 	{
 		$this->addComponent('zone');
-		include($this->appPath . "/zone_{$name}.php");
+		$this->addInclude("zone_{$name}", $this->appPath . "/zone_{$name}.php");
+		//include($this->appPath . "/zone_{$name}.php");
 	}
 
 	/**
@@ -97,8 +111,55 @@ class zoop
 	function addObject($name)
 	{
 		$file = $this->appPath . "/objects/$name.php";
-		if (file_exists($file))
-		include($file);
+		$this->addInclude($name, $file);
+		//if (file_exists($file))
+		//	include($file);
+	}
+	
+	/**
+	 * addInclude
+	 *
+	 * @param mixed $name
+	 * @param mixed $file
+	 * @access public
+	 * @return void
+	 */
+	function addInclude($name, $file)
+	{
+		$this->includes[$name] = $file;
+		if(version_compare(PHP_VERSION, "5.0", "<"))
+			include_once($file);
+	}
+	
+	/**
+	 * addInclude
+	 *
+	 * @param array $classes
+	 * @access public
+	 * @return void
+	 */
+	function addIncludes($classes)
+	{
+		foreach($classes as $name => $file)
+			$this->addInclude($name, $file);
+	}
+	
+	/**
+	 * autoLoad($name)
+	 *
+	 * @param mixed $name
+	 * @access public
+	 * @return void
+	 */
+	function autoLoad($name)
+	{
+		$name = strtolower($name);
+		if( isset( $this->includes[$name]))
+		{
+			include_once($this->includes[$name]);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -128,6 +189,7 @@ class zoop
 	 */
 	function run()
 	{
+		echo_r($this->includes);
 		foreach($this->components as $name => $object)
 		{
 			$object->run();
@@ -200,6 +262,18 @@ class component
 	function &getRequiredComponents()
 	{
 		return $this->required;
+	}
+	
+	/**
+	 * getIncludes
+	 *
+	 * @access public
+	 * @return void
+	 *
+	 */
+	function getIncludes()
+	{
+		return array();
 	}
 
 	/**

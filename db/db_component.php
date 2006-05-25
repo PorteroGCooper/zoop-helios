@@ -32,12 +32,20 @@ class component_db extends component
 	 */
 	function init()
 	{
-		require_once('DB.php');
-		include(dirname(__file__) . "/database.php");
+		//require_once('DB.php');
+		//include(dirname(__file__) . "/database.php");
 		include(dirname(__file__) . "/" . db_RDBMS . ".php");
 		include(dirname(__file__) . "/db_utils.php");
-		include(dirname(__file__) . "/ComplexUpdate.php");
-		include(dirname(__file__) . "/ComplexInsert.php");
+	}
+	
+	function getIncludes()
+	{
+		return array(
+				"db" => 'DB.php',
+				"database" => dirname(__file__) . "/database.php",
+				"complexupdate" => dirname(__file__) . "/ComplexUpdate.php",
+				"complexinsert" => dirname(__file__) . "/ComplexInsert.php"
+				);
 	}
 
 	/**

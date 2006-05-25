@@ -35,7 +35,10 @@ class zone_zoopfile extends zone
 		$module = array_shift($inPath);
 
 		$jsfile = zoop_dir . '/' . $module . '/public/' . implode('/', $inPath);
-		$mtime = filemtime($jsfile);
+		if(file_exists($jsfile))
+			$mtime = filemtime($jsfile);
+		else
+			return $this->page404($inPath);
 		$headers = getallheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
 		//header('Cache-Control: max-age=86400');
@@ -53,7 +56,10 @@ class zone_zoopfile extends zone
 				//echo_r($headers);
 			}
 		}
-		header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
+		if(substr(strrchr($jsfile, "."), 1) == 'js')
+			header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
+		else if(substr(strrchr($jsfile, "."), 1) == 'html')
+			header('Content-type: text/html');// . mime_content_type($jsfile));
 		header('Content-length: ' . filesize($jsfile));
 		include($jsfile);
 		die();
@@ -69,6 +75,11 @@ class zone_zoopfile extends zone
 		$mtime = filemtime($file);
  		header("Content-type: image/jpeg");
 		include($file);
+		die();
+	}
+	
+	function page404($inPath)
+	{
 		die();
 	}
 }

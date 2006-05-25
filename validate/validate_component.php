@@ -12,7 +12,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	include(dirname(__file__) . '/validate.php');
+
 /**
 * @package storage
 */
@@ -27,6 +27,11 @@ class component_validate extends component
 	function component_validate()
 	{
 
+	}
+	
+	function getIncludes()
+	{
+		return array('validator' => dirname(__file__) . '/validate.php');
 	}
 
 	/**
