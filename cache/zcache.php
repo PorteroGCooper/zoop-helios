@@ -34,7 +34,7 @@ class zcache
 {
 	var $cacheLite;
 
-	function zcache($options = array())
+	function &zcache($options = array())
 	{
 		$DefaultOptions = array(
 			'readControl' => false,
@@ -50,7 +50,7 @@ class zcache
 	  	if (isset($this) && is_object($this))
 	  	{
 		 	$this->cacheLite =& $cacheLite;
-			return &$this->cacheLite;
+			return $this->cacheLite;
 		}
 		else
 		{
@@ -58,35 +58,40 @@ class zcache
 		}
 	}  
 	
-	function _getCacheObj($array = array())
+	function &_getCacheObj($array = array())
 	{
 	  if (isset($this) && is_object($this))
-	  	return &$this->cacheLite;
+	  {
+	  	return $this->cacheLite;
+	  }
 	  else
-	  	return zcache::zcache($array)
+	  {
+	  		$tmp = zcache::zcache($array);
+	  		return $tmp;
+	  }
 	}	
   
-  	function cache($id, $data, $group="default", $duration = 3600)
+  	function cache($id, $data, $group = "default", $duration = 3600) // 1 hour
   	{
 		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/", 'lifeTime' => $duration));
 		return $co->save($data, $id);
 	}
 	
-	function get($id, $group="default")
+	function get($id, $group = "default")
   	{
-		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/");
+		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
 		return $co->get($id);
 	}
   
-  	function remove($id, $group)
+  	function remove($id, $group = "default")
   	{
-	    $co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/");
+	    $co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
 	    return $co->remove($id);
 	}
 	
-	function clean()
+	function clean($group = "default")
 	{
-		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/");
+		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
 		return $co->clean();
 	}	
 	
