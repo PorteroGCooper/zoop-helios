@@ -15,20 +15,20 @@
 require_once(dirname(__file__) . "/Smarty.class.php");
 
 /**
- * gui 
- * 
+ * gui
+ *
  * @uses Smarty
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class gui extends Smarty
 {
 	/**
-	 * gui 
-	 * 
+	 * gui
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -93,9 +93,9 @@ class gui extends Smarty
 	}
 
 	/**
-	 * setCompileDir 
-	 * 
-	 * @param mixed $inDir 
+	 * setCompileDir
+	 *
+	 * @param mixed $inDir
 	 * @access public
 	 * @return void
 	 */
@@ -113,16 +113,16 @@ class gui extends Smarty
 
 					This function is used by display.
 	\*======================================================================*/
-	
+
 	/**
-	 * fetch 
-	 * 
-	 * @param mixed $tpl_file 
-	 * @param mixed $cache_id 
-	 * @param mixed $compile_id 
-	 * @param mixed $display 
+	 * fetch
+	 *
+	 * @param mixed $tpl_file
+	 * @param mixed $cache_id
+	 * @param mixed $compile_id
+	 * @param mixed $display
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function fetch($tpl_file, $cache_id = null, $compile_id = null, $display = false)
 	{
@@ -136,18 +136,19 @@ class gui extends Smarty
 
 	//	what is the point of this function. It isn't adding anything to the base class function
 	//	and the second paramater isn't even being used.
+	// 	Answer:
+	// 	This function echos, instead of displaying.. It doesn't work properly without this
 	/**
-	 * display 
-	 * 
-	 * @param mixed $tpl_file 
-	 * @param string $base_template 
+	 * display
+	 *
+	 * @param mixed $tpl_file
 	 * @access public
 	 * @return void
 	 */
-	function display($tpl_file, $base_template = 'template.tpl')
-	{
-		echo $this->fetch($tpl_file);
-	}
+ 	function display($tpl_file)
+ 	{
+ 		echo $this->fetch($tpl_file);
+ 	}
 
     /*======================================================================*\
         Function:   _smarty_include()
@@ -156,11 +157,11 @@ class gui extends Smarty
 					If that constant exists then included files need to be
 					looked for in the fw_gui_look sub dir.
     \*======================================================================*/
-   
+
 	/**
-	 * _smarty_include 
-	 * 
-	 * @param mixed $params 
+	 * _smarty_include
+	 *
+	 * @param mixed $params
 	 * @access protected
 	 * @return void
 	 */
@@ -194,9 +195,9 @@ class gui extends Smarty
 	*/
 
 	/**
-	 * assign_array 
-	 * 
-	 * @param mixed $tpl_var 
+	 * assign_array
+	 *
+	 * @param mixed $tpl_var
 	 * @access public
 	 * @return void
 	 */
@@ -212,13 +213,13 @@ class gui extends Smarty
 
 	// A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLIER
 	/**
-	 * generate 
-	 * 
-	 * @param mixed $inBodytpl 
-	 * @param mixed $inSidebartpl 
-	 * @param mixed $inMenutpl 
-	 * @param mixed $title 
-	 * @param string $inCss 
+	 * generate
+	 *
+	 * @param mixed $inBodytpl
+	 * @param mixed $inSidebartpl
+	 * @param mixed $inMenutpl
+	 * @param mixed $title
+	 * @param string $inCss
 	 * @access public
 	 * @return void
 	 */
@@ -235,8 +236,8 @@ class gui extends Smarty
 	}
 
 	/**
-	 * assignbrowser 
-	 * 
+	 * assignbrowser
+	 *
 	 * @access public
 	 * @return void
 	 */

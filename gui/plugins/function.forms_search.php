@@ -171,7 +171,7 @@ function smarty_function_forms_search($params, &$smarty)
 	$output .= "<br><br><input type=\"submit\" name=\"Submit\" id=\"submit\" value=\"Search\"><br><br>"; //onClick='document.main_form.submit();
 	if ($ajax)
 	{
-		$output = "<a style=\"cursor:pointer;\" onClick=\"toggleVisible('$sdivid');\">Search</a><div id=\"$sdivid\" style=\"display:$display;\">" . $output;
+		$output = "<a style=\"cursor:pointer;\" onClick=\"new Effect.toggle('$sdivid', 'slide');\">Search</a><div id=\"$sdivid\" style=\"display:$display;\">" . $output;
 		$output .= "</div>";
 	}
 return $output;

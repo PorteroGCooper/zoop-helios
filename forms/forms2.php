@@ -371,7 +371,8 @@ class form2
 		if (isset($this->record->values[$fieldname]->value))
 			return $this->record->values[$fieldname]->value;
 		else
-			trigger_error("No value is set for the field: $fieldname");
+			return NULL;
+// 			trigger_error("No value is set for the field: $fieldname");
 	}
 
 	/**

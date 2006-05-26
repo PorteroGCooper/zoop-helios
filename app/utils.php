@@ -763,8 +763,8 @@ function VerifyText($inText)
 * @return string
 */
 function br2nl($text) {
-   $text = str_replace("<br />\n", "\r\n", $text);
-   $text = str_replace("<br>\n", "\r\n", $text);
+   $text = str_replace("<br />", "\r\n", $text);
+   $text = str_replace("<br>", "\r\n", $text);
    return $text;
 }
 
@@ -1355,6 +1355,18 @@ function mrand($l,$h,$t,$len=false){
 	return $n;
 }
 
+/**
+* unserialize with some empty handling
+*
+* @param string $inString
+*/
+function unserializer($inString)
+{
+	if (empty($inString) || is_null($inString))
+		return array();
+	else
+		return unserialize($inString);
+}
 
 /**
 * convert html to fairly readable text
@@ -1471,6 +1483,32 @@ function fuzzy_seconds_to_time($seconds)
 
 	if ($timearray['seconds'] != 0)
 		return "{$timearray['seconds']} seconds";
+}
+
+/**
+ * rmrf  essentially works like rm -rf, recursively deletes all files and directories.
+ *
+ * @param mixed $seconds
+ * @access public
+ * @return void
+ */
+function rmrf($dir)
+{
+	$d = dir($dir);
+	$dir .= "/";
+	while($f = $d->read() ){
+		if($f != "." && $f != "..")
+		{
+			if(is_dir($dir.$f))
+			{
+				rmrf($dir.$f."/");
+				rmdir($dir.$f);
+			}
+			if(is_file($dir.$f))
+				unlink($dir.$f);
+		}
+	}
+	$d->close();
 }
 
 /**
