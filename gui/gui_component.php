@@ -38,6 +38,7 @@ class component_gui extends component
 	 */
 	function component_gui()
 	{
+		mkdirr(app_temp_dir . "/gui");
 		$this->requireComponent('session');
 		$this->requireComponent('validate');
 	}

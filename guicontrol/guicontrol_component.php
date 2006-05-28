@@ -1,18 +1,21 @@
 <?
 
+define("zoop_guicontrol_dir", zoop_dir . "/guicontrol/GuiControls/");
+define("app_guicontrol_dir", app_dir . "/GuiControls/");
 
-class component_guicontrol
+class component_guicontrol extends component
 {
-	function component_app()
+	function component_guicontrol()
 	{
-		
+				
+		$this->requireComponent('gui');
 	}
 	
 	function getIncludes()
 	{
-		return array("guicontrol" => dirname(__file__) . '/GuiControls/GuiControl.php',
-		"guicontainer" => dirname(__file__) . '/GuiControls/GuiContainer.php',
-		"guimultivalue" => dirname(__file__) . '/GuiControls/GuiMultiValue.php');
+		return array("guicontrol" => zoop_guicontrol_dir. 'GuiControl.php',
+		"guicontainer" => zoop_guicontrol_dir. 'GuiContainer.php',
+		"guimultivalue" => zoop_guicontrol_dir. 'GuiMultiValue.php');
 	}
 	
 	/**
@@ -141,7 +144,7 @@ class component_guicontrol
 		{
 			foreach($controlset as $name => $controlitems)
 			{
-				$controls[$type][$name] = &component_guicontrol::getGuiControl($type, $name, $useGlobals);
+				$controls[$type][$name] = &getGuiControl($type, $name, $useGlobals);
 
 				if(is_array($controlitems))
 				{
@@ -207,14 +210,14 @@ class component_guicontrol
 	{
 		$filename = strtolower($type).".php";
 
-		if(file_exists(app_dir . "/GuiControls/$filename"))
-			include_once(app_dir . "/GuiControls/$filename");
-		else if(file_exists(zoop_dir . "/gui/GuiControls/$filename"))
-			include_once(zoop_dir . "/gui/GuiControls/$filename");
+		if(file_exists(app_guicontrol_dir. "$filename"))
+			include_once(app_guicontrol_dir. "$filename");
+		else if(file_exists(zoop_guicontrol_dir. "$filename"))
+			include_once(zoop_guicontrol_dir. "$filename");
 		else
 			trigger_error("Please Implement a $type Control and place it in " .
-						app_dir . "/GuiControls/$filename" . " or " .
-						zoop_dir . "/gui/GuiControls/$filename");
+						app_guicontrol_dir. "$filename" . " or " .
+						zoop_guicontrol_dir. "$filename");
 	}
 }
 

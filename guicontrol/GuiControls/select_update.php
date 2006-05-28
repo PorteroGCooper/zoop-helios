@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once(zoop_dir . "/gui/GuiControls/select.php");
+include_once(zoop_guicontrol_dir. "select.php");
 
 class select_update extends select
 {

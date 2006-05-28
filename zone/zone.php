@@ -389,7 +389,7 @@
 						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $path2");
 						return true;
 					}
-
+					
 					array_unshift($inPath, 'default');
 					return( $this->_checkFuncs("Default", $inPath) );
 				}
@@ -476,7 +476,7 @@
 			else
 				$prefix = "http://";
 
-			$cur_url = $prefix . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+			$cur_url = $prefix . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 			if (isset($_SERVER['HTTP_REFERER'])  && $_SERVER['HTTP_REFERER'] == $cur_url)
 				return true;

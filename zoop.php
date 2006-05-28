@@ -189,7 +189,6 @@ class zoop
 	 */
 	function run()
 	{
-		echo_r($this->includes);
 		foreach($this->components as $name => $object)
 		{
 			$object->run();

@@ -22,6 +22,21 @@
 class zone_zoopfile extends zone
 {
 
+	function getheaders()
+	{
+		if (function_exists("getallheaders"))
+		{
+			return getallheaders();
+		}
+		else
+		{
+		   foreach($_SERVER as $name => $value)
+		       if(substr($name, 0, 5) == 'HTTP_')
+		           $headers[substr($name, 5)] = $value;
+		   return $headers;
+		}
+	}
+
 	/**
 	 * pageDefault
 	 *
@@ -35,17 +50,20 @@ class zone_zoopfile extends zone
 		$module = array_shift($inPath);
 
 		$jsfile = zoop_dir . '/' . $module . '/public/' . implode('/', $inPath);
+		
 		if(file_exists($jsfile))
 			$mtime = filemtime($jsfile);
 		else
 			return $this->page404($inPath);
-		$headers = getallheaders();
+			
+		$headers = $this->getheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
 		//header('Cache-Control: max-age=86400');
 		header('Cache-Control: ');
 		header('Pragma: ');
 		header('Expires: ');
 		header('Last-Modified: ' . $mdate);
+
 		if(isset($headers['If-Modified-Since']))
 		{
 			if(strtotime($headers['If-Modified-Since']) == $mtime)

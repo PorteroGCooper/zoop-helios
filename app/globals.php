@@ -42,9 +42,16 @@
 *	PATH_INFO is everything between the filename and the ? in the url
 *
 **/
+
+	
+
 	if(!isset($_SERVER["PATH_INFO"]))
 	{
 		$GLOBALS['PATH_INFO'] = "";
+	}
+	elseif (empty($_SERVER["PATH_INFO"])) // This ensures Zoop works as a fastcgi script 
+	{
+		$GLOBALS['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
 	}
 	else
 	{
@@ -53,9 +60,8 @@
 			$GLOBALS['PATH_INFO'] = $_SERVER["PATH_INFO"];
 		else
 			$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
-
 	}
-
+	
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
 
 	//	if $Sname ends with $PATH_INFO then strip $PATH_INFO from the end
