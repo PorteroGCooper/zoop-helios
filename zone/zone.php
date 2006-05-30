@@ -16,6 +16,7 @@
 	$GLOBALS['gUrlVars'] = array();
 	$GLOBALS['gPathParts'] = array();
 	$GLOBALS['gZoneUrls'] = array();
+
 /**
 * zone class.
 *
