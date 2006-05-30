@@ -1,25 +1,29 @@
-          ________                                   _          __
-         /\_____  \                                /' \       /'__`\
-         \/____// /      ___     ___    _____     /\_  \     /\ \/\ \
-              // /      / __`\  / __`\ /\  __`\   \/_/\ \    \ \ \ \ \
-             // /____  /\ \_\ \/\ \_\ \\ \ \_\ \     \ \ \  __\ \ \_\ \
-             /\_______\\ \____/\ \____/ \ \  __/      \ \_\/\_\\ \____/
-             \/_______/ \/___/  \/___/   \ \ \/        \/_/\/_/ \/___/
-                                          \ \_\
-                                           \/_/
+     oooooooooooo                     ooooooooo.        .o        .oooo.   
+     '""""""d888'                     `888   `Y88.    o888      .dP""Y88b  
+          .888P    .ooooo.   .ooooo.   888   .d88'     888            ]8P' 
+         d888'    d88' `88b d88' `88b  888ooo88P'      888          .d8P'  
+       .888P      888   888 888   888  888             888        .dP'     
+      d888'    .  888   888 888   888  888             888  .o. .oP     .o 
+    .8888888888P  `Y8bod8P' `Y8bod8P' o888o           o888o Y8P 8888888888 
+                                                                           
+The Zoop Object Oriented Php Framework, The Zoop Framework for short, A framework 
+written in and for php.
 
-This is the first public release of The Zoop Object Oriented Php Framework (The
-Zoop Framework for short). A framework written in and for php. Zoop is based on
-the pehppy framework and has been developed by the same group. In essence this
-is the next major version of pehppy. We decided to rename it to zoop because:
+Zoop is an object oriented framework for PHP based on a front controller. It is 
+designed to be very fast and efficient and very nice for the programmer to work 
+with. It is easily extensible, and you need only include the functionality you use.
+
+
+Zoop is based on the pehppy framework and is developed by the same group. 
+In essence Zoop 1.x is the next major version of pehppy. 
+We decided to rename it to zoop because:
+
 	1. This version broke compatibility with pehppy without reconfiguring and
 	   some rewriting of code.
 	2. This version more than doubles the features had in pehppy.
 	3. We didn't really like the name pehppy all that much.
 
-Zoop is designed to be very fast and efficient and very nice for the programmer
-to work with. It is easily extendable and you only include the functionality
-you use. It integrates many different projects including smarty
+Zoop integrates many different projects including smarty
 (http://smarty.php.net) and the prototype AJAX framework. It also makes use of
 many PEAR functions (http://pear.php.net)
 
@@ -57,10 +61,11 @@ For Programmers:
 * Extensible component architecture
 * Supports popular database servers provided by PEAR-DB including:
 	mysql
+	mysqli
 	pgsql
 	sqlite
 * GuiControls (nicest thing to happen to web development)
-* Forms (simplified form handling)
+* Forms (simplified form / db integration)
 * Full AJAX Support
 * Automatic Validation of forms
 * Built in Security Features
@@ -79,6 +84,7 @@ For Programmers:
 * Compatibile with PHP4 and PHP5
 * Sequences (Navigation Management / Action Request Workflow)
 * A Nice Skeleton program to get you started on any project
+* Compatible with mod_php as well as php-cli and php-fcgi (fastCGI)
 
 				  --------------
 				 | REQUIREMENTS |
@@ -86,15 +92,18 @@ For Programmers:
 
 * A working php above version 4.3.0
 * The following PEAR packages:
+	Starting with ZooP 1.2 the necessary pear packages can be found from at http://zoopframework.com
+	ZooP 1.2 and later can read from zoop_dir/libs as well as the system wide pear repository.
 
-	Date
+	DATE
 	XML_TREE
+	CACHE_LITE		(only if using forms and / or cache)
 	PEAR-DB 		(only if using a database)
 	Mail 			(only if using mail framework)
 	Mail_Mime 		(only if using mail framework)
 	VFS_SQL 		(only if using storage framework)
 	VFS 			(only if using userfiles framework)
-	XML_Serializer 	(only if using XML capabilities of forms)
+	XML_Serializer 	(only if using forms)
 
 				 -----------------
 				| HOW TO USE ZOOP |
@@ -119,7 +128,7 @@ One instance of Zoop can be used by many different applications.
 				  | COPYRIGHT |
 				   -----------
 
-Copyright (c) 2005 Supernerd LLC and Contributors.
+Copyright (c) 2006 Supernerd LLC and Contributors.
 All Rights Reserved.
 
 This software is subject to the provisions of the Zope Public License,

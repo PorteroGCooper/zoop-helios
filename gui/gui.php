@@ -22,6 +22,9 @@ require_once(dirname(__file__) . "/Smarty.class.php");
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
+ * @author Rick Gigger 
+ * @author John Lesueur
+ * @author Richard Bateman
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class gui extends Smarty
