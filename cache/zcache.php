@@ -47,57 +47,91 @@ class zcache
 		
 		$cacheLite = new Cache_Lite($cacheoptions);	  
 	  
-	  	if (isset($this) && is_object($this))
+/*	  	if (isset($this) && is_object($this))
 	  	{
 		 	$this->cacheLite =& $cacheLite;
 			return $this->cacheLite;
 		}
 		else
-		{
+		{*/
 		  return $cacheLite;
-		}
+//		}
 	}  
 	
 	function &_getCacheObj($array = array())
 	{
-	  if (isset($this) && is_object($this))
-	  {
-	  	return $this->cacheLite;
-	  }
-	  else
-	  {
+//	  if (isset($this) && is_object($this) && isset($this->cacheLite))
+//	  {
+//	  	return $this->cacheLite;
+//	  }
+//	  else
+//	  {
 	  		$tmp = zcache::zcache($array);
 	  		return $tmp;
-	  }
+//	  }
 	}	
   
-  	function cache($id, $data, $group = "default", $duration = 3600) // 1 hour
+  	function cache($id, $data, $group = "default", $duration = 3600, $options = array()) // 1 hour
   	{
-		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/", 'lifeTime' => $duration));
+  		mkdirr(app_cache_dir . $group);
+		$co = zcache::_getCacheObj(array_merge(array('cacheDir' => app_cache_dir . "$group/", 'lifeTime' => $duration), $options));
+		
 		return $co->save($data, $id);
 	}
 	
-	function get($id, $group = "default")
+	function cacheData($id, $data, $group = "default", $duration = 3600, $options = array())
+	{		
+		$options = array_merge($options, array('automaticSerialization' => true));
+		return zcache::cache($id, $data, $group, $duration, $options);
+	}
+	
+	function cacheString($id, $data, $group = "default", $duration = 3600, $options = array())
+	{
+		$options = array_merge($options, array('automaticSerialization' => false));
+		return zcache::cache($id, $data, $group, $duration, $options);
+	}
+	
+	function get($id, $group = "default", $options = array())
   	{
-		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
+		$co = zcache::_getCacheObj(array_merge(array('cacheDir' => app_cache_dir . "$group/"), $options));
 		return $co->get($id);
 	}
+	
+	function getData($id, $group = "default", $options = array())
+  	{
+  		$options = array_merge($options, array('automaticSerialization' => true));
+  		return zcache::get($id, $group, $options);
+	}
+	
+	function getString($id, $group = "default", $options = array())
+  	{
+		$options = array_merge($options, array('automaticSerialization' => false));
+		return zcache::get($id, $group, $options);
+	}
   
-  	function remove($id, $group = "default")
+  	function clear($id, $group = "default")
   	{
 	    $co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
 	    return $co->remove($id);
 	}
 	
-	function clean($group = "default")
+	function clearGroup($group = "default", $mode = "normal") // mode can be normal or recursive
 	{
-		$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
-		return $co->clean();
-	}	
+		if ($mode == "normal")
+		{
+			$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
+			return $co->clean();	
+		}
+		else
+		{
+			return rmrf(app_cache_dir . "$group/");
+		}
+	}
 	
-	function cleanAllCache()
+	function clearAllCache()
 	{
-		
+		rmrf(app_cache_dir . "/");
+		mkdirr(app_cache_dir);
 	}
 }
 ?>
