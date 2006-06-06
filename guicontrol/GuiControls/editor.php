@@ -15,7 +15,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once(dirname(__file__) . "/../plugins/function.loadeditor.php");
+include_once(zoop_dir . "/gui/plugins/function.loadeditor.php");
 
 /**
  * editor

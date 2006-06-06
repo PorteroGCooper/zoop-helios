@@ -1802,15 +1802,16 @@ var Position = {
     return [valueL, valueT];
   },
 
-  cumulativeOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-    } while (element);
-    return [valueL, valueT];
-  },
+  cumulativeOffset: function(element) { 
+    var valueT = 0, valueL = 0; 
+    do { 
+    	if(element.style.position == 'fixed') 
+    	 { valueT += window.pageYOffset + element.offsetTop; valueL += window.pageXOffset + element.offsetLeft; element = null; } 
+    	else 
+    	{ valueT += element.offsetTop || 0; valueL += element.offsetLeft || 0; element = element.offsetParent; } 
+       } while (element); 
+       return [valueL, valueT]; 
+    },
 
   positionedOffset: function(element) {
     var valueT = 0, valueL = 0;
