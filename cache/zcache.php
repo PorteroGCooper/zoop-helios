@@ -45,6 +45,11 @@ class zcache
 		
 		$cacheoptions = array_merge($DefaultOptions, $options);
 		
+		if (isset($options['base']))
+			$cacheoptions['cacheDir'] .= $options['base'];
+					
+		mkdirr($cacheoptions['cacheDir'];
+			
 		$cacheLite = new Cache_Lite($cacheoptions);	  
 	  
 /*	  	if (isset($this) && is_object($this))
