@@ -111,25 +111,16 @@ class record
 
 		$dbname = $$dbconnname->dsn['database'];
 
-		$cacheoptions = array(
-			'readControl' => false,
-			'automaticSerialization' => true,
-			'cacheDir' => app_temp_dir . '/cache/forms/table_info',
-			'lifeTime' => NULL
-		);
-
 		if ($this->id == "new")
 		{
-			$cl = new Cache_Lite($cacheoptions);
-
-			if (app_status == 'live' && $rows = $cl->get($table, $dbname))
+			if (app_status == 'live' && $rows = zcache::getData($table, array('base'=> 'forms/table_info/', 'group' => $dbname))) 
 			{
 				$rows = $rows;
 			}
 			else
 			{
 				$rows = $$dbconnname->get_table_info($table);
-				$cl->save($rows, $table, $dbname);
+				zcache::cacheData($table, $rows, array('base'=> 'forms/table_info/', 'group' => $dbname)); 
 			}
 			foreach ($rows as $row)
 			{
