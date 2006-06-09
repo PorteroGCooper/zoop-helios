@@ -239,6 +239,14 @@
 		 * @access public
 		 */
 		var $urlzones = false;
+		
+		/**
+		 * zcache
+		 * 
+		 * @var object
+		 * @access public
+		 */
+		var $zcache;
 
 		/*
 		* Set $this->Alias["alias"] = "Aliastarget"
@@ -247,9 +255,9 @@
 
 		function Zone()		// Constructor
 		{
-			// nothing to put here at the moment
+			if (defined("zone_cache") && zone_cache)
+				$this->initZoneCache();
 		}
-
 
 		/**
 		 * handleRequest 
@@ -910,6 +918,23 @@
 			$dirName = implode('_', $parts);
 
 			$gui->display($dirName . '/'. $inTemplateName);
+		}
+		
+		/**
+		 * initZoneCache
+		 * Sets up an instance of zcache in $this->zcache.
+		 * 
+		 * @access public
+		 * @return void
+		 */		
+		function initZoneCache()
+		{
+			$className = get_class($this);
+			$parts = explode('_', $className);
+			array_shift($parts);
+			$dirName = implode('_', $parts);
+			$this->cacheBase = "zones/$dirName/";
+			$this->zcache = new zcache(array('base'=> $this->cacheBase));
 		}
 	}
 ?>

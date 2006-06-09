@@ -14,7 +14,7 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* An easy to use, effective and secure caching system. 
+* An easy to use, high performance, and secure caching system. 
 * zcache functions are intended to be called statically or instantiated.
 * We currently use the pear library, cacheLite to handle our dirty work.
 *
@@ -33,12 +33,34 @@ class zcache
 
 	function &zcache($options = array())
 	{
-		$DefaultOptions = array(
-			'readControl' => false,
-			'automaticSerialization' => true,
-			'cacheDir' => app_cache_dir,
-			'lifeTime' => NULL 
-		);
+		if (defined('default_cache_lifeTime'))
+			$default_lifeTime = default_cache_lifeTime;
+		else
+			$default_lifeTime = NULL; // NULL = forever
+			
+		if (defined('cache_style') && cache_style == 'performance')
+		{
+			$DefaultOptions = array(
+				'readControl' => false,
+				'writeControl' => false,
+				'fileNameProtection' => false,
+				'automaticSerialization' => true,
+				'cacheDir' => app_cache_dir,
+				'lifeTime' => $default_lifeTime,
+				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing
+				'automaticCleaningFactor' => 200 // clean stale files 1x out of 200 writes
+			);		
+		}
+		else
+		{
+			$DefaultOptions = array(
+				'automaticSerialization' => true,
+				'cacheDir' => app_cache_dir,
+				'lifeTime' => $default_lifeTime,
+				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing 
+				'automaticCleaningFactor' => 200 // clean stale files 1x out of 200 writes
+			);
+		}
 		
 		$cacheoptions = array_merge($DefaultOptions, $options);
 		
@@ -73,9 +95,13 @@ class zcache
 		}
 	}	
   
-  	function cache($id, $data, $options = array()) // 1 hour
+  	function cache($id, $data, $options = array())
   	{
 		$co = zcache::_getCacheObj($options);
+		
+		if (isset($options['lifeTime']))
+			$co->setLifeTime($options['lifeTime']);
+		
 		return $co->save($data, $id);
 	}
 	
