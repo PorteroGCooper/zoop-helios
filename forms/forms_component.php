@@ -20,7 +20,7 @@ require(dirname(__file__) . "/record.php");
 require(dirname(__file__) . "/field.php");
 require(dirname(__file__) . "/cell.php");
 
-require_once('Cache/Lite.php');
+// require_once('Cache/Lite.php');
 require_once("XML/Serializer.php");
 
 
@@ -39,6 +39,7 @@ class component_forms extends component
 	{
 		$this->requireComponent('db');
 		$this->requireComponent('gui');
+		$this->requireComponent('cache');
 		$this->requireComponent('validate');
 	}
 
@@ -48,9 +49,9 @@ class component_forms extends component
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
-		mkdirr(app_temp_dir . '/cache/forms/', 0770);
-	}
+// 	function init()
+// 	{
+// 		mkdirr(app_temp_dir . '/cache/forms/', 0770);
+// 	}
 }
 ?>

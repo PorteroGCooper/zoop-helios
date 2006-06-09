@@ -197,16 +197,18 @@ class table
 
 		$dbname = $$dbconnname->dsn['database'];
 
-		$cacheoptions = array(
-			'readControl' => false,
-			'automaticSerialization' => true,
-			'cacheDir' => app_temp_dir . '/cache/forms/processed_table_info',
-			'lifeTime' => NULL
-		);
-
-		$cl = new Cache_Lite($cacheoptions);
-
-		if (app_status == 'live' && $tablecache = $cl->get($table, $dbname)) {
+// 		$cacheoptions = array(
+// 			'readControl' => false,
+// 			'automaticSerialization' => true,
+// 			'cacheDir' => app_temp_dir . '/cache/forms/processed_table_info',
+// 			'lifeTime' => NULL
+// 		);
+// 
+// 		$cl = new Cache_Lite($cacheoptions);
+// 
+// 		if (app_status == 'live' && $tablecache = $cl->get($table, $dbname)) 
+		if (app_status == 'live' && $tablecache = zcache::getData($table, array('base'=> 'forms/', 'group' => $dbname))) 
+		{
 			$this->fields = $tablecache->fields;
 			$this->idfield = $tablecache->idfield;
 			$this->sequence = $tablecache->sequence;
@@ -273,7 +275,8 @@ class table
 			$tmpobj->sequence = &$this->sequence;
 			$tmpobj->order = &$this->order;
 
-			$cl->save($tmpobj, $table, $dbname);
+			zcache::cacheData($table, $tmpobj, array('base'=> 'forms/', 'group' => $dbname))) 
+// 			$cl->save($tmpobj, $table, $dbname);
 		}
 	}
 
