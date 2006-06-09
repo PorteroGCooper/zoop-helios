@@ -15,11 +15,8 @@
 
 /**
 * An easy to use, effective and secure caching system. 
-* zcache functions are intended to be called statically,  but can also be used as an object 
-* (you just need to know what parameters to pass).
-* We use the pear library, cacheLite to handle our dirty work, but we don't use groups in the same way as they do.
-* Our groups are subdirectories where cacheLite places all files in the same directory and appends different keys.
-* Our method provides one benefit, less files in a directory for faster indexing.
+* zcache functions are intended to be called statically or instantiated.
+* We currently use the pear library, cacheLite to handle our dirty work.
 *
 * @author Steve Francia <sfrancia@supernerd.com>
 * @version 1.0
@@ -40,7 +37,7 @@ class zcache
 			'readControl' => false,
 			'automaticSerialization' => true,
 			'cacheDir' => app_cache_dir,
-			'lifeTime' => NULL
+			'lifeTime' => NULL 
 		);
 		
 		$cacheoptions = array_merge($DefaultOptions, $options);
@@ -48,89 +45,93 @@ class zcache
 		if (isset($options['base']))
 			$cacheoptions['cacheDir'] .= $options['base'];
 					
-		mkdirr($cacheoptions['cacheDir'];
+		mkdirr($cacheoptions['cacheDir']);
 			
 		$cacheLite = new Cache_Lite($cacheoptions);	  
-	  
-/*	  	if (isset($this) && is_object($this))
+		
+	  	if (isset($this) && is_object($this)  && "zcache" == strtolower(get_class($this)))
 	  	{
 		 	$this->cacheLite =& $cacheLite;
 			return $this->cacheLite;
 		}
 		else
-		{*/
-		  return $cacheLite;
-//		}
+		{	  
+			return $cacheLite;
+		}
 	}  
 	
 	function &_getCacheObj($array = array())
 	{
-//	  if (isset($this) && is_object($this) && isset($this->cacheLite))
-//	  {
-//	  	return $this->cacheLite;
-//	  }
-//	  else
-//	  {
-	  		$tmp = zcache::zcache($array);
-	  		return $tmp;
-//	  }
+		if (isset($this) && is_object($this) && "zcache" == strtolower(get_class($this)))
+		{
+			return $this->cacheLite;
+		}
+		else
+		{
+			$tmp = zcache::zcache($array);
+			return $tmp;
+		}
 	}	
   
-  	function cache($id, $data, $group = "default", $duration = 3600, $options = array()) // 1 hour
+  	function cache($id, $data, $options = array()) // 1 hour
   	{
-  		mkdirr(app_cache_dir . $group);
-		$co = zcache::_getCacheObj(array_merge(array('cacheDir' => app_cache_dir . "$group/", 'lifeTime' => $duration), $options));
-		
+		$co = zcache::_getCacheObj($options);
 		return $co->save($data, $id);
 	}
 	
-	function cacheData($id, $data, $group = "default", $duration = 3600, $options = array())
+	function cacheData($id, $data, $options = array())
 	{		
 		$options = array_merge($options, array('automaticSerialization' => true));
-		return zcache::cache($id, $data, $group, $duration, $options);
+		return zcache::cache($id, $data, $options);
 	}
 	
-	function cacheString($id, $data, $group = "default", $duration = 3600, $options = array())
+	function cacheString($id, $data, $options = array())
 	{
 		$options = array_merge($options, array('automaticSerialization' => false));
-		return zcache::cache($id, $data, $group, $duration, $options);
+		return zcache::cache($id, $data, $options);
 	}
 	
-	function get($id, $group = "default", $options = array())
+	function get($id, $options = array())
   	{
-		$co = zcache::_getCacheObj(array_merge(array('cacheDir' => app_cache_dir . "$group/"), $options));
+		$co = zcache::_getCacheObj($options);
 		return $co->get($id);
 	}
 	
-	function getData($id, $group = "default", $options = array())
+	function getData($id, $options = array())
   	{
   		$options = array_merge($options, array('automaticSerialization' => true));
-  		return zcache::get($id, $group, $options);
+  		return zcache::get($id, $options);
 	}
 	
-	function getString($id, $group = "default", $options = array())
+	function getString($id, $options = array())
   	{
 		$options = array_merge($options, array('automaticSerialization' => false));
-		return zcache::get($id, $group, $options);
+		return zcache::get($id, $options);
 	}
   
-  	function clear($id, $group = "default")
+  	function clear($id, $options = array())
   	{
-	    $co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
+	    $co = zcache::_getCacheObj($options);
 	    return $co->remove($id);
 	}
 	
 	function clearGroup($group = "default", $mode = "normal") // mode can be normal or recursive
 	{
-		if ($mode == "normal")
+		if ($mode == "normal") // only mode implemented now
 		{
-			$co = zcache::_getCacheObj(array('cacheDir' => app_cache_dir . "$group/"));
+			$options = array_merge($options, array('group' => $group));
+			$co = zcache::_getCacheObj($options);
 			return $co->clean();	
 		}
 		else
 		{
-			return rmrf(app_cache_dir . "$group/");
+			// return rmrf(app_cache_dir . "$group/");
 		}
+	}
+	
+	function clearBase($base)
+	{
+		return rmrf(app_cache_dir . "$base");
 	}
 	
 	function clearAllCache()
