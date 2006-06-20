@@ -7,17 +7,17 @@ class component_guicontrol extends component
 {
 	function component_guicontrol()
 	{
-				
+
 		$this->requireComponent('gui');
 	}
-	
+
 	function getIncludes()
 	{
 		return array("guicontrol" => zoop_guicontrol_dir. 'GuiControl.php',
 		"guicontainer" => zoop_guicontrol_dir. 'GuiContainer.php',
 		"guimultivalue" => zoop_guicontrol_dir. 'GuiMultiValue.php');
 	}
-	
+
 	/**
 	 * init
 	 *
@@ -93,15 +93,26 @@ class component_guicontrol extends component
 				{
 					foreach($controllist as $name => $control)
 					{
+						echo_r($_SESSION['controls']);
 						$_SESSION['controls'][$type][$name]['viewState'] = base64_encode(gzcompress(serialize($control->getParams())));
 						$_SESSION['controls'][$type][$name]['value'] = $control->getValue();
 					}
 				}
-				redirect(VIRTUAL_URL);
+
+				if (isset($_SESSION['sUrls']) && count($_SESSION['sUrls']) > 1)
+				{
+					$key = count($_SESSION['sUrls']) - 2; // 2nd to last
+					$previousPage = $_SESSION['sUrls'][$key];
+					$url = substr($previousPage, strpos($previousPage, " ") + 1);
+				}
+				else
+					$url = VIRTUAL_URL;
+
+				redirect($url);
 			}
 		}
 	}
-	
+
 	/**
 	 * loadChildControls
 	 *
@@ -130,7 +141,7 @@ class component_guicontrol extends component
 			}
 		}
 	}
-	
+
 	/**
 	 * &parseControlData
 	 *
@@ -198,7 +209,7 @@ class component_guicontrol extends component
 		}
 		return $controls;
 	}
-	
+
 	/**
 	 * includeGuiControl
 	 *

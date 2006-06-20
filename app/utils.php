@@ -655,7 +655,7 @@ function echo_backtrace($full = false)
 * and stripsslashes only when it is on.
 * Also works on Arrays
 *
-* @author ferik100 at flexis dot com dot br   posted to php.net (public domain)
+* @author ferik100 at flexis dot com dot br posted to php.net (public domain)
 * @param string $str
 * @return string
 */

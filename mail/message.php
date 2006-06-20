@@ -42,19 +42,19 @@ class message extends gui
 	function message()
 	{
 		$this->Smarty();
-   		$this->template_dir = fw_gui_base;
-		$this->compile_dir = fw_temp_dir . "/gui";
+   		$this->template_dir = gui_base;
+		$this->compile_dir = app_temp_dir . "/gui";
 
 		if (defined("fw_gui_look") )
 		{
-			$this->config_dir = $this->template_dir . "/" . fw_gui_look . "/configs";
-			$this->debug_tpl = "file:" . fw_gui_look . "/debug.tpl";
-			$this->assign("template_root", fw_gui_look);
+			$this->config_dir = $this->template_dir . "/" . gui_look . "/configs";
+			$this->debug_tpl = "file:" . gui_look . "/debug.tpl";
+			$this->assign("template_root", gui_look);
 		}
 		else
 		{
 			$this->config_dir = $this->template_dir . "/configs";
-			$this->assign("template_root", fw_gui_base);
+			$this->assign("template_root", gui_base);
 		}
 		global $strings;
 		$this->assign("strings", $strings);
@@ -74,7 +74,7 @@ class message extends gui
 	 */
 	function send($from, $to, $cc, $subject, $inTemplateName, $inType = "text")
 	{
-		$body = $this->fetch(fw_gui_messages . "/" . $inTemplateName);
+		$body = $this->fetch(gui_messages . "/" . $inTemplateName);
 
 			switch ($inType)
 			{
@@ -108,7 +108,7 @@ class message extends gui
 	 */
 	function display($from, $to, $cc, $subject, $inTemplateName, $inType = "text")
 	{
-		gui::display(fw_gui_messages . "/" . $inTemplateName);
+		gui::display(gui_messages . "/" . $inTemplateName);
 	}
 
 	/**
@@ -125,7 +125,6 @@ class message extends gui
 	 */
 	function sendEmail($from, $to, $cc, $subject, $body, $type = "text")
 	{
-
 		if(app_status == "dev")
 		{
 			if (defined(dev_email_address))
@@ -177,7 +176,6 @@ class message extends gui
 		{
 			if(mail_smtp_auth_use)
 			{
-				//die("Before mail");
 				$mail =& Mail::factory('smtp', array(
 						"host" => mail_smtp_host,
 						"port" => mail_smtp_port,
@@ -202,6 +200,7 @@ class message extends gui
 
 	/**
 	 * sendTextEmail 
+	 * Send a plain text Email without using a template
 	 * 
 	 * @param mixed $from 
 	 * @param mixed $to 
@@ -217,6 +216,7 @@ class message extends gui
 	}
 	/**
 	 * sendHTMLEmail 
+	 * Send an html Email without using a template
 	 * 
 	 * @param mixed $from 
 	 * @param mixed $to 
@@ -232,6 +232,7 @@ class message extends gui
 	}
 	/**
 	 * sendMultipartEmail 
+	 * Send a multipart Email without using a template
 	 * 
 	 * @param mixed $from 
 	 * @param mixed $to 
