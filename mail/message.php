@@ -45,7 +45,7 @@ class message extends gui
    		$this->template_dir = gui_base;
 		$this->compile_dir = app_temp_dir . "/gui";
 
-		if (defined("fw_gui_look") )
+		if (defined("gui_look") )
 		{
 			$this->config_dir = $this->template_dir . "/" . gui_look . "/configs";
 			$this->debug_tpl = "file:" . gui_look . "/debug.tpl";
@@ -113,7 +113,8 @@ class message extends gui
 
 	/**
 	 * sendEmail 
-	 * 
+	 * Send and Email using a Template
+	 *
 	 * @param mixed $from 
 	 * @param mixed $to 
 	 * @param mixed $cc 

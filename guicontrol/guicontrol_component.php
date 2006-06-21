@@ -93,7 +93,6 @@ class component_guicontrol extends component
 				{
 					foreach($controllist as $name => $control)
 					{
-						echo_r($_SESSION['controls']);
 						$_SESSION['controls'][$type][$name]['viewState'] = base64_encode(gzcompress(serialize($control->getParams())));
 						$_SESSION['controls'][$type][$name]['value'] = $control->getValue();
 					}
