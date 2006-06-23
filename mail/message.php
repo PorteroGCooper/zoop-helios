@@ -20,13 +20,13 @@ require_once 'Mail.php';
 */
 
 /**
- * message 
- * 
+ * message
+ *
  * @uses gui
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @author John Lesueur
  * @author Rick Gigger
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
@@ -34,8 +34,8 @@ require_once 'Mail.php';
 class message extends gui
 {
 	/**
-	 * message 
-	 * 
+	 * message
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -61,14 +61,15 @@ class message extends gui
 	}
 
 	/**
-	 * send 
-	 * 
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $inTemplateName 
-	 * @param string $inType 
+	 * send
+	 * Send an Email using a Template
+	 *
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $inTemplateName
+	 * @param string $inType
 	 * @access public
 	 * @return void
 	 */
@@ -95,14 +96,15 @@ class message extends gui
 
 	//	this is mostly just for debugging
 	/**
-	 * display 
-	 * 
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $inTemplateName 
-	 * @param string $inType 
+	 * display
+	 * Works like send, but displays the email to the browser rather than sending it.
+	 *
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $inTemplateName
+	 * @param string $inType
 	 * @access public
 	 * @return void
 	 */
@@ -112,15 +114,15 @@ class message extends gui
 	}
 
 	/**
-	 * sendEmail 
-	 * Send and Email using a Template
+	 * sendEmail
+	 * Send an Email without using a Template
 	 *
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $body 
-	 * @param string $type 
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $body
+	 * @param string $type
 	 * @access public
 	 * @return void
 	 */
@@ -200,14 +202,14 @@ class message extends gui
 	}
 
 	/**
-	 * sendTextEmail 
+	 * sendTextEmail
 	 * Send a plain text Email without using a template
-	 * 
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $body 
+	 *
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $body
 	 * @access public
 	 * @return void
 	 */
@@ -216,14 +218,14 @@ class message extends gui
 		message::sendEmail($from, $to, $cc, $subject, $body, "text");
 	}
 	/**
-	 * sendHTMLEmail 
+	 * sendHTMLEmail
 	 * Send an html Email without using a template
-	 * 
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $body 
+	 *
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $body
 	 * @access public
 	 * @return void
 	 */
@@ -232,14 +234,14 @@ class message extends gui
 		message::sendEmail($from, $to, $cc, $subject, $body, "html");
 	}
 	/**
-	 * sendMultipartEmail 
+	 * sendMultipartEmail
 	 * Send a multipart Email without using a template
-	 * 
-	 * @param mixed $from 
-	 * @param mixed $to 
-	 * @param mixed $cc 
-	 * @param mixed $subject 
-	 * @param mixed $body 
+	 *
+	 * @param mixed $from
+	 * @param mixed $to
+	 * @param mixed $cc
+	 * @param mixed $subject
+	 * @param mixed $body
 	 * @access public
 	 * @return void
 	 */

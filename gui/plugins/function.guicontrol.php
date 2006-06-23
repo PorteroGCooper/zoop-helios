@@ -35,14 +35,14 @@ function smarty_function_guicontrol($params, &$smarty)
 		$name = $params['name'];
 		$control = &getGuiControl($type, $name);
 	}
-		if (isset($params['echo']))
-			$echo = $params['echo'];
-		else
-			$echo = true;
+
+	if (isset($params['echo']))
+		$echo = $params['echo'];
+	else
+		$echo = true;
 
 	foreach($params as $key => $value)
 	{
-
 		if($key[0] != '_')
 		{
 			$control->setParam($key, $value);
@@ -53,7 +53,6 @@ function smarty_function_guicontrol($params, &$smarty)
 			array_shift($keys);
 			$specialParams[$keys[0]][$keys[1]] = $value;
 		}
-
 	}
 	if(isset($specialParams))
 	{
