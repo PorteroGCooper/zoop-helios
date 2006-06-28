@@ -89,7 +89,87 @@ class Validator
 		else
 			trigger_error("No known validation for {$validate['type']}");
 	}
+	
+	/**
+	 * a boolean validate wrapper for the functions in this class.
+	 * This function will return a boolean true / false for validation, rather than the array returned by the other functions.
+	 * the validate array must have 'type' => $type set for this to work.
+	 *
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return array
+	 */
+	function boolvalidate($value, $validate)
+	{
+		$result = Validator::validate($value, $validate);
+		
+		if($result['result'] == true)
+			return true;
+		else
+			return false;
+	}
 
+	/**
+	 * a function to stack validators together.
+	 * This function will validate more than one validator, stacked in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
+	 * It will return as soon as one of the validators fails. This is particularly useful if one of the validators performs a sql check.
+	 * the validate array must have 'validators' => array of individual "validate" arrays  set for this to work.
+	 *
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return array
+	 */
+	function validateStack($value, $validate)
+	{
+		if (!isset($validate['validators']) || empty($validate['validators']))
+			trigger_error('you need to define some validators');
+			
+		foreach($validate['validators'] as $validator)
+		{
+			$result = Validator::validate($value, $validator);
+			
+			if($result['result'] != true)
+				return $result;
+		}
+	
+		return $result;
+	}
+
+	/**
+	 * a function to combine validators together.
+	 * This function will validate more than one validator, in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
+	 * It will perform all validations before it returns the combined results.
+	 * the validate array must have 'validators' => array of individual "validate" arrays  set for this to work.
+	 *
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return array
+	 */	
+	function validateMerge($value, $validate)
+	{
+		$result['result'] = true;
+		$result['message'] = "";
+		
+		if (!isset($validate['validators']) || empty($validate['validators']))
+			trigger_error('you need to define some validators');
+			
+		foreach($validate['validators'] as $validator)
+		{
+			$tmpresult = Validator::validate($value, $validator);
+			
+			if($tmpresult['result'] != true)
+			{
+				$result['result'] = false;
+				$result['message'] .= $tmpresult['message'] . "<br>";
+			}
+		}
+	
+		return $result;
+	}
+	
 	/**
 	 * getPhoneAttr
 	 *
@@ -915,7 +995,7 @@ class Validator
 	{
 		$result['message'] = "is already in use, please choose another one";
 
-		if (sql_check("SELECT username from {$validate['table']} where {$validate['field']}=\"$value\""))
+		if (sql_check("SELECT {$validate['field']} from {$validate['table']} where {$validate['field']}=\"$value\""))
 			$result['result'] = false;
 		else
 			$result['result'] = true;
