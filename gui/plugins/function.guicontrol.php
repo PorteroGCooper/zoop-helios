@@ -51,7 +51,17 @@ function smarty_function_guicontrol($params, &$smarty)
 		{
 			$keys = explode('_', $key);
 			array_shift($keys);
-			$specialParams[$keys[0]][$keys[1]] = $value;
+			$tmpkeys = $keys;
+			$tmpval  = $value;
+			while (!empty($tmpkeys))
+			{
+				$tmpval = array(array_pop($tmpkeys) => $tmpval);
+			}
+			
+			if (isset($specialParams))
+				$specialParams = array_merge_recursive($specialParams, $tmpval);
+			else
+				$specialParams = $tmpval;
 		}
 	}
 	if(isset($specialParams))
