@@ -474,18 +474,23 @@ class form2
 	 * guiAssign
 	 * Used to assign a portion of the form into the gui object so that the smarty functions can use it to draw the form or listing.
 	 * This step is necessary if you want to actually view anything.
+	 * It is a legacy thing unless used with defaults.
 	 *
 	 * @param string $name a name to assign the value to
 	 * @param mixed $switch can be form, tablename, table, or record
 	 * @access public
 	 * @return void
 	 */
-	function guiAssign($name, $switch)
+	function guiAssign($name = "this", $switch = "this")
 	{
 		global $gui;
 
 		switch($switch)
 		{
+			case 'this':
+				$gui->assign("form", $this);
+				break;
+
 			case 'form':
 				$gui->assign($name, $this->form);
 				break;
