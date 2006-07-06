@@ -1166,15 +1166,21 @@ function mkdir_r($filename)
   * Create a directory structure recursively
   *
   * @author      Aidan Lister <aidan@php.net>
-  * @version     1.0.0
+  * @author      Steve Francia --- added support for if is already a symlink
+  * @version     1.1
   * @link        http://aidanlister.com/repos/v/function.mkdirr.php
   * @param       string   $pathname    The directory structure to create
   * @return      bool     Returns TRUE on success, FALSE on failure
   */
  function mkdirr($pathname, $mode = 0770)
  {
-     // Check if directory already exists
-     if (is_dir($pathname) || empty($pathname)) {
+
+	// eliminate the trailing slash
+	if (substr($pathname, -1) == "/")
+		$pathname = substr($pathname, 0, -1);
+
+     // Check if directory or symlink already exists
+     if (is_dir($pathname) || empty($pathname) ) {
          return true;
      }
 

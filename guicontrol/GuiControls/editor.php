@@ -54,7 +54,7 @@ class editor extends GuiControl
 		$this->params['name'] = $this->getName();
 		$this->params['value'] = $this->getValue();
 
-		$html .= smarty_function_loadeditor($this->params, &$smarty);
+		$html .= smarty_function_loadeditor($this->params, $smarty);
 
 		if(isset($this->params['errorState']))
 		{

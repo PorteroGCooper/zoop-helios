@@ -14,12 +14,12 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * database 
- * 
- * @package 
+ * database
+ *
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @author John Lesusur
  * @author Rick Gigger
  * @author Richard Bateman
@@ -28,24 +28,24 @@
 class database
 {
 	/**
-	 * db 
-	 * 
+	 * db
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $db = null;
 	/**
-	 * transaction 
-	 * 
+	 * transaction
+	 *
 	 * @var float
 	 * @access public
 	 */
 	var $transaction = 0;
 
 	/**
-	 * database 
-	 * 
-	 * @param mixed $dsn 
+	 * database
+	 *
+	 * @param mixed $dsn
 	 * @access public
 	 * @return void
 	 */
@@ -60,8 +60,8 @@ class database
 			$options['persistent'] = db_persistent;
 
 		$this->dsn = &$dsn;
-		$this->db = DB::connect($dsn, $options);
-		if(DB::isError($this->db))
+		$this->db = db::connect($dsn, $options);
+		if(db::isError($this->db))
 		{
 			$this->error($this->db);
 		}
@@ -69,8 +69,8 @@ class database
 	}
 
 	/**
-	 * getDSN 
-	 * 
+	 * getDSN
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -80,9 +80,9 @@ class database
 	}
 
 	/**
-	 * verifyQuery 
-	 * 
-	 * @param mixed $inQuery 
+	 * verifyQuery
+	 *
+	 * @param mixed $inQuery
 	 * @access public
 	 * @return void
 	 */
@@ -113,14 +113,14 @@ class database
 	}
 
 	/**
-	 * makeDSN 
-	 * 
-	 * @param mixed $dbtype 
-	 * @param mixed $host 
-	 * @param mixed $port 
-	 * @param mixed $username 
-	 * @param mixed $password 
-	 * @param mixed $database 
+	 * makeDSN
+	 *
+	 * @param mixed $dbtype
+	 * @param mixed $host
+	 * @param mixed $port
+	 * @param mixed $username
+	 * @param mixed $password
+	 * @param mixed $database
 	 * @access public
 	 * @return void
 	 */
@@ -141,8 +141,8 @@ class database
 	}
 
 	/**
-	 * begin_transaction 
-	 * 
+	 * begin_transaction
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -154,8 +154,8 @@ class database
 	}
 
 	/**
-	 * commit_transaction 
-	 * 
+	 * commit_transaction
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -167,8 +167,8 @@ class database
 	}
 
 	/**
-	 * rollback_transaction 
-	 * 
+	 * rollback_transaction
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -180,9 +180,9 @@ class database
 	}
 
 	/**
-	 * error 
-	 * 
-	 * @param mixed $result 
+	 * error
+	 *
+	 * @param mixed $result
 	 * @access public
 	 * @return void
 	 */
@@ -199,10 +199,10 @@ class database
 	}
 
 	/**
-	 * query 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $Db 
+	 * query
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $Db
 	 * @access public
 	 * @return void
 	 */
@@ -210,7 +210,7 @@ class database
 	{
 		$this->verifyQuery($inQueryString);
 		$result = $this->db->query($inQueryString);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -218,9 +218,9 @@ class database
 	}
 
 	/**
-	 * get_fields 
-	 * 
-	 * @param mixed $table 
+	 * get_fields
+	 *
+	 * @param mixed $table
 	 * @access public
 	 * @return void
 	 */
@@ -230,9 +230,9 @@ class database
 	}
 
 	/**
-	 * insert 
-	 * 
-	 * @param mixed $query 
+	 * insert
+	 *
+	 * @param mixed $query
 	 * @access public
 	 * @return void
 	 */
@@ -242,9 +242,9 @@ class database
 	}
 
 	/**
-	 * fetch_sequence 
-	 * 
-	 * @param mixed $sequence 
+	 * fetch_sequence
+	 *
+	 * @param mixed $sequence
 	 * @access public
 	 * @return void
 	 */
@@ -263,7 +263,7 @@ class database
 	{
 		$result = $this->db->query($query);
 
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -281,16 +281,16 @@ class database
 	}
 
 	/**
-	 * fetch_into_arrays 
-	 * 
-	 * @param mixed $query 
+	 * fetch_into_arrays
+	 *
+	 * @param mixed $query
 	 * @access public
 	 * @return void
 	 */
 	function fetch_into_arrays($query)
 	{
 		$result = $this->db->getAll($query, array(), DB_FETCHMODE_ASSOC | DB_FETCHMODE_FLIPPED);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -298,9 +298,9 @@ class database
 	}
 
 	/**
-	 * fetch_into_arrobjs 
-	 * 
-	 * @param mixed $query 
+	 * fetch_into_arrobjs
+	 *
+	 * @param mixed $query
 	 * @access public
 	 * @return void
 	 */
@@ -309,7 +309,7 @@ class database
 		$this->verifyQuery($query);
 		bug("this function deprecated, please use a different one...");
 		$result = $this->db->getAll($query);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -318,9 +318,9 @@ class database
 	}
 
 	/**
-	 * new_fetch_into_array 
-	 * 
-	 * @param mixed $query 
+	 * new_fetch_into_array
+	 *
+	 * @param mixed $query
 	 * @access public
 	 * @return void
 	 */
@@ -328,7 +328,7 @@ class database
 	{
 		$this->verifyQuery($query);
 		$result = $this->db->getCol($query);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -336,11 +336,11 @@ class database
 	}
 
 	/**
-	 * fetch_into_array 
-	 * 
-	 * @param mixed $inTableName 
-	 * @param mixed $inFieldName 
-	 * @param string $inExtra 
+	 * fetch_into_array
+	 *
+	 * @param mixed $inTableName
+	 * @param mixed $inFieldName
+	 * @param string $inExtra
 	 * @access public
 	 * @return void
 	 */
@@ -348,7 +348,7 @@ class database
 	{
 		bug("please change this to a query and use new_fetch_into_array");
 		$result = $this->db->getCol("SELECT $inFieldName FROM $inTableName $inExtra");
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -364,7 +364,7 @@ class database
 	function fetch_one($inQueryString)
 	{
 		$result = $this->db->query($inQueryString);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -397,7 +397,7 @@ class database
 	{
 		$this->verifyQuery($inQuery);
 		$result = $this->db->getAssoc($inQuery);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -406,10 +406,10 @@ class database
 	}
 
 	/**
-	 * fetch_rows 
-	 * 
-	 * @param mixed $inQuery 
-	 * @param int $inReturnObjects 
+	 * fetch_rows
+	 *
+	 * @param mixed $inQuery
+	 * @param int $inReturnObjects
 	 * @access public
 	 * @return void
 	 */
@@ -425,7 +425,7 @@ class database
 		{
 			$rows = $this->db->getAll($inQuery);
 		}
-		if(DB::isError($rows))
+		if(db::isError($rows))
 		{
 			$this->error($rows);
 		}
@@ -433,10 +433,10 @@ class database
 	}
 
 	/**
-	 * &fetch_map 
-	 * 
-	 * @param mixed $inQuery 
-	 * @param mixed $inKeyField 
+	 * &fetch_map
+	 *
+	 * @param mixed $inQuery
+	 * @param mixed $inKeyField
 	 * @access public
 	 * @return void
 	 */
@@ -444,7 +444,7 @@ class database
 	{
 		$this->verifyQuery($inQuery);
 		$rows = $this->db->getAll($inQuery);
-		if(DB::isError($rows))
+		if(db::isError($rows))
 		{
 			$this->error($rows);
 		}
@@ -490,11 +490,11 @@ class database
 
 
 	/**
-	 * fetch_simple_map 
-	 * 
-	 * @param mixed $inQuery 
-	 * @param mixed $inKeyField 
-	 * @param mixed $inValueField 
+	 * fetch_simple_map
+	 *
+	 * @param mixed $inQuery
+	 * @param mixed $inKeyField
+	 * @param mixed $inValueField
 	 * @access public
 	 * @return void
 	 */
@@ -502,7 +502,7 @@ class database
 	{
 		$this->verifyQuery($inQuery);
 		$rows = $this->db->getAll($inQuery);
-		if(DB::isError($rows))
+		if(db::isError($rows))
 		{
 			$this->error($rows);
 		}
@@ -537,10 +537,10 @@ class database
 
 
 	/**
-	 * &fetch_complex_map 
-	 * 
-	 * @param mixed $inQuery 
-	 * @param mixed $inKeyField 
+	 * &fetch_complex_map
+	 *
+	 * @param mixed $inQuery
+	 * @param mixed $inKeyField
 	 * @access public
 	 * @return void
 	 */
@@ -548,7 +548,7 @@ class database
 	{
 		$this->verifyQuery($inQuery);
 		$rows = $this->db->getAll($inQuery);
-		if(DB::isError($rows))
+		if(db::isError($rows))
 		{
 			$this->error($rows);
 		}
@@ -590,17 +590,17 @@ class database
 
 
 	/**
-	 * fetch_one_cell 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param int $inField 
+	 * fetch_one_cell
+	 *
+	 * @param mixed $inQueryString
+	 * @param int $inField
 	 * @access public
 	 * @return void
 	 */
 	function fetch_one_cell($inQueryString, $inField = 0)
 	{
 		$result = $this->db->query($inQueryString, array(), DB_FETCHMODE_ORDERED);
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -627,11 +627,11 @@ class database
 	}
 
 	/**
-	 * &prepare_tree_query 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param string $idField 
-	 * @param string $parentField 
+	 * &prepare_tree_query
+	 *
+	 * @param mixed $inQueryString
+	 * @param string $idField
+	 * @param string $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -649,12 +649,12 @@ class database
 	}
 
 	/**
-	 * &better_fetch_tree 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $rootNode 
-	 * @param string $idField 
-	 * @param string $parentField 
+	 * &better_fetch_tree
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $rootNode
+	 * @param string $idField
+	 * @param string $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -699,12 +699,12 @@ class database
 	}
 
 	/**
-	 * &fetch_tree 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $rootNode 
-	 * @param string $idField 
-	 * @param string $parentField 
+	 * &fetch_tree
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $rootNode
+	 * @param string $idField
+	 * @param string $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -738,12 +738,12 @@ class database
 	}
 
 	/**
-	 * &__sql_append_children 
-	 * 
-	 * @param mixed $rootObject 
-	 * @param mixed $objects 
-	 * @param mixed $idField 
-	 * @param mixed $parentField 
+	 * &__sql_append_children
+	 *
+	 * @param mixed $rootObject
+	 * @param mixed $objects
+	 * @param mixed $idField
+	 * @param mixed $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -763,13 +763,13 @@ class database
 	}
 
 	/**
-	 * &__sql_better_append_children 
-	 * 
-	 * @param mixed $rootObjectId 
-	 * @param mixed $objects 
-	 * @param mixed $idField 
-	 * @param mixed $parentField 
-	 * @param mixed $depth 
+	 * &__sql_better_append_children
+	 *
+	 * @param mixed $rootObjectId
+	 * @param mixed $objects
+	 * @param mixed $idField
+	 * @param mixed $parentField
+	 * @param mixed $depth
 	 * @access public
 	 * @return void
 	 */
@@ -796,12 +796,12 @@ class database
 	//	Might be too much of a secret hack though - at least the var name should probably be changed
 
 	/**
-	 * &fetch_children 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $rootNode 
-	 * @param string $idField 
-	 * @param string $parentField 
+	 * &fetch_children
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $rootNode
+	 * @param string $idField
+	 * @param string $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -871,13 +871,13 @@ class database
 	//	Might be too much of a secret hack though - at least the var name should probably be changed
 
 	/**
-	 * &better_fetch_children 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $rootNode 
-	 * @param string $idField 
-	 * @param string $parentField 
-	 * @param mixed $depth 
+	 * &better_fetch_children
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $rootNode
+	 * @param string $idField
+	 * @param string $parentField
+	 * @param mixed $depth
 	 * @access public
 	 * @return void
 	 */
@@ -917,12 +917,12 @@ class database
 	}
 
 	/**
-	 * _fetch_children 
-	 * 
-	 * @param mixed $children 
-	 * @param mixed $objects 
-	 * @param mixed $id 
-	 * @param mixed $depth 
+	 * _fetch_children
+	 *
+	 * @param mixed $children
+	 * @param mixed $objects
+	 * @param mixed $id
+	 * @param mixed $depth
 	 * @access protected
 	 * @return void
 	 */
@@ -939,12 +939,12 @@ class database
 	}
 
 	/**
-	 * &fetch_parents 
-	 * 
-	 * @param mixed $inQueryString 
-	 * @param mixed $leafNode 
-	 * @param string $idField 
-	 * @param string $parentField 
+	 * &fetch_parents
+	 *
+	 * @param mixed $inQueryString
+	 * @param mixed $leafNode
+	 * @param string $idField
+	 * @param string $parentField
 	 * @access public
 	 * @return void
 	 */
@@ -968,9 +968,9 @@ class database
 	}
 
 	/**
-	 * get_table_info 
-	 * 
-	 * @param mixed $inTable 
+	 * get_table_info
+	 *
+	 * @param mixed $inTable
 	 * @access public
 	 * @return void
 	 */
@@ -978,7 +978,7 @@ class database
 	{
 		$result = $this->db->tableinfo($inTable);
 
-		if(DB::isError($result))
+		if(db::isError($result))
 		{
 			$this->error($result);
 		}
@@ -986,9 +986,9 @@ class database
 	}
 
 	/**
-	 * escape_string 
-	 * 
-	 * @param mixed $inString 
+	 * escape_string
+	 *
+	 * @param mixed $inString
 	 * @access public
 	 * @return void
 	 */
@@ -998,9 +998,9 @@ class database
 	}
 
 	/**
-	 * escape_identifier 
-	 * 
-	 * @param mixed $inString 
+	 * escape_identifier
+	 *
+	 * @param mixed $inString
 	 * @access public
 	 * @return void
 	 */
@@ -1010,9 +1010,9 @@ class database
 	}
 
 	/**
-	 * escape_tablename 
-	 * 
-	 * @param mixed $inString 
+	 * escape_tablename
+	 *
+	 * @param mixed $inString
 	 * @access public
 	 * @return void
 	 */

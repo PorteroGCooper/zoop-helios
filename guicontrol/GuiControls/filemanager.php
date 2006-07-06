@@ -32,7 +32,7 @@ class filemanager extends GuiControl
 		$this->params['name'] = $this->getName();
 		$this->params['value'] = $this->getValue();
 
-		$html .= smarty_function_loadmanager($this->params, &$smarty);
+		$html .= smarty_function_loadmanager($this->params, $smarty);
 
 		if(isset($this->params['errorState']))
 		{

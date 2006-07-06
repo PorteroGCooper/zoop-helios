@@ -37,14 +37,14 @@
 */
 
 	/**
-	 * zone 
-	 * 
-	 * @package 
+	 * zone
+	 *
+	 * @package
 	 * @version $id$
 	 * @copyright 1997-2006 Supernerd LLC
 	 * @author Richard Bateman
 	 * @author John Lesueur
-	 * @author Steve Francia <webmaster@supernerd.com> 
+	 * @author Steve Francia <webmaster@supernerd.com>
 	 * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
 	 */
 	class zone
@@ -54,23 +54,23 @@
         //////////////////////////////////////////////////////////////
 
 		/**
-		 * error 
-		 * 
+		 * error
+		 *
 		 * @var string
 		 * @access public
 		 */
 		var $error = "";		// The last error message recorded.
 		/**
-		 * errornum 
-		 * 
+		 * errornum
+		 *
 		 * @var float
 		 * @access public
 		 */
 		var $errornum = 0;
 
 		/**
-		 * zonename 
-		 * 
+		 * zonename
+		 *
 		 * @var string
 		 * @access public
 		 */
@@ -80,70 +80,70 @@
 								 */
 
 		/**
-		 * zonetype 
-		 * 
+		 * zonetype
+		 *
 		 * @var string
 		 * @access public
 		 */
 		var $zonetype = "";		// this will always contain the name of this zone
 
 		/**
-		 * urlvar 
-		 * 
+		 * urlvar
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
 		/**
-		 * urlzone 
-		 * 
+		 * urlzone
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $urlzone = array();		// this is a legacy variable that should be left alone
 
 		/**
-		 * parent 
-		 * 
+		 * parent
+		 *
 		 * @var mixed
 		 * @access public
 		 */
 		var $parent = null;		// Reference to the parent of this zone
 
 		/**
-		 * _zone 
-		 * 
+		 * _zone
+		 *
 		 * @var array
 		 * @access protected
 		 */
 		var $_zone = array();	// array of subclasses for this zone
 
 		/**
-		 * allowed_children 
-		 * 
+		 * allowed_children
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $allowed_children = array();	// These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
 		/**
-		 * allowed_parents 
-		 * 
+		 * allowed_parents
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $allowed_parents = array();	// These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
 
 		/**
-		 * zoneParamNames 
-		 * 
+		 * zoneParamNames
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $zoneParamNames = array();
 
 		/**
-		 * returnPaths 
-		 * 
+		 * returnPaths
+		 *
 		 * @var array
 		 * @access public
 		 */
@@ -158,8 +158,8 @@
 			rjl 8/25/2005 */
 		//var $allowed_remote_post = array();
 		/**
-		 * restricted_remote_post 
-		 * 
+		 * restricted_remote_post
+		 *
 		 * @var array
 		 * @access public
 		 */
@@ -167,16 +167,16 @@
 
 
 		/**
-		 * origins 
-		 * 
+		 * origins
+		 *
 		 * @var array
 		 * @access public
 		 */
 		var $origins = array();
 
 		/**
-		 * url 
-		 * 
+		 * url
+		 *
 		 * @var string
 		 * @access public
 		 */
@@ -226,23 +226,23 @@
 		**/
 
         	/**
-        	 * urlvars 
-        	 * 
+        	 * urlvars
+        	 *
         	 * @var mixed
         	 * @access public
         	 */
         	var $urlvars = false;
 		/**
-		 * urlzones 
-		 * 
+		 * urlzones
+		 *
 		 * @var mixed
 		 * @access public
 		 */
 		var $urlzones = false;
-		
+
 		/**
 		 * zcache
-		 * 
+		 *
 		 * @var object
 		 * @access public
 		 */
@@ -260,9 +260,9 @@
 		}
 
 		/**
-		 * handleRequest 
-		 * 
-		 * @param mixed $inPath 
+		 * handleRequest
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -281,7 +281,6 @@
 				$GLOBALS['current_usertype'] = $gUrlVars['userType'];
 
 			$gPathParts[] = $this->zonename;
-
 
 			if (!$this->zonename)  // SINCE THIS IS NULL SET ZONENAME TO @ROOT
 			{
@@ -398,7 +397,7 @@
 						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $path2");
 						return true;
 					}
-					
+
 					array_unshift($inPath, 'default');
 					return( $this->_checkFuncs("Default", $inPath) );
 				}
@@ -406,10 +405,10 @@
 		}
 
 		/**
-		 * _checkFuncs 
-		 * 
-		 * @param mixed $curPath 
-		 * @param mixed $inPath 
+		 * _checkFuncs
+		 *
+		 * @param mixed $curPath
+		 * @param mixed $inPath
 		 * @access protected
 		 * @return void
 		 */
@@ -462,9 +461,9 @@
 		}
 
 		/**
-		 * _checkAllowedPost 
-		 * 
-		 * @param mixed $curPath 
+		 * _checkAllowedPost
+		 *
+		 * @param mixed $curPath
 		 * @access protected
 		 * @return void
 		 */
@@ -494,10 +493,10 @@
 		}
 
 		/**
-		 * _checkZone 
-		 * 
-		 * @param mixed $zoneName 
-		 * @param mixed $inPath 
+		 * _checkZone
+		 *
+		 * @param mixed $zoneName
+		 * @param mixed $inPath
 		 * @access protected
 		 * @return void
 		 */
@@ -549,10 +548,10 @@
 		}
 
 		/**
-		 * _xmlrpcDispatch 
-		 * 
-		 * @param mixed $curPath 
-		 * @param mixed $inPath 
+		 * _xmlrpcDispatch
+		 *
+		 * @param mixed $curPath
+		 * @param mixed $inPath
 		 * @access protected
 		 * @return void
 		 */
@@ -642,9 +641,9 @@
 		}
 
 		/**
-		 * pageDefault 
-		 * 
-		 * @param mixed $inPath 
+		 * pageDefault
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -656,9 +655,9 @@
 		}
 
 		/**
-		 * initZone 
-		 * 
-		 * @param mixed $inPath 
+		 * initZone
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -668,9 +667,9 @@
 		}
 
 		/**
-		 * closeZone 
-		 * 
-		 * @param mixed $inPath 
+		 * closeZone
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -680,9 +679,9 @@
 		}
 
 		/**
-		 * initPages 
-		 * 
-		 * @param mixed $inPath 
+		 * initPages
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -692,9 +691,9 @@
 		}
 
 		/**
-		 * closePages 
-		 * 
-		 * @param mixed $inPath 
+		 * closePages
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -704,9 +703,9 @@
 		}
 
 		/**
-		 * closePosts 
-		 * 
-		 * @param mixed $inPath 
+		 * closePosts
+		 *
+		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
@@ -716,8 +715,8 @@
 		}
 
 		/**
-		 * getZoneParamNames 
-		 * 
+		 * getZoneParamNames
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -728,8 +727,8 @@
 
 		//deprecated...
 		/**
-		 * getUrlVarNames 
-		 * 
+		 * getUrlVarNames
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -740,9 +739,9 @@
 		}
 
 		/**
-		 * setZoneParams 
-		 * 
-		 * @param mixed $inParamNames 
+		 * setZoneParams
+		 *
+		 * @param mixed $inParamNames
 		 * @access public
 		 * @return void
 		 */
@@ -753,9 +752,9 @@
 
 		//deprecated
 		/**
-		 * setUrlVarNames 
-		 * 
-		 * @param mixed $inUrlVarNames 
+		 * setUrlVarNames
+		 *
+		 * @param mixed $inUrlVarNames
 		 * @access public
 		 * @return void
 		 */
@@ -766,8 +765,8 @@
 		}
 
 		/**
-		 * getZoneParams 
-		 * 
+		 * getZoneParams
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -779,8 +778,8 @@
 
 		//deprecated
 		/**
-		 * getUrlVars 
-		 * 
+		 * getUrlVars
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -795,15 +794,15 @@
 		 * Return an array of parent(s) for this zone.
 		 */
 		/**
-		 * getMyParents 
-		 * 
+		 * getMyParents
+		 *
 		 * @access public
 		 * @return void
 		 */
 		function getMyParents() {
 			/**
-			 * parent_zones 
-			 * 
+			 * parent_zones
+			 *
 			 * @static
 			 * @var mixed
 			 * @access public
@@ -821,8 +820,8 @@
 		}
 
 		/**
-		 * initParents 
-		 * 
+		 * initParents
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -832,9 +831,9 @@
 
 		//should return an url to this zone
 		/**
-		 * getZoneUrl 
-		 * 
-		 * @param int $depth 
+		 * getZoneUrl
+		 *
+		 * @param int $depth
 		 * @access public
 		 * @return void
 		 */
@@ -846,9 +845,9 @@
 
 		//should return an app path to this zone
 		/**
-		 * getZonePath 
-		 * 
-		 * @param int $depth 
+		 * getZonePath
+		 *
+		 * @param int $depth
 		 * @access public
 		 * @return void
 		 */
@@ -860,10 +859,10 @@
 
 		//should redirect us in the zone to the page $inUrl
 		/**
-		 * zoneRedirect 
-		 * 
-		 * @param string $inUrl 
-		 * @param mixed $redirectType 
+		 * zoneRedirect
+		 *
+		 * @param string $inUrl
+		 * @param mixed $redirectType
 		 * @access public
 		 * @return void
 		 */
@@ -873,8 +872,8 @@
 		}
 
 		/**
-		 * hideNext 
-		 * 
+		 * hideNext
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -885,10 +884,10 @@
 		}
 
 		/**
-		 * guiAssign 
-		 * 
-		 * @param mixed $templateVarName 
-		 * @param mixed $varValue 
+		 * guiAssign
+		 *
+		 * @param mixed $templateVarName
+		 * @param mixed $varValue
 		 * @access public
 		 * @return void
 		 */
@@ -900,9 +899,9 @@
 		}
 
 		/**
-		 * guiDisplay 
-		 * 
-		 * @param mixed $inTemplateName 
+		 * guiDisplay
+		 *
+		 * @param mixed $inTemplateName
 		 * @access public
 		 * @return void
 		 */
@@ -919,14 +918,14 @@
 
 			$gui->display($dirName . '/'. $inTemplateName);
 		}
-		
+
 		/**
 		 * initZoneCache
 		 * Sets up an instance of zcache in $this->zcache.
-		 * 
+		 *
 		 * @access public
 		 * @return void
-		 */		
+		 */
 		function initZoneCache()
 		{
 			$className = get_class($this);

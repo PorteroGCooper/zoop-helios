@@ -27,28 +27,28 @@ if(!defined('zoop_autoload') || zoop_autoload)
 }
 
 /**
- * zoop 
- * 
- * @package 
+ * zoop
+ *
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class zoop
 {
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @var array
 	 * @access public
 	 */
 	var $init = array();
 
 	/**
-	 * zoop 
-	 * 
-	 * @param mixed $appPath 
+	 * zoop
+	 *
+	 * @param mixed $appPath
 	 * @access public
 	 * @return void
 	 */
@@ -64,9 +64,9 @@ class zoop
 	}
 
 	/**
-	 * addComponent 
-	 * 
-	 * @param mixed $name 
+	 * addComponent
+	 *
+	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
@@ -88,9 +88,9 @@ class zoop
 	}
 
 	/**
-	 * addZone 
-	 * 
-	 * @param mixed $name 
+	 * addZone
+	 *
+	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
@@ -102,9 +102,9 @@ class zoop
 	}
 
 	/**
-	 * addObject 
-	 * 
-	 * @param mixed $name 
+	 * addObject
+	 *
+	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
@@ -115,7 +115,7 @@ class zoop
 		//if (file_exists($file))
 		//	include($file);
 	}
-	
+
 	/**
 	 * addInclude
 	 *
@@ -130,7 +130,7 @@ class zoop
 		if(version_compare(PHP_VERSION, "5.0", "<"))
 			include_once($file);
 	}
-	
+
 	/**
 	 * addInclude
 	 *
@@ -143,7 +143,7 @@ class zoop
 		foreach($classes as $name => $file)
 			$this->addInclude($name, $file);
 	}
-	
+
 	/**
 	 * autoLoad($name)
 	 *
@@ -153,7 +153,7 @@ class zoop
 	 */
 	function autoLoad($name)
 	{
-		$name = strtolower($name);
+// 		$name = strtolower($name);
 		if( isset( $this->includes[$name]))
 		{
 			include_once($this->includes[$name]);
@@ -163,8 +163,8 @@ class zoop
 	}
 
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -182,8 +182,8 @@ class zoop
 	}
 
 	/**
-	 * run 
-	 * 
+	 * run
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -196,9 +196,9 @@ class zoop
 	}
 
 	/**
-	 * includeConfig 
-	 * 
-	 * @param mixed $name 
+	 * includeConfig
+	 *
+	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
@@ -211,27 +211,27 @@ class zoop
 }
 
 /**
- * component 
- * 
- * @package 
+ * component
+ *
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component
 {
 	/**
-	 * required 
-	 * 
+	 * required
+	 *
 	 * @var array
 	 * @access public
 	 */
 	var $required = array();
 
 	/**
-	 * component 
-	 * 
+	 * component
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -241,9 +241,9 @@ class component
 	}
 
 	/**
-	 * requireComponent 
-	 * 
-	 * @param mixed $name 
+	 * requireComponent
+	 *
+	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
@@ -253,8 +253,8 @@ class component
 	}
 
 	/**
-	 * &getRequiredComponents 
-	 * 
+	 * &getRequiredComponents
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -262,7 +262,7 @@ class component
 	{
 		return $this->required;
 	}
-	
+
 	/**
 	 * getIncludes
 	 *
@@ -276,8 +276,8 @@ class component
 	}
 
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -287,8 +287,8 @@ class component
 	}
 
 	/**
-	 * run 
-	 * 
+	 * run
+	 *
 	 * @access public
 	 * @return void
 	 */

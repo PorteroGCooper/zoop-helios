@@ -1,6 +1,6 @@
 <?
 
-define("zoop_guicontrol_dir", zoop_dir . "/guicontrol/GuiControls/");
+define("zoop_guicontrol_dir", zoop_dir . "/GuiControl/GuiControls/");
 define("app_guicontrol_dir", app_dir . "/GuiControls/");
 
 class component_guicontrol extends component
@@ -13,9 +13,9 @@ class component_guicontrol extends component
 
 	function getIncludes()
 	{
-		return array("guicontrol" => zoop_guicontrol_dir. 'GuiControl.php',
-		"guicontainer" => zoop_guicontrol_dir. 'GuiContainer.php',
-		"guimultivalue" => zoop_guicontrol_dir. 'GuiMultiValue.php');
+		return array("GuiControl" => zoop_guicontrol_dir. 'GuiControl.php',
+		"GuiContainer" => zoop_guicontrol_dir. 'GuiContainer.php',
+		"GuiMultiValue" => zoop_guicontrol_dir. 'GuiMultiValue.php');
 	}
 
 	/**
@@ -218,7 +218,7 @@ class component_guicontrol extends component
 	 */
 	function includeGuiControl($type)
 	{
-		$filename = strtolower($type).".php";
+ 		$filename = strtolower($type).".php";
 
 		if(file_exists(app_guicontrol_dir. "$filename"))
 			include_once(app_guicontrol_dir. "$filename");

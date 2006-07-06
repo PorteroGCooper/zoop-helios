@@ -89,7 +89,7 @@ class Validator
 		else
 			trigger_error("No known validation for {$validate['type']}");
 	}
-	
+
 	/**
 	 * a boolean validate wrapper for the functions in this class.
 	 * This function will return a boolean true / false for validation, rather than the array returned by the other functions.
@@ -103,7 +103,7 @@ class Validator
 	function boolvalidate($value, $validate)
 	{
 		$result = Validator::validate($value, $validate);
-		
+
 		if($result['result'] == true)
 			return true;
 		else
@@ -125,15 +125,15 @@ class Validator
 	{
 		if (!isset($validate['validators']) || empty($validate['validators']))
 			trigger_error('you need to define some validators');
-			
+
 		foreach($validate['validators'] as $validator)
 		{
 			$result = Validator::validate($value, $validator);
-			
+
 			if($result['result'] != true)
 				return $result;
 		}
-	
+
 		return $result;
 	}
 
@@ -147,29 +147,29 @@ class Validator
 	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
 	 * @access public
   	 * @return array
-	 */	
+	 */
 	function validateMerge($value, $validate)
 	{
 		$result['result'] = true;
 		$result['message'] = "";
-		
+
 		if (!isset($validate['validators']) || empty($validate['validators']))
 			trigger_error('you need to define some validators');
-			
+
 		foreach($validate['validators'] as $validator)
 		{
 			$tmpresult = Validator::validate($value, $validator);
-			
+
 			if($tmpresult['result'] != true)
 			{
 				$result['result'] = false;
 				$result['message'] .= $tmpresult['message'] . "<br>";
 			}
 		}
-	
+
 		return $result;
 	}
-	
+
 	/**
 	 * getPhoneAttr
 	 *

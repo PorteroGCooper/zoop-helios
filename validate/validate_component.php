@@ -19,8 +19,8 @@
 class component_validate extends component
 {
 	/**
-	 * component_validate 
-	 * 
+	 * component_validate
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -28,15 +28,15 @@ class component_validate extends component
 	{
 
 	}
-	
+
 	function getIncludes()
 	{
-		return array('validator' => dirname(__file__) . '/validate.php');
+		return array('Validator' => dirname(__file__) . '/validate.php');
 	}
 
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @access public
 	 * @return void
 	 */

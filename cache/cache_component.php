@@ -19,28 +19,28 @@ include(dirname(__file__) . "/zcache.php");
 
 
 /**
- * component_cache 
- * 
+ * component_cache
+ *
  * @uses component
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component_cache extends component
 {
 	/**
-	 * init 
-	 * 
+	 * init
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function init()
 	{
-		// make sure the directories are writable and exist or are created properly 
-		mkdirr(app_cache_dir);
+		// make sure the directories are writable and exist or are created properly
+ 		mkdirr(app_cache_dir);
 	}
-	
+
 }
 ?>
