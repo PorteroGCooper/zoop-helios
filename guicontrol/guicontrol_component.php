@@ -1,6 +1,6 @@
 <?
 
-define("zoop_guicontrol_dir", zoop_dir . "/GuiControl/GuiControls/");
+define("zoop_guicontrol_dir", zoop_dir . "/guicontrol/GuiControls/");
 define("app_guicontrol_dir", app_dir . "/GuiControls/");
 
 class component_guicontrol extends component
