@@ -1,0 +1,51 @@
+<?php
+// Copyright (c) 2005 Supernerd LLC and Contributors.
+// All Rights Reserved.
+//
+// This software is subject to the provisions of the Zope Public License,
+// Version 2.1 (ZPL). A copy of the ZPL should accompany this distribution.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+// WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+// FOR A PARTICULAR PURPOSE.
+
+/**
+ * Zoop Smarty plugin
+ * @package gui
+ * @subpackage plugins
+ */
+
+/*
+ * Smarty plugin
+ * -------------------------------------------------------------
+ * Type:     function
+ * Name:     guicontrol_label
+ * Purpose:  privide a label tag for a guicontrol.
+ * -------------------------------------------------------------
+ */
+function smarty_function_guicontrol_label($params, &$smarty)
+{
+	if(isset($params['guicontrol']))
+	{
+		$control = $params['guicontrol'];
+		$name = $control->name;
+	}
+	else
+	{
+		$type = $params['type'];
+		$name = $params['name'];
+		$control = &getGuiControl($type, $name);
+	}
+
+	$for = $control->getName() . "[value]";
+
+	$lname = ucfirst($name);
+
+	$html = "<label for=\"$for\"> $lname: </label>";
+
+	return $html;
+}
+
+/* vim: set expandtab: */
+
+?>

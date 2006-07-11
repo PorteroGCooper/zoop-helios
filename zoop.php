@@ -126,7 +126,7 @@ class zoop
 	 */
 	function addInclude($name, $file)
 	{
-		$this->includes[$name] = $file;
+		$this->includes[strtolower($name)] = $file;
 		if(version_compare(PHP_VERSION, "5.0", "<"))
 			include_once($file);
 	}
@@ -153,7 +153,7 @@ class zoop
 	 */
 	function autoLoad($name)
 	{
-// 		$name = strtolower($name);
+ 		$name = strtolower($name);
 		if( isset( $this->includes[$name]))
 		{
 			include_once($this->includes[$name]);

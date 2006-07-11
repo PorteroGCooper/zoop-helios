@@ -43,7 +43,7 @@ class checkbox extends GuiControl
 				$value = $this->getValue();
 				if (!$value)
 				{
-					$errorState['text'] = "This field is required to be checked";
+					$errorState['text'] = "This box must be checked";
 					$errorState['value'] = $this->getValue();
 					return $errorState;
 				}
@@ -125,7 +125,7 @@ class checkbox extends GuiControl
 		if(isset($this->params['errorState']))
 		{
 			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
+			$html .=" <span style=\"color: red;\">{$errorState['text']}</span>";
 		}
 
 		return $html;

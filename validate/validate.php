@@ -316,10 +316,10 @@ class Validator
 	 */
 	function getEqualToAttr($validate) // FOR JS VALIDATION
 	{
-		if (!isset($validate['equal_id']))
+		if (!isset($validate['field']))
 			return ;
 
-		$answer = "validate=\"equalto|{$validate['equal_id']}";
+		$answer = "validate=\"equalto|{$validate['field']}";
 
 		if(!isset($validate['required']) || $validate['required'] == 0)
 		{
@@ -339,8 +339,18 @@ class Validator
 	function validateEqualTo($value, $validate)
 	{
 		// THIS ONE ONLY PERFORMED IN JAVASCRIPT
-  		$result['result'] = true;
-  		return $result;
+		$post = getRawPost();
+
+		$field = $validate['field'];
+
+		$result = array('message' => "Must match {$field}.");
+
+		if (!isset($post[$field]) || $value != $post[$field])
+			$result['result'] = false;
+		else
+			$result['result'] = true;
+
+		return $result;
 	}
 
 	/**
@@ -995,7 +1005,12 @@ class Validator
 	{
 		$result['message'] = "is already in use, please choose another one";
 
-		if (sql_check("SELECT {$validate['field']} from {$validate['table']} where {$validate['field']}=\"$value\""))
+		if (isset($validate['where']))
+			$wherestr = " AND ({$validate['where']}) ";
+		else
+			$wherestr = "";
+
+		if (sql_check("SELECT {$validate['field']} from {$validate['table']} where {$validate['field']}=\"$value\" $wherestr"))
 			$result['result'] = false;
 		else
 			$result['result'] = true;

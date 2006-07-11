@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class TextArea extends GuiControl
+class textarea extends GuiControl
 {
 	function getPersistentParams()
 	{
@@ -22,7 +22,6 @@ class TextArea extends GuiControl
 
 	function render()
 	{
-		$html = $this->renderViewState();
 		$attrs = array();
 
 		foreach ($this->params as $parameter => $value)
@@ -59,13 +58,18 @@ class TextArea extends GuiControl
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		$html .= "<textarea name=\"{$label}\" id=\"{$label}\" $attrs>$value</textarea>";
+		$html = "<textarea name=\"{$label}\" id=\"{$label}\" $attrs>$value</textarea>";
 
 		if(isset($this->params['errorState']))
 		{
 			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
+			if (!empty($errorState['value']))
+				$html ="<span style=\"color: red;\">\"{$errorState['value']}\" {$errorState['text']} </span><br>" . $html;
+			else
+				$html ="<span style=\"color: red;\">{$errorState['text']} </span><br>" . $html;
 		}
+
+		$html = $this->renderViewState() . $html;
 
 		return $html;
 	}

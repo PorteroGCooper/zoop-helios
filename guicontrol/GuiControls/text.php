@@ -79,16 +79,21 @@ class text extends GuiControl
 
 		$name = $this->getName();
 		$value = $this->getValue();
+		$thistype = get_class($this);
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
-		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\">";
+		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\" type=\"$thistype\">";
 
 		if(isset($this->params['errorState']))
 		{
 			$errorState = $this->params['errorState'];
-			$html .=" <br><span style=\"color: red;\">The value \"{$errorState['value']}\" {$errorState['text']} </span>";
+
+			if (!empty($errorState['value']))
+				$html .=" <br><span style=\"color: red;\">\"{$errorState['value']}\" {$errorState['text']} </span>";
+			else
+				$html .=" <br><span style=\"color: red;\">{$errorState['text']} </span>";
 		}
 
 		$html = $this->renderViewState() . $html;
