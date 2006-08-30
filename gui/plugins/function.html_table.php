@@ -46,6 +46,7 @@ function smarty_function_html_table($params, &$smarty)
     $table_attr = 'border="1"';
     $tr_attr = '';
     $td_attr = '';
+    $th = false;
     $cols = 3;
     $rows = 3;
     $trailpad = '&nbsp;';
@@ -63,6 +64,9 @@ function smarty_function_html_table($params, &$smarty)
             case 'loop':
                 $$_key = (array)$_value;
                 break;
+		  case 'th':
+	    		$$_key = (boolean)$_value;
+			break;
 
             case 'cols':
             case 'rows':
@@ -108,10 +112,15 @@ function smarty_function_html_table($params, &$smarty)
                 $x = floor($x/$cols) + ($x%$cols)*$rows;
             }
 
+			if ($r == 0 && $th)
+			{	$btag = "<th"; $etag = "</th>";}
+			else
+			{$btag = "<td"; $etag = "</td>";}
+
             if ($x<$loop_count) {
-                $output .= "<td" . smarty_function_html_table_cycle('td', $td_attr, $c) . ">" . $loop[$x] . "</td>\n";
+                $output .= $btag . smarty_function_html_table_cycle('td', $td_attr, $c) . ">" . $loop[$x] . "$etag\n";
             } else {
-                $output .= "<td" . smarty_function_html_table_cycle('td', $td_attr, $c) . ">$trailpad</td>\n";
+                $output .= $btag . smarty_function_html_table_cycle('td', $td_attr, $c) . ">$trailpad$etag\n";
             }
         }
         $output .= "</tr>\n";

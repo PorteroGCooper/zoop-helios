@@ -269,7 +269,7 @@ class form
 		if ($id == "new" && $this->tables->$table->fields[$idfield]->autoincrement)
 			unset($record->values[$idfield]); // only unset this if the table is set to autoincrement
 
-		if ($$dbconnname->db->phptype == "mysql")
+		if ($$dbconnname->db->phptype == "mysql" || $$dbconnname->db->phptype == "mysqli")
 			$colquote = '`';
 		else
 			$colquote = '"';

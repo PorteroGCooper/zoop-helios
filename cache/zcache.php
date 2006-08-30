@@ -19,7 +19,7 @@
 * We currently use the pear library, cacheLite to handle our dirty work.
 *
 * @author Steve Francia <sfrancia@supernerd.com>
-* @version 1.0
+* @version 1.1
 * @since 1.2
 * @package cache
 * @access public
@@ -61,6 +61,7 @@ class zcache
 				'fileNameProtection' => false,
 				'automaticSerialization' => true,
 				'cacheDir' => app_cache_dir,
+				'group' => 'default',
 				'lifeTime' => $default_lifeTime,
 				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing
 				'automaticCleaningFactor' => 200 // clean stale files 1x out of 200 writes
@@ -71,6 +72,7 @@ class zcache
 			$DefaultOptions = array(
 				'automaticSerialization' => true,
 				'cacheDir' => app_cache_dir,
+				'group' => 'default',
 				'lifeTime' => $default_lifeTime,
 				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing
 				'automaticCleaningFactor' => 200 // clean stale files 1x out of 200 writes
@@ -89,6 +91,7 @@ class zcache
 	  	if (isset($this) && is_object($this)  && "zcache" == strtolower(get_class($this)))
 	  	{
 		 	$this->cacheLite =& $cacheLite;
+			$this->group = $cacheoptions['group'];
 			return $this->cacheLite;
 		}
 		else
@@ -119,6 +122,28 @@ class zcache
 	}
 
 	/**
+	 * getGroup
+	 * get the group name (default = 'default').
+	 * Used by cache and get.
+	 *
+	 * @param string $id
+	 * @param mixed $data
+	 * @param array $options
+	 * @access public
+	 * @return boolean
+	 */
+	function _getGroup($options = array())
+	{
+		if (isset($options['group']))
+			return $options['group'];
+
+		if (isset($this) && is_object($this) && "zcache" == strtolower(get_class($this)) && isset($this->group))
+			return $this->group;
+
+		return 'default';
+	}
+
+	/**
 	 * cache
 	 * cache or save the data passed.
 	 * Used by cacheData and cacheString.
@@ -136,8 +161,9 @@ class zcache
 		if (isset($options['lifeTime']))
 			$co->setLifeTime($options['lifeTime']);
 
-		return $co->save($data, $id);
+		return $co->save($data, $id, zcache::_getGroup($options));
 	}
+
 
 	/**
 	 * cacheData
@@ -184,7 +210,7 @@ class zcache
 	function get($id, $options = array())
   	{
 		$co = zcache::_getCacheObj($options);
-		return $co->get($id);
+		return $co->get($id, zcache::_getGroup($options));
 	}
 
 	/**
@@ -249,7 +275,7 @@ class zcache
 		{
 			$options = array_merge($options, array('group' => $group));
 			$co = zcache::_getCacheObj($options);
-			return $co->clean();
+			return $co->clean($group);
 		}
 		else
 		{

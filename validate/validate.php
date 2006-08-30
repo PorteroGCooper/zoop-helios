@@ -338,7 +338,6 @@ class Validator
 	 */
 	function validateEqualTo($value, $validate)
 	{
-		// THIS ONE ONLY PERFORMED IN JAVASCRIPT
 		$post = getRawPost();
 
 		$field = $validate['field'];

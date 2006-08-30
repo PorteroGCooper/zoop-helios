@@ -311,7 +311,8 @@
 					{
 						$varValue = array_shift( $inPath );
 						if(defined("strip_url_vars") && strip_url_vars)
-							assert(strtok($varValue, " \t\r\n\0\x0B") === $varValue);
+							if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
+								trigger_error("a parameter must be supplied for this zone");
 						$gUrlVars[ $varName ] = $varValue;
 						$gPathParts[] = $varValue;
 					}
@@ -740,12 +741,25 @@
 
 		/**
 		 * setZoneParams
+		 * alias for setZoneParamsNames
 		 *
 		 * @param mixed $inParamNames
 		 * @access public
 		 * @return void
 		 */
 		function setZoneParams($inParamNames)
+		{
+			return $this->zoneParamNames = $inParamNames;
+		}
+
+		/**
+		 * setZoneParamsNames
+		 *
+		 * @param mixed $inParamNames
+		 * @access public
+		 * @return void
+		 */
+		function setZoneParamsNames($inParamNames)
 		{
 			return $this->zoneParamNames = $inParamNames;
 		}
