@@ -62,7 +62,7 @@
 			$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
 	}
 	
-	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+	$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($GLOBALS['PATH_INFO']));
 
 	//	if $Sname ends with $PATH_INFO then strip $PATH_INFO from the end
 	if(substr($GLOBALS['Sname'], strlen($GLOBALS['PATH_INFO']) * -1) == $GLOBALS['PATH_INFO'])
@@ -243,5 +243,4 @@ $GLOBALS['allowed_attributes'] = array(
 * Cool, eh?  Change the paths apropriately.
 * This assumes that all your normal files are in /resources/ somewhere, including images, css, js, etc
 \******** End URL Rewrite example ************/
-
 ?>
