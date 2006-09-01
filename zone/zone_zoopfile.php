@@ -68,16 +68,26 @@ class zone_zoopfile extends zone
 		{
 			if(strtotime($headers['If-Modified-Since']) == $mtime)
 			{
-				//send 304
+				//send 304, not modified
 				header('Pragma: ', true, 304);
 				die();
 				//echo_r($headers);
 			}
 		}
+		
 		if(substr(strrchr($jsfile, "."), 1) == 'js')
 			header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
 		else if(substr(strrchr($jsfile, "."), 1) == 'html')
 			header('Content-type: text/html');// . mime_content_type($jsfile));
+		else if(function_exists('mime_content_type'))
+		{
+			header('Content-type: ' . mime_content_type($jsfile));
+		}
+		else
+		{
+			//we don't know what header to send...
+		}
+			
 		header('Content-length: ' . filesize($jsfile));
 		include($jsfile);
 		die();

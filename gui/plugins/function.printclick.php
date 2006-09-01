@@ -44,7 +44,10 @@ function smarty_function_printclick($params, &$smarty)
 	if(isset($params['name']))
 		$name = $params['name'];
 	else
-		$name = 'printpopup';
+	{
+		$time = time();
+		$name = 'printpopup$time';
+	}
     
 	if(isset($params['nolimiter']))
 	{
