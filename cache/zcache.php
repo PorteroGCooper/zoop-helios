@@ -257,7 +257,7 @@ class zcache
   	function clear($id, $options = array())
   	{
 	    $co = zcache::_getCacheObj($options);
-	    return $co->remove($id);
+	    return $co->remove($id, zcache::_getGroup($options));
 	}
 
 	/**
@@ -269,13 +269,13 @@ class zcache
 	 * @access public
 	 * @return boolean
 	 */
-	function clearGroup($group = "default", $mode = "normal") // mode can be normal or recursive
+	function clearGroup($group = "default", $options = array(), $mode = "normal") // mode can be normal or recursive
 	{
 		if ($mode == "normal") // only mode implemented now
 		{
 			$options = array_merge($options, array('group' => $group));
 			$co = zcache::_getCacheObj($options);
-			return $co->clean($group);
+			return $co->clean($group, $options);
 		}
 		else
 		{
