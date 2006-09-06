@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * set up global constants and variables
 *
@@ -61,16 +61,20 @@
 		else
 			$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
 	}
+	//find the url encoded path_info, strip that off the end of REQUEST_URI, that is SCRIPT_URL
+	//this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
+	//we'll support it until we know that no one uses that bug.
 	
-	$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($GLOBALS['PATH_INFO']));
-
-	//	if $Sname ends with $PATH_INFO then strip $PATH_INFO from the end
-	if(substr($GLOBALS['Sname'], strlen($GLOBALS['PATH_INFO']) * -1) == $GLOBALS['PATH_INFO'])
+	if(isset($_SERVER['GATEWAY_INTERFACE']) && strstr($_SERVER['GATEWAY_INTERFACE'], 'CGI') !== false)
 	{
-		$GLOBALS['Sname'] = substr_replace ($GLOBALS['Sname'], "", strlen($GLOBALS['PATH_INFO']) * -1);
+		$pathInfoUrl = str_replace(' ', '%20', $GLOBALS['PATH_INFO']);
+		$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($pathInfoUrl));
 	}
+	else
+		$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+	//what does this do?
 	$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
-	//if (isset($PATH_INFO)) { $Sname = ereg_replace($PATH_INFO, "", $Sname); }
+	
 
 
 
