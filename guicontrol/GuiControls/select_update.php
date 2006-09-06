@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @package gui
 * @subpackage guicontrol

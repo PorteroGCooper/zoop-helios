@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @category zoop
 * @package mail

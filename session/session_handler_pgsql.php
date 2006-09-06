@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * PostgreSQL Session Handler for PHP
  *

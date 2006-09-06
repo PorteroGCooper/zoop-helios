@@ -1,4 +1,4 @@
-<?
+<?php
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //

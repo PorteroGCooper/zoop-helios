@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * XMLRPC classes
 * 

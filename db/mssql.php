@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * mssql sql_* functions
 *
@@ -316,7 +316,7 @@ sql_select_db($DbDatabase, $Db_Link);
 		return $results;
 	}
 ?>
-<?
+<?php
 
 	function mssql_error()
 	{

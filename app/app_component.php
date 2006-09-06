@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Main component file for component_app
 *

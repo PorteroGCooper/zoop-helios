@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Zoop Guicontrol
 * @package gui

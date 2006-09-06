@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @package db
 * @subpackage database
