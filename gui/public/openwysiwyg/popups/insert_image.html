@@ -32,7 +32,7 @@ function retrieveWYSIWYG() {
   Description : Inserts image into the WYSIWYG.
 \* ---------------------------------------------------------------------- */
 function insertImage() {
-  var image = '<img src="' + document.all.imageurl.value + '" alt="' + document.all.alt.value + '" alignment="' + document.all.alignment.value + '" border="' + document.all.borderThickness.value + '" hspace="' + document.all.horizontal.value + '" vspace="' + document.all.vertical.value + '">';
+  var image = '<img src="' + document.getElementById('imageurl').value + '" alt="' + document.getElementById('alt').value + '" alignment="' + document.getElementById('alignment').value + '" border="' + document.getElementById('borderThickness').value + '" hspace="' + document.getElementById('horizontal').value + '" vspace="' + document.getElementById('vertical').value + '">';
   window.opener.insertHTML(image, qsParm['wysiwyg']);
   window.close();
 }
@@ -46,11 +46,11 @@ function insertImage() {
 <table width="380" border="0" cellpadding="0" cellspacing="0" style="background-color: #F7F7F7; border: 2px solid #FFFFFF; padding: 5px;">
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;" width="80">Image URL:</td>
-	<td style="padding-bottom: 2px; padding-top: 0px;" width="300"><input type="text" name="imageurl" value=""  style="font-size: 10px; width: 100%;"></td>
+	<td style="padding-bottom: 2px; padding-top: 0px;" width="300"><input type="text" name="imageurl" id="imageurl" value=""  style="font-size: 10px; width: 100%;"></td>
  </tr>
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;">Alternate Text:</td>
-	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="alt" value=""  style="font-size: 10px; width: 100%;"></td>
+	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="alt" id="alt" value=""  style="font-size: 10px; width: 100%;"></td>
  </tr>
 </table>
 	
@@ -63,7 +63,7 @@ function insertImage() {
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;" width="100">Alignment:</td>
 	<td style="padding-bottom: 2px; padding-top: 0px;" width="85">
-	<select name="alignment" style="font-family: arial, verdana, helvetica; font-size: 11px; width: 100%;">
+	<select name="alignment" id="alignment" style="font-family: arial, verdana, helvetica; font-size: 11px; width: 100%;">
 	 <option value="">Not Set</option>
 	 <option value="left">Left</option>
 	 <option value="right">Right</option>
@@ -79,7 +79,7 @@ function insertImage() {
  </tr>
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;">Border Thickness:</td>
-	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="borderThickness" value=""  style="font-size: 10px; width: 100%;"></td>
+	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="borderThickness" id="borderThickness" value=""  style="font-size: 10px; width: 100%;"></td>
  </tr>
 </table>	
 
@@ -91,11 +91,11 @@ function insertImage() {
 <table width="185" border="0" cellpadding="0" cellspacing="0" style="background-color: #F7F7F7; border: 2px solid #FFFFFF; padding: 5px;">
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;" width="80">Horizontal:</td>
-	<td style="padding-bottom: 2px; padding-top: 0px;" width="105"><input type="text" name="horizontal" value=""  style="font-size: 10px; width: 100%;"></td>
+	<td style="padding-bottom: 2px; padding-top: 0px;" width="105"><input type="text" name="horizontal" id="horizontal" value=""  style="font-size: 10px; width: 100%;"></td>
  </tr>
  <tr>
   <td style="padding-bottom: 2px; padding-top: 0px; font-family: arial, verdana, helvetica; font-size: 11px;">Vertical:</td>
-	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="vertical" value=""  style="font-size: 10px; width: 100%;"></td>
+	<td style="padding-bottom: 2px; padding-top: 0px;"><input type="text" name="vertical" id="vertical" value=""  style="font-size: 10px; width: 100%;"></td>
  </tr>
 </table>	
 

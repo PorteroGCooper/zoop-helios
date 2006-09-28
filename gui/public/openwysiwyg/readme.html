@@ -19,13 +19,13 @@ h3 {font-size:12pt; color: #494949; font-family: "Trebuchet MS";}
 <table border="0" cellpadding="0" cellspacing="0" style=" border: 1px solid #CCCCCC; background-color: #FFFFFF; padding: 20px;">
  <tr>
   <td><a href="http://www.openwebware.com/"><img src="http://www.openwebware.com/images/docs/logo.gif" alt="openwebware - Free Components and Applications" hspace="10" vspace="10" border="0"></a></td>
-	<td><span style="font-family: arial, verdana, helvetica; font-size: 20px; font-weight: bold; color: #494949;">openWYSIWYG 1.0 Documentation</td>
+	<td><span style="font-family: arial, verdana, helvetica; font-size: 20px; font-weight: bold; color: #494949;">openWYSIWYG 1.01 Documentation</td>
  </tr>
  <tr>
   <td colspan="2" style="font-family: verdana, helvetica; font-size: 13px; color: #494949;" >
 	<center><b>Please read this document completely before using openWYSIWYG.</b></center>
 		<p>Please note that this documentation is not all-inclusive, a more detailed instruction manual will be available as openWYSIWYG matures. The good news, this document will walk you through the basics of getting started.</p>
-	 <p>If you have any suggestions on how to improve this document, or feel your contributions will make it more complete, please <a href="http://www.openwebware.com/contact/">contact us</a>. We're always looking for ways to improve, whether it's the product itself or the accompanying documentation.</p>
+	 <p>If you have any suggestions on how to improve this document, or feel your contributions will make it more complete, please <a href="http://www.openwebware.com/about/contact/">contact us</a>. We're always looking for ways to improve, whether it's the product itself or the accompanying documentation.</p>
   
 	<ol>
    <li><a href="#introduction">Introduction</a></li>
@@ -326,17 +326,24 @@ Post your question in the forum</a> if it wasn't answered here.</p>
 
 <br /><br />
 <a name="#issues"><h2>5. Known Issues</h2></a>
-<p><b>Undo/Redo Doesn't Work in IE</b>
-<div style="margin-left: 50px;">While Undo/Redo works perfectly fine in Mozilla and Mozilla 
-Firefox, unfortunately at the moment it doesn't work in IE. Every time a user makes a change 
-to text in openWYSIWYG we update the content to WYSIWYG's respective &lt;textarea&gt; field. 
-This is so you never loose any text formatting when submitting the form. It seems that Internet 
-Explorer's Undo/Redo cache is reset every time the WYSIWYG's respective &lt;textarea&gt; field
-is updated. We hope to find a way to address this issue in the future.</div></p>
-
+<p><b>HTML header tags (e.g.: &lt;body&gt;, &lt;head&gt;, etc) aren't preserved</b>
+<div style="margin-left: 50px;">This probably has to do with the browser trying to be smart about the way it generates its HTML. The editor already has HTML header information of its own so inserting a second one confuses the browser and the content gets stripped. While this is a very minor issue, we do hope to research this further and find a solution.</div></p>
 
 <br /><br />
 <a name="#change"><h2>6. Change Log</h2></a>
+
+<p><b>Version 1.01 (Released: April 9, 2006)</b><br />
+Addresses the following:
+<ul>
+<li>A bizarre problem on certain version combinations of IE and Windows where; the textarea wasn't hidden, the font size and font type drop downs did not display at all, and the "Text" mode button wasn't hidden when first loading.</li>
+<li>Font Size and Font Select buttons weren't "unselectable" in IE 6+ (meaning users could drag and drop them into the editor). This is now fixed.</li>
+<li>The WYSIWYG should now always update the textarea on the user's last command.</li>
+<li>All document.all references have been changed to document.getElementById.</li>
+<li>Minor UI changes to the Insert Table popup.</li>
+<li>Minor design changes to the toolbar (CSS, HTML changes) so it displays better in various HTML doctypes.</li>
+<li>Undo/Redo now works in Internet Explorer.</li> 
+</ul>
+</p>
 
 <p><b>Version 1.00 (Released: March 1, 2006)</b><br />
 Initial Release</p>
@@ -356,15 +363,6 @@ enhancements will be credited in the source code and on the openwebware.com webs
   <li>Table Editing Features (modify table, insert table cell, insert row, merge table cell, etc)</li>
  </ul>
 </ul>
-
-<ul> 
- <li><b>Fixes</b></li>
- <ul>
-  <li>Undo/Redo support for Internet Explorer</li>
-
- </ul>
-</ul>
-
 
 <ul>
  <li><b>Add-ons and Plug-ins</b></li>

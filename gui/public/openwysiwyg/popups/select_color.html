@@ -24,7 +24,7 @@ function retreiveColor() {
        qsParm[key] = val;
     }
   }
-  document.all['enterColor'].value = "#" + (qsParm['color']);
+  document.getElementById('enterColor').value = "#" + (qsParm['color']);
 }
 
 
@@ -43,16 +43,16 @@ function selectColor(color) {
   Description : Updates the preview pane as the user mouses over different colors
 \* ---------------------------------------------------------------------- */
 function previewColor(color) {
-  document.all['enterColor'].value = color;
-	document.all['PreviewColor'].style.backgroundColor = color;
+  document.getElementById('enterColor').value = color;
+	document.getElementById('PreviewColor').style.backgroundColor = color;
 }
 </script>
 <body bgcolor="#EEEEEE" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="retreiveColor();">
 <center>
 <table border="0" cellspacing="0" cellpadding="4" width="100%">
- <tr><form onSubmit="selectColor(document.all['enterColor'].value);">
+ <tr><form onSubmit="selectColor(document.getElementById('enterColor').value);">
   <td valign=center><div style="background-color: #000000; padding: 1; height: 21px; width: 50px"><div id="PreviewColor" style="height: 100%; width: 100%"></div></div></td>
-  <td valign=center><input type="text" size="15" id="enterColor" name="enterColor"></td>
+  <td valign=center><input type="text" size="15" id="enterColor" name="enterColor" id="enterColor"></td>
   <td width="100%"></td>
  </tr></form>
 </table>

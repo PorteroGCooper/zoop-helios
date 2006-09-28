@@ -1,5 +1,5 @@
 <?php
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2006 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -298,6 +298,31 @@ class Validator
 			$result = array('message' => "You must select between {$validate['min']} and {$validate['max']}, inclusive.");
 
 		if (count($value) >= $validate['min'] && (count($value) <= $validate['max'] || $validate['max'] === false))
+		{
+			$result['result'] = true;
+		}
+		else
+			$result['result'] = false;
+
+		return $result;
+	}
+
+	/**
+	 * validateCreditCard
+	 * Validate a credit card input to see if format is valid.
+	 * By no means a way of validating an acutal card, merely checks if the format complies
+	 * with the standard formats
+	 *
+  	 * @param mixed $value The value to be validated.
+  	 * @param array $validate
+	 * @access public
+  	 * @return array
+	 */
+	function validateCreditCard($value, $validate)
+	{
+		$result = array('message' => "You must provide a valid credit card.");
+
+		if (preg_match('/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{14}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value))
 		{
 			$result['result'] = true;
 		}

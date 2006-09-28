@@ -49,8 +49,8 @@ function buildTable() {
   
 	// Checks if the table border will use the BORDER-COLLAPSE CSS attribute
 	var collapse;
-	if (document.all.borderCollapse.checked == true) {
-	  collapse = document.all.borderCollapse.value;
+	if (document.getElementById('borderCollapse').checked == true) {
+	  collapse = document.getElementById('borderCollapse').value;
 		}
 	else {
 	  collapse = "separate";
@@ -59,16 +59,16 @@ function buildTable() {
 	// Builds a table based on the data input into the form
   var table = '<table border="0" cellpadding="0" cellspacing="0" style="';
 	table += 'BORDER-COLLAPSE: ' + collapse + ';';  
-	table += ' border: ' + document.all.borderWidth.value + ' ' +  document.all.borderStyle.value + ' ' +  document.all.borderColor.value + ';';	
-  table += ' width: ' + document.all.tableWidth.value + document.all.widthType.value + ';';
-	table += ' background-color: ' + document.all.shadingColor.value + ';"';
-  table += ' alignment="' + document.all.alignment.value + '">\n';	
+	table += ' border: ' + document.getElementById('borderWidth').value + ' ' +  document.getElementById('borderStyle').value + ' ' +  document.getElementById('borderColor').value + ';';	
+  table += ' width: ' + document.getElementById('tableWidth').value + document.getElementById('widthType').value + ';';
+	table += ' background-color: ' + document.getElementById('shadingColor').value + ';"';
+  table += ' alignment="' + document.getElementById('alignment').value + '">\n';	
 	
 	// Creates the number of rows and cols the table will have
-	for (var i = 0; i < document.all.rows.value; i++) {
+	for (var i = 0; i < document.getElementById('rows').value; i++) {
 	  table += '<tr>\n';
-		  for (var j = 0; j < document.all.cols.value; j++) {
-		    table += '<td style="border: ' + document.all.borderWidth.value + ' ' +  document.all.borderStyle.value + ' ' +  document.all.borderColor.value + '; padding: ' + document.all.padding.value + ';">&nbsp;</td>\n';
+		  for (var j = 0; j < document.getElementById('cols').value; j++) {
+		    table += '<td style="border: ' + document.getElementById('borderWidth').value + ' ' +  document.getElementById('borderStyle').value + ' ' +  document.getElementById('borderColor').value + '; padding: ' + document.getElementById('padding').value + ';">&nbsp;</td>\n';
 		  }
 		table += '</tr>\n';
   }
@@ -142,7 +142,7 @@ function selectWidth(id) {
 	document.getElementById(id + ' on').style.display = 'block';
 	
 	// Assign value to <input type="hidden" id="borderWidth">
-	document.all['borderWidth'].value = id;
+	document.getElementById('borderWidth').value = id;
 } 
 
 
@@ -216,7 +216,7 @@ function selectBorder(id) {
 	document.getElementById(id + ' on').style.display = 'block';
 	
 	// Assign value to <input type="hidden" id="borderStyle">
-	document.all['borderStyle'].value = id;
+	document.getElementById('borderStyle').value = id;
 } 
  
 
@@ -227,8 +227,8 @@ function selectBorder(id) {
 	              shading color. 
 \* ---------------------------------------------------------------------- */
 function hideColorMenus() {
-  document.all.borderColorMenu.style.display = "none";
-	document.all.shadingColorMenu.style.display = "none";
+  document.getElementById('borderColorMenu').style.display = "none";
+	document.getElementById('shadingColorMenu').style.display = "none";
 }
 
 
@@ -238,7 +238,7 @@ function hideColorMenus() {
 	              border color. 
 \* ---------------------------------------------------------------------- */
 function showBorderColorMenu() {
-  document.all.borderColorMenu.style.display = "block";
+  document.getElementById('borderColorMenu').style.display = "block";
 }
 
 
@@ -248,7 +248,7 @@ function showBorderColorMenu() {
 	              preview square.
 \* ---------------------------------------------------------------------- */
 function previewBorderColor(color) {
-  document.all.borderColorPreview.style.backgroundColor = color;  
+  document.getElementById('borderColorPreview').style.backgroundColor = color;  
 }
 
 
@@ -258,9 +258,9 @@ function previewBorderColor(color) {
 	              <input type="hidden" id="borderColor">.
 \* ---------------------------------------------------------------------- */
 function selectBorderColor(color) {
-  document.all.borderColorPreview.style.backgroundColor = color;  
-	document.all.borderColorMenu.style.display = "none";
-	document.all['borderColor'].value = color;
+  document.getElementById('borderColorPreview').style.backgroundColor = color;  
+	document.getElementById('borderColorMenu').style.display = "none";
+	document.getElementById('borderColor').value = color;
 }
 
 
@@ -271,7 +271,7 @@ function selectBorderColor(color) {
 	              shading color. 
 \* ---------------------------------------------------------------------- */
 function showShadingColorMenu() {
-  document.all.shadingColorMenu.style.display = "block";
+  document.getElementById('shadingColorMenu').style.display = "block";
 }
 
 
@@ -282,7 +282,7 @@ function showShadingColorMenu() {
 	              preview square.
 \* ---------------------------------------------------------------------- */
 function previewShadingColor(color) {
-  document.all.shadingColorPreview.style.backgroundColor = color;  
+  document.getElementById('shadingColorPreview').style.backgroundColor = color;  
 }
 
 
@@ -293,9 +293,9 @@ function previewShadingColor(color) {
 	              <input type="hidden" id="shadingColor">.
 \* ---------------------------------------------------------------------- */
 function selectShadingColor(color) {
-  document.all.shadingColorPreview.style.backgroundColor = color;  
-	document.all.shadingColorMenu.style.display = "none";
-	document.all['shadingColor'].value = color;
+  document.getElementById('shadingColorPreview').style.backgroundColor = color;  
+	document.getElementById('shadingColorMenu').style.display = "none";
+	document.getElementById('shadingColor').value = color;
 }
 </script>
 
@@ -306,7 +306,7 @@ function selectShadingColor(color) {
 <input type="hidden" name="borderWidth"  id="borderWidth"    value="0px">
 <input type="hidden" name="borderStyle"  id="borderStyle"    value="solid">
 <input type="hidden" name="borderColor"  id="borderColor"    value="#000000">
-<input type="hidden" name="shadingColor" id="borderShading"  value="#FFFFFF">
+<input type="hidden" name="shadingColor" id="shadingColor"   value="#FFFFFF">
 
 <span style="font-family: arial, verdana, helvetica; font-size: 11px; font-weight: bold;">Table Properties:</span>
 <table width="380" border="0" cellpadding="0" cellspacing="0" style="background-color: #F7F7F7; border: 2px solid #FFFFFF; padding: 5px;">
@@ -315,8 +315,8 @@ function selectShadingColor(color) {
 	<td style="padding-bottom: 2px; width: 80px; "><input type="text" size="4" id="rows" name="rows" value="5" style="font-size: 10px; width: 65px;"></td>
   <td style="padding-bottom: 2px; width: 80px; font-family: arial, verdana, helvetica; font-size: 11px;">Table Width:
 	<td style="padding-bottom: 2px; width: 180px; ">
-	<input type="text" name="tableWidth" value="100" size="10" style="font-size: 10px; width: 65px;">&nbsp;
-	<select name="widthType" style="margin-right: 10px; font-size: 10px;">
+	<input type="text" name="tableWidth" id="tableWidth" value="100" size="10" style="font-size: 10px; width: 65px;">&nbsp;
+	<select name="widthType" id="widthType" style="margin-right: 10px; font-size: 10px;">
 	 <option value="%">Percent</option>
 	 <option value="px">Pixels</option>
 	</select>
@@ -558,6 +558,6 @@ function selectShadingColor(color) {
 </table>
 </td></tr></table>
 
-<div align="right"><input type="submit" value="  Submit  " onClick="buildTable();" style="font-size: 12px; margin-right: 15px;" >&nbsp;<input type="submit" value="  Cancel  " onClick="window.close();" style="font-size: 12px;" ></div>
+<div align="right"><input type="submit" value="  Submit  " onClick="buildTable();" style="font-size: 12px;">&nbsp;<input type="submit" value="  Cancel  " onClick="window.close();" style="font-size: 12px; margin-right: 15px;" ></div>
 </body>
 </html>

@@ -50,12 +50,12 @@ class zone_zoopfile extends zone
 		$module = array_shift($inPath);
 
 		$jsfile = zoop_dir . '/' . $module . '/public/' . implode('/', $inPath);
-		
+
 		if(file_exists($jsfile))
 			$mtime = filemtime($jsfile);
 		else
 			return $this->page404($inPath);
-			
+
 		$headers = $this->getheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
 		//header('Cache-Control: max-age=86400');
@@ -74,7 +74,7 @@ class zone_zoopfile extends zone
 				//echo_r($headers);
 			}
 		}
-		
+
 		if(substr(strrchr($jsfile, "."), 1) == 'js')
 			header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
 		else if(substr(strrchr($jsfile, "."), 1) == 'html')
@@ -87,7 +87,7 @@ class zone_zoopfile extends zone
 		{
 			//we don't know what header to send...
 		}
-			
+
 		header('Content-length: ' . filesize($jsfile));
 		include($jsfile);
 		die();
@@ -105,7 +105,38 @@ class zone_zoopfile extends zone
 		include($file);
 		die();
 	}
-	
+
+	function pageImage($inPath)
+	{
+		array_shift($inPath);
+
+		$file = zoop_dir . '/gui/public/images/' . implode('/', $inPath);
+
+		if(file_exists($file))
+			$mtime = filemtime($file);
+		else
+			die();
+
+		switch (substr(strrchr(strtolower($file), "."), 1))
+		{
+			case "gif" :
+ 				header("Content-type: image/gif");
+				break;
+			case "jpg" :
+			case "jpeg":
+ 				header("Content-type: image/jpeg");
+				break;
+			case "png":
+  				header("Content-type: image/png");
+				break;
+		}
+
+		$hfile = fopen($file, 'rb');
+		while(!feof($hfile)){
+			print fread($hfile, 1024 * 8);
+		} // while
+	}
+
 	function page404($inPath)
 	{
 		die();

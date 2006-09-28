@@ -1,5 +1,5 @@
 //
-// openWYSIWYG v1.0 Copyright (c) 2006 openWebWare.com
+// openWYSIWYG v1.01 Copyright (c) 2006 openWebWare.com
 // This copyright notice MUST stay intact for use.
 //
 // An open source WYSIWYG editor for use in web based applications.
@@ -156,7 +156,9 @@ var ToolbarList = {
 	"createlink":     ['CreateLink',           'CreateLink',         imagesDir + 'insert_hyperlink.gif',   imagesDir + 'insert_hyperlink_on.gif'],
 	"viewSource":     ['ViewSource',           'ViewSource',         imagesDir + 'view_source.gif',        imagesDir + 'view_source_on.gif'],
 	"viewText":       ['ViewText',             'ViewText',           imagesDir + 'view_text.gif',          imagesDir + 'view_text_on.gif'],
-	"help":           ['Help',                 'Help',               imagesDir + 'help.gif',               imagesDir + 'help_on.gif']
+	"help":           ['Help',                 'Help',               imagesDir + 'help.gif',               imagesDir + 'help_on.gif'],
+	"selectfont":     ['SelectFont',           'SelectFont',         imagesDir + 'select_font.gif',        imagesDir + 'select_font_on.gif'],
+	"selectsize":     ['SelectSize',           'SelectSize',         imagesDir + 'select_size.gif',        imagesDir + 'select_size_on.gif']
 };
 
 
@@ -222,7 +224,10 @@ viewTextMode = 0;
   Arguments   : textarea_id - ID of textarea to replace
 \* ---------------------------------------------------------------------- */
 function generate_wysiwyg(textareaID) {
-
+ 
+  	// Hide the textarea 
+	document.getElementById(textareaID).style.display = 'none'; 
+	
   // Pass the textareaID to the "n" variable.
   var n = textareaID;
 	
@@ -231,11 +236,11 @@ function generate_wysiwyg(textareaID) {
 	
   // Generate WYSIWYG toolbar one
   var toolbar;
-  toolbar =  '<table cellpadding="0" cellspacing="0" border="0" class="toolbar1" style="width:' + toolbarWidth + ';"><tr><td width="6"><img src="' +imagesDir+ 'seperator2.gif" alt="" hspace="3"></td>';
+  toolbar =  '<table cellpadding="0" cellspacing="0" border="0" class="toolbar1" style="width:' + toolbarWidth + 'px;"><tr><td style="width: 6px;"><img src="' +imagesDir+ 'seperator2.gif" alt="" hspace="3"></td>';
   
 	// Create IDs for inserting Font Type and Size drop downs
-	toolbar += '<td width="90"><span id="FontSelect' + n + '"></span></td>';
-	toolbar += '<td width="60"><span id="FontSizes'  + n + '"></span></td>';
+	toolbar += '<td style="width: 90px;"><span id="FontSelect' + n + '"></span></td>';
+	toolbar += '<td style="width: 60px;"><span id="FontSizes'  + n + '"></span></td>';
   
 	// Output all command buttons that belong to toolbar one
 	for (var i = 0; i <= buttonName.length;) { 
@@ -247,10 +252,10 @@ function generate_wysiwyg(textareaID) {
 		  var buttonImageRollover  = buttonObj[3];
 	    
 			if (buttonName[i] == "seperator") {
-		    toolbar += '<td width="12" align="center"><img src="' +buttonImage+ '" border=0 unselectable="on" width="2" height="18" hspace="2"></td>';
+		    toolbar += '<td style="width: 12px;" align="center"><img src="' +buttonImage+ '" border=0 unselectable="on" width="2" height="18" hspace="2" unselectable="on"></td>';
 			}
 	    else {
-		    toolbar += '<td width="22"><img src="' +buttonImage+ '" border=0 unselectable="on" title="' +buttonTitle+ '" id="' +buttonID+ '" class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' + buttonImageRollover + '\';" onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' + buttonImage + '\';" unselectable="on"  width="20" height="20"></td>';
+		    toolbar += '<td style="width: 22px;"><img src="' +buttonImage+ '" border=0 unselectable="on" title="' +buttonTitle+ '" id="' +buttonID+ '" class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' + buttonImageRollover + '\';" onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' + buttonImage + '\';" unselectable="on" width="20" height="20"></td>';
 	    }
     }
     i++;
@@ -260,7 +265,7 @@ function generate_wysiwyg(textareaID) {
 
   // Generate WYSIWYG toolbar two
   var toolbar2;
-  toolbar2 = '<table cellpadding="0" cellspacing="0" border="0" class="toolbar2" style="width:' + toolbarWidth + ';"><tr><td width="6"><img src="' +imagesDir+ 'seperator2.gif" alt="" hspace="3"></td>';
+  toolbar2 = '<table cellpadding="0" cellspacing="0" border="0" class="toolbar2" style="width:' + toolbarWidth + 'px;"><tr><td style="width: 6px;"><img src="' +imagesDir+ 'seperator2.gif" alt="" hspace="3"></td>';
  
   // Output all command buttons that belong to toolbar two
   for (var j = 0; j <= buttonName2.length;) {
@@ -272,34 +277,46 @@ function generate_wysiwyg(textareaID) {
 		  var buttonImageRollover  = buttonObj[3];
 	  
 		  if (buttonName2[j] == "seperator") {
-		    toolbar2 += '<td width="12" align="center"><img src="' +buttonImage+ '" border=0 unselectable="on" width="2" height="18" hspace="2"></td>';
+		    toolbar2 += '<td style="width: 12px;" align="center"><img src="' +buttonImage+ '" border=0 unselectable="on" width="2" height="18" hspace="2" unselectable="on"></td>';
 			}
 	    else if (buttonName2[j] == "viewSource"){
-		    toolbar2 += '<td width="22">';
+		    toolbar2 += '<td style="width: 22px;">';
 				toolbar2 += '<span id="HTMLMode' + n + '"><img src="'  +buttonImage+  '" border=0 unselectable="on" title="' +buttonTitle+ '" id="' +buttonID+ '" class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' +buttonImageRollover+ '\';" onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' + buttonImage + '\';" unselectable="on"  width="20" height="20"></span>';
 				toolbar2 += '<span id="textMode' + n + '"><img src="' +imagesDir+ 'view_text.gif" border=0 unselectable="on" title="viewText"          id="ViewText"       class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' +imagesDir+ 'view_text_on.gif\';"    onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' +imagesDir+ 'view_text.gif\';" unselectable="on"  width="20" height="20"></span>';
 	      toolbar2 += '</td>';
 			}
 	    else {
-		    toolbar2 += '<td width="22"><img src="' +buttonImage+ '" border=0 unselectable="on" title="' +buttonTitle+ '" id="' +buttonID+ '" class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' +buttonImageRollover+ '\';" onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' + buttonImage + '\';" unselectable="on"  width="20" height="20"></td>';
+		    toolbar2 += '<td style="width: 22px;"><img src="' +buttonImage+ '" border=0 unselectable="on" title="' +buttonTitle+ '" id="' +buttonID+ '" class="button" onClick="formatText(this.id,\'' + n + '\');" onmouseover="if(className==\'button\'){className=\'buttonOver\'}; this.src=\'' +buttonImageRollover+ '\';" onmouseout="if(className==\'buttonOver\'){className=\'button\'}; this.src=\'' + buttonImage + '\';" unselectable="on" width="20" height="20"></td>';
 	    }
     }
     j++;
   }
 
   toolbar2 += '<td>&nbsp;</td></tr></table>';  
+	
  	
 	// Create iframe which will be used for rich text editing
-	var iframe = '<table cellpadding="0" cellspacing="0" border="0" style="width:' + wysiwygWidth + '; height:' + wysiwygHeight + ';border: 1px inset #CCCCCC;"><tr><td valign="top">\n'
+	var iframe = '<table cellpadding="0" cellspacing="0" border="0" style="width:' + wysiwygWidth + 'px; height:' + wysiwygHeight + 'px;border: 1px inset #CCCCCC;"><tr><td valign="top">\n'
   + '<iframe frameborder="0" id="wysiwyg' + n + '"></iframe>\n'
   + '</td></tr></table>\n';
 
   // Insert after the textArea both toolbar one and two
-  document.all[n].insertAdjacentHTML("afterEnd", toolbar + toolbar2 + iframe);
+  document.getElementById(n).insertAdjacentHTML("afterEnd", toolbar + toolbar2 + iframe);
+	
+  // Insert the Font Type and Size drop downs into the toolbar
+	outputFontSelect(n);
+	outputFontSizes(n); 
+	
+  // Hide the dynamic drop down lists for the Font Types and Sizes
+  hideFonts(n);
+	hideFontSizes(n);
+	
+	// Hide the "Text Mode" button
+	document.getElementById("textMode" + n).style.display = 'none'; 
 	
 	// Give the iframe the global wysiwyg height and width
-  document.getElementById("wysiwyg" + n).style.height = wysiwygHeight;
-  document.getElementById("wysiwyg" + n).style.width = wysiwygWidth;
+  document.getElementById("wysiwyg" + n).style.height = wysiwygHeight + "px";
+  document.getElementById("wysiwyg" + n).style.width = wysiwygWidth + "px";
 	
 	// Pass the textarea's existing text over to the content variable
   var content = document.getElementById(n).value;
@@ -310,36 +327,25 @@ function generate_wysiwyg(textareaID) {
   doc.open();
   doc.write(content);
   doc.close();
-  
+	
 	// Make the iframe editable in both Mozilla and IE
   doc.body.contentEditable = true;
   doc.designMode = "on";
 	
-	// When a user updates the content in the iframe update the 
-	// textarea as well (note: causes undo not to work in IE)
-	var browserName = navigator.appName;
-	if (browserName == "Microsoft Internet Explorer") {
-    doc.onkeyup = function () { 
-		  updateTextArea(n);
-	  }
-  } 
+  	// Update the textarea with content in WYSIWYG when user submits form
+  var browserName = navigator.appName;
+  if (browserName == "Microsoft Internet Explorer") {
+    for (var idx=0; idx < document.forms.length; idx++) {
+      document.forms[idx].attachEvent('onsubmit', function() { updateTextArea(n); });
+    }
+  }
   else {
-    doc.addEventListener('keyup',function OnKeyUp() { updateTextArea(n); }, true);
- 	}
+  	for (var idx=0; idx < document.forms.length; idx++) {
+    	document.forms[idx].addEventListener('submit',function OnSumbmit() { updateTextArea(n); }, true);
+    }
+  }
+ 	
 
-	// Hide the textarea 
-	document.getElementById(n).style.display = 'none'; 
-	
-	// Insert the Font Type and Size drop downs into the toolbar
-	outputFontSelect(n);
-	outputFontSizes(n); 
-	
-	// Hide the dynamic drop down lists for the Font Types and Sizes
-  hideFonts(n);
-	hideFontSizes(n);
-	
-	// Hide the "Text Mode" button
-	document.getElementById("textMode" + n).style.display = 'none'; 
 };
 
 
@@ -430,11 +436,8 @@ function formatText(id, n, selected) {
 		// Every other command
 	  else {
       document.getElementById("wysiwyg" + n).contentWindow.document.execCommand(id, false, null);
-	  }
+		}
   }
-	
-	// Update the textarea when user updates respective WYSIWYG
-  updateTextArea(n);
 };
 
 
@@ -451,12 +454,12 @@ function insertHTML(html, n) {
 
   var browserName = navigator.appName;
 	 	 
-	if (browserName == "Microsoft Internet Explorer") {
-	  document.all['wysiwyg' + n].contentWindow.document.selection.createRange().pasteHTML(html);   
+	if (browserName == "Microsoft Internet Explorer") {	  
+	  document.getElementById('wysiwyg' + n).contentWindow.document.selection.createRange().pasteHTML(html);   
 	} 
 	 
 	else {
-	  var div = document.all['wysiwyg' + n].contentWindow.document.createElement("div");
+	  var div = document.getElementById('wysiwyg' + n).contentWindow.document.createElement("div");
 		 
 		div.innerHTML = html;
 		var node = insertNodeAtSelection(div, n);		
@@ -476,7 +479,7 @@ function insertHTML(html, n) {
 \* ---------------------------------------------------------------------- */
 function insertNodeAtSelection(insertNode, n) {
   // get current selection
-  var sel = document.all['wysiwyg' + n].contentWindow.getSelection();
+  var sel = document.getElementById('wysiwyg' + n).contentWindow.getSelection();
 
   // get the first range of the selection
   // (there's almost always only one range)
@@ -580,19 +583,24 @@ function _dec_to_rgb(value) {
 	                    when making font changes (the textarea's ID)
 \* ---------------------------------------------------------------------- */
 function outputFontSelect(n) {
+
+  var FontSelectObj        = ToolbarList['selectfont'];
+  var FontSelect           = FontSelectObj[2];
+  var FontSelectOn         = FontSelectObj[3];
+  
 	Fonts.sort();
 	var FontSelectDropDown = new Array;
-	FontSelectDropDown[n] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td onMouseOver="document.getElementById(\'selectFont' + n + '\').src=\'' +imagesDir+ 'select_font_on.gif\';" onMouseOut="document.getElementById(\'selectFont' + n + '\').src=\'' +imagesDir+ 'select_font.gif\';"><img src="' +imagesDir+ 'select_font.gif" id="selectFont' + n + '" width="85" height="20" onClick="showFonts(\'' + n + '\');"><br>';
+	FontSelectDropDown[n] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td onMouseOver="document.getElementById(\'selectFont' + n + '\').src=\'' + FontSelectOn + '\';" onMouseOut="document.getElementById(\'selectFont' + n + '\').src=\'' + FontSelect + '\';"><img src="' + FontSelect + '" id="selectFont' + n + '" width="85" height="20" onClick="showFonts(\'' + n + '\');" unselectable="on"><br>';
 	FontSelectDropDown[n] += '<span id="Fonts' + n + '" class="dropdown" style="width: 145px;">';
 
 	for (var i = 0; i <= Fonts.length;) {
 	  if (Fonts[i]) {
-      FontSelectDropDown[n] += '<button type="button" onClick="formatText(\'FontName\',\'' + n + '\',\'' + Fonts[i] + '\')\;hideFonts(\'' + n + '\');" onMouseOver="this.className=\'mouseOver\'" onMouseOut="this.className=\'mouseOut\'" class="mouseOut" style="width: 120px;"><table cellpadding="0" cellspacing="0" border="0"><tr><td align="left" style="font-family:' + Fonts[i] + '; font-size: 12px;">' + Fonts[i] + '</td></tr></table></button><br>';	
+      FontSelectDropDown[n] += '<button type="button" onClick="formatText(\'FontName\',\'' + n + '\',\'' + Fonts[i] + '\')\; hideFonts(\'' + n + '\');" onMouseOver="this.className=\'mouseOver\'" onMouseOut="this.className=\'mouseOut\'" class="mouseOut" style="width: 120px;"><table cellpadding="0" cellspacing="0" border="0"><tr><td align="left" style="font-family:' + Fonts[i] + '; font-size: 12px;">' + Fonts[i] + '</td></tr></table></button><br>';	
     }	  
 	  i++;
   }
 	FontSelectDropDown[n] += '</span></td></tr></table>';
-	document.all['FontSelect' + n].insertAdjacentHTML("afterBegin", FontSelectDropDown[n]);
+	document.getElementById('FontSelect' + n).insertAdjacentHTML("afterBegin", FontSelectDropDown[n]);
 };
 
 
@@ -606,9 +614,14 @@ function outputFontSelect(n) {
 	                    when making font changes (the textarea's ID)
 \* ---------------------------------------------------------------------- */
 function outputFontSizes(n) {
+
+  var FontSizeObj        = ToolbarList['selectsize'];
+  var FontSize           = FontSizeObj[2];
+  var FontSizeOn         = FontSizeObj[3];
+
 	FontSizes.sort();
 	var FontSizesDropDown = new Array;
-	FontSizesDropDown[n] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td onMouseOver="document.getElementById(\'selectSize' + n + '\').src=\'' +imagesDir+ 'select_size_on.gif\';" onMouseOut="document.getElementById(\'selectSize' + n + '\').src=\'' +imagesDir+ 'select_size.gif\';"><img src="' +imagesDir+ 'select_size.gif" id="selectSize' + n + '" width="49" height="20" onClick="showFontSizes(\'' + n + '\');"><br>';
+	FontSizesDropDown[n] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td onMouseOver="document.getElementById(\'selectSize' + n + '\').src=\'' + FontSizeOn + '\';" onMouseOut="document.getElementById(\'selectSize' + n + '\').src=\'' + FontSize + '\';"><img src="' + FontSize + '" id="selectSize' + n + '" width="49" height="20" onClick="showFontSizes(\'' + n + '\');" unselectable="on"><br>';
   FontSizesDropDown[n] += '<span id="Sizes' + n + '" class="dropdown" style="width: 170px;">';
 
 	for (var i = 0; i <= FontSizes.length;) {
@@ -618,7 +631,7 @@ function outputFontSizes(n) {
 	  i++;
   }
 	FontSizesDropDown[n] += '</span></td></tr></table>';
-	document.all['FontSizes' + n].insertAdjacentHTML("afterBegin", FontSizesDropDown[n]);
+	document.getElementById('FontSizes' + n).insertAdjacentHTML("afterBegin", FontSizesDropDown[n]);
 };
 
 
