@@ -169,8 +169,8 @@ class GuiControl
 				else
 					return true;
 			}
-
 			$validate = Validator::validate($this->getValue(), $this->params['validate']);
+			//die();
 			if($validate['result'] !== true)
 			{
 				if (isset($validate['message']))

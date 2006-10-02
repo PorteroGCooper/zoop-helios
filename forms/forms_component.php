@@ -13,15 +13,15 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-require(dirname(__file__) . "/forms2.php");
-require(dirname(__file__) . "/forms.php");
-require(dirname(__file__) . "/table.php");
-require(dirname(__file__) . "/record.php");
-require(dirname(__file__) . "/field.php");
-require(dirname(__file__) . "/cell.php");
+//require(dirname(__file__) . "/forms2.php");
+//require(dirname(__file__) . "/forms.php");
+//require(dirname(__file__) . "/table.php");
+//require(dirname(__file__) . "/record.php");
+//require(dirname(__file__) . "/field.php");
+//require(dirname(__file__) . "/cell.php");
 
 // require_once('Cache/Lite.php');
-require_once("XML/Serializer.php");
+//require_once("XML/Serializer.php");
 
 
 /**
@@ -35,10 +35,25 @@ class component_forms extends component
 	 * @access public
 	 * @return void
 	 */
+	 
+	function getIncludes()
+	{
+		return array(
+				"forms2" => dirname(__file__) . "/forms2.php",
+				"forms" => dirname(__file__) . "/forms.php",
+				"table" => dirname(__file__) . "/table.php",
+				"record" => dirname(__file__) . "/record.php",
+				"field" => dirname(__file__) . "/field.php",
+				"cell" => dirname(__file__) . "/cell.php",
+				"xml_serializer" => "XML/Serializer.php"
+		);
+	}
+	 
 	function component_forms()
 	{
 		$this->requireComponent('db');
 		$this->requireComponent('gui');
+		$this->requireComponent('guicontrol');
 		$this->requireComponent('cache');
 		$this->requireComponent('validate');
 	}

@@ -174,52 +174,7 @@ if($dst)
  */
 function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
 {
-	if(strstr($inFormatString, "%") === false)
-	{
-		//bug("We need to make sure that $inFormatString string uses %'s");
-		trigger_error("The Formating string that has been passed into the FormatPostgresDate() function is formated incorrectly.
-		It must follow the formating convention from the Date.php class. For Example: D M j, Y becomes %a %b %e, %Y ");
-	}
-	//	this should actually parse in the hours, minutes and seconds too
-	//		but I don't need them right now.
-	$date = &new Date();
-	if($inPostgresDate != 0)
-	{
-		global $tz;
-		$timeparts = split("-|:| |\\.", $inPostgresDate);
-
-		$year = $timeparts[0];
-		$month = $timeparts[1];
-		$day = $timeparts[2];
-		$date->setYear($year);
-		$date->setMonth($month);
-		$date->setDay($day);
-
-		if(isset($timeparts[3]))
-		{
-			$hours = $timeparts[3];
-			$minutes = $timeparts[4];
-			$seconds = $timeparts[5];
-			$date->setHour($hours);
-			$date->setMinute($minutes);
-			$date->setSecond($seconds);
-		}
-
-		$date->setTZ(new Date_TimeZone($tz));
-	}
-	if($inTimeZone != NULL)
-	{
-		$date->convertTZ(new Date_TimeZone($inTimeZone));
-	}
-
-	$timeString = $date->format($inFormatString);
-
-	/*
-	$timestamp = mktime ( 0, 0, 0,  $month, $day, $year);
-	$timeString = date($inFormatString, $timestamp);
-	*/
-
-	return $timeString;
+	sql_format_date($inPostgresDate, $inFormatString, $inTimeZone);
 }
 
 

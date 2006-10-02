@@ -30,6 +30,11 @@
  */
 class component_gui extends component
 {
+	function defaultConstants()
+	{
+		define_once('app_temp_dir', app_dir . '/tmp');
+	}
+	
 	/**
 	 * component_gui
 	 *
@@ -38,6 +43,7 @@ class component_gui extends component
 	 */
 	function component_gui()
 	{
+		$this->defaultConstants();
 		mkdirr(app_temp_dir . "/gui");
 		$this->requireComponent('session');
 		$this->requireComponent('validate');

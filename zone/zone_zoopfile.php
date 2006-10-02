@@ -89,8 +89,9 @@ class zone_zoopfile extends zone
 		}
 
 		header('Content-length: ' . filesize($jsfile));
-		include($jsfile);
+		/*include($jsfile);
 		die();
+		*/
 		$file = fopen($jsfile, 'rb');
 		while(!feof($file)){
 			print fread($file, 1024 * 8);

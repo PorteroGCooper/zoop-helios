@@ -128,7 +128,7 @@ class record
 				$cell = new cell($name, NULL);
 				$this->values[$name] = $cell;
 			}
-		$this->submit = "Add";
+			$this->submit = "Add";
 		}
 		else
 		{

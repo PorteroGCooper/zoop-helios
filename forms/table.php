@@ -207,7 +207,6 @@ class table
 		else
 		{
 			$result = $$dbconnname->get_table_info($table);
-
 			foreach($result as $field)
 			{
 				$fieldname = $field["name"];
@@ -220,8 +219,9 @@ class table
 					$this->fields[$fieldname]->listshow = 1;
 								$this->fields[$fieldname]->clickable = 1;
 				}
-
-				if (preg_match('/.*?default_nextval.*?public.(.*?)%29\\s.*/i', $field["flags"], $regs))
+				//the first is for more modern postgres. the second for older postgres...
+				if (preg_match('/.*?default_nextval%28(.*?)%29\\s.*/i', $field["flags"], $regs) || 
+					preg_match('/.*?default_nextval.*?public.(.*?)%29\\s.*/i', $field["flags"], $regs))
 				{
 					$this->sequence = $regs[1];
 				}
@@ -406,30 +406,30 @@ class table
 			if (isset($post["search['field']"]))
 				$this->search["field"] = $post["searchfield"];
 		}
-
+		
 		foreach ($this->fields as $field)
 		{
+			
 			if (isset($field->name))
 			{
 				$fieldname = $field->name;
 				// SETUP LIST REQUIREMENTS
+				
+					
 				if (isset($field->listrequirement) && $field->listrequirement)
 				{
-					if (isset($field->name))
+					if (is_array($field->listrequirement))
 					{
-						if (is_array($field->listrequirement))
+						$orwhere = array();
+						foreach($field->listrequirement as $listrequirement)
 						{
-							$orwhere = array();
-							foreach($field->listrequirement as $listrequirement)
-							{
-								$orwhere[] = "$field->name = '$listrequirement'";
-							}
-
-							$where[] = "(" . implode(" OR ", $orwhere) . ")";
+							$orwhere[] = "$field->name = '$listrequirement'";
 						}
-						else
-						$where[] = "$field->name = '$field->listrequirement'";
+
+						$where[] = "(" . implode(" OR ", $orwhere) . ")";
 					}
+					else
+					$where[] = "$field->name = '$field->listrequirement'";
 				}
 				// SETUP ADVANCED SEARCH
 				if ($post) // PROCESS SEARCH QUERY AS WELL AS NORMAL QUERY
@@ -561,7 +561,7 @@ class table
 		if (isset($this->sort))
 				$query .=" ORDER BY $this->sort";
 
-		if (isset($this->direction) && ($this->direction == "ASC" || $this->direction == "DESC"))
+		if (isset($this->sort) && isset($this->direction) && ($this->direction == "ASC" || $this->direction == "DESC"))
 				$query .= " $this->direction";
 
 		if ($this->limit != -1 && is_numeric($this->limit))

@@ -335,9 +335,10 @@
 				array_unshift($tmp, $temp);
 			}
 			$this->url = implode("/", $tmp);
-			$this->initZone($inPath);
 
 			array_unshift($gZoneUrls, $this->url);
+			$this->initZone($inPath);
+		
 
 
 			// THE SECOND STEP IS TO SEE IF THERE IS ANOTHER ZONE TO RUN.

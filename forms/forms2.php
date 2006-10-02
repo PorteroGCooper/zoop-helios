@@ -367,7 +367,7 @@ class form2
 	{
 		if ($this->id == 'new')
 			return "";
-
+			
 		if (isset($this->record->values[$fieldname]->value))
 			return $this->record->values[$fieldname]->value;
 		else
@@ -427,7 +427,8 @@ class form2
 			$POST = getPost();
 
 		$this->form->setvaluesfrompost($POST);
-		return $this->form->storeRecord($this->tablename, $this->id);
+		$this->id = $this->form->storeRecord($this->tablename, $this->id);
+		return $this->id;
 	}
 
 	/**

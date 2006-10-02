@@ -265,6 +265,57 @@
   		$return = $defaultdb->escape_string($inString);
   		return $return;
 	}
+	
+function sql_format_date($dbdate, $format, $timezone = NULL)
+{
+	global $zoop;
+	$zoop->addInclude('date', 'Date.php');
+	if(strstr($format, "%") === false)
+	{
+		//bug("We need to make sure that $inFormatString string uses %'s");
+		trigger_error("The Formating string that has been passed into the FormatPostgresDate() function is formated incorrectly.
+		It must follow the formating convention from the Date.php class. For Example: D M j, Y becomes %a %b %e, %Y ");
+	}
+	//	this should actually parse in the hours, minutes and seconds too
+	//		but I don't need them right now.
+	$date = &new Date();
+	if($dbdate != 0)
+	{
+		global $tz;
+		$timeparts = split("-|:| |\\.", $dbdate);
+
+		$year = $timeparts[0];
+		$month = $timeparts[1];
+		$day = $timeparts[2];
+		$date->setYear($year);
+		$date->setMonth($month);
+		$date->setDay($day);
+
+		if(isset($timeparts[3]))
+		{
+			$hours = $timeparts[3];
+			$minutes = $timeparts[4];
+			$seconds = $timeparts[5];
+			$date->setHour($hours);
+			$date->setMinute($minutes);
+			$date->setSecond($seconds);
+		}
+
+		$date->setTZ(new Date_TimeZone($tz));
+	}
+	if($timezone != NULL)
+	{
+		$date->convertTZ(new Date_TimeZone($timezone));
+	}
+
+	$timeString = $date->format($format);
+
+	/*
+	$timestamp = mktime ( 0, 0, 0,  $month, $day, $year);
+	$timeString = date($inFormatString, $timestamp);
+	*/
+	return $timeString;
+}
 
 	function makeDate($Year, $Month = 1, $Day = 1)
 	{

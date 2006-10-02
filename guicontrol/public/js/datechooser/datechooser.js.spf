@@ -1,0 +1,204 @@
+// +----------------------------------------------------------------------+
+// | Homework 3 - Calendar Date Picker                                    |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2005 Ben Candland                                      |
+// +----------------------------------------------------------------------+
+// | This source code was written by the author for use in ISYS 542       |
+// | at Brigham Young University, except were noted.  Feel free to use    |
+// | any code as needed.  Thanks!                                         |
+// +----------------------------------------------------------------------+
+// | Authors: Original Author  Ben Candland <benjammm@hotmail.com>        |
+// |          Contributions    Isys 542, S.W. Liddle                      |
+// |          Contributions    Steve Francia <sfrancia@supernerd.com>     |
+// +----------------------------------------------------------------------+
+
+// Functions (Sorted by Name)
+function change_Month(Name)        // Written by Ben Candland
+{
+    var month = document.getElementById('cal_Month');
+    var year = document.getElementById('cal_Year');
+    if (Name=='next') {
+        month.title = parseInt(month.title) + 1;
+        if (month.title > 11) {
+            year.innerHTML = parseInt(year.innerHTML) + 1;
+            month.title = 0;
+        }
+    } else {
+        month.title = parseInt(month.title) - 1;
+        if (month.title < 0) {
+            year.innerHTML = parseInt(year.innerHTML) - 1;
+            month.title = 11;
+        }
+    }
+    get_Days();
+}                                  // end of change_Month
+
+
+function change_Year(Name)         // Written by Ben Candland
+{
+    var month = document.getElementById('cal_Month');
+    var year = document.getElementById('cal_Year');
+    if (Name=='next') {
+        year.innerHTML = parseInt(year.innerHTML) + 1;
+    } else {
+        year.innerHTML = parseInt(year.innerHTML) - 1;
+    }
+    get_Days();
+}                                  // end of change_Year
+
+
+function get_Cell(row, col)        // Function model from Class
+{
+    return (document.getElementById(row + '.' + col));
+}                                  // end of get_Cell
+
+
+function get_Days(sender)                // Adapted from Class by Ben Candland
+{
+    var days;
+    var calYear = document.getElementById('cal_Year');
+    var year = calYear.innerHTML;
+    if (year == '') {
+        year = today.getFullYear();
+        calYear.innerHTML = year;
+    }
+    var calMonth = document.getElementById("cal_Month");
+    var month = calMonth.title;
+    if (month == "") {
+        month = today.getMonth();
+        calMonth.title = month;
+    }
+    calMonth.innerHTML = months[month];
+    calMonth.title = month;
+    if (month==0 || month==2 || month==4 || month==6 || month==7 || month==9 || month==11) {
+        days=31;
+    }
+    else if (month==3 || month==5 || month==8 || month==10) {
+        days=30;
+    }
+    else if (month==1)  {
+        if (is_Leap_Year(year)) {
+            days=29;
+        } else {
+            days=28;
+        }
+    }
+    var start_Date = new Date(year, month, 1);
+    var i;
+    var col = 0;
+    var row = 0;
+    var cell1 = get_Cell(row, col);
+    for (i = 1; i <= 42; i++) {
+        cell1 = get_Cell(row, col);
+        cell1.innerHTML = "";
+        ++col;
+        if (col >= 7) {
+            ++row;
+            col = 0;
+        }
+    }
+
+    col = start_Date.getDay();
+    row = 0;
+    for (i = 1; i <= days; i++) {
+        cell1 = get_Cell(row, col);
+        cell1.innerHTML = "<a  id=\"" + i + "\" onclick=\"put_Dates("+i+"," + sender + ");\">" + i + "</a>";
+        ++col;
+        if (col >= 7) {
+            ++row;
+            col = 0;
+        }
+    }
+    if ((calYear.innerHTML == today.getFullYear()) && (calMonth.title == today.getMonth())) {
+        var today_ref = document.getElementById(today.getDate());
+        today_ref.style.color = "#E4C43F";
+    }
+}                                   // end of get_Days()
+
+
+function go_Today(sender)                // Function written by Ben Candland
+{
+    var month = document.getElementById("cal_Month");
+    var year = document.getElementById("cal_Year");
+    month.title = "";
+    year.innerHTML = "";
+    get_Days();
+}
+
+function hide_Calendar()           // Function model from Class
+{
+    var my_Div = document.getElementById("calendarDiv");
+ //   my_Div.style.visibility = "hidden";
+}                                 // end of hide_Calendar()
+
+
+
+function is_Leap_Year(year)      // Adapted from 1st Class lesson
+{
+    if (((year % 4)==0) && ((year % 100)!= 0) || ((year % 400)==0)) {
+        return (true);
+    } else {
+        return (false);
+    }
+}
+
+
+function put_Dates(day, sender)          // Written by Ben Candland
+{
+    // puts the date clicked on into the textbox
+	alert(day);
+	alert(sender);
+	var month = document.getElementById("cal_Month").title;
+	var year = document.getElementById("cal_Year").innerHTML;
+		month = (parseInt(month) + 1);
+	var chosen_Date =  month + "/" + day + "/" + year;
+//		var sender = document.getElementById(sender);
+//	var date_Field = document.getElementById(sender);
+	alert(chosen_Date);
+	alert(sender);
+	alert(document.getElementById(sender).value);
+	document.getElementById(sender).value = chosen_Date;
+	hide_Calendar();
+	//alert (sender);
+	//alert (date_Field);
+
+}                                 //  end of put_Dates()
+
+
+function show_Calendar(sender)         // Written by Ben Candland
+{
+	var my_Div = document.getElementById("calendarDiv");
+	var cal_sender = document.getElementById(sender);
+	get_Days(sender);
+	my_Div.style.visibility = "visible";
+
+	document.getElementById("calendarToday").innerHTML = "<a href=\"#\" style=\"border:0\" onClick=\"go_Today("
+	+ sender +")\" onMouseOver=\"MM_swapImage('today_star','','..\/images\/newNav\/today_starpress.gif',1)\" onMouseOut=\"MM_swapImgRestore()\"><img name=\"today_star\" src=\"../images/newNav/today_star.gif\" width=\"15\" height=\"15\" border=\"0\">Go to Today </a>";
+//	cal_sender.innerHTML = sender;
+//	alert (cal_sender);
+//	alert (sender);
+}                                 // end of show_Calendar()
+
+/*
+function toggle_Calendar(sender)       // Function model from Class
+{
+    var my_Div = document.getElementById("calendarDiv");
+	var cal_sender = document.getElementById("cal_sender");
+    if (my_Div.style.visibility == "hidden") {
+        show_Calendar();
+		cal_sender.innerHTML = sender;
+    } else {
+        hide_Calendar();
+		//cal_sender.innerHTML == "";
+    }
+    return (false);
+}                                 // end of toggle_Calendar()
+*/
+
+// +------------------------------------------------------------+
+// |                        Global Variables                    |
+// +------------------------------------------------------------+
+var today = new Date();
+var months = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November",
+              "December"];

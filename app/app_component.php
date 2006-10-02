@@ -44,8 +44,14 @@ include(dirname(__file__) . "/post_utils.php");
 */
 class component_app extends component
 {
+	function defaultConstants()
+	{
+		define_once('app_status', 'dev');
+	}
+	
 	function component_app()
 	{
+		$this->defaultConstants();
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());

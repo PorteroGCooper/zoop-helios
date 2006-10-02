@@ -77,9 +77,10 @@ class date extends GuiControl
 
 
 		$html .= "<input name=\"{$label}\" $attrs value=\"$value\" id=\"{$label}\" onfocus=\"show_Calendar(id);\">"; // type=\"{$this->params['type']}\"
-		$html .= "<img src=\"public/resources/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
+		$html .= "<img src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
+		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>"; 
 
-		$html .= file_get_contents(app_dir . "/public/resources/js/datechooser/cal_div.htm");
+		$html .= file_get_contents(zoop_dir . "/guicontrol/public/js/datechooser/cal_div.htm");
 
 		if(isset($this->params['errorState']))
 		{

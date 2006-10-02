@@ -27,6 +27,11 @@
  */
 class component_session extends component
 {
+	function defaultConstants()
+	{
+		define_once('session_type', 'files');
+	}
+	
 	/**
 	 * init 
 	 * 
@@ -35,6 +40,7 @@ class component_session extends component
 	 */
 	function init()
 	{
+		$this->defaultConstants();
 		include(dirname(__file__) . "/session_handler_" . session_type . ".php");
 
 		if (isset($HTTP_GET_VARS["cache_limiter"]))

@@ -41,15 +41,15 @@ function smarty_function_forms2($params, &$smarty)
 	if (isset($form->table->pages))
 	{
 		include_once(dirname(__file__) . "/function.forms_list.php");
-		echo smarty_function_forms_list(array("form" => $form->form, "table" => $form->tablename), &$smarty);
+		echo smarty_function_forms_list(array("form" => $form->form, "table" => $form->tablename), $smarty);
 	}
 	else
 	{
 		include_once(dirname(__file__) . "/function.forms_form.php");
 		if (isset($params['type']) && $params['type'] == "view")
-			echo smarty_function_forms_form(array("form" => $form->record, "form_type" => "view"), &$smarty);
+			echo smarty_function_forms_form(array("form" => $form->record, "form_type" => "view"), $smarty);
 		else
-			echo smarty_function_forms_form(array("form" => $form->record), &$smarty);
+			echo smarty_function_forms_form(array("form" => $form->record), $smarty);
 
 	}
 

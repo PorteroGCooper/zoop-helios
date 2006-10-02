@@ -177,10 +177,18 @@ if (!isset($form->tables->$table))
 	{
 		foreach ($form->tables->$table->records as $record)
 		{
-			if ($j%2 == 0)
-				$rclass = "even";
-			else
-				$rclass = "odd";
+			if(isset($form->tables->$table->rowclasses))
+			{
+				$classField = $form->tables->$table->rowclasses['field'];
+				if(isset($form->tables->$table->rowclasses['classes'][$record->values[$classField]->value]))
+					$rclass = $form->tables->$table->rowclasses['classes'][$record->values[$classField]->value];
+			
+			}
+			if(!isset($rclass))
+				if ($j%2 == 0)
+					$rclass = "even";
+				else
+					$rclass = "odd";
 
 			$output .= "<tr class=\"" . $rclass . "\">";
 			if ($form->tables->$table->id_location == "page")
@@ -190,37 +198,44 @@ if (!isset($form->tables->$table))
 			foreach ($form->tables->$table->order as $fieldname)
 			{
 				$field = &$form->tables->$table->fields[$fieldname];
-				if (isset($field->listshow))
+				if (isset($field->listshow) && $field->listshow)
 				{
-					if ($field->listshow)
+					$name= $field->name;
+					if (!empty($field->showIndex))
 					{
-						$name= $field->name;
-						if ($field->showIndex)
-						{
-							$tvalue = $record->values[$name]->value;
-							if (isset($field->index[$tvalue]))
-								$lvalue = $field->index[$tvalue];
-							else
-								$lvalue = "";
-						}
+						$tvalue = $record->values[$name]->value;
+						if (isset($field->index[$tvalue]))
+							$lvalue = $field->index[$tvalue];
 						else
-							$lvalue = $record->values[$name]->value;
-						if ($field->clickable)
-							$output .= "<td><a href=\"$link\">" . $lvalue . "</a></td>";
-						else
-							$output .= "<td>" . $lvalue . "</td>";
+							$lvalue = "";
 					}
+					else
+					{
+						switch($field->type)
+						{
+							case "timestamptz":
+								if(isset($field->format))
+									$lvalue = sql_format_date($record->values[$name]->value, $field->format);
+								else
+									$lvalue = $record->values[$name]->value;
+								break;
+							default:
+								$lvalue = $record->values[$name]->value;
+						}
+					}
+					if ($field->clickable)
+						$output .= "<td><a href=\"$link\">" . $lvalue . "</a></td>";
+					else
+						$output .= "<td>" . $lvalue . "</td>";
 				}
 			}
-
+			
 			if ($form->tables->$table->deleteColumn)
 			{
-
 					if (isset($form->tables->$table->deletelink))
 					{
-
 						$deletelink = $smarty->_tpl_vars["SCRIPT_URL"] . "/" . $form->tables->$table->zone . "/" .$form->tables->$table->deletelink . "/" . $record->id ;
-						$output .= "<td class=\"" . $rclass . "\" align=\"right\" valign\"bottom\"><a href=\"$deletelink\" onclick=\"return confirm('Are you sure you want to delete this?');\" style=\"color:red;\">" . "X" . "</a></td>";
+						$output .= "<td class=\"" . $rclass . "\" align=\"right\" valign\"bottom\"><a href=\"$deletelink\" onclick=\"return confirm('Are you sure you want to delete this?');\" class=\"delete\">" . "X" . "</a></td>";
 					}
 					else
 					{

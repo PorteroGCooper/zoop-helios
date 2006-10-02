@@ -1,0 +1,68 @@
+/* +----------------------------------------------------------------------+
+   | Homework 3 - Calendar Date Picker Style Sheet                        |
+   +----------------------------------------------------------------------+
+   | Copyright (c) 2005 Ben Candland                                      |
+   +----------------------------------------------------------------------+
+   | This style sheet was written by the author for use in ISYS 542       |
+   | at Brigham Young University.                                         |
+   +----------------------------------------------------------------------+
+   | Authors: Original Author  Ben Candland benjammm@hotmail.com          |
+   +----------------------------------------------------------------------+
+*/
+#calendarDiv  a,  h1, h2, h3, body, p, tr, td {
+	font-family:         Verdana, Arial, Helvetica, sans-serif;
+}
+#calendarDiv  a:link {
+	text-decoration:     none;
+	color:               #0066CC;
+}
+#calendarDiv  a:visited {
+	color:               #8B91C2;
+	text-decoration:     none;
+}
+.style_Cal_Dates td:hover {
+	color:               #3333FF;
+	border:              1px solid #CCCCCC;
+}
+
+.style_Cal_Day td {
+	color:               #FFFFFF;
+	font-weight:         bold; 
+	font-size:           9px;
+	background-color:    #4491F9; 
+	text-align:          center;
+}
+#calendarDiv  .style_Cal_Month {
+	color:               #000000;
+	font-weight:         bold;
+	font-size:           13px;
+	text-align:          center;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #000080;
+}
+#calendarDiv .style_Cal_Year {
+	font-weight:         bold;
+	font-size:           13px;
+	text-align:          center;
+}
+.style_Cal_Dates td{
+	font-size:           9px;
+	text-align:          center;
+}
+#calendarDiv  .style_Cal_Info {
+	font-size:           9px;
+	text-align:          left;
+	border-top:          1px solid #999;
+	color:               #999;
+}
+#calendarDiv {
+	background-color:    #FFFFFF;
+	border:              1px solid #000066;
+	position:            absolute;
+	z-index:             2;
+	width:               159px;
+	left:                0px;
+	top:                 0px;
+	font-size:	     	 8px; 
+}

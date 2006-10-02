@@ -1,0 +1,69 @@
+<div id="calendarDiv" style="visibility:hidden; display: none">
+	<table border="0" align="center" cellpadding="1" cellspacing="0">
+		<tr>
+			<td>
+			</td>
+			<td colspan="5" class="style_Cal_Year">
+				<span id="prev" onClick="change_Year(id)"  style="cursor:pointer; font-size:17px">
+					&#8249;</span>
+
+				<span id="cal_Year"></span>
+				<span id="next" onClick="change_Year(id)"  style="cursor:pointer; font-size:17px">
+			&#8250;</span>
+			</td>
+			<td align="right"  class="style_Cal_Info"><div align="right">
+				<span onClick="hide_Calendar()"  style="cursor:pointer;">x
+				</span></div></td>
+		</tr>
+		<tr class="style_Cal_Month">
+			<td width="20" align="center" class="style_Cal_Month">
+					<span id="prev" onClick="change_Month(id)" style="cursor:pointer; font-size:17px">
+						&laquo;
+					</span>
+			</td>
+			<td colspan="5" class="style_Cal_Month">
+				<span id="cal_Month" title=""></span>
+			</td>
+			<td width="20" align="center" class="style_Cal_Month">
+				<span  id="next" onClick="change_Month(id)"  style="cursor:pointer; font-size:17px">
+					&raquo;
+				</span>
+			</td>
+		</tr>
+		<tr class="style_Cal_Day">
+			<td width="20" style="background-color:#4491F9">Sun</td>
+			<td width="20" style="background-color:#4491F9">Mon</td>
+			<td width="20" style="background-color:#4491F9">Tue</td>
+			<td width="20" style="background-color:#4491F9">Wed</td>
+			<td width="20" style="background-color:#4491F9">Thu</td>
+			<td width="20" style="background-color:#4491F9">Fri</td>
+			<td width="20" style="background-color:#4491F9">Sat</td>
+		</tr>
+		<tr class="style_Cal_Dates">
+			<td id="0.0"></td><td id="0.1"></td><td id="0.2"><td id="0.3"><td id="0.4">
+			<td id="0.5"></td><td id="0.6"></td></tr>
+		<tr class="style_Cal_Dates">
+			<td id="1.0"></td><td id="1.1"></td><td id="1.2"><td id="1.3"><td id="1.4">
+			<td id="1.5"></td><td id="1.6"></td></tr>
+		<tr class="style_Cal_Dates">
+			<td id="2.0"></td><td id="2.1"></td><td id="2.2"><td id="2.3"><td id="2.4">
+			<td id="2.5"></td><td id="2.6"></td></tr>
+		<tr class="style_Cal_Dates">
+			<td id="3.0"></td><td id="3.1"></td><td id="3.2"><td id="3.3"><td id="3.4">
+			<td id="3.5"></td><td id="3.6"></td></tr>
+		<tr class="style_Cal_Dates">
+			<td id="4.0"></td><td id="4.1"></td><td id="4.2"><td id="4.3"><td id="4.4">
+			<td id="4.5"></td><td id="4.6"></td></tr>
+		<tr class="style_Cal_Dates">
+			<td id="5.0"></td><td id="5.1"></td><td id="5.2"><td id="5.3"><td id="5.4">
+			<td id="5.5"></td><td id="5.6"></td></tr>
+		<tr>
+			<td colspan="4" class="style_Cal_Info" id="calendarToday">
+			</td>
+			<td class="style_Cal_Info"><div id="cal_sender" style="visibility:hidden; font-size:1px; "></div></td>
+			<td class="style_Cal_Info" >&nbsp;</td>
+			<td class="style_Cal_Info" align="right">
+			</td>
+		</tr>
+   </table>
+</div>

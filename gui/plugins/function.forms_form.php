@@ -173,7 +173,7 @@ function smarty_function_forms_form($params, &$smarty)
 	  {
 		$output .= "<input type=\"hidden\" name=\"recordid\" value=\"$recordid\">";
 		$output .= "<input type=\"hidden\" name=\"recordtable\" value=\"$recordtable\">";
-		$output .= "<br><input type=\"submit\" name=\"Submit\" class=\"submit\" id=\"submit\" value=\"$submitlabel\" onclick=\"return submitForm(form);\">";
+		$output .= "<br><input type=\"submit\" name=\"SubmitButton\" class=\"submit\" id=\"SubmitButton\" value=\"$submitlabel\" onclick=\"return submitForm(form);\">";
 	   }
     return $output;
 }

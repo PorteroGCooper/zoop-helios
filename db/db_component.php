@@ -24,6 +24,10 @@
  */
 class component_db extends component
 {
+	function defaultConstants()
+	{
+		define_once('db_RDBMS', 'pgsql');
+	}
 	/**
 	 * init 
 	 * 
@@ -32,6 +36,7 @@ class component_db extends component
 	 */
 	function init()
 	{
+		$this->defaultConstants();
 		//require_once('DB.php');
 		//include(dirname(__file__) . "/database.php");
 		include(dirname(__file__) . "/" . db_RDBMS . ".php");
