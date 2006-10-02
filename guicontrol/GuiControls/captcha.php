@@ -14,7 +14,7 @@
 // FOR A PARTICULAR PURPOSE.
 
 // include captcha class
-require(zoop_dir . "/gui/GuiControls/libs/captcha/php-captcha.inc.php");
+require(zoop_dir . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
 
 /**
  * captcha
@@ -62,12 +62,6 @@ class captcha extends GuiControl
 	 */
 	function render()
 	{
-		$html = "";
-
-		$name = $this->getName();
-		$value = $this->getValue();
-		$label = $this->getLabelName();
-
 		// define fonts
 		$aFonts = array('VeraMoBd.ttf');
 
@@ -77,7 +71,8 @@ class captcha extends GuiControl
 		$path = app_dir . '/tmp/captcha/';
 		$file = $path . $filename;
 
-		CleanDirectory($path, 30);
+		if (file_exists($path))
+			CleanDirectory($path, 30);
 		mkdirr($path);
 		// create new image
 		$oPhpCaptcha = new PhpCaptcha($aFonts, rand(150,250), rand(40,60));
@@ -88,17 +83,9 @@ class captcha extends GuiControl
 		$oPhpCaptcha->UseColour(rand(0,1));
 		$oPhpCaptcha->Create($file);
 
-		$html .= "Please enter the letters you see in the image.<br>";
+		$html = "Please enter the letters you see in the image.<br>";
 		$html .= "<img alt=\"security image\" src=\"". SCRIPT_REF ."/zoopfile/CaptchaImage/$filename\"><br>";
- 		$html .= "<input name=\"{$label}\" id=\"{$label}\" value=\"$value\">(case insensitive)";
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <br><span style=\"color: red;\">The value \"{$errorState['value']}\" {$errorState['text']} </span>";
-		}
-
-		$html = $this->renderViewState() . $html;
+ 		$html .= "<input {$this->getNameIdString()} value=\"{$this->getValue()}\">(case insensitive)";
 
 		return $html;
 	}

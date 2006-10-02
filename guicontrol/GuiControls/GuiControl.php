@@ -204,7 +204,7 @@ class GuiControl
 	 *
 	 * @param mixed $validate
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function getValidationAttr($validate)
 	{
@@ -220,6 +220,80 @@ class GuiControl
 			return '';
 		}
 	}
+
+	/**
+	 * getValidationAttr
+	 *
+	 * @param mixed $validate
+	 * @access public
+	 * @return string
+	 */
+	function getValidationDivs($validate = null)
+	{
+		if (empty($validate))
+		{
+			if (!isset($this->params['validate']) || empty ($this->params['validate']))
+				return "";
+			else
+				$validate = $this->params['validate'];
+		}
+
+		$html = "";
+
+		$style = "style=\"display:none\"";
+
+		$id = $this->getLabelName();
+
+		if (isset($validate['max']) && !empty($validate['max']))
+			$html .= "<div id=\"max-$id\" $style>{$validate['max']}</div>";
+
+		if (isset($validate['min']) && !empty($validate['min']))
+			$html .= "<div id=\"min-$id\" $style>{$validate['min']}</div>";
+
+		if (isset($validate['regExp']) && !empty($validate['regExp']))
+			$html .= "<div id=\"params-$id\" $style>{$validate['regExp']}</div>";
+
+		if (isset($validate['regExp']) && !empty($validate['regExp']))
+			$html .= "<div id=\"params-$id\" $style>{$validate['regExp']}</div>";
+
+		if (isset($validate['field']) && !empty($validate['field']))
+			$html .= "<div id=\"params-$id\" $style>{$validate['field']}</div>";
+
+		return $html;
+	}
+
+	/**
+	 * getValidationClasses
+	 * Used to get the css class names so the javascript validator can be properly run
+	 *
+	 * @param mixed $validate
+	 * @access public
+	 * @return string
+	 */
+	function getValidationClasses($validate = null)
+	{
+		if (empty($validate))
+		{
+			if (!isset($this->params['validate']) || empty ($this->params['validate']))
+				return "";
+			else
+				$validate = $this->params['validate'];
+		}
+
+		return Validator::getJSClassNames($validate);
+	}
+
+	/**
+	 * getNameIdString
+	 *
+	 * @access public
+	 * @return string
+	 */
+	function getNameIdString()
+	{
+		return "name=\"{$this->getLabelName()}\" id=\"{$this->getLabelName()}\"";
+	}
+
 	/**
 	 * setRequired
 	 *
@@ -261,6 +335,19 @@ class GuiControl
  	}
 
 	/**
+	 * setDefaultValue
+	 * Sets the value for the control if no value is provided
+	 *
+	 * @param mixed $value
+	 * @access public
+	 * @return void
+	 */
+	function setDefaultValue($value)
+	{
+		$this->setParam("default", $value);
+	}
+
+	/**
 	 * getValue
 	 *
 	 * @access public
@@ -270,6 +357,8 @@ class GuiControl
 	{
 		if (isset($this->params['value']))
 			return $this->params['value'];
+		elseif (isset($this->params['default']))
+			return $this->params['default'];
 		else
 			return;
 	}
@@ -305,6 +394,26 @@ class GuiControl
 		$name = $this->getName();
 		$html = "<input type=\"hidden\" name=\"{$name}[viewState]\" value=\"$viewState\">";
 		return $html;
+	}
+
+
+	function renderErrorMessage()
+	{
+		if(isset($this->params['errorState']))
+		{
+			$errorState = $this->params['errorState'];
+			$label = $this->getLabelName();
+			$html =" <br><div class='s-message s-error' id='advice-$label'>";
+
+			if (!empty($errorState['value']))
+				$html .= "\"{$errorState['value']}\" {$errorState['text']}";
+			else
+				$html .= "{$errorState['text']}";
+
+			$html .= "</div>";
+			return $html;
+		}
+		return "";
 	}
 
 	/**
@@ -375,6 +484,19 @@ class GuiControl
 	function display()
 	{
 		echo ($this->render(true));
+	}
+
+	function renderControl($echo = false)
+	{
+		$html =  $this->renderViewState();
+		$html .= $this->getValidationDivs();
+		$html .= $this->render();
+		$html .= $this->renderErrorMessage();
+
+		if ($echo)
+			echo($html);
+		else
+			return $html;
 	}
 
 	/**

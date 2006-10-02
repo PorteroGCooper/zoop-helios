@@ -28,17 +28,10 @@ class filemanager extends GuiControl
 	{
 		global $smarty;
 
-		$html = $this->renderViewState();
 		$this->params['name'] = $this->getName();
 		$this->params['value'] = $this->getValue();
 
-		$html .= smarty_function_loadmanager($this->params, $smarty);
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
+		$html = smarty_function_loadmanager($this->params, $smarty);
 
 		return $html;
 	}

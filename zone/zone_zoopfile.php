@@ -58,6 +58,23 @@ class zone_zoopfile extends zone
 
 		$headers = $this->getheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
+
+		switch (strtolower(substr(strrchr($jsfile, "."), 1)))
+		{
+			case 'js':
+				header('Content-Type: x-application/javascript');
+				break;
+			case 'html' :
+				header('Content-Type: text/html');
+				break;
+			case 'css' :
+				header('Content-Type: text/css');
+				break;
+			default:
+				if(function_exists('mime_content_type'))
+					header('Content-Type: ' . mime_content_type($jsfile));
+		}
+
 		//header('Cache-Control: max-age=86400');
 		header('Cache-Control: ');
 		header('Pragma: ');
@@ -75,36 +92,21 @@ class zone_zoopfile extends zone
 			}
 		}
 
-		if(substr(strrchr($jsfile, "."), 1) == 'js')
-			header('Content-type: x-application/javascript');// . mime_content_type($jsfile));
-		else if(substr(strrchr($jsfile, "."), 1) == 'html')
-			header('Content-type: text/html');// . mime_content_type($jsfile));
-		else if(function_exists('mime_content_type'))
-		{
-			header('Content-type: ' . mime_content_type($jsfile));
-		}
-		else
-		{
-			//we don't know what header to send...
-		}
-
 		header('Content-length: ' . filesize($jsfile));
-		/*include($jsfile);
-		die();
-		*/
-		$file = fopen($jsfile, 'rb');
-		while(!feof($file)){
-			print fread($file, 1024 * 8);
-		} // while
+		$this->outputFile($jsfile);
+// 		include($jsfile);
+// 		die();
 	}
 
 	function pageCaptchaImage($inPath)
 	{
 		$file = app_dir . '/tmp/captcha/' . $inPath[1];
 		$mtime = filemtime($file);
- 		header("Content-type: image/jpeg");
-		include($file);
-		die();
+ 		header("Content-Type: image/jpeg");
+
+		$this->outputFile($file);
+// 		include($file);
+// 		die();
 	}
 
 	function pageImage($inPath)
@@ -121,25 +123,31 @@ class zone_zoopfile extends zone
 		switch (substr(strrchr(strtolower($file), "."), 1))
 		{
 			case "gif" :
- 				header("Content-type: image/gif");
+ 				header("Content-Type: image/gif");
 				break;
 			case "jpg" :
 			case "jpeg":
- 				header("Content-type: image/jpeg");
+ 				header("Content-Type: image/jpeg");
 				break;
 			case "png":
-  				header("Content-type: image/png");
+  				header("Content-Type: image/png");
 				break;
 		}
 
-		$hfile = fopen($file, 'rb');
-		while(!feof($hfile)){
-			print fread($hfile, 1024 * 8);
-		} // while
+		$this->outputFile($file);
 	}
 
 	function page404($inPath)
 	{
+		die();
+	}
+
+	function outputFile($file)
+	{
+		$hfile = fopen($file, 'rb');
+		while(!feof($hfile)){
+			print fread($hfile, 1024 * 8);
+		} // while
 		die();
 	}
 }

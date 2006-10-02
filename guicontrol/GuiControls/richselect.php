@@ -68,12 +68,10 @@ class richselect extends guicontrol
 		if (!isset($this->params['index']))
 			return 'you need to specify an index for this guiControl';
 
-		$html = $this->renderViewState();
 		$width = "180";
 		$height = 22;
  		$onclick = "";
 
-		$name = $this->getName();
 		$value = $this->getValue();
 		$label = $this->getLabelName();
 
@@ -87,7 +85,7 @@ class richselect extends guicontrol
  		if (isset($this->params['onclick']))
  			$onclick = $this->params['onclick'];
 
-		$html .= "
+		$html = "
 			<div style=\"position:relative; width: {$width}px;\" class=\"b\">
 				<div  onclick=\"new Effect.toggle('" .$label. "_dd','BLIND', {duration: 0.20}); return false;\" style=\"background : white; border : #D0D0D0 inset 2px; width : $newwidth"."px; height: {$height}px; padding:2px; cursor:default;\" class=\"c\">
 					<div id=\"$label"."_holder\" style=\"float: left;\" class=\"d\">";
@@ -110,12 +108,6 @@ class richselect extends guicontrol
 				</div>
 			</div>
 		";
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
 
 		return $html;
 	}

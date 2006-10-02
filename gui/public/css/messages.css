@@ -1,0 +1,73 @@
+.message {
+    font-size: 122%;
+    padding: 16px;
+    padding-left: 60px;
+    margin: 1em;
+    clear: both;
+    background: no-repeat 15px 50%;
+}
+
+.s-message, .validation-advice{
+    font-size: 100%;
+    padding: 6px;
+    padding-left: 35px;
+    margin: 1em;
+    clear: both;
+    background: no-repeat 5px 50%;
+}
+
+.m-important, .s-important, .validation-advice{
+    color: #e60;
+    border: 1px solid #ffbe61;
+    background-color: #fff3e1;
+}
+
+.m-information, .s-information{
+    color: #1F5EFF;
+    border: 1px solid #4096EE;
+    background-color: #C3D9FF;
+}
+
+.m-warning, .s-warning{
+    color: #1FA228;
+    border: 1px solid #45D831;
+    background-color: #FFFCBF;
+}
+
+.m-error, .s-error {
+    color: #E22727;
+    border: 1px solid #D01F3C;
+    background-color: #FFBDBB;
+}
+
+.m-error {
+    background-image: url('../../image/messages/error.png');
+}
+
+.s-error {
+    background-image: url('../../image/messages/error-s.png');
+}
+
+.m-important {
+    background-image: url('../../image/messages/important.png');
+}
+
+.s-important, .validation-advice {
+    background-image: url('../../image/messages/important-s.png');
+}
+
+.m-information {
+    background-image: url('../../image/messages/information.png');
+}
+
+.s-information {
+    background-image: url('../../image/messages/information-s.png');
+}
+
+.m-warning {
+    background-image: url('../../image/messages/warning.png');
+}
+
+.s-warning {
+    background-image: url('../../image/messages/warning-s.png');
+}

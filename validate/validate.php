@@ -50,6 +50,7 @@ class Validator
 	}
 
 	/**
+	 * validate
 	 * validate wrapper for the functions in this class.
 	 *
 	 * the validate array must have 'type' => $type set for this to work.
@@ -72,7 +73,6 @@ class Validator
 			$result['message'] = "This field is required";
 			$result['result'] = false;
 			return $result;
-
 		}
 
 		if ((!isset($validate['required']) || $validate['required'] == false) && strlen($value) < 1)
@@ -91,6 +91,7 @@ class Validator
 	}
 
 	/**
+	 * boolValidate
 	 * a boolean validate wrapper for the functions in this class.
 	 * This function will return a boolean true / false for validation, rather than the array returned by the other functions.
 	 * the validate array must have 'type' => $type set for this to work.
@@ -111,6 +112,7 @@ class Validator
 	}
 
 	/**
+	 * validateSTack
 	 * a function to stack validators together.
 	 * This function will validate more than one validator, stacked in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
 	 * It will return as soon as one of the validators fails. This is particularly useful if one of the validators performs a sql check.
@@ -138,7 +140,8 @@ class Validator
 	}
 
 	/**
-	 * a function to combine validators together.
+	 * validateMerge
+	 a function to combine validators together.
 	 * This function will validate more than one validator, in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
 	 * It will perform all validations before it returns the combined results.
 	 * the validate array must have 'validators' => array of individual "validate" arrays  set for this to work.
@@ -168,6 +171,122 @@ class Validator
 		}
 
 		return $result;
+	}
+
+	/**
+	 * type2ClassNames
+	 * This function will convert the validation types to the appropriate string of class names to use with the javascript validator
+	 *
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return string
+	 */
+	function type2ClassNames($validate)
+	{
+		if (!isset($validate['type']))
+			return "";
+
+		switch (strtolower($validate['type']))
+		{
+			case "merge" :
+			case "stack" :
+				$names = " ";
+				foreach ($validate['validators'] as $validator)
+				{
+					$names .= Validator::JSClassNames($validator) . " ";
+				}
+				return trim($names);
+				break;
+			default:
+				return Validator::NameToJS($validate['type']);
+				break;
+		}
+	}
+
+	/**
+	 * type2JSParamClassNames
+	 * This function will convert the validation types and properties to the appropriate additional class names for the javascript validator. To be used with type2ClassNames
+	 *
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return string
+	 */
+	function type2JSParamClassNames($validate)
+	{
+		$classes = array();
+		if (isset($validate['required']) && $validate['required'] == true)
+			$classes[] = "required";
+
+		if (isset($validate['max']) && $validate['type'] != 'length')
+			$classes[] = "LessThan";
+
+		if (isset($validate['min']) && $validate['type'] != 'length')
+			$classes[] = "GreaterThan";
+
+		return implode(" ", $classes);
+	}
+
+	/**
+	 * getJSClassNames
+	 * This function will convert the validation array to the appropriate string of class names to use with the javascript validator. Combines output of type2ClassNames and type2JSParamClassNames
+	 *
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return string
+	 */
+	function getJSClassNames($validate)
+	{
+		$cn = array();
+		$cn[] = Validator::type2ClassNames($validate);
+		$cn[] = Validator::type2JSParamClassNames($validate);
+
+		return implode(" ", $cn);
+	}
+
+	/**
+	 * nameToJS
+	 * This function will take one validation type and return the javascript class name equivalent
+	 *
+	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @access public
+  	 * @return string
+	 */
+	function nameToJS($name)
+	{
+		switch(strtolower($name))
+		{
+			case "phone" :
+			case "date" :
+			case "money" :
+			case "email" :
+			case "domain" :
+			case "url" :
+			case "ssn" :
+			case "password" :
+			case "ip" :
+			case "regexp" :
+				return "validate-$name";
+				break;
+			case "creditcard" :
+				return "validate-cc";
+				break;
+    			case "float" :
+			case "numeric" :
+				return "validate-number";
+    				break;
+			case "alphanumeric" :
+	   			return "validate-alphanum";
+				break;
+			case "equalto" :
+	   			return "EqualTo";
+				break;
+			case "length" :
+	   			return "Length";
+				break;
+			case "int" :
+	   			return "validate-digits";
+				break;
+		}
 	}
 
 	/**
@@ -1175,6 +1294,5 @@ class Validator
 		$answer .="\"";
 		return $answer;
 	}
-
 }
 ?>

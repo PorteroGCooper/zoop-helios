@@ -39,7 +39,6 @@ class checkboxes extends GuiMultiValue
 	{
 		if(isset($this->params['validate']))
 		{
-
 			$value = $this->getValue();
 
 			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
@@ -76,7 +75,6 @@ class checkboxes extends GuiMultiValue
 					$errorState['value'] = "";
 					return $errorState;
 				}
-
 			}
 		}
 
@@ -150,10 +148,6 @@ class checkboxes extends GuiMultiValue
 	{
 		global $gui;
 
-		$html = $this->renderViewState();
-		$attrs = array();
-		$Sattrs = array();
-
 		$smartyParams = array('options' => $this->params['index']);
 
 		foreach ($this->params as $parameter => $value)
@@ -177,23 +171,14 @@ class checkboxes extends GuiMultiValue
 			}
 		}
 
-		$name = $this->getName();
 		$value = $this->getValue();
 		$value ? $checked = "checked" : $checked = "";
-		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
-		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
 		$smartyParams['selected'] = $value;
 		$smartyParams['name'] = $label;
 
-		$html .= smarty_function_html_checkboxes($smartyParams, &$gui);
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
+		$html = smarty_function_html_checkboxes($smartyParams, &$gui);
 
 		return $html;
 	}

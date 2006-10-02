@@ -57,7 +57,7 @@ function smarty_function_guicontrol($params, &$smarty)
 			{
 				$tmpval = array(array_pop($tmpkeys) => $tmpval);
 			}
-			
+
 			if (isset($specialParams))
 				$specialParams = array_merge_recursive($specialParams, $tmpval);
 			else
@@ -69,7 +69,7 @@ function smarty_function_guicontrol($params, &$smarty)
 		$control->setParams($specialParams);
 	}
 
-	return $control->render($echo);
+	return $control->renderControl($echo);
 }
 
 /* vim: set expandtab: */

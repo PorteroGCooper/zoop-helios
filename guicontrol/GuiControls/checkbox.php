@@ -88,7 +88,6 @@ class checkbox extends GuiControl
 	 */
 	function render()
 	{
-		$html = $this->renderViewState();
 		$attrs = array();
 		$Sattrs = array();
 
@@ -113,20 +112,13 @@ class checkbox extends GuiControl
 			}
 		}
 
-		$name = $this->getName();
 		$value = $this->getValue();
 		$value ? $checked = "checked" : $checked = "";
+
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
-		$label = $this->getLabelName();
 
-		$html .= "<input name=\"{$label}\" $attrs $checked>";
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']}</span>";
-		}
+		$html = "<input class=\"{$this->getValidationClasses()}\"  {$this->getNameIdString()} $attrs $checked>";
 
 		return $html;
 	}

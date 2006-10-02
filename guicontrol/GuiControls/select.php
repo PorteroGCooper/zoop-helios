@@ -3,7 +3,7 @@
 * @package gui
 * @subpackage guicontrol
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2006 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -50,7 +50,6 @@ class select extends GuiMultiValue
 		if (!isset($this->params['index']))
 			return 'you need to specify an index for this guiControl';
 
-		$html = $this->renderViewState();
 		$attrs = array();
 
 		foreach ($this->params as $parameter => $value)
@@ -74,7 +73,6 @@ class select extends GuiMultiValue
 			}
 		}
 
-		$name = $this->getName();
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
@@ -82,17 +80,9 @@ class select extends GuiMultiValue
 		if (isset($this->params['multiple']) && $this->params['multiple'])
 			$label .= "[]";
 
-		$html .=  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
-
+		$html =  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
 		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
-
 		$html .=  "</select>\r";
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
 
 		return $html;
 	}

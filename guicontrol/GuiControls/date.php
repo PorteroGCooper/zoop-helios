@@ -16,20 +16,20 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * date 
- * 
+ * date
+ *
  * @uses GuiControl
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class date extends GuiControl
 {
 	/**
-	 * getPersistentParams 
-	 * 
+	 * getPersistentParams
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -39,14 +39,13 @@ class date extends GuiControl
 	}
 
 	/**
-	 * render 
-	 * 
+	 * render
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function render()
 	{
-		$html = $this->renderViewState();
 		$attrs = array();
 
 		foreach ($this->params as $parameter => $value)
@@ -70,23 +69,16 @@ class date extends GuiControl
 			}
 		}
 
-		$name = $this->getName();
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
 
 
-		$html .= "<input name=\"{$label}\" $attrs value=\"$value\" id=\"{$label}\" onfocus=\"show_Calendar(id);\">"; // type=\"{$this->params['type']}\"
+		$html = "<input $attrs value=\"$value\" {$this->getNameIdString()} onfocus=\"show_Calendar(id);\">";
 		$html .= "<img src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
 		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>"; 
 
 		$html .= file_get_contents(zoop_dir . "/guicontrol/public/js/datechooser/cal_div.htm");
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
 
 		return $html;
 	}

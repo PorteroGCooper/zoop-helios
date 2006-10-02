@@ -66,10 +66,6 @@ class radio extends GuiControl
 		if (!isset($this->params['index']))
 			return 'you need to specify an index for this guiControl';
 
-		$html = $this->renderViewState();
-		$attrs = array();
-
-
 		$smartyParams = array('options' => $this->params['index']);
 
 		foreach ($this->params as $parameter => $value)
@@ -90,21 +86,10 @@ class radio extends GuiControl
 			}
 		}
 
-		$name = $this->getName();
-		$value = $this->getValue();
-		$attrs = implode(' ', $attrs);
-		$label = $this->getLabelName();
+		$smartyParams['selected'] = $this->getValue();
+		$smartyParams['name'] = $this->getLabelName();
 
-		$smartyParams['selected'] = $value;
-		$smartyParams['name'] = $label;
-
-		$html .= smarty_function_html_radios($smartyParams, &$gui);
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
+		$html = smarty_function_html_radios($smartyParams, &$gui);
 
 		return $html;
 	}

@@ -3,7 +3,7 @@
 * @package gui
 * @subpackage guicontrol
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2006 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -33,7 +33,6 @@ class slider extends GuiControl
 		if (!isset($this->params['index']))
 			return 'you need to specify an index for this guiControl';*/
 
-		$html = $this->renderViewState();
 		$size = 150;
 		if (!isset($this->params['axis']))
 			$this->params['axis'] = "horizontal";
@@ -81,18 +80,17 @@ class slider extends GuiControl
 		}
 
 		$attrs = implode(',', $attrs);
-		$name = $this->getName();
 		$value = $this->getValue();
 		$label = $this->getLabelName();
 
-		$html .= "<table cellpadding=2><tr><td>
+		$html = "<table cellpadding=2><tr><td>
 		  <div id=\"{$label}_track\" style=\"width:{$size}px;background-color:#aaa;height:3px;\">
   	  		<div id=\"{$label}_handle\" style=\"width:5px;height:10px;background-color:#000;\"> </div>
   		  </div></td><td>
   		  <div id=\"{$label}_display\" style=\"padding-left:5px;float:right;\">{$value}</div>
   		  </td></tr></table>
 
-		  <input type=\"hidden\" name=\"{$label}\" id=\"{$label}\" value={$value}>
+		  <input type=\"hidden\" {$this->getNameIdString()} value={$value}>
   		  ";
 
 		$html .= "
@@ -104,12 +102,6 @@ class slider extends GuiControl
 			onChange:function(v){$(\'' .$label. '\').value=v}});
 		// ]]>
 		</script> ';
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
 
 		return $html;
 	}

@@ -66,9 +66,9 @@ class text extends GuiControl
 						if ($value)
 							$attrs[] = "readonly=\"true\"";
 						break;
-					case 'validate':
-						$attrs[] = $this->getValidationAttr($this->params['validate']);
-						break;
+// 					case 'validate':
+// 						$attrs[] = $this->getValidationAttr($this->params['validate']);
+// 						break;
 					case 'width':
 					case 'height':
 						if ($value != '')
@@ -77,26 +77,11 @@ class text extends GuiControl
 				}
 			}
 
-		$name = $this->getName();
-		$value = $this->getValue();
 		$thistype = get_class($this);
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
-		$label = $this->getLabelName();
 
-		$html .= "<input name=\"{$label}\" id=\"{$label}\" $attrs value=\"$value\" type=\"$thistype\">";
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-
-			if (!empty($errorState['value']))
-				$html .=" <br><span style=\"color: red;\">\"{$errorState['value']}\" {$errorState['text']} </span>";
-			else
-				$html .=" <br><span style=\"color: red;\">{$errorState['text']} </span>";
-		}
-
-		$html = $this->renderViewState() . $html;
+		$html = "<input class=\"{$this->getValidationClasses()}\" {$this->getNameIdString()} $attrs value=\"{$this->getValue()}\" type=\"$thistype\">";
 
 		return $html;
 	}

@@ -50,17 +50,10 @@ class editor extends GuiControl
 	{
 		global $smarty;
 
-		$html = $this->renderViewState();
 		$this->params['name'] = $this->getName();
 		$this->params['value'] = $this->getValue();
 
-		$html .= smarty_function_loadeditor($this->params, $smarty);
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
+		$html = smarty_function_loadeditor($this->params, $smarty);
 
 		return $html;
 	}

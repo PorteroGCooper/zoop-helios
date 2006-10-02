@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class textarea extends GuiControl
+class openwysiwyg extends GuiControl
 {
 	function getPersistentParams()
 	{
@@ -34,13 +34,10 @@ class textarea extends GuiControl
 					if ($value != '')
 						$attrs[] = "$parameter=\"$value\"";
 					break;
-				case 'width': // alias for cols
+				case 'width':
+				case 'height':
 					if ($value != '')
-						$attrs[] = "cols='$value'";
-					break;
-				case 'height': // alias for rows
-					if ($value != '')
-						$attrs[] = "rows='$value'";
+						$Sattrs[] = "$parameter: {$value}px;";
 					break;
 				case 'readonly':
 				case 'disabled':
@@ -50,9 +47,18 @@ class textarea extends GuiControl
 			}
 		}
 
+		if (isset($Sattrs))
+			$attrs[] = "style=\"" . implode(" ", $Sattrs) . "\"";
+
 		$attrs = implode(' ', $attrs);
 
 		$html = "<textarea class=\"{$this->getValidationClasses()}\"  {$this->getNameIdString()} $attrs>{$this->getValue()}</textarea>";
+
+		$html .= "
+				<script language=\"javascript1.2\">
+				generate_wysiwyg('{$this->getLabelName()}');
+				</script>
+				";
 
 		return $html;
 	}

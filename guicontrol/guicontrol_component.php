@@ -47,6 +47,12 @@ class component_guicontrol extends component
 				$GLOBALS['controlData'] = $_SESSION['controls'];
 				unset($_SESSION['controls']);
 			}
+
+			if (!isset($_SESSION['guiControlUrl']))
+				session_register('guiControlUrl');
+
+			if (!stristr(VIRTUAL_URL, $GLOBALS['Sname'] . "/zoopfile"))
+				$_SESSION['guiControlUrl'] = VIRTUAL_URL;
 		}
 
 		if(isset($controlData))
@@ -98,12 +104,8 @@ class component_guicontrol extends component
 					}
 				}
 
-				if (isset($_SESSION['sUrls']) && count($_SESSION['sUrls']) > 1)
-				{
-					$key = count($_SESSION['sUrls']) - 2; // 2nd to last
-					$previousPage = $_SESSION['sUrls'][$key];
-					$url = substr($previousPage, strpos($previousPage, " ") + 1);
-				}
+				if (isset($_SESSION['guiControlUrl']))
+					$url = $_SESSION['guiControlUrl'];
 				else
 					$url = VIRTUAL_URL;
 

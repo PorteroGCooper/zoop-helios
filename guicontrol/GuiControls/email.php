@@ -16,20 +16,20 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * email 
- * 
+ * email
+ *
  * @uses GuiControl
- * @package 
+ * @package
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com> 
+ * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class email extends GuiControl
 {
 	/**
-	 * validate 
-	 * 
+	 * validate
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -39,8 +39,8 @@ class email extends GuiControl
 	}
 
 	/**
-	 * getValue 
-	 * 
+	 * getValue
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -56,8 +56,8 @@ class email extends GuiControl
 	}
 
 	/**
-	 * getLabelName 
-	 * 
+	 * getLabelName
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -68,8 +68,8 @@ class email extends GuiControl
 	}
 
 	/**
-	 * getPersistentParams 
-	 * 
+	 * getPersistentParams
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -79,14 +79,13 @@ class email extends GuiControl
 	}
 
 	/**
-	 * render 
-	 * 
+	 * render
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function render()
 	{
-		$html = $this->renderViewState();
 		$attrs = array();
 		$value = $this->getValue();
 		$name = $this->getName();
@@ -108,7 +107,7 @@ class email extends GuiControl
 		$usercontrol->setParam('text', $emailvalue);
 		$usercontrol->setParent($name);
 		$usercontrol->setParams($this->params);
-		$html .= $usercontrol->render();
+		$html = $usercontrol->renderControl();
 
 		$html .= " @ ";
 
@@ -116,16 +115,9 @@ class email extends GuiControl
 		$domaincontrol->setParam('value', $domainvalue);
 		$domaincontrol->setParams($this->params);
 		$domaincontrol->setParent($name);
-		$html .= $domaincontrol->render();
+		$html .= $domaincontrol->renderControl();
 
 		$this->controls = array(&$usercontrol, &$domaincontrol);
-
-
-		if(isset($this->params['errorState']))
-		{
-			$errorState = $this->params['errorState'];
-			$html .=" <span style=\"color: red;\">{$errorState['text']} {$errorState['value']}</span>";
-		}
 
 		return $html;
 	}
