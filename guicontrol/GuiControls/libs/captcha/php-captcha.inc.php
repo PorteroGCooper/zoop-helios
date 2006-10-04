@@ -1,69 +1,44 @@
 <?php
    /***************************************************************/
-   /* PhpCaptcha												  */
-   /* Copyright © 2005 Edward Eliot - http://www.ejeliot.com/	  */
-   /* This class is Freeware, however please retain this		  */
-   /* copyright notice when using								  */
-   /* Last Updated:	 17th December 2005							  */
-   /* Disclaimer: The author accepts no responsibility for		  */
-   /* problems arising from the use of this class. The CAPTCHA	  */
-   /* generated is not guaranteed to be unbreakable				  */
+   /* PhpCaptcha - A visual and audio CAPTCHA generation library
+
+      Software License Agreement (BSD License)
+
+      Copyright (C) 2005-2006, Edward Eliot.
+      All rights reserved.
+
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+
+         * Redistributions of source code must retain the above copyright
+           notice, this list of conditions and the following disclaimer.
+         * Redistributions in binary form must reproduce the above copyright
+           notice, this list of conditions and the following disclaimer in the
+           documentation and/or other materials provided with the distribution.
+         * Neither the name of Edward Eliot nor the names of its contributors
+           may be used to endorse or promote products derived from this software
+           without specific prior written permission of Edward Eliot.
+
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND ANY
+      EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+      WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY
+      DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+      (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+      LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+      ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+      SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+      Last Updated:  18th April 2006                               */
    /***************************************************************/
 
-   /************************ Class Info ***************************/
+   /************************ Documentation ************************/
    /*
 
-   Basic Usage Steps
-   -----------------
-
-   1. Create a file to call the class
-   2. Include the file as the src of an img tag in your HTML form
-   3. Check the user entered code against the generated code using the static method
-	  PhpCaptcha::Validate(string sCode). This takes one argument - the user entered code
-
-   Additional Options
-   ------------------
-
-   There are two ways to set additional options to change the behaviour and look
-   and feel of the generated CAPTCHA
-
-   1. Specify the options in the class constructor - only the first parameter is required
-   2. Use the corresponding "Set" method. Available ones shown below:
-
-	  SetWidth(int iWidth) - width in pixels
-	  SetHeight(int iHeight) - height in pixels
-	  SetNumChars(int iNumchars) - number of characters to generate, default 5
-	  SetNumLines(int iNumLines) - number of noise lines to generate, default 70
-	  DisplayShadow(bool bCharShadow) - display character shadow, default false
-	  SetOwnerText(string sOwnerText) - display owner identification text at bottom on CAPTCHA
-	  SetCharSet(array aCharSet) - specify custom array of characters to generate code from - default (A-Z)
-	  SetBackgroundImage(string sBackgroundImage) - specify a custom background to display, filename for jpeg image, noise lines are turned off if used
-	  SetMinFontSize(int iMinFontSize) - minimum font size to select from (pts)
-	  SetMaxFontSize(int iMaxFontSize) - max font size to select from (pts)
-	  UseColour(bool bUseColour) - use coloured lines and characters instead of greyscale, default false
-	  SetFileType() - 'gif', 'png' or 'jpeg' (default 'jpeg')
-
-   Sub-Classing
-   ------------
-   Creating a sub class will allow you to control which options you expose in the constructor or allow you to pre-set
-   options for use in multiple places
-
-   Other Info
-   ----------
-
-   If you use the class in a real world situation, drop me a line or post on my site - I'd
-   love to hear about it
-
-   Donations
-   ---------
-
-   Always welcome but by no means required or expected. If you'd like to donate follow the PayPal link below:
-
-   https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=me%40ejeliot%2ecom&item_name=Edward%20Eliot&no_shipping=0&no_note=1&tax=0&currency_code=GBP&bn=PP%2dDonationsBF&charset=UTF%2d8
+   Documentation is available at http://www.ejeliot.com/pages/2
 
    */
-   /************************ End Class Info ***********************/
-
    /************************ Default Options **********************/
 
    // start a PHP session - this class uses sessions to store the generated
@@ -72,328 +47,444 @@
 
    // class defaults - change to effect globally
 
+   define('CAPTCHA_SESSION_ID', 'php_captcha');
    define('CAPTCHA_WIDTH', 200); // max 500
    define('CAPTCHA_HEIGHT', 50); // max 200
    define('CAPTCHA_NUM_CHARS', 5);
    define('CAPTCHA_NUM_LINES', 70);
    define('CAPTCHA_CHAR_SHADOW', false);
    define('CAPTCHA_OWNER_TEXT', '');
-   define('CAPTCHA_BACKGROUND_IMAGE', '');
-   define('CAPTCHA_MIN_FONT_SIZE', 23);
-   define('CAPTCHA_MAX_FONT_SIZE', 33);
+   define('CAPTCHA_CHAR_SET', ''); // defaults to A-Z
+   define('CAPTCHA_CASE_INSENSITIVE', true);
+   define('CAPTCHA_BACKGROUND_IMAGES', '');
+   define('CAPTCHA_MIN_FONT_SIZE', 16);
+   define('CAPTCHA_MAX_FONT_SIZE', 25);
    define('CAPTCHA_USE_COLOUR', false);
    define('CAPTCHA_FILE_TYPE', 'jpeg');
+   define('CAPTCHA_FLITE_PATH', '/usr/bin/flite');
+   define('CAPTCHA_AUDIO_PATH', '/tmp/'); // must be writeable by PHP process
 
    /************************ End Default Options **********************/
 
    // don't edit below this line (unless you want to change the class!)
 
    class PhpCaptcha {
-	  var $oImage;
-	  var $aFonts;
-	  var $iWidth;
-	  var $iHeight;
-	  var $iNumChars;
-	  var $iNumLines;
-	  var $iSpacing;
-	  var $bCharShadow;
-	  var $sOwnerText;
-	  var $aCharSet;
-	  var $sBackgroundImage;
-	  var $iMinFontSize;
-	  var $iMaxFontSize;
-	  var $bUseColour;
-	  var $sFileType;
-	  var $sCode;
+      var $oImage;
+      var $aFonts;
+      var $iWidth;
+      var $iHeight;
+      var $iNumChars;
+      var $iNumLines;
+      var $iSpacing;
+      var $bCharShadow;
+      var $sOwnerText;
+      var $aCharSet;
+      var $bCaseInsensitive;
+      var $vBackgroundImages;
+      var $iMinFontSize;
+      var $iMaxFontSize;
+      var $bUseColour;
+      var $sFileType;
+      var $sCode = '';
 
-	  function PhpCaptcha(
-		 $aFonts, // array of TypeType fonts to use - specify full path
-		 $iWidth = CAPTCHA_WIDTH, // width of image
-		 $iHeight = CAPTCHA_HEIGHT, // height of image
-		 $iNumChars = CAPTCHA_NUM_CHARS, // number of characters to draw
-		 $iNumLines = CAPTCHA_NUM_LINES, // number of noise lines to draw
-		 $bCharShadow = CAPTCHA_CHAR_SHADOW, // add shadow to generated characters to further obscure code
-		 $sOwnerText = CAPTCHA_OWNER_TEXT, // add owner text to bottom of CAPTCHA, usually your site address
-		 $aCharSet = array(), // array of characters to select from - if blank uses upper case A - Z
-		 $sBackgroundImage = CAPTCHA_BACKGROUND_IMAGE, // background image to use - if blank creates image with white background
-		 $iMinFontSize = CAPTCHA_MIN_FONT_SIZE, // set the minimum font size that can be selected
-		 $iMaxFontSize = CAPTCHA_MAX_FONT_SIZE, // set the maximum font size that can be used
-		 $bUseColour = CAPTCHA_USE_COLOUR, // determines whether or not to use colour to draw lines and characters
-		 $sFileType = CAPTCHA_FILE_TYPE // set the output file type
-	  ) {
-		 // get parameters
-		 $this->aFonts = $aFonts;
-		 $this->SetNumChars($iNumChars);
-		 $this->SetNumLines($iNumLines);
-		 $this->DisplayShadow($bCharShadow);
-		 $this->SetOwnerText($sOwnerText);
-		 $this->SetCharSet($aCharSet);
-		 $this->SetBackgroundImage($sBackgroundImage);
-		 $this->SetMinFontSize($iMinFontSize);
-		 $this->SetMaxFontSize($iMaxFontSize);
-		 $this->UseColour($bUseColour);
-		 $this->SetFileType($sFileType);
-		 $this->SetWidth($iWidth);
-		 $this->SetHeight($iHeight);
+      function PhpCaptcha(
+         $aFonts, // array of TrueType fonts to use - specify full path
+         $iWidth = CAPTCHA_WIDTH, // width of image
+         $iHeight = CAPTCHA_HEIGHT // height of image
+      ) {
+         // get parameters
+         $this->aFonts = $aFonts;
+         $this->SetNumChars(CAPTCHA_NUM_CHARS);
+         $this->SetNumLines(CAPTCHA_NUM_LINES);
+         $this->DisplayShadow(CAPTCHA_CHAR_SHADOW);
+         $this->SetOwnerText(CAPTCHA_OWNER_TEXT);
+         $this->SetCharSet(CAPTCHA_CHAR_SET);
+         $this->CaseInsensitive(CAPTCHA_CASE_INSENSITIVE);
+         $this->SetBackgroundImages(CAPTCHA_BACKGROUND_IMAGES);
+         $this->SetMinFontSize(CAPTCHA_MIN_FONT_SIZE);
+         $this->SetMaxFontSize(CAPTCHA_MAX_FONT_SIZE);
+         $this->UseColour(CAPTCHA_USE_COLOUR);
+         $this->SetFileType(CAPTCHA_FILE_TYPE);
+         $this->SetWidth($iWidth);
+         $this->SetHeight($iHeight);
+      }
 
-		 // calculate spacing between characters based on width of image
-		 $this->CalculateSpacing();
-	  }
+      function CalculateSpacing() {
+         $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
+      }
 
-	  function CalculateSpacing() {
-		 $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
-	  }
+      function SetWidth($iWidth) {
+         $this->iWidth = $iWidth;
+         if ($this->iWidth > 500) $this->iWidth = 500; // to prevent perfomance impact
+         $this->CalculateSpacing();
+      }
 
-	  function SetWidth($iWidth) {
-		 $this->iWidth = $iWidth;
-		 if ($this->iWidth > 500) $this->iWidth = 500; // to prevent perfomance impact
-		 $this->CalculateSpacing();
-	  }
+      function SetHeight($iHeight) {
+         $this->iHeight = $iHeight;
+         if ($this->iHeight > 200) $this->iHeight = 200; // to prevent performance impact
+      }
 
-	  function SetHeight($iHeight) {
-		 $this->iHeight = $iHeight;
-		 if ($this->iHeight > 200) $this->iWidth = 200; // to prevent performance impact
-	  }
+      function SetNumChars($iNumChars) {
+         $this->iNumChars = $iNumChars;
+         $this->CalculateSpacing();
+      }
 
-	  function SetNumChars($iNumChars) {
-		 $this->iNumChars = $iNumChars;
-		 $this->CalculateSpacing();
-	  }
+      function SetNumLines($iNumLines) {
+         $this->iNumLines = $iNumLines;
+      }
 
-	  function SetNumLines($iNumLines) {
-		 $this->iNumLines = $iNumLines;
-	  }
+      function DisplayShadow($bCharShadow) {
+         $this->bCharShadow = $bCharShadow;
+      }
 
-	  function DisplayShadow($bCharShadow) {
-		 $this->bCharShadow = $bCharShadow;
-	  }
+      function SetOwnerText($sOwnerText) {
+         $this->sOwnerText = $sOwnerText;
+      }
 
-	  function SetOwnerText($sOwnerText) {
-		 $this->sOwnerText = $sOwnerText;
-	  }
+      function SetCharSet($vCharSet) {
+         // check for input type
+         if (is_array($vCharSet)) {
+            $this->aCharSet = $vCharSet;
+         } else {
+            if ($vCharSet != '') {
+               // split items on commas
+               $aCharSet = explode(',', $vCharSet);
 
-	  function SetCharSet($aCharSet) {
-		 $this->aCharSet = $aCharSet;
-	  }
+               // initialise array
+               $this->aCharSet = array();
 
-	  function SetBackgroundImage($sBackgroundImage) {
-		 $this->sBackgroundImage = $sBackgroundImage;
-	  }
+               // loop through items
+               foreach ($aCharSet as $sCurrentItem) {
+                  // a range should have 3 characters, otherwise is normal character
+                  if (strlen($sCurrentItem) == 3) {
+                     // split on range character
+                     $aRange = explode('-', $sCurrentItem);
 
-	  function SetMinFontSize($iMinFontSize) {
-		 $this->iMinFontSize = $iMinFontSize;
-	  }
+                     // check for valid range
+                     if (count($aRange) == 2 && $aRange[0] < $aRange[1]) {
+                        // create array of characters from range
+                        $aRange = range($aRange[0], $aRange[1]);
 
-	  function SetMaxFontSize($iMaxFontSize) {
-		 $this->iMaxFontSize = $iMaxFontSize;
-	  }
+                        // add to charset array
+                        $this->aCharSet = array_merge($this->aCharSet, $aRange);
+                     }
+                  } else {
+                     $this->aCharSet[] = $sCurrentItem;
+                  }
+               }
+            }
+         }
+      }
 
-	  function UseColour($bUseColour) {
-		 $this->bUseColour = $bUseColour;
-	  }
+      function CaseInsensitive($bCaseInsensitive) {
+         $this->bCaseInsensitive = $bCaseInsensitive;
+      }
 
-	  function SetFileType($sFileType) {
-		 // check for valid file type
-		 if (in_array($sFileType, array('gif', 'png', 'jpeg'))) {
-			$this->sFileType = $sFileType;
-		 } else {
-			$this->sFileType = 'jpeg';
-		 }
-	  }
+      function SetBackgroundImages($vBackgroundImages) {
+         $this->vBackgroundImages = $vBackgroundImages;
+      }
 
-	  function DrawLines() {
-		 for ($i = 0; $i < $this->iNumLines; $i++) {
-			// allocate colour
-			if ($this->bUseColour) {
-			   $iLineColour = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
-			} else {
-			   $iRandColour = rand(100, 250);
-			   $iLineColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
-			}
+      function SetMinFontSize($iMinFontSize) {
+         $this->iMinFontSize = $iMinFontSize;
+      }
 
-			// draw line
-			imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColour);
-		 }
-	  }
+      function SetMaxFontSize($iMaxFontSize) {
+         $this->iMaxFontSize = $iMaxFontSize;
+      }
 
-	  function DrawOwnerText() {
-		 // allocate owner text colour
-		 $iBlack = imagecolorallocate($this->oImage, 0, 0, 0);
-		 // get height of selected font
-		 $iOwnerTextHeight = imagefontheight(2);
-		 // calculate overall height
-		 $iLineHeight = $this->iHeight - $iOwnerTextHeight - 4;
+      function UseColour($bUseColour) {
+         $this->bUseColour = $bUseColour;
+      }
 
-		 // draw line above text to separate from CAPTCHA
-		 imageline($this->oImage, 0, $iLineHeight, $this->iWidth, $iLineHeight, $iBlack);
+      function SetFileType($sFileType) {
+         // check for valid file type
+         if (in_array($sFileType, array('gif', 'png', 'jpeg'))) {
+            $this->sFileType = $sFileType;
+         } else {
+            $this->sFileType = 'jpeg';
+         }
+      }
 
-		 // write owner text
-		 imagestring($this->oImage, 2, 3, $this->iHeight - $iOwnerTextHeight - 3, $this->sOwnerText, $iBlack);
+      function DrawLines() {
+         for ($i = 0; $i < $this->iNumLines; $i++) {
+            // allocate colour
+            if ($this->bUseColour) {
+               $iLineColour = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
+            } else {
+               $iRandColour = rand(100, 250);
+               $iLineColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
+            }
 
-		 // reduce available height for drawing CAPTCHA
-		 $this->iHeight = $this->iHeight - $iOwnerTextHeight - 5;
-	  }
+            // draw line
+            imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColour);
+         }
+      }
 
-	  function GenerateCode() {
-		 // reset code
-		 $this->sCode = '';
+      function DrawOwnerText() {
+         // allocate owner text colour
+         $iBlack = imagecolorallocate($this->oImage, 0, 0, 0);
+         // get height of selected font
+         $iOwnerTextHeight = imagefontheight(2);
+         // calculate overall height
+         $iLineHeight = $this->iHeight - $iOwnerTextHeight - 4;
 
-		 // loop through and generate the code letter by letter
-		 for ($i = 0; $i < $this->iNumChars; $i++) {
-			if (count($this->aCharSet) > 0) {
-			   // select random character and add to code string
-			   $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
-			} else {
-			   // select random character and add to code string
-			   $this->sCode .= chr(rand(65, 90));
-			}
-		 }
+         // draw line above text to separate from CAPTCHA
+         imageline($this->oImage, 0, $iLineHeight, $this->iWidth, $iLineHeight, $iBlack);
 
-		 // save code in session variable
-		 $_SESSION['php_captcha'] = md5(strtoupper($this->sCode));
-	  }
+         // write owner text
+         imagestring($this->oImage, 2, 3, $this->iHeight - $iOwnerTextHeight - 3, $this->sOwnerText, $iBlack);
 
-	  function DrawCharacters() {
-		 // loop through and write out selected number of characters
-		 for ($i = 0; $i < strlen($this->sCode); $i++) {
-			// select random font
-			$sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
+         // reduce available height for drawing CAPTCHA
+         $this->iHeight = $this->iHeight - $iOwnerTextHeight - 5;
+      }
 
-			// select random colour
-			if ($this->bUseColour) {
-			   $iTextColour = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
+      function GenerateCode() {
+         // reset code
+         $this->sCode = '';
 
-			   if ($this->bCharShadow) {
-				  // shadow colour
-				  $iShadowColour = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
-			   }
-			} else {
-			   $iRandColour = rand(0, 100);
-			   $iTextColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
+         // loop through and generate the code letter by letter
+         for ($i = 0; $i < $this->iNumChars; $i++) {
+            if (count($this->aCharSet) > 0) {
+               // select random character and add to code string
+               $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
+            } else {
+               // select random character and add to code string
+               $this->sCode .= chr(rand(65, 90));
+            }
+         }
 
-			   if ($this->bCharShadow) {
-				  // shadow colour
-				  $iRandColour = rand(0, 100);
-				  $iShadowColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
-			   }
-			}
+         // save code in session variable
+         if ($this->bCaseInsensitive) {
+            $_SESSION[CAPTCHA_SESSION_ID] = strtoupper($this->sCode);
+         } else {
+            $_SESSION[CAPTCHA_SESSION_ID] = $this->sCode;
+         }
+      }
 
-			// select random font size
-			$iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
+      function DrawCharacters() {
+         // loop through and write out selected number of characters
+         for ($i = 0; $i < strlen($this->sCode); $i++) {
+            // select random font
+            $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
 
-			// select random angle
-			$iAngle = rand(-30, 30);
+            // select random colour
+            if ($this->bUseColour) {
+               $iTextColour = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
 
-			// get dimensions of character in selected font and text size
-			$aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
+               if ($this->bCharShadow) {
+                  // shadow colour
+                  $iShadowColour = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
+               }
+            } else {
+               $iRandColour = rand(0, 100);
+               $iTextColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
 
-			// calculate character starting coordinates
-			$iX = $this->iSpacing / 4 + $i * $this->iSpacing;
-			$iCharHeight = $aCharDetails[2] - $aCharDetails[5];
-			$iY = $this->iHeight / 2 + $iCharHeight / 4;
+               if ($this->bCharShadow) {
+                  // shadow colour
+                  $iRandColour = rand(0, 100);
+                  $iShadowColour = imagecolorallocate($this->oImage, $iRandColour, $iRandColour, $iRandColour);
+               }
+            }
 
-			// write text to image
-			imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColour, $sCurrentFont, $this->sCode[$i], array());
+            // select random font size
+            $iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
 
-			if ($this->bCharShadow) {
-			   $iOffsetAngle = rand(-30, 30);
+            // select random angle
+            $iAngle = rand(-30, 30);
 
-			   $iRandOffsetX = rand(-5, 5);
-			   $iRandOffsetY = rand(-5, 5);
+            // get dimensions of character in selected font and text size
+            $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
 
-			   imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColour, $sCurrentFont, $this->sCode[$i], array());
-			}
-		 }
-	  }
+            // calculate character starting coordinates
+            $iX = $this->iSpacing / 4 + $i * $this->iSpacing;
+            $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
+            $iY = $this->iHeight / 2 + $iCharHeight / 4;
 
-	  function WriteFile($sFilename) {
-		 if ($sFilename == '') {
-			// tell browser that data is jpeg
-			header("Content-type: image/$this->sFileType");
-		 }
+            // write text to image
+            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColour, $sCurrentFont, $this->sCode[$i], array());
 
-		 switch ($this->sFileType) {
-			case 'gif':
-			   $sFilename != '' ? imagegif($this->oImage, $sFilename) : imagegif($this->oImage);
-			   break;
-			case 'png':
-			   $sFilename != '' ? imagepng($this->oImage, $sFilename) : imagepng($this->oImage);
-			   break;
-			default:
-			   $sFilename != '' ? imagejpeg($this->oImage, $sFilename) : imagejpeg($this->oImage);
-		 }
-	  }
+            if ($this->bCharShadow) {
+               $iOffsetAngle = rand(-30, 30);
 
-	  function Create($sFilename = '') {
-		 // check for required gd functions
-		 if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || ($this->sBackgroundImage != '' && !function_exists('imagecreatetruecolor'))) {
-			return false;
-		 }
+               $iRandOffsetX = rand(-5, 5);
+               $iRandOffsetY = rand(-5, 5);
 
-		 // get background image if specified and copy to CAPTCHA
-		 if ($this->sBackgroundImage != '') {
-			// create new image
-			$this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
+               imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColour, $sCurrentFont, $this->sCode[$i], array());
+            }
+         }
+      }
 
-			// create background image
-			$oBackgroundImage = imagecreatefromjpeg($this->sBackgroundImage);
+      function WriteFile($sFilename) {
+         if ($sFilename == '') {
+            // tell browser that data is jpeg
+            header("Content-type: image/$this->sFileType");
+         }
 
-			// copy background image
-			imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
+         switch ($this->sFileType) {
+            case 'gif':
+               $sFilename != '' ? imagegif($this->oImage, $sFilename) : imagegif($this->oImage);
+               break;
+            case 'png':
+               $sFilename != '' ? imagepng($this->oImage, $sFilename) : imagepng($this->oImage);
+               break;
+            default:
+               $sFilename != '' ? imagejpeg($this->oImage, $sFilename) : imagejpeg($this->oImage);
+         }
+      }
 
-			// free memory used to create background image
-			imagedestroy($oBackgroundImage);
-		 } else {
-			// create new image
-			$this->oImage = imagecreate($this->iWidth, $this->iHeight);
-		 }
+      function Create($sFilename = '') {
+         // check for required gd functions
+         if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || ($this->vBackgroundImages != '' && !function_exists('imagecreatetruecolor'))) {
+            return false;
+         }
 
-		 // allocate white background colour
-		 imagecolorallocate($this->oImage, 255, 255, 255);
+         // get background image if specified and copy to CAPTCHA
+         if (is_array($this->vBackgroundImages) || $this->vBackgroundImages != '') {
+            // create new image
+            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
 
-		 // check for owner text
-		 if ($this->sOwnerText != '') {
-			$this->DrawOwnerText();
-		 }
+            // create background image
+            if (is_array($this->vBackgroundImages)) {
+               $iRandImage = array_rand($this->vBackgroundImages);
+               $oBackgroundImage = imagecreatefromjpeg($this->vBackgroundImages[$iRandImage]);
+            } else {
+               $oBackgroundImage = imagecreatefromjpeg($this->vBackgroundImages);
+            }
 
-		 // check for background image before drawing lines
-		 if ($this->sBackgroundImage == '') {
-			$this->DrawLines();
-		 }
+            // copy background image
+            imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
 
-		 $this->GenerateCode();
-		 $this->DrawCharacters();
+            // free memory used to create background image
+            imagedestroy($oBackgroundImage);
+         } else {
+            // create new image
+            $this->oImage = imagecreate($this->iWidth, $this->iHeight);
+         }
 
-		 // write out image to file or browser
-		 $this->WriteFile($sFilename);
+         // allocate white background colour
+         imagecolorallocate($this->oImage, 255, 255, 255);
 
-		 // free memory used in creating image
-		 imagedestroy($this->oImage);
+         // check for owner text
+         if ($this->sOwnerText != '') {
+            $this->DrawOwnerText();
+         }
 
-		 return true;
-	  }
+         // check for background image before drawing lines
+         if (!is_array($this->vBackgroundImages) && $this->vBackgroundImages == '') {
+            $this->DrawLines();
+         }
 
-	  // call this method statically
-	  function Validate($sUserCode) {
-		if (md5(strtoupper($sUserCode)) == $_SESSION['php_captcha']) {
-			// clear to prevent re-use
-			$_SESSION['php_captcha'] = '';
+         $this->GenerateCode();
+         $this->DrawCharacters();
 
-			return true;
-		 }
+         // write out image to file or browser
+         $this->WriteFile($sFilename);
 
-		 return false;
-	  }
+         // free memory used in creating image
+         imagedestroy($this->oImage);
+
+         return true;
+      }
+
+      // call this method statically
+      function Validate($sUserCode, $bCaseInsensitive = true) {
+         if ($bCaseInsensitive) {
+            $sUserCode = strtoupper($sUserCode);
+         }
+
+         if (!empty($_SESSION[CAPTCHA_SESSION_ID]) && $sUserCode == $_SESSION[CAPTCHA_SESSION_ID]) {
+            // clear to prevent re-use
+            unset($_SESSION[CAPTCHA_SESSION_ID]);
+
+            return true;
+         }
+
+         return false;
+      }
+   }
+
+   // this class will only work correctly if a visual CAPTCHA has been created first using PhpCaptcha
+   class AudioPhpCaptcha {
+      var $sFlitePath;
+      var $sAudioPath;
+      var $sCode;
+
+      function AudioPhpCaptcha(
+         $sFlitePath = CAPTCHA_FLITE_PATH, // path to flite binary
+         $sAudioPath = CAPTCHA_AUDIO_PATH // the location to temporarily store the generated audio CAPTCHA
+      ) {
+         $this->SetFlitePath($sFlitePath);
+         $this->SetAudioPath($sAudioPath);
+
+         // retrieve code if already set by previous instance of visual PhpCaptcha
+         if (isset($_SESSION[CAPTCHA_SESSION_ID])) {
+            $this->sCode = $_SESSION[CAPTCHA_SESSION_ID];
+         }
+      }
+
+      function SetFlitePath($sFlitePath) {
+         $this->sFlitePath = $sFlitePath;
+      }
+
+      function SetAudioPath($sAudioPath) {
+         $this->sAudioPath = $sAudioPath;
+      }
+
+      function Mask($sText) {
+         $iLength = strlen($sText);
+
+         // loop through characters in code and format
+         $sFormattedText = '';
+         for ($i = 0; $i < $iLength; $i++) {
+            // comma separate all but first and last characters
+            if ($i > 0 && $i < $iLength - 1) {
+               $sFormattedText .= ', ';
+            } elseif ($i == $iLength - 1) { // precede last character with "and"
+               $sFormattedText .= ' and ';
+            }
+            $sFormattedText .= $sText[$i];
+         }
+
+         $aPhrases = array(
+            "The %1\$s characters are as follows: %2\$s",
+            "%2\$s, are the %1\$s letters",
+            "Here are the %1\$s characters: %2\$s",
+            "%1\$s characters are: %2\$s",
+            "%1\$s letters: %2\$s"
+         );
+
+         $iPhrase = array_rand($aPhrases);
+
+         return sprintf($aPhrases[$iPhrase], $iLength, $sFormattedText);
+      }
+
+      function Create() {
+         $sText = $this->Mask($this->sCode);
+         $sFile = md5($this->sCode.time());
+
+         // create file with flite
+         shell_exec("$this->sFlitePath -t \"$sText\" -o $this->sAudioPath$sFile.wav");
+
+         // set headers
+         header('Content-type: audio/x-wav');
+         header("Content-Disposition: attachment;filename=$sFile.wav");
+
+         // output to browser
+         echo file_get_contents("$this->sAudioPath$sFile.wav");
+
+         // delete temporary file
+         @unlink("$this->sAudioPath$sFile.wav");
+      }
    }
 
    // example sub class
    class PhpCaptchaColour extends PhpCaptcha {
-	  function PhpCaptchaColour($aFonts, $iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
-		 // call parent constructor
-		 parent::PhpCaptcha($aFonts, $iWidth, $iHeight);
+      function PhpCaptchaColour($aFonts, $iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+         // call parent constructor
+         parent::PhpCaptcha($aFonts, $iWidth, $iHeight);
 
-		 // set options
-		 $this->UseColour(true);
-	  }
+         // set options
+         $this->UseColour(true);
+      }
    }
 ?>

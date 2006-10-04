@@ -63,7 +63,7 @@ class captcha extends GuiControl
 	function render()
 	{
 		// define fonts
-		$aFonts = array('VeraMoBd.ttf');
+		$aFonts = array(dirname(__file__) . '/libs/captcha/VeraMoBd.ttf');
 
 		$_SESSION['captchaTS'] = base64_encode(microtime());
 
