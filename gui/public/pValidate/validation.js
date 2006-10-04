@@ -225,8 +225,8 @@ Validation.add('Length', 'Please enter the correct length.', function(v, elm) {
 			});
 
 Validation.add('EqualTo', 'Does not match.', function(v, elm) {
-				params = Validation.getParams(elm);
-				otherField = String(params[0]);
+				var params = Validation.getParams(elm);
+				var otherField = String(params[0]);
 				return  (v == $(otherField).value);
 			});
 Validation.add('validate-regexp', 'Please enter a valid format.', function(v, elm) {

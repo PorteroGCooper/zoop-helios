@@ -12,7 +12,7 @@
  * Purpose:  write html to include a image from the zoop framework
  * -------------------------------------------------------------
  */
-function smarty_function_js_zoop_file($params, &$smarty)
+function smarty_function_zoop_file_js($params, &$smarty)
 {
 	$base_href = $smarty->_tpl_vars['BASE_HREF'];
     	extract($params);

@@ -1,0 +1,82 @@
+.zbb-lspace {
+ padding:10px;
+ margin:1em;
+}
+
+.zbb-mspace{
+ padding:7px;
+ margin:.5em;
+}
+
+.zbb-sspace {
+ padding:3px;
+ margin:.3em;
+}
+
+.zbb-r {
+ text-align:right;
+}
+
+.zbb-l {
+ text-align:left;
+}
+
+.zbb-c {
+ text-align:center;
+}
+
+.zbor-1 {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.zbor-2 {
+  border-width: 1px 0 1px 0;
+  border-style: solid;
+}
+
+.zbor-3 {
+  border-width: 0 1px 0 1px;
+  border-style: solid;
+}
+
+.zbor-4 {
+  border-width: 1px 1px 1px 5px;
+  border-style: solid;
+}
+
+.zbor-5 {
+  border-width: 1px 5px 1px 1px;
+  border-style: solid;
+}
+
+.zbor-6 {
+  border-width: 3px 1px 1px 1px;
+  border-style: solid;
+}
+
+.zbor-7 {
+  border-width: 1px 1px 3px 1px;
+  border-style: solid;
+}
+
+.zbor-8 {
+  border-width: 3px 0px 0px 0px;
+  border-style: solid;
+}
+
+.zbor-9 {
+  border-width: 0px 3px 0px 0px;
+  border-style: solid;
+}
+
+.zbor-10 {
+  border-width: 0px 0px 3px 0px;
+  border-style: solid;
+}
+
+.zbor-11 {
+  border-width: 0px 0px 0px 3px;
+  border-style: solid;
+}
+

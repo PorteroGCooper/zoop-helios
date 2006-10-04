@@ -1,0 +1,80 @@
+.zt-nospace {
+  margin:0;
+}
+
+.zt-smspace {
+  margin: 0.2em;
+}
+
+.zt-medspace {
+  margin: 0.5em;
+}
+
+.zt-mlspace {
+  margin: 0.7em;
+}
+
+.zt-lrgspace {
+  margin: 1em;
+}
+
+.zt-nd {
+  text-decoration:none;
+}
+
+
+.zt-tah {
+  font-family: Tahoma,arial,verdana,sans-serif;
+}
+
+.zt-tre {
+    font-family:"trebuchet ms",arial,verdana,sans-serif;
+}
+
+.zt-ver {
+  font-family:verdana,arial,sans-serif;
+}
+
+.zt-cour {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.zt-tms {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.zt-xxl {
+    font-size:2.7em;
+}
+
+.zt-xl {
+    font-size:2.2em;
+}
+
+.zt-l {
+  font-size:1.85em;
+}
+
+.zt-mxl {
+  font-size:1.45em;
+}
+
+.zt-ml {
+  font-size:1.2em;
+}
+
+.zt-m {
+  font-size:1em;
+}
+
+.zt-ms {
+  font-size:0.8em;
+}
+
+.zt-s {
+  font-size:0.7em;
+}
+
+.zt-xs {
+  font-size:0.5em;
+}
