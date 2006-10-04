@@ -117,8 +117,10 @@ class checkbox extends GuiControl
 
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
+		$vc = $this->getValidationClasses();
+		$ni = $this->getNameIdString();
 
-		$html = "<input class=\"{$this->getValidationClasses()}\"  {$this->getNameIdString()} $attrs $checked>";
+		$html = "<input class=\"$vc\"  $ni $attrs $checked>";
 
 		return $html;
 	}

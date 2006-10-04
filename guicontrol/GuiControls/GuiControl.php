@@ -291,7 +291,8 @@ class GuiControl
 	 */
 	function getNameIdString()
 	{
-		return "name=\"{$this->getLabelName()}\" id=\"{$this->getLabelName()}\"";
+		$name = $this->getLabelName();
+          return "name=\"$name\" id=\"$name\"";
 	}
 
 	/**

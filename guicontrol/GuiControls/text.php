@@ -81,7 +81,11 @@ class text extends GuiControl
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
 
-		$html = "<input class=\"{$this->getValidationClasses()}\" {$this->getNameIdString()} $attrs value=\"{$this->getValue()}\" type=\"$thistype\">";
+		$vc = $this->getValidationClasses();
+		$ni = $this->getNameIdString();
+		$v = $this->getValue();
+
+		$html = "<input class=\"$vc\" $ni $attrs value=\"$v\" type=\"$thistype\">";
 
 		return $html;
 	}

@@ -82,6 +82,7 @@ class slider extends GuiControl
 		$attrs = implode(',', $attrs);
 		$value = $this->getValue();
 		$label = $this->getLabelName();
+		$ni = $this->getNameIdString();
 
 		$html = "<table cellpadding=2><tr><td>
 		  <div id=\"{$label}_track\" style=\"width:{$size}px;background-color:#aaa;height:3px;\">
@@ -90,7 +91,7 @@ class slider extends GuiControl
   		  <div id=\"{$label}_display\" style=\"padding-left:5px;float:right;\">{$value}</div>
   		  </td></tr></table>
 
-		  <input type=\"hidden\" {$this->getNameIdString()} value={$value}>
+		  <input type=\"hidden\" $ni value={$value}>
   		  ";
 
 		$html .= "

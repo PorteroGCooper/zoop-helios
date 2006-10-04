@@ -52,7 +52,11 @@ class textarea extends GuiControl
 
 		$attrs = implode(' ', $attrs);
 
-		$html = "<textarea class=\"{$this->getValidationClasses()}\"  {$this->getNameIdString()} $attrs>{$this->getValue()}</textarea>";
+		$vc = $this->getValidationClasses();
+		$ni = $this->getNameIdString();
+		$v = $this->getValue();
+
+		$html = "<textarea class=\"$vc\" $ni  $attrs>$v</textarea>";
 
 		return $html;
 	}

@@ -72,11 +72,12 @@ class date extends GuiControl
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
 		$label = $this->getLabelName();
+		$ni = $this->getNameIdString();
 
 
-		$html = "<input $attrs value=\"$value\" {$this->getNameIdString()} onfocus=\"show_Calendar(id);\">";
+		$html = "<input $attrs value=\"$value\" $ni onfocus=\"show_Calendar(id);\">";
 		$html .= "<img src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
-		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>"; 
+		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>";
 
 		$html .= file_get_contents(zoop_dir . "/guicontrol/public/js/datechooser/cal_div.htm");
 

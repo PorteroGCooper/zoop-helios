@@ -83,9 +83,12 @@ class captcha extends GuiControl
 		$oPhpCaptcha->UseColour(rand(0,1));
 		$oPhpCaptcha->Create($file);
 
+		$ni = $this->getNameIdString();
+		$v = $this->getValue();
+
 		$html = "Please enter the letters you see in the image.<br>";
 		$html .= "<img alt=\"security image\" src=\"". SCRIPT_REF ."/zoopfile/CaptchaImage/$filename\"><br>";
- 		$html .= "<input {$this->getNameIdString()} value=\"{$this->getValue()}\">(case insensitive)";
+ 		$html .= "<input $ni value=\"$v\">(case insensitive)";
 
 		return $html;
 	}

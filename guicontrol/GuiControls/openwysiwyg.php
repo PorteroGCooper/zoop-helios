@@ -52,11 +52,16 @@ class openwysiwyg extends GuiControl
 
 		$attrs = implode(' ', $attrs);
 
-		$html = "<textarea class=\"{$this->getValidationClasses()}\"  {$this->getNameIdString()} $attrs>{$this->getValue()}</textarea>";
+		$vc = $this->getValidationClasses();
+		$ni = $this->getNameIdString();
+		$v = $this->getValue();
+		$label = $this->getLabelName();
+
+		$html = "<textarea class=\"$vc\"  $ni $attrs>$v</textarea>";
 
 		$html .= "
 				<script language=\"javascript1.2\">
-				generate_wysiwyg('{$this->getLabelName()}');
+				generate_wysiwyg('$label');
 				</script>
 				";
 
