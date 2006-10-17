@@ -114,7 +114,8 @@ function assign_odd_even_classes(table)
 {
 	var odd = true;
 	for (j=1;j<table.rows.length+1;j++){
-		table.rows[j-1].className = odd ? 'even' : 'odd';
+		if(table.rows[j-1].className.indexOf('even') != -1 && table.rows[j-1].className.indexOf('odd') != -1)
+			table.rows[j-1].className = odd ? 'even' : 'odd';
 		odd = !odd;
 	}
 }
