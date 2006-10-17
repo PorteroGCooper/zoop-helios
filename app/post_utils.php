@@ -19,17 +19,37 @@ include_once( dirname(__file__) . "/class.inputfilter.php");
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+//find the item of the post that we should be using. 
 /**
-* Warning : This function is dangerous, and shouldn't be used generally
-* Zoop Automatically copies $_POST and provides functions to access it safely.
-* This function returns the value of $_POST without any cleanup or filtering.
+* Filters bad HTML from $in with default settings.
 *
-* @return array
+* @param mixed $inName a string or array of strings that indicates the post index.
+* @return mixed
 */
-function getRawPost()
+function findPostItem($inName = false)
 {
 	global $POSTCOPY;
-	return $POSTCOPY;
+	$post = $POSTCOPY;
+	if (!$inName)
+		return $POSTCOPY;
+	else if(is_array($inName))
+	{
+		foreach($inName as $key)
+		{
+			if(isset($post[$key]))
+				$post = $post[$key];
+			else
+				return false;
+		}
+	}
+	else
+	{
+		if(isset($post[$inName]))
+			$post = $post[$inName];
+		else
+			return false;
+	}
+	return $post;
 }
 
 /**
@@ -66,6 +86,8 @@ function StripHTMLElement($in)
 * @param string $inName Name of the variable
 * @return boolean
 */
+//	I don't like the existence of this function. I think there should never be such a thing as getPost, because we don't 
+//	know how to filter all the elements, unless the programmer tells us how they should be filtered. - rjl
 function getPost($inName = false)
 {
 	return getPostHTML($inName);
@@ -77,68 +99,10 @@ function getPost($inName = false)
 * @param string $inName Name of the variable
 * @return mixed
 */
-function GetPostString($inName = false)
+function getPostString($inName = false)
 {
-	if (!$inName)
-		return getRawPost();
-
-	global $POSTCOPY;
-	if( isset($POSTCOPY["$inName"]) )
-		return $POSTCOPY["$inName"];
-	else
-		return false;
-}
-
-/**
-* This strips dangerous html and javascript from the post
-* Depends on define "filter_input"
-* Can take an input to get that posted element or leave blank for all of post.
-*
-* @param string $inName Name of the variable
-* @return mixed
-*/
-function GetPostHTML($inName = false)
-{
-	if(!defined('filter_input') || filter_input)
-	{
-		global $POSTCOPY;
-
-		if (!$inName)
-			return  HTMLFilterElement($POSTCOPY);
-
-		if( isset($POSTCOPY["$inName"]) )
-			return HTMLFilterElement($POSTCOPY["$inName"]);
-		else
-			return false;
-	}
-	else
-		return getPostString($inName);
-}
-
-/**
-* This strips all html from the variable then returns it
-* Depends on define "filter_input"
-* Can take an input to get that posted element or leave blank for all of post.
-*
-* @param string $inName Name of the variable
-* @return mixed
-*/
-function GetPostText($inName)
-{
-	if(!defined('filter_input') || filter_input)
-	{
-		global $POSTCOPY;
-
-		if (!$inName)
-			return  StripHTMLElement($POSTCOPY);
-
-		if( isset($POSTCOPY["$inName"]) )
-			return StripHTMLElement($POSTCOPY["$inName"]);
-		else
-			return false;
-	}
-	else
-		return getPostString($inName);
+	deprecated('This function has been deprecated in favor of getRawPost().');
+	return getRawPost($inName);
 }
 
 /**
@@ -147,10 +111,12 @@ function GetPostText($inName)
 * @param string $inName Name of the variable
 * @return boolean
 */
-function GetPostIsset($inName)
+function getPostIsset($inName = false)
 {
-	global $POSTCOPY;
-	return isset($POSTCOPY[$inName]);
+	$item = findPostItem($inName);
+	if(!$item)
+		return $item;
+	return true;
 }
 
 /**
@@ -159,10 +125,12 @@ function GetPostIsset($inName)
 * @param string $inName Name of the variable
 * @return boolean This returns 0 or 1
 */
-function GetPostCheckbox($inName)
+function getPostCheckbox($inName = false)
 {
-	global $POSTCOPY;
-	return isset( $POSTCOPY[$inName] ) ? 1 : 0;
+	$item = findPostItem($inName);
+	if(!$item)
+		return 0;
+	return 1;
 }
 
 /**
@@ -172,36 +140,10 @@ function GetPostCheckbox($inName)
  * @access public
  * @return void
  */
-function getPostHTMLArray($inName)
+function getPostHTMLArray($inName = false)
 {
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			$answer[$key] = verifyText($text);
-		}
-	}
-	return $answer;
+	deprecated('This function has been deprecated in favor of getPostHTML().');
+	return getPostHTML($inName);
 }
 
 /**
@@ -211,156 +153,64 @@ function getPostHTMLArray($inName)
  * @access public
  * @return void
  */
-function getPostTextArray($inName)
+function getPostTextArray($inName = false)
 {
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			if (is_array($text))
-			{
-				$answer[$key] = VerifyTextOrArray($text);
-			}
-			else
-			{
-				$answer[$key] = verifyText($text);
-			}
-		}
-	}
-
-	return $answer;
+	deprecated('This function has been deprecated in favor of getPostText().');
+	return getPostText($inName);
 }
 
 /**
-* This makes sure that the requested post var is an integer and casts it as such
-*
-* @param string $inName Name of the variable
-* @return mixed Either the int or false
-*/
-function GetPostInt($inName)
+ * VerifyInt - take an item, an array or arraytree and make sure that each item is an integer.
+ *
+ * @param mixed $inNumber
+ * @access public
+ * @return void
+ */
+function VerifyInt($inNumber)
 {
-	global $POSTCOPY;
-	if( isset($POSTCOPY["$inName"]) )
+	if(defined('filter_input') && !filter_input)
+		return $inNumber;
+	if(is_array($inNumber))
 	{
-		return verifyInt($POSTCOPY["$inName"]);
+		foreach($inNumber as $key => $value)
+		{
+			$inNumber[$key] = VerifyInt($inNumber);
+		}
 	}
+	else if($inNumber === '')//blank is ok, because we're not checking that it's set to a value, just that if it has one, it is an integer.
+		return '';
 	else
-		return false;
+	{
+		assert( is_numeric($inNumber));
+		return (integer)$inNumber;
+	}
+	return $inNumber;
 }
 
 /**
- * GetPostIntArray
+ * getPostIntArray
  *
  * @param mixed $inName
  * @access public
  * @return void
  */
-function GetPostIntArray($inName)
+function getPostIntArray($inName = false)
 {
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	if(isset($post))
-	{
-		foreach($post as $key => $text)
-		{
-			$answer[$key] = verifyInt($text);
-		}
-	}
-	return $answer;
+	deprecated('This function has been deprecated in favor of getPostInt().');
+	return getPostInt($inName);
 }
 
 /**
- * GetPostIntTree
+ * getPostIntTree
  *
  * @param mixed $inName
  * @access public
  * @return void
  */
-function GetPostIntTree($inName)
+function getPostIntTree($inName)
 {
-	global $POSTCOPY;
-	$answer = array();
-	$post = $POSTCOPY;
-	if(is_array($inName))
-	{
-		foreach($inName as $key)
-		{
-			if(isset($post[$key]))
-				$post = $post[$key];
-			else
-				return false;
-		}
-	}
-	else
-	{
-		if(isset($post[$inName]))
-			$post = $post[$inName];
-		else
-			return false;
-	}
-	return __getPostIntTree($post);
-}
-
-/**
- * __GetPostIntTree
- *
- * @param mixed $post
- * @access protected
- * @return void
- */
-function __GetPostIntTree($post)
-{
-	$answer = array();
-	if(is_array($post))
-	{
-		foreach($post as $key => $val)
-		{
-			$answer[$key] = __getPostIntTree($val);
-		}
-		return $answer;
-	}
-	else
-	{
-		return verifyInt($post);
-	}
+	deprecated('This function has been deprecated in favor of getPostInt().');
+	return getPostInt($inName);
 }
 
 /**
@@ -370,53 +220,10 @@ function __GetPostIntTree($post)
  * @access public
  * @return void
  */
-function GetPostTextTree($inName)
-	{
-		global $POSTCOPY;
-		$answer = array();
-		$post = $POSTCOPY;
-		if(is_array($inName))
-		{
-			foreach($inName as $key)
-			{
-				if(isset($post[$key]))
-					$post = $post[$key];
-				else
-					return false;
-			}
-		}
-		else
-		{
-			if(isset($post[$inName]))
-				$post = $post[$inName];
-			else
-				return false;
-		}
-		return __getPostTextTree($post);
-	}
-
-/**
- * __GetPostTextTree
- *
- * @param mixed $post
- * @access protected
- * @return void
- */
-function __GetPostTextTree($post)
+function getPostTextTree($inName = false)
 {
-	$answer = array();
-	if(is_array($post))
-	{
-		foreach($post as $key => $val)
-		{
-			$answer[$key] = __getPostTextTree($val);
-		}
-		return $answer;
-	}
-	else
-	{
-		return verifyText($post);
-	}
+	deprecated('This function has been deprecated in favor of getPostText().');
+	return getPostText($inName);
 }
 
 /**
@@ -428,6 +235,7 @@ function __GetPostTextTree($post)
  */
 function unsetPost($inName)
 {
+	
 	global $POSTCOPY;
 	unset($POSTCOPY[$inName]);
 }
@@ -438,9 +246,77 @@ function unsetPost($inName)
  * @access public
  * @return void
  */
-function getPostKeys()
+function getPostKeys($inName = false)
 {
-	global $POSTCOPY;
-	return array_keys($POSTCOPY);
+	return array_keys(findPostItem($POSTCOPY));
 }
+
+/**
+* Warning : This function is dangerous, and shouldn't be used generally
+* Zoop Automatically copies $_POST and provides functions to access it safely.
+* This function returns the value of $_POST without any cleanup or filtering.
+* @param mixed $inName a string or array of strings that indicates the post index.
+* @return mixed
+*/
+function getRawPost($inName = false)
+{
+	return findPostItem($inName);
+}
+
+/**
+* This strips dangerous html and javascript from the post
+* Depends on define "filter_input"
+* Can take an input to get that posted element or leave blank for all of post.
+*
+* @param string $inName Name of the variable
+* @return mixed
+*/
+function getPostHTML($inName = false)
+{
+	if(!defined('filter_input') || filter_input)
+	{
+		$item = findPostItem($inName);
+		if(!$item)
+			return $item;
+		return HTMLFilterElement(findPostItem($inName));
+	}
+	else
+		return getRawPost($inName);
+}
+
+/**
+* This strips all html from the variable then returns it
+* Depends on define "filter_input"
+* Can take an input to get that posted element or leave blank for all of post.
+*
+* @param string $inName Name of the variable
+* @return mixed
+*/
+function getPostText($inName = false)
+{
+	if(!defined('filter_input') || filter_input)
+	{
+		$item = findPostItem($inName);
+		if(!$item)
+			return $item;
+		return  StripHTMLElement($item);
+	}
+	else
+		return getRawPost($inName);
+}
+
+/**
+* This makes sure that the requested post var is an integer and casts it as such
+*
+* @param string $inName Name of the variable
+* @return mixed Either the int or false
+*/
+function getPostInt($inName)
+{
+	$item = findPostItem($inName);
+	if(!$item)
+		return $item;
+	return verifyInt($item);
+}
+
 ?>
