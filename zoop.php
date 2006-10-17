@@ -78,11 +78,11 @@ class zoop
 			$class = "component_{$name}";
 			$currComponent = &new $class();
 			$components = &$currComponent->getRequiredComponents();
-			$this->addIncludes($currComponent->getIncludes());
 			foreach($components as $newname)
 			{
 				$this->addComponent($newname);
 			}
+			$this->addIncludes($currComponent->getIncludes());
 			$this->components[$name] = &$currComponent;
 		}
 	}
