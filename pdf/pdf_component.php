@@ -16,7 +16,7 @@
 	include(dirname(__file__) . "/PdfImage.php");
 	include(dirname(__file__) . "/PdfCircle.php");
 	include(dirname(__file__) . "/PdfLine.php");
-	include(dirname(__file__) . "/HTMLtoPdfObject.php");
+	//include(dirname(__file__) . "/HTMLtoPdfObject.php");
 /**
 * @package pdf
 */
