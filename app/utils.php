@@ -755,23 +755,6 @@ function VerifyTextOrArray($array)
 }
 
 /**
- * VerifyInt
- *
- * @param mixed $inNumber
- * @access public
- * @return void
- */
-function VerifyInt($inNumber)
-{
-	if(defined('filter_input') && !filter_input)
-		return $inNumber;
-	if($inNumber === '')
-		return '';
-	assert( is_numeric($inNumber));
-	return (integer)$inNumber;
-}
-
-/**
  * get_shared_key
  *
  * reads a key(for authentication between apps) from the shared key file.
@@ -1501,4 +1484,103 @@ function define_once($name, $value){
 	if(!defined($name))
 		define($name, $value);
 }
+
+//	give it the center, width and height to define an ellipse
+//	then give it an angle and it will give you the x and y coordinates
+//	the angle that it uses is not the actual angle that that will be drawn
+//	The angle used is the same as would be drawn by the imagearc and image 
+//		filled arc functions given the same angle.  The idea is that you 
+//		take the angle given and map it to a circle whose diameter is the
+//		same length the major axis of the ellipse.  Then you rotate the 
+//		resulting circle along the horizontal axis.  Looking straight onto
+//		the circle it becomes an ellipse as it is rotated.  Wherever the 
+//		x and y from the original angle now appear to be on the 2D plane is where 
+//		the new x and y are on the ellipse.  That x and y are what this function returns
+//	Use this function to figure out the coordinates for pie slices generated with the 
+//		imagearc and imagefilledarc functions as the actual angle it draws is NOT the actual
+//		angle of the lines drawn on the screen
+
+function EllipseCirclePos($cx, $cy, $w, $h, $theta, &$newx, &$newy)
+{
+	if($w > $h)
+	{
+		$a = $w / 2;
+		$b = $h / 2;
+	}
+	else
+	{
+		$b = $w / 2;
+		$a = $h / 2;
+	}
+
+	//	$normalTheta = ($theta + (floor((abs($theta) + 360) / 360) * 360)) % 360;
+
+	$ct = cos(deg2rad($theta));
+	$st = sin(deg2rad($theta));
+
+	//	From the parametric definition of the ellipse
+	$newx = $a * $ct;
+	$newy = $b * $st;
+	
+	//	This is if you think of it as a rotated circle and uses the definition of the ellipse
+	//		as (($x*$x)/($a*$a)) + (($y*$y)/($b*$b)) = 1
+	//	It gives the same results as the parametric equations above
+	//$newx = $a * $ct;
+	//$newy = sqrt( ( 1 - (($newx*$newx)/($a * $a)) ) * $b * $b);
+	
+	//
+	//	These are the x and y that would be returned if we wanted the actual angle given to
+	//		coorespond to the ellipse that is drawn and not to an imaginary circle that has
+	//		a diamater matching the ellipses' major axis.
+	//
+	//$newx = sqrt(($b*$b*$ct*$ct)/(1 - $ct*$ct + (($b*$b*$ct*$ct)/($a*$a))));
+	//$newy = sqrt(($a*$a*$st*$st)/(1 - $st*$st + (($a*$a*$st*$st)/($b*$b))));
+	
+	
+	//if($normalTheta > 90 && $normalTheta < 270)
+	//	$newx *= -1;
+	
+	//if($normalTheta > 180)
+	//	$newy *= -1;
+
+	$newx = round($newx);
+	$newy = round($newy);
+
+	$newx += $cx;
+	$newy += $cy;
+}
+
+function NormalizeAngle($theta)
+{
+	return ($theta + (floor((abs($theta) + 360) / 360) * 360)) % 360;
+}
+
+function NormalizeAngle2($theta)
+{
+	if($theta >= 0 && $theta <= 360)
+		return $theta;
+	
+	if($theta < 0)
+	{
+		$offCycles = floor((abs($theta) + 360) / 360);
+		$theta += $offCycles * 360;
+	}
+	else
+	{
+		$offCycles = floor($theta / 360);
+		$theta -= $offCycles * 360;
+	}
+	
+	return $theta;
+}
+
+if(version_compare(PHP_VERSION, '5.0', '<'))
+{
+	include_once(dirname(__FILE__) . '/utils4.php');
+}
+else
+{
+	include_once(dirname(__FILE__) . '/utils5.php');
+}
+
 ?>
