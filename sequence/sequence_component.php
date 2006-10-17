@@ -23,6 +23,7 @@ class component_sequence extends component
 	function component_sequence()
 	{
 		$this->requireComponent('session');
+		$this->requireComponent('xml');
 	}
 
 	function init()

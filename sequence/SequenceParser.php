@@ -23,7 +23,7 @@ class SequenceParser
 {
 	function sequenceParser($filename = 'sequence.xml')
 	{
-		$xmldom = &new BMXmlDom();
+		$xmldom = &new XmlDom();
 		$this->xmlnode = $xmldom->parseFile($filename);
 	}
 	
