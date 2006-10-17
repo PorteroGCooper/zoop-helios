@@ -634,7 +634,10 @@
 			global $sGlobals;
 			if($value === NULL)
 			{
+				if(isset($sGlobals->zones) && isset($sGlobals->zones[$this->zonename]) && isset($sGlobals->zones[$this->zonename][$name]))
 					return $sGlobals->zones[$this->zonename][$name];
+				else
+					return NULL;
 			}
 			else
 			{
