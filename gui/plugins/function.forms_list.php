@@ -78,7 +78,7 @@ if ($class == "" || $class == " ")
 if (!isset($form->tables->$table))
 	return "";
 
-	$output = "<ul></ul><table cellpadding=0 cellspacing=0 border=0><tr><td colspan=\"3\">";
+	$output = "<table cellpadding=0 cellspacing=0 border=0><tr><td colspan=\"3\">";
 	$output .= "<table class='$class' cellpadding='1' cellspacing='1' border='0'><tr>";
 
 	if (isset($form->tables->$table->title))
@@ -173,6 +173,8 @@ if (!isset($form->tables->$table))
 // 	$output .= "</tr></thead><tbody>";
 	$output .= "</tr>";
 	$j = 1;
+	if(!is_array($form->tables->$table->records))
+		$form->tables->$table->getRecords();
 	if (is_array($form->tables->$table->records))
 	{
 		foreach ($form->tables->$table->records as $record)
@@ -250,7 +252,7 @@ if (!isset($form->tables->$table))
 	else
 	{
 		if ($empty_error === false)
-			$output = "<h1>No Records Found</h1>";
+			$output = "<h2>No Records Found</h2>";
 		else
 			$output = "<h2>$empty_error</h2>";
 		return $output;

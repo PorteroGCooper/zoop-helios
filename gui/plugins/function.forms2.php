@@ -37,11 +37,12 @@
 function smarty_function_forms2($params, &$smarty)
 {
 	$form = $params['form'];
-
-	if (isset($form->table->pages))
+	if ($form->type == 'list' || isset($form->table->pages))
 	{
 		include_once(dirname(__file__) . "/function.forms_list.php");
-		echo smarty_function_forms_list(array("form" => $form->form, "table" => $form->tablename), $smarty);
+		$params['form'] = $form->form;
+		$params['table'] = $form->tablename;
+		echo smarty_function_forms_list($params, $smarty);
 	}
 	else
 	{
