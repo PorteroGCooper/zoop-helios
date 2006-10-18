@@ -45,46 +45,51 @@
 
 
 
-	if(!isset($_SERVER["PATH_INFO"]))
-	{
-		$GLOBALS['PATH_INFO'] = "";
-	}
-	elseif (empty($_SERVER["PATH_INFO"])) // This ensures Zoop works as a fastcgi script
-	{
-		$GLOBALS['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
-	}
+if(!isset($_SERVER["PATH_INFO"]))
+{
+	$GLOBALS['PATH_INFO'] = "";
+}
+elseif (empty($_SERVER["PATH_INFO"])) // This ensures Zoop works as a fastcgi script
+{
+	$GLOBALS['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
+}
+else
+{
+	//	add a slash to the front if it's not already there
+	if(substr($_SERVER["PATH_INFO"],0,1) == "/")
+		$GLOBALS['PATH_INFO'] = $_SERVER["PATH_INFO"];
 	else
-	{
-		//	add a slash to the front if it's not already there
-		if(substr($_SERVER["PATH_INFO"],0,1) == "/")
-			$GLOBALS['PATH_INFO'] = $_SERVER["PATH_INFO"];
-		else
-			$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
-	}
-	//find the url encoded path_info, strip that off the end of REQUEST_URI, that is SCRIPT_URL
-	//this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
-	//we'll support it until we know that no one uses that bug.
+		$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
+}
+//find the url encoded path_info, strip that off the end of REQUEST_URI, that is SCRIPT_URL
+//this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
+//we'll support it until we know that no one uses that bug.
 
-	if(isset($_SERVER['GATEWAY_INTERFACE']) && strstr($_SERVER['GATEWAY_INTERFACE'], 'CGI') !== false)
-	{
-		$pathInfoUrl = str_replace(' ', '%20', $GLOBALS['PATH_INFO']);
-		// THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
-		$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($pathInfoUrl));
-	}
-	if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
-	{
-		$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
-	}
-	//what does this do?
-	$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
+if(isset($_SERVER['GATEWAY_INTERFACE']) && strstr($_SERVER['GATEWAY_INTERFACE'], 'CGI') !== false)
+{
+	$pathInfoUrl = str_replace(' ', '%20', $GLOBALS['PATH_INFO']);
+	$queryStringPos = strrpos($_SERVER['REQUEST_URI'], '?');
+	if($queryStringPos !== false)
+		$queryStringlen = strlen($_SERVER['QUERY_STRING']) + 1;
+	else
+		$queryStringlen = 0;
+	
+	// THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
+	$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($pathInfoUrl) - $queryStringlen);
+}
+if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
+{
+	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+}
+//what does this do?
+$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
 
 // echo("<PRE>");
-// echo($pathInfoUrl);
 // echo($GLOBALS['PATH_INFO']);
+// echo("<BR>");
 // echo($GLOBALS['Sname']);
 // echo("<BR>");
 // print_r($_SERVER);
-//
 // echo("</PRE>");
 // die();
 
