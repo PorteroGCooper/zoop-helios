@@ -27,6 +27,8 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 	
 	if($type == 'Unknown')
 		return;
+	if($type == 'Strict' && $errstr == 'Assigning the return value of new by reference is deprecated')
+		return;
 	
 	$basedir = dirname(dirname(__file__));
 	$errfile = str_replace($basedir, "", $errfile);
@@ -60,6 +62,12 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
+	$type = GetErrorType($errno);
+	
+	if($type == 'Unknown')
+		return;
+	if($type == 'Strict' && $errstr == 'Assigning the return value of new by reference is deprecated')
+		return;
 	while (ob_get_level() > __zoop_error_ob_start )
 	{
 		ob_end_clean();
@@ -108,7 +116,8 @@ function GetErrorType($errno)
 		case E_USER_NOTICE:
 			$errortype = "Notice";
 			break;
-		
+		case E_STRICT:
+			$errortype = "Coding Standards";
 		default:
 			$errortype = "Unknown";
 	}
