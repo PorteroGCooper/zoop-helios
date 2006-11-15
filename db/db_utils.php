@@ -30,6 +30,8 @@ function sqlMap($field, $mapfield)
 	$sql = "case $field ";
 	foreach ($mapfield as $key => $value)
 	{
+		if(!is_numeric($key))
+			$key = ticks($key);
 		$sql .= "when $key then ". sql_escape_string($value) . " ";
 	}
 	$sql .= "else '' end";

@@ -163,7 +163,7 @@ class database
 	{
 		$this->transaction--;
 		if($this->transaction == 0)
-			$this->db->query("END");
+			$this->db->query("COMMIT");
 	}
 
 	/**

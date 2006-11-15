@@ -283,7 +283,6 @@ function sql_format_date($dbdate, $format, $timezone = NULL)
 	{
 		global $tz;
 		$timeparts = split("-|:| |\\.", $dbdate);
-
 		$year = $timeparts[0];
 		$month = $timeparts[1];
 		$day = $timeparts[2];
