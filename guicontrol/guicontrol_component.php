@@ -197,8 +197,13 @@ class component_guicontrol extends component
 				{
 					// I DON'T THINK THIS EVER OCCURS?? SPF 4/9/06
 					// SHOULD PROBABLY BE REMOVED AFTER MORE TESTING OCCURS
-					bug("error in parseControlData this shouldn't occur");
+					// This happens if only the value is posted for a guicontrol(there is no viewstate)
+					// Most useful when it's an ajax post.
+					// This is maybe a little dangerous, but I'm disabling the bug for now.
+					//bug("error in parseControlData this shouldn't occur");
 					$controls[$type][$name]->setValue($controlitems);
+					//var_dump($controlData);
+					//die();
 				}
 
 				// We have reached this point but still need to assign the newly POSTED controls into their proper location.
