@@ -82,12 +82,13 @@ class form2
 
 		$this->form = new form;
 		$this->form->initTable($tablename);
+		$this->type = $type;
 		$this->table = &$this->form->tables->$tablename;
 		$this->table->setupenv($_GET);
 
 		if ($type == 'list')
 		{
-			$this->getRecords($int);
+			//$this->getRecords($int);
 		}
 		elseif ($type == 'record')
 		{
@@ -153,10 +154,133 @@ class form2
 		else
 		{
 			if (isset($this->table->fields[$fieldname]))
+			{
 				$this->table->fields[$fieldname]->$name = $value;
+			}
 			else
 				trigger_error("No field exists with the name: $fieldname");
 		}
+	}
+	
+	/**
+	 * setFieldWhere
+	 *
+	 * Set a field specific parameter
+	 *
+	 * @param mixed $fieldname must be the name of a field
+	 * @param string $where is a sql statment predicate, like 'between 4 and 5' or '= 4'
+	 * @param mixed $junction is 'AND' or 'OR'
+	 * @access public
+	 * @return void
+	 */
+	function addFieldWhere($fieldname, $where, $junction = 'AND')
+	{
+		if (isset($this->table->fields[$fieldname]))
+		{
+			$this->table->fields[$fieldname]->where[] = array('condition' => $where, 'junction' => $junction);
+		}
+		else
+			trigger_error("No field exists with the name: $fieldname");
+	}
+	
+	/**
+	 * hideField
+	 *
+	 * Don't show the field in a list and don't show it in a form.
+	 *
+	 * @param mixed $fieldname must be the name of a field or an array of fields
+	 * @access public
+	 * @return void
+	 */
+	function hideField($fieldname)
+	{
+		if (is_array($fieldname))
+		{
+			foreach($fieldname as $name)
+			{
+				$this->hideField($fieldname);
+			}
+		}
+		else
+		{
+			if (isset($this->table->fields[$fieldname]))
+			{
+				$this->table->fields[$fieldname]->listshow = false;
+				$this->table->fields[$fieldname]->formshow = false;
+			}
+			else
+				trigger_error("No field exists with the name: $fieldname");
+		}
+	}
+	
+	/**
+	 * setFieldName
+	 *
+	 * The label to give the field when displaying.
+	 *
+	 * @param mixed $fieldname must be the name of a field or an array of fields
+	 * @access public
+	 * @return void
+	 */
+	function setFieldName($fieldname, $name)
+	{
+		if (isset($this->table->fields[$fieldname]))
+		{
+			$this->table->fields[$fieldname]->label = $name;
+			
+		}
+		else
+			trigger_error("No field exists with the name: $fieldname");
+	}
+	
+	/**
+	 * formatField
+	 *
+	 * A format string to use(especially on dates) when displaying in lists.
+	 *
+	 * @param mixed $fieldname must be the name of a field or an array of fields
+	 * @access public
+	 * @return void
+	 */
+	function formatField($fieldname, $format)
+	{
+		if (isset($this->table->fields[$fieldname]))
+		{
+			$this->table->fields[$fieldname]->format = $format;
+		}
+		else
+			trigger_error("No field exists with the name: $fieldname");
+	}
+	
+	/**
+	 * showDelete
+	 *
+	 * show a column of delete links for each record in the listing
+	 *
+	 * @param mixed $path must be the path (not including the zoneUrl) to the delete page. An id will be added to the end of the path that is give as a page parameter.
+	 * @access public
+	 * @return void
+	 */
+	function showDelete($path)
+	{
+		$this->table->deleteColumn = true;
+		$this->table->deletelink = $path;
+	}
+	
+	/**
+	 * setRowClasses
+	 *
+	 * set a map of css classes that will be used to display rows.
+	 *
+	 * @param string $field is the field that will be used to index the class map
+	 * @param mixed $map is the map of field values to css classnames
+	 * @access public
+	 * @return void
+	 */
+	function setRowClasses($field, $map)
+	{
+		$this->table->rowclasses['field'] = $field;
+		$this->table->rowclasses['classes'] = $map;
 	}
 
 	/**

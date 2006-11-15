@@ -396,7 +396,7 @@ class table
 		$value = "";
 
 		// SETUP INDIVIDUAL AND ALL SEARCH TYPES
-		if ($post && ($this->search["type"] == "individual" || $this->search["type"] == "all"))
+		if (isset($post) && $post && ($this->search["type"] == "individual" || $this->search["type"] == "all"))
 		{
 			if (isset($post["search"]))
 			{
@@ -429,10 +429,27 @@ class table
 						$where[] = "(" . implode(" OR ", $orwhere) . ")";
 					}
 					else
-					$where[] = "$field->name = '$field->listrequirement'";
+						$where[] = "$field->name = '$field->listrequirement'";
+				}
+				if (isset($field->where) && $field->where)
+				{
+					if (is_array($field->where))
+					{
+						$fieldwhere = '';
+						foreach($field->where as $thiswhere)
+						{
+							if(empty($fieldwhere))
+								$fieldwhere .= "$field->name {$thiswhere['condition']}";
+							else
+								$fieldwhere .= " {$thiswhere['junction']} $field->name {$thiswhere['condition']}";
+						}
+						$where[] = "($fieldwhere)";
+					}
+					else
+						$where[] = "$field->name $field->where";
 				}
 				// SETUP ADVANCED SEARCH
-				if ($post) // PROCESS SEARCH QUERY AS WELL AS NORMAL QUERY
+				if (isset($post) && $post) // PROCESS SEARCH QUERY AS WELL AS NORMAL QUERY
 				{
 					$this->cur = 0;  // RESET TO PAGE 0 of RECORD SET
 
@@ -526,7 +543,7 @@ class table
 			}
 			$this->search["wherestr"] = $search["wherestr"];
 		}
-		if ($post && !isset($swhere)) // IF POSTING A SEARCH WITHOUT VALUES THEN CLEAR OUT THE SWHERE STRING
+		if (isset($post) && $post && !isset($swhere)) // IF POSTING A SEARCH WITHOUT VALUES THEN CLEAR OUT THE SWHERE STRING
 		{
 			$this->search["wherestr"] = null;
 		}

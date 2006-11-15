@@ -328,8 +328,9 @@ class form
 
 	function escapeValue($value)
 	{
-		$escapedValue = preg_replace('/(\'|\\\')/', "\\\\'", $value);
-		return $escapedValue;
+		if(!ini_get('magic_quotes_sybase'))
+			$value = preg_replace('/(\'|\\\')/', "\\\\'", $value);
+		return $value;
 	}
  }
 ?>
