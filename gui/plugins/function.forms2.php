@@ -48,9 +48,16 @@ function smarty_function_forms2($params, &$smarty)
 	{
 		include_once(dirname(__file__) . "/function.forms_form.php");
 		if (isset($params['type']) && $params['type'] == "view")
-			echo smarty_function_forms_form(array("form" => $form->record, "form_type" => "view"), $smarty);
+		{
+			$params['form'] = $form->record;
+			$params['type'] = $view;
+			echo smarty_function_forms_form($params, $smarty);
+		}
 		else
-			echo smarty_function_forms_form(array("form" => $form->record), $smarty);
+		{
+			$params['form'] = $form->record;
+			echo smarty_function_forms_form($params, $smarty);
+		}
 
 	}
 

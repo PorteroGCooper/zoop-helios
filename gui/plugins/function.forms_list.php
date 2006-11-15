@@ -67,11 +67,9 @@ if (($lastchar == "/") || is_int($lastchar))
 	$initpath = $initpath;
 else
 	$initpath = $initpath . "/";
-
 $apath = explode("/",$initpath);
 $lastelement = array_pop($apath);
 $path = implode("/", $apath) . "/";
-
 if ($class == "" || $class == " ")
 	$class = "list";
 
@@ -92,6 +90,7 @@ if (!isset($form->tables->$table))
 
 	if ($sort_type == 'js')  // OUTPUT THE COLUMN DATATYPE FOR JS SORTING
 	{
+		/* This code doesn't do anything?
 		foreach ($form->tables->$table->order as $fieldname)
 		{
 
@@ -111,7 +110,7 @@ if (!isset($form->tables->$table))
 		{
 
 		}
-
+		*/
 		$output .= "<tr  style=\"cursor: hand; cursor: pointer;\">";
 	}
 	else
@@ -123,42 +122,35 @@ if (!isset($form->tables->$table))
 
 	foreach ($form->tables->$table->order as $fieldname)
 	{
-
-	$field = &$form->tables->$table->fields[$fieldname];
-
-		if (isset($field->listshow))
+		$field = &$form->tables->$table->fields[$fieldname];
+		if (isset($field->listshow) && $field->listshow)
 		{
-			if ($field->listshow)
+			if ($sort_type == "forms")
 			{
-
-				if ($sort_type == "forms")
+				if ($field->name == $ctable->sort)
 				{
-					if ($field->name == $ctable->sort)
-					{
-							if ($ctable->direction == "ASC")
-									$dir = "DESC";
-							else
-									$dir = "ASC";
-					}
+					if ($ctable->direction == "ASC")
+						$dir = "DESC";
 					else
-							$dir = "ASC";
-
-					$i++;
-					$output .= "<th>";
-					$output .= "<a href=\"";
-					$output .= "$path?sort=$field->name&dir=$dir&start=0";
-					$output .= "\">";
-					$output .= $field->label;
-					$output .= "</a>";
-					$output .= "</th>";
+						$dir = "ASC";
 				}
 				else
-				{
-					$i++;
-					$output .= "<th>";
-					$output .= $field->label;
-					$output .= "</th>";
-				}
+					$dir = "ASC";
+				$i++;
+				$output .= "<th>";
+				$output .= "<a href=\"";
+				$output .= "$path?sort=$field->name&dir=$dir&start=0";
+				$output .= "\">";
+				$output .= $field->label;
+				$output .= "</a>";
+				$output .= "</th>";
+			}
+			else
+			{
+				$i++;
+				$output .= "<th>";
+				$output .= $field->label;
+				$output .= "</th>";
 			}
 		}
 	}
@@ -216,6 +208,7 @@ if (!isset($form->tables->$table))
 						switch($field->type)
 						{
 							case "timestamptz":
+							case "date":
 								if(isset($field->format))
 									$lvalue = sql_format_date($record->values[$name]->value, $field->format);
 								else

@@ -47,11 +47,12 @@ function smarty_function_forms_form($params, &$smarty)
 			case 'class':
 			case 'form_type':
 			case 'cols':
+			case 'onclick':
 			$$_key = $_value;
 			break;
 		}
 	}
-
+	
 	$recordid = $form->id;
 	$recordtable = $form->table;
 	$submitlabel = $form->submit;
@@ -61,6 +62,8 @@ function smarty_function_forms_form($params, &$smarty)
 
 	if (!isset($form_type))
 		$form_type = "form";  // EITHER FORM OR SHOW
+	if(!isset($onclick))
+		$onclick = "return submitForm(form);";
 
 	$output = "<ul align=\"center\" id=\"errorsbx\">";
 	if ($form->error)
@@ -173,7 +176,7 @@ function smarty_function_forms_form($params, &$smarty)
 	  {
 		$output .= "<input type=\"hidden\" name=\"recordid\" value=\"$recordid\">";
 		$output .= "<input type=\"hidden\" name=\"recordtable\" value=\"$recordtable\">";
-		$output .= "<br><input type=\"submit\" name=\"SubmitButton\" class=\"submit\" id=\"SubmitButton\" value=\"$submitlabel\" onclick=\"return submitForm(form);\">";
+		$output .= "<br><input type=\"button\" name=\"SubmitButton\" class=\"submit\" id=\"SubmitButton\" value=\"$submitlabel\" onclick=\"$onclick\">";
 	   }
     return $output;
 }
