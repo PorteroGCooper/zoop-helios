@@ -26,13 +26,13 @@
 \* ---------------------------------------------------------------------- */
 
 // Images Directory
-imagesDir = "index.php/zoopfile/gui/openwysiwyg/icons/";
+imagesDir = "zoopfile/gui/openwysiwyg/icons/";
 
 // CSS Directory
-cssDir = "index.php/zoopfile/gui/openwysiwyg/styles/";
+cssDir = "zoopfile/gui/openwysiwyg/styles/";
 
 // Popups Directory
-popupsDir = "index.php/zoopfile/gui/openwysiwyg/popups/";
+popupsDir = "zoopfile/gui/openwysiwyg/popups/";
 
 // WYSIWYG Width and Height
 wysiwygWidth = 500;
