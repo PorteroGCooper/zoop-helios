@@ -16,10 +16,12 @@ function smarty_function_zoop_file_js($params, &$smarty)
 {
 	$base_href = $smarty->_tpl_vars['BASE_HREF'];
     	extract($params);
+	if(!isset($component))
+		$component = 'gui';
 
  	foreach (explode(',', $files) as $file){
 		$file = trim($file);
-   		echo "<script type=\"text/javascript\" src=\"$base_href/zoopfile/gui/$file\"></script>\n";
+   		echo "<script type=\"text/javascript\" src=\"$base_href/zoopfile/$component/$file\"></script>\n";
   	}
 }
 
