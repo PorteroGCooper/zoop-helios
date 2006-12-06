@@ -51,30 +51,30 @@ function smarty_function_forms_list($params, &$smarty)
 		}
 	}
 
-$table_id = __randomstring();
+	$table_id = __randomstring();
 
-$ctable =& $form->tables->$table;
+	$ctable =& $form->tables->$table;
 
-if ($ctable->pages > 1)
-	$sort_type = "forms";
+	if ($ctable->pages > 1)
+		$sort_type = "forms";
 
-$baselink = $smarty->_tpl_vars["SCRIPT_URL"] . "/" . $form->tables->$table->zone . "/";
+	$baselink = $smarty->_tpl_vars["SCRIPT_URL"] . "/" . $form->tables->$table->zone . "/";
 
-$initpath = $smarty->_tpl_vars["VIRTUAL_URL"];
+	$initpath = $smarty->_tpl_vars["VIRTUAL_URL"];
 
-$lastchar = substr($initpath, -1);
-if (($lastchar == "/") || is_int($lastchar))
-	$initpath = $initpath;
-else
-	$initpath = $initpath . "/";
-$apath = explode("/",$initpath);
-$lastelement = array_pop($apath);
-$path = implode("/", $apath) . "/";
-if ($class == "" || $class == " ")
-	$class = "list";
+	$lastchar = substr($initpath, -1);
+	if (($lastchar == "/") || is_int($lastchar))
+		$initpath = $initpath;
+	else
+		$initpath = $initpath . "/";
+	$apath = explode("/",$initpath);
+	$lastelement = array_pop($apath);
+	$path = implode("/", $apath) . "/";
+	if ($class == "" || $class == " ")
+		$class = "list";
 
-if (!isset($form->tables->$table))
-	return "";
+	if (!isset($form->tables->$table))
+		return "";
 
 	$output = "<table cellpadding=0 cellspacing=0 border=0><tr><td colspan=\"3\">";
 	$output .= "<table class='$class' cellpadding='1' cellspacing='1' border='0'><tr>";
@@ -256,9 +256,6 @@ if (!isset($form->tables->$table))
 
 	if ($ctable->pages > 1)
 	{
-
-
-
 		$output .= "<tr><td align=\"left\" width=\"33%\">&nbsp;";
 		if ($ctable->cur >= $ctable->limit)
 		{
@@ -289,7 +286,7 @@ if (!isset($form->tables->$table))
 	}
 
 	$output .= "</table>";
-return $output;
+	return $output;
 }
 
 
@@ -302,7 +299,7 @@ function __randomstring() {
 	$randkey = "";
 	for ($i=0;$i<$length;$i++)
 	{
-	$randkey .= substr($keychars, rand(1, strlen($keychars) ), 1);
+		$randkey .= substr($keychars, rand(1, strlen($keychars) ), 1);
 	}
 	return $randkey;
 }
