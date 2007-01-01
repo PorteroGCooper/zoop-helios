@@ -14,7 +14,7 @@
  */
 function smarty_function_zoop_file_js($params, &$smarty)
 {
-	$base_href = $smarty->_tpl_vars['BASE_HREF'];
+	$base_href = $smarty->_tpl_vars['SCRIPT_URL'];
     	extract($params);
 	if(!isset($component))
 		$component = 'gui';

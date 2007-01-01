@@ -18,7 +18,7 @@ function smarty_function_zoop_image($params, &$smarty)
     	static $class = "";
 	static $type = "full"; // can also be path
 
-	$base_href = $smarty->_tpl_vars['BASE_HREF'];
+	$base_href = $smarty->_tpl_vars['SCRIPT_URL'];
     	extract($params);
 
 	$path = "$base_href/zoopfile/image/$group/$image";
