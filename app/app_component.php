@@ -25,19 +25,6 @@
 * include subpackages
 *
 */
-/**
-* include error handling
-*/
-include(dirname(__file__) . "/error.php");
-include(dirname(__file__) . "/xmlrpcClasses.php");
-
-if(isset($_SERVER["HTTP_HOST"]))
-{
-	//globals.php only deals with http variables.
-	include(dirname(__file__) . "/globals.php");
-}
-include(dirname(__file__) . "/utils.php");
-include(dirname(__file__) . "/post_utils.php");
 /**#@-*/
 /**
 * @package app
@@ -47,11 +34,25 @@ class component_app extends component
 	function defaultConstants()
 	{
 		define_once('app_status', 'dev');
+		define_once('app_url_rewrite', false);
 	}
 	
 	function component_app()
 	{
+		//inlude the define_once function
+		include(dirname(__file__) . "/define.php");
 		$this->defaultConstants();
+		//include errorhandling, as soon as possible
+		include(dirname(__file__) . "/error.php");
+		include(dirname(__file__) . "/xmlrpcClasses.php");
+
+		if(isset($_SERVER["HTTP_HOST"]))
+		{	
+		        //globals.php only deals with http variables.
+		        include(dirname(__file__) . "/globals.php");
+		}
+		include(dirname(__file__) . "/utils.php");
+		include(dirname(__file__) . "/post_utils.php");
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());

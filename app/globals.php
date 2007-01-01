@@ -65,33 +65,39 @@ else
 //this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
 //we'll support it until we know that no one uses that bug.
 
-if(isset($_SERVER['GATEWAY_INTERFACE']) && strstr($_SERVER['GATEWAY_INTERFACE'], 'CGI') !== false)
+//if we are mod_php
+if(function_exists("apache_lookup_uri"))
 {
-	$pathInfoUrl = str_replace(' ', '%20', $GLOBALS['PATH_INFO']);
-	$queryStringPos = strrpos($_SERVER['REQUEST_URI'], '?');
-	if($queryStringPos !== false)
-		$queryStringlen = strlen($_SERVER['QUERY_STRING']) + 1;
-	else
-		$queryStringlen = 0;
-	
-	// THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
-	$GLOBALS['Sname'] = substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI']) - strlen($pathInfoUrl) - $queryStringlen);
+	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+	//if url_rewrites are on, strip index.php...
+	if(app_url_rewrite)
+	{
+		$GLOBALS['Sname'] = dirname($GLOBALS['Sname']);
+	}
 }
+//if we are cgi
+elseif(isset($_ENV['REQUEST_URI']))
+{
+	//in cgi, script_name is almost guaranteed to be wrong...
+	$decodedUrl = urldecode($_SERVER['REQUEST_URI']);
+        $queryStringPos = strrpos($decodedUrl, '?');
+        if($queryStringPos !== false)
+                $queryStringlen = strlen($_SERVER['QUERY_STRING']) + 1;
+        else
+                $queryStringlen = 0;
+
+        // THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
+	//how?
+        $GLOBALS['Sname'] = substr($decodedUrl, 0, strlen($decodedUrl) - strlen($_SERVER['PATH_INFO']) - $queryStringlen);
+}
+//	do something to find the scriptName, parse REQUEST_URI
+//if we are isapi
+//	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+//	
 if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
 {
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
 }
-//what does this do?
-$GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
-
-// echo("<PRE>");
-// echo($GLOBALS['PATH_INFO']);
-// echo("<BR>");
-// echo($GLOBALS['Sname']);
-// echo("<BR>");
-// print_r($_SERVER);
-// echo("</PRE>");
-// die();
 
 /**
 *
@@ -113,7 +119,7 @@ $GLOBALS['PATH_INFO'] = preg_replace("'\\s'", "", $GLOBALS['PATH_INFO']);
 	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
 	{
 
-		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . "/");
+		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . '/');
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("HOME_URL", SCRIPT_URL);
 		define("SCRIPT_BASE", SCRIPT_URL);

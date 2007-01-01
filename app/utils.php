@@ -1471,20 +1471,6 @@ function rmrf($dir)
 	$d->close();
 }
 
-/**
- * define_once
- *
- * use instead of define to insure that the the $name is not being redefined
- * @param mixed $name
- * @param mixed $value
- * @access public
- * @return void
- */
-function define_once($name, $value){
-	if(!defined($name))
-		define($name, $value);
-}
-
 //	give it the center, width and height to define an ellipse
 //	then give it an angle and it will give you the x and y coordinates
 //	the angle that it uses is not the actual angle that that will be drawn
