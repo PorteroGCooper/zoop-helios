@@ -39,6 +39,7 @@ class component_xml extends component
 	
 	function getIncludes()
 	{
+		$includes = array();
 		if(version_compare(phpversion(), "5.0.0", "<"))
 			$includes = array('xml_tree' => 'XML/Tree.php');
 		return $includes + array(
