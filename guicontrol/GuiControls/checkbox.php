@@ -88,9 +88,10 @@ class checkbox extends GuiControl
 	 */
 	function render()
 	{
+		if(!isset($this->params['type']))
+			$this->params['type'] = 'checkbox';
 		$attrs = array();
 		$Sattrs = array();
-
 		foreach ($this->params as $parameter => $value)
 		{
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
