@@ -94,7 +94,14 @@
 		 * @access public
 		 */
 		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
-		
+		/**
+		 * urlzone
+		 *
+		 * @var array
+		 * @access public
+		 */
+		var $urlzone = array();		// this is a legacy variable that should be left alone
+
 		/**
 		 * parent
 		 *
@@ -263,12 +270,15 @@
 		{
 			global $gAlias;
 			global $gUrlVars;
-			global $gPathParts;//an array of all the parts of the path so far
+			global $gPathParts;
 			global $gZoneUrls;
 
 			$this->zonename = array_shift($inPath); // $inPath[0] IS NULL
 
 			$GLOBALS['current_zone'] = $this->zonename; // SET TO NULL
+
+			if (isset($gUrlVars['userType']))
+				$GLOBALS['current_usertype'] = $gUrlVars['userType'];
 
 			$gPathParts[] = $this->zonename;
 
@@ -281,6 +291,9 @@
 			{
 			    $this->zonetype = ($this->zonename != "@ROOT") ? $this->zonename : "Default";  // SET $this->zonetype TO THE ZONENAME OR TO DEFAULT IF $this->zonename == @ROOT
 			}
+
+			$this->urlzone = array();
+			$this->urlzone[] = $this->zonename;
 
 			// when wildcards are enabled, always execute the default function.
 			if ($this->wildcards)
@@ -314,15 +327,16 @@
 
 			$tmp = $gPathParts;
 			global $sequenceStack;
+
 			if(isset($sequenceStack))
 			{
-				$temp = array_shift($tmp);//the first thing in path_info must be a null?
-				array_unshift($tmp, implode(":", $sequenceStack));//reinject the sequence stack into the path_info
+				$temp = array_shift($tmp);
+				array_unshift($tmp, implode(":", $sequenceStack));
 				array_unshift($tmp, $temp);
 			}
-			$this->url = $tmp;
+			$this->url = implode("/", $tmp);
 
-			array_unshift($gZoneUrls, $this->getUrl());
+			array_unshift($gZoneUrls, $this->url);
 			$this->initZone($inPath);
 		
 
@@ -779,32 +793,6 @@
 			global $gUrlVars;
 			return $gUrlVars;
 		}
-		
-		/**
-		 * getZoneParams
-		 *
-		 * @access public
-		 * @return void
-		 */
-		function getZoneParam($paramName)
-		{
-			global $gUrlVars;
-			return $gUrlVars[$paramName];
-		}
-		
-		/**
-		 * setZoneParamValue
-		 *
-		 * @access public
-		 * @return void
-		 */
-		function setZoneParamValue($paramName, $value)
-		{
-			global $gUrlVars;
-			$gUrlVars[$paramName] = $value;
-		}
-		
-		
 
 		//deprecated
 		/**
@@ -867,7 +855,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZoneUrl($depth = 0)
+		function getZoneUrl($depth = 0)//this function should return a complete url, not a path
 		{
 			global $gZoneUrls;
 			return SCRIPT_URL . $gZoneUrls[$depth];
@@ -881,7 +869,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZonePath($depth = 0)
+		function getZonePath($depth = 0)//use this function from now on, until we fix the function above
 		{
 			global $gZoneUrls;
 			return $gZoneUrls[$depth];
@@ -898,20 +886,7 @@
 		 */
 		function zoneRedirect( $inUrl = '', $redirectType = HEADER_REDIRECT)
 		{
-			BaseRedirect( $this->getUrl() . "/" . $inUrl, $redirectType);
-		}
-		
-		/**
-		 * getUrl
-		 *
-		 * @param string $inUrl
-		 * @param mixed $redirectType
-		 * @access public
-		 * @return void
-		 */
-		function getUrl()
-		{
-			return implode('/', $this->url);
+			BaseRedirect( $this->url . "/" . $inUrl, $redirectType);
 		}
 
 		/**

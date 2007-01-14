@@ -28,7 +28,7 @@ function smarty_function_guicontrol_label($params, &$smarty)
 	if(isset($params['guicontrol']))
 	{
 		$control = $params['guicontrol'];
-		$name = $control->getDisplayName();
+		$name = $control->name;
 	}
 	else
 	{
@@ -37,7 +37,7 @@ function smarty_function_guicontrol_label($params, &$smarty)
 		$control = &getGuiControl($type, $name);
 	}
 
-	$for = $control->getLabelName();
+	$for = $control->getName() . "[value]";
 
 	$lname = ucfirst($name);
 

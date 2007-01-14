@@ -1,5 +1,5 @@
-function submitForm(form, action)
+function submitForm(form)
 {
-	if(validateForm(form))
-		form.submit();
+	return validateForm(form);
+	form.submit()
 }

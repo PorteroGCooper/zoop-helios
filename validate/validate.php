@@ -257,6 +257,7 @@ class Validator
 		{
 			case "phone" :
 			case "date" :
+			case "money" :
 			case "email" :
 			case "domain" :
 			case "url" :
@@ -266,13 +267,10 @@ class Validator
 			case "regexp" :
 				return "validate-$name";
 				break;
-			case "money" :
-				return "validate-currency-dollar";
-				break;
 			case "creditcard" :
 				return "validate-cc";
 				break;
-			case "float" :
+    			case "float" :
 			case "numeric" :
 				return "validate-number";
     				break;
