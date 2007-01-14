@@ -100,7 +100,7 @@
 				<action name="view_devplan" type="namedStep" step="newdevplan" page="view"/>
 			</step>
 		</pagesequence>
-	</zone>
+	</zone>	
 	<zonesequence name="talentproxy">
 		<param name="periodId"/>
 		<param name="userType"/>

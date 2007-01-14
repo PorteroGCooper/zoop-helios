@@ -39,8 +39,8 @@ class component_forms extends component
 	function getIncludes()
 	{
 		return array(
-				"forms2" => dirname(__file__) . "/forms2.php",
-				"forms" => dirname(__file__) . "/forms.php",
+				"form2" => dirname(__file__) . "/forms2.php",
+				"form" => dirname(__file__) . "/forms.php",
 				"table" => dirname(__file__) . "/table.php",
 				"record" => dirname(__file__) . "/record.php",
 				"field" => dirname(__file__) . "/field.php",

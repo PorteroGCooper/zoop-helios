@@ -147,6 +147,20 @@ class GuiControl
 		else
 			return "{$this->parent}[controls][$type][{$this->name}]";
 	}
+	
+	/**
+	 * getName
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function getDisplayName()
+	{
+		if(isset($this->params['displayName']))
+			return $this->params['displayName'];
+		else
+			return $this->name;
+	}
 
 	/**
 	 * validate
