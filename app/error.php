@@ -25,7 +25,7 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 {
 	$type = GetErrorType($errno);
 	
-	if($type == 'Unknown')
+	if($type == 'Unknown')	
 		return;
 	if($type == 'Strict' && $errstr == 'Assigning the return value of new by reference is deprecated')
 		return;
@@ -117,7 +117,7 @@ function GetErrorType($errno)
 			$errortype = "Notice";
 			break;
 		case E_STRICT:
-			$errortype = "Coding Standards";
+			$errortype = "Strict";
 		default:
 			$errortype = "Unknown";
 	}
