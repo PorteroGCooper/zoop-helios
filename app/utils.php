@@ -1560,6 +1560,112 @@ function NormalizeAngle2($theta)
 	return $theta;
 }
 
+function logprofile(&$timestruct, $sql = false)
+{
+	if(!defined('logprofile') || logprofile == false)
+		return;
+	if(!is_array($timestruct))
+	{
+		$timestruct['starttime'] = getmicrotime();
+		$timestruct['sqltotal'] = 0;
+		$timestruct['longestquerytime'] = 0;
+		$timestruct['longestquery'] = '';
+		$timestruct['longestquerycaller'] = '';
+		$timestruct['sqlcount'] = 0;
+	}
+	else if($sql)
+	{
+		if(isset($timestruct['sqlstart']))
+		{
+			$currtime = getmicrotime();
+			$length = $currtime - $timestruct['sqlstart'];
+			unset($timestruct['sqlstart']);
+			$timestruct['sqltotal'] += $length;
+			$timestruct['sqlcount']++;
+			$bt = debug_backtrace();
+			foreach($bt as $step)
+			{
+				if($step['function'] != 'logprofile' && (!isset($step['class']) || $step['class'] != 'database'))
+				{
+					if(isset($step['file']))
+						$caller = $step['file'] . ' @ line ' . $step['line'];
+					else
+						$caller = $step['class'] . '->' . $step['function'] . " file unknown(php doesn't know)";
+					break;
+				}
+			}
+			if($timestruct['longestquerytime'] < $length)
+			{
+				$timestruct['longestquerytime'] = $length;
+				$timestruct['longestquery'] = $sql;
+				$timestruct['longestquerycaller'] = $caller;
+			}
+			if(defined('logallqueries') && logallqueries != false)
+			{
+				$query['time'] = $length;
+				$query['sql'] = $sql;
+				$query['caller'] = $caller;
+				$timestruct['queries'][] = $query;
+			}
+		}
+		else
+		{
+			$timestruct['sqlstart'] = getmicrotime();
+		}
+	}
+	else
+	{
+		$currtime = getmicrotime();
+		$timestruct['totaltime'] = $currtime - $timestruct['starttime'];
+		//log it to the file...
+		if(logprofile == 'print')
+		{
+			if($_SERVER['REQUEST_METHOD'] != 'POST')
+			{
+				echo_r(implode('/', $GLOBALS['logpath']));
+				echo_r($timestruct);
+			}
+		}
+		else
+		{
+			$queryId = uniqid('query_');
+			//add the .0 just in case the starttime fell on an even second...
+			$time = explode('.', $timestruct['starttime'] . '.0');
+			$ms = $time[1];
+			$time = $time[0];
+			$time = gmstrftime('%D %T.', $time) . $ms;
+			$line[] = $time;
+			$line[] = implode('/', $GLOBALS['logpath']);
+			$line[] = $timestruct['sqlcount'];
+			$line[] = $timestruct['totaltime'];
+			$line[] = $timestruct['sqltotal'];
+			$line[] = $queryId;
+			$line[] = $timestruct['longestquerycaller'];
+			$line[] = $timestruct['longestquerytime'];
+			$file = fopen(logprofile . '/profile.log', 'a+');
+			fwrite($file, '"' . implode("\",\t\"", $line) . '"' . "\n");
+			fclose($file);
+			$file = fopen(logprofile . '/longest.log', 'a+');
+			fwrite($file, '"' . $queryId . '",	"' . $timestruct['longestquery'] . '"' . "\n");
+			fclose($file);
+			if(defined('logallqueries') && logallqueries != false)
+			{
+				$file = fopen(logprofile . '/queries.log', 'a+');
+				foreach($timestruct['queries'] as $query)
+				{
+					$line = array();
+					$line[] = $time;
+					$line[] = $query['time'];
+					$line[] = $query['sql'];
+					$line[] = $query['caller'];
+					fwrite($file, '"' . implode("\",\t\"", $line) . '"' . "\n");
+				}
+				fclose($file);
+			}	
+		}
+	}
+}
+
 if(version_compare(PHP_VERSION, '5.0', '<'))
 {
 	include_once(dirname(__FILE__) . '/utils4.php');
