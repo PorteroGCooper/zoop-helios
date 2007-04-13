@@ -27,7 +27,7 @@ class SmartPdf extends SmartGraphic
 	{
 		//	this is really something that you should be able to set in the xml file
 		//$rootContainer->setMargin(72);
-		$rootContainer->setMargin(36);
+		$rootContainer->setMargin(24);
 		
 		if($this->pageNumberStartPage)
 		{

@@ -48,6 +48,7 @@ class component_graphic extends component
 			'smartimagemap' => dirname(__file__) . '/SmartImageMap.php',
 			'bmfpdf' => dirname(__file__) . '/BMFPdf.php',
 			'graphicrospdfengine' => dirname(__file__) . '/GraphicRosPdfEngine.php',
+			
 			//	the graphic contexts
 			'graphiccontext' => dirname(__file__) . '/GraphicContext.php',
 			'imagecontext' => dirname(__file__) . '/ImageContext.php',

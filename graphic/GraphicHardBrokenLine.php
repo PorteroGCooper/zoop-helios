@@ -103,7 +103,6 @@ class GraphicHardBrokenLine extends GraphicObject
 					trigger_error('invalid alignment specified: ' . $this->alignment);
 					break;
 			}
-			
 			$height = $this->members[0]->draw($curx, $y, $width, $reallyDraw);
 			
 			$this->doneDrawing = $this->members[0]->doneDrawing();

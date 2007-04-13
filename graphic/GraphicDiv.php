@@ -560,7 +560,6 @@ class GraphicDiv extends GraphicObject
 			{
 				//	get a reference to this child
 				$thisChild = &$this->children[$childKey];
-				
 //				echo get_class($thisChild) . " $reallyDraw ";
 //				echo $thisChild->getPosition();
 //				echo '<br>';
@@ -577,7 +576,9 @@ class GraphicDiv extends GraphicObject
 						break;
 					case 'container':
 						if($reallyDraw)
+						{
 							$thisChild->draw($x + $thisChild->getLeft(), $y + $thisChild->getTop(), $width, $reallyDraw);
+						}
 						continue 2;
 						break;
 					case 'static':
