@@ -22,8 +22,7 @@ function smarty_modifier_better_date_format($string, $format="%b %e, %Y", $nullf
 	{
 		//echo($string);
 		///*
-		$answer = formatPostgresDate($string, $format, $timezone);
-		return $answer;
+		return formatPostgresDate($string, $format, $timezone);
 		$parts = explode("-", $string);
 		$date = &new Date();
 		$date->setYear($parts[0]);
