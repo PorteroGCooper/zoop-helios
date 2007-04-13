@@ -89,7 +89,7 @@ class radio extends GuiControl
 		$smartyParams['selected'] = $this->getValue();
 		$smartyParams['name'] = $this->getLabelName();
 
-		$html = smarty_function_html_radios($smartyParams, &$gui);
+		$html = smarty_function_html_radios($smartyParams, $gui);
 
 		return $html;
 	}

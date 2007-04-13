@@ -320,8 +320,8 @@ class GuiControl
 	{
 		$this->params['validate']['required'] = $req;
 
-		if (!isset($this->params['validate']['type']) || !$this->params['validate']['type'])
-			$this->setValidationType('length');
+		//if (!isset($this->params['validate']['type']) || !$this->params['validate']['type'])
+		//	$this->setValidationType('length');
 	}
 
 	/**

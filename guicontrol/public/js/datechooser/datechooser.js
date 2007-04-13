@@ -178,8 +178,10 @@ function show_Calendar(sender)         // Written by Ben Candland
 	my_Div.style.display = '';
 	
 	// alert(findPosX(document.getElementById(sender)));
+	base_href = document.getElementsByTagName('base')[0].href;
+	
 	document.getElementById("calendarToday").innerHTML = "<span style=\"border:0;cursor:pointer;\" onClick=\"go_Today('"
-	+ sender +"')\"><img name=\"today_star\" src=\"index.php/zoopfile/guicontrol/js/datechooser/today_star.gif\" width=\"15\" height=\"15\" border=\"0\">Go to Today </span>";
+	+ sender +"')\"><img name=\"today_star\" src=\"" + base_href + "/zoopfile/guicontrol/js/datechooser/today_star.gif\" width=\"15\" height=\"15\" border=\"0\">Go to Today </span>";
 
 }                             // end of show_Calendar()
 
