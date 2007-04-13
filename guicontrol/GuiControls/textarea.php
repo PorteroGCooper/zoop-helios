@@ -31,6 +31,7 @@ class textarea extends GuiControl
 				case 'rows':
 				case 'cols':
 				case 'wrap':
+				case 'style':
 					if ($value != '')
 						$attrs[] = "$parameter=\"$value\"";
 					break;
@@ -53,6 +54,8 @@ class textarea extends GuiControl
 		$attrs = implode(' ', $attrs);
 
 		$vc = $this->getValidationClasses();
+		if (isset($this->params['class']))
+			$vc .= " " . $this->params['class'];
 		$ni = $this->getNameIdString();
 		$v = $this->getValue();
 

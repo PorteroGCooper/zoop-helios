@@ -130,7 +130,7 @@ class message extends gui
 	{
 		if(app_status == "dev")
 		{
-			if (defined(dev_email_address))
+			if (defined("dev_email_address"))
 			{
 				$to = dev_email_address;
 				if( $cc != NULL)

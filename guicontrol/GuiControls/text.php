@@ -82,6 +82,8 @@ class text extends GuiControl
 		$attrs = implode(' ', $attrs);
 
 		$vc = $this->getValidationClasses();
+		if (isset($this->params['class']))
+			$vc .= " " . $this->params['class'];
 		$ni = $this->getNameIdString();
 		$v = $this->getValue();
 
