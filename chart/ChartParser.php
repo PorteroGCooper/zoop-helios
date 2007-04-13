@@ -3,7 +3,7 @@ class ChartParser
 {
 	function getTagList()
 	{
-		return array('piechart', 'horizontalbarchart', 'verticalbarchart');
+		return array('piechart', 'horizontalbarchart', 'verticalbarchart', 'linechart');
 	}
 	
 	function &getNewContainer($node, &$context)
@@ -54,6 +54,9 @@ class ChartParser
 				
 				if($node->hasAttribute('barcolor'))
 					$object->setBarColor($node->getAttribute('barcolor'));
+				break;
+			case 'linechart':
+				$object = &new LineChart($context);
 				break;
 		}
 		

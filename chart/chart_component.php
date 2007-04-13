@@ -30,6 +30,8 @@ class component_chart extends component
 			'verticalbarchart' => dirname(__file__) . '/VerticalBarChart.php',
 			'deepverticalbarchart' => dirname(__file__) . '/DeepVerticalBarChart.php',
 			'sideverticalbarchart' => dirname(__file__) . '/SideVerticalBarChart.php',
+			'linechart' => dirname(__file__) . '/LineChart.php',
+			'linechartdatagroup' => dirname(__file__) . '/LineChartDataGroup.php',
 		);
 	}
 }

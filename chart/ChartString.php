@@ -23,6 +23,7 @@ class ChartString extends ChartObject
 	
 	function substitute()
 	{
+		//$this->text = sprintf($this->text, $this->chart->getValueTotal());
 		$this->text = str_replace("%n", $this->chart->getValueTotal(), $this->text);
 	}
 	
