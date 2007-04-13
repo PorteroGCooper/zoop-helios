@@ -63,8 +63,8 @@
 	{
 		sql_connect();
 		global $defaultdb;
-		$result = $defaultdb->insert($query);
-  		$return = $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
+		$return = $defaultdb->insert($query, $sequence);
+  		//$return = $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
   		return $return;
 	}
 

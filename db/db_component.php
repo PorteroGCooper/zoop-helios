@@ -45,9 +45,15 @@ class component_db extends component
 	
 	function getIncludes()
 	{
-		return array(
-				"db" => 'DB.php',
-				"database" => dirname(__file__) . "/database.php",
+		$includes = array();
+		if(class_exists('PDO'))
+			$includes['database'] = dirname(__file__) . '/PDO_database.php';
+		else
+		{
+			$includes['db'] = 'DB.php';
+			$includes['database'] =  dirname(__file__) . "/database.php";
+		}
+		return $includes + array(
 				"complexupdate" => dirname(__file__) . "/ComplexUpdate.php",
 				"complexinsert" => dirname(__file__) . "/ComplexInsert.php"
 				);

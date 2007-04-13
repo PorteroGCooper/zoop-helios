@@ -48,7 +48,7 @@ function sqlMap($field, $mapfield)
 * @param string $tablename the name of the table to insert the array into
 * @return mixed $return the primary key value of the inserted record
 */
-function db_insert_array($inArray, $tablename)
+function db_insert_array(&$inArray, &$tablename)
 {
 	sql_connect();
 	global $defaultdb;
@@ -59,11 +59,11 @@ function db_insert_array($inArray, $tablename)
 		$values[] = $defaultdb->escape_string($value);
 	}
 
-	$fieldstr = implode(",", $fields);
-	$valuestr = implode(",", $values);
+	$fields = implode(",", $fields);
+	$values = implode(",", $values);
 	$tablename = $defaultdb->escape_tablename($tablename);
 
-	$query = "INSERT INTO $tablename ($fieldstr) VALUES ($valuestr)";
+	$query = "INSERT INTO $tablename ($fields) VALUES ($values)";
 
 	$id = sql_insert($query);
 
