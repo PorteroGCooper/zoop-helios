@@ -35,6 +35,7 @@ class component_app extends component
 	{
 		define_once('app_status', 'dev');
 		define_once('app_url_rewrite', false);
+		define_once('logprofile', false);
 	}
 	
 	function component_app()
@@ -45,13 +46,16 @@ class component_app extends component
 		//include errorhandling, as soon as possible
 		include(dirname(__file__) . "/error.php");
 		include(dirname(__file__) . "/xmlrpcClasses.php");
-
+		include(dirname(__file__) . "/utils.php");
 		if(isset($_SERVER["HTTP_HOST"]))
 		{	
 		        //globals.php only deals with http variables.
 		        include(dirname(__file__) . "/globals.php");
 		}
-		include(dirname(__file__) . "/utils.php");
+		
+		
+		$globalTime = &$GLOBALS['globalTime'];
+		logprofile($globalTime);
 		include(dirname(__file__) . "/post_utils.php");
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...

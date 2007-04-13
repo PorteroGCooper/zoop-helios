@@ -220,6 +220,7 @@ Validation.add('Between', 'Your number is too small or too large.', function(v, 
 
 Validation.add('Length', 'Please enter the correct length.', function(v, elm) {
 				var min = Validation.getMin(elm);
+				alert(min);
 				var max = Validation.getMax(elm);
 				return  (min <= v.length && v.length <= max );
 			});

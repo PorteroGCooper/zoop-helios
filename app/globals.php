@@ -35,7 +35,6 @@
 //
 //
 //////////////////////////////////////////////
-
 /**
 *
 *	ensure that PATH_INFO is getting to us in a format we like.
@@ -65,8 +64,30 @@ else
 //this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
 //we'll support it until we know that no one uses that bug.
 
+//if we are cgi
+if(isset($_ENV['REQUEST_URI']))
+{
+	//in cgi, script_name is almost guaranteed to be wrong, so we must parse it from the request_uri
+	$decodedUrl = urldecode($_SERVER['REQUEST_URI']);
+	$queryStringPos = strrpos($decodedUrl, '?');
+	if($queryStringPos !== false)
+			$queryStringlen = strlen($_SERVER['QUERY_STRING']) + 1;
+	else
+			$queryStringlen = 0;
+
+	// THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
+	//how?
+	//subtract path_info and query_string from the uri, and you get the base uri...
+	$GLOBALS['Sname'] = substr($decodedUrl, 0, strlen($decodedUrl) - strlen($_SERVER['PATH_INFO']) - $queryStringlen);
+	//if we aren't doing rewrites, then we need to make sure that index.php is on the end of the base uri.
+	if(!app_url_rewrite && strpos($GLOBALS['Sname'], 'index.php') === false)
+	{
+		$GLOBALS['Sname'] .= 'index.php';
+	}
+}
 //if we are mod_php
-if(function_exists("apache_lookup_uri"))
+//if(function_exists("apache_lookup_uri"))
+else
 {
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
 	//if url_rewrites are on, strip index.php...
@@ -74,21 +95,6 @@ if(function_exists("apache_lookup_uri"))
 	{
 		$GLOBALS['Sname'] = dirname($GLOBALS['Sname']);
 	}
-}
-//if we are cgi
-elseif(isset($_ENV['REQUEST_URI']))
-{
-	//in cgi, script_name is almost guaranteed to be wrong...
-	$decodedUrl = urldecode($_SERVER['REQUEST_URI']);
-        $queryStringPos = strrpos($decodedUrl, '?');
-        if($queryStringPos !== false)
-                $queryStringlen = strlen($_SERVER['QUERY_STRING']) + 1;
-        else
-                $queryStringlen = 0;
-
-        // THE FOLLOWING LINE MAY RESULT IN AN EMPTY STRING
-	//how?
-        $GLOBALS['Sname'] = substr($decodedUrl, 0, strlen($decodedUrl) - strlen($_SERVER['PATH_INFO']) - $queryStringlen);
 }
 //	do something to find the scriptName, parse REQUEST_URI
 //if we are isapi
@@ -116,7 +122,7 @@ if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
 		$preht = "http://";
 	}
 
-	if (strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
+	if (app_url_rewrite)//strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
 	{
 
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . '/');
@@ -143,7 +149,7 @@ if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
 		//die(SCRIPT_URL);
 	}
 
-		define("BASE_HREF", SCRIPT_REF);
+	define("BASE_HREF", SCRIPT_REF);
 
 /**
 *

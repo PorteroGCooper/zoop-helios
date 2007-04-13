@@ -537,7 +537,7 @@ dojo.io.XMLHTTPTransport = new function(){
 			if (!kwArgs.user) {
 				http.open("POST", url, async);
 			}else{
-        http.open("POST", url, async, kwArgs.user, kwArgs.password);
+				http.open("POST", url, async, kwArgs.user, kwArgs.password);
 			}
 			setHeaders(http, kwArgs);
 			http.setRequestHeader("Content-Type", kwArgs.multipart ? ("multipart/form-data; boundary=" + this.multipartBoundary) : 

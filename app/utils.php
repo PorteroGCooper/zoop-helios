@@ -54,6 +54,7 @@ define("JS_REDIRECT", 2);
 */
 function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 {
+	global $globalTime;
 	switch($redirectType)
 	{
 		case HEADER_REDIRECT:
@@ -66,6 +67,7 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 			trigger_error("unknown redirect type");
 			break;
 	}
+	logprofile($globalTime);
 	exit();
 }
 
