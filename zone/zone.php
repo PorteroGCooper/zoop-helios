@@ -94,14 +94,7 @@
 		 * @access public
 		 */
 		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
-		/**
-		 * urlzone
-		 *
-		 * @var array
-		 * @access public
-		 */
-		var $urlzone = array();		// this is a legacy variable that should be left alone
-
+		
 		/**
 		 * parent
 		 *
@@ -270,15 +263,12 @@
 		{
 			global $gAlias;
 			global $gUrlVars;
-			global $gPathParts;
+			global $gPathParts;//an array of all the parts of the path so far
 			global $gZoneUrls;
 
 			$this->zonename = array_shift($inPath); // $inPath[0] IS NULL
 
 			$GLOBALS['current_zone'] = $this->zonename; // SET TO NULL
-
-			if (isset($gUrlVars['userType']))
-				$GLOBALS['current_usertype'] = $gUrlVars['userType'];
 
 			$gPathParts[] = $this->zonename;
 
@@ -291,9 +281,6 @@
 			{
 			    $this->zonetype = ($this->zonename != "@ROOT") ? $this->zonename : "Default";  // SET $this->zonetype TO THE ZONENAME OR TO DEFAULT IF $this->zonename == @ROOT
 			}
-
-			$this->urlzone = array();
-			$this->urlzone[] = $this->zonename;
 
 			// when wildcards are enabled, always execute the default function.
 			if ($this->wildcards)
@@ -327,14 +314,19 @@
 
 			$tmp = $gPathParts;
 			global $sequenceStack;
-
 			if(isset($sequenceStack))
 			{
-				$temp = array_shift($tmp);
-				array_unshift($tmp, implode(":", $sequenceStack));
+				$temp = array_shift($tmp);//the first thing in path_info must be a null?
+				array_unshift($tmp, implode(":", $sequenceStack));//reinject the sequence stack into the path_info
 				array_unshift($tmp, $temp);
 			}
-			$this->url = implode("/", $tmp);
+			
+			global $logpath;
+			if(!isset($logpath))
+				$logpath = array();
+			$logpath[] = $this->zonename;
+			
+			$this->url = implode('/', $tmp);
 
 			array_unshift($gZoneUrls, $this->url);
 			$this->initZone($inPath);
@@ -356,20 +348,15 @@
 
 			if ( isset( $this->Alias[$path2]) && !(($retval = $this->_checkFuncs($this->Alias[$path2], $inPath)) === false) )
 			{
-
-				return $retval;
+				//break;
 			}
-
 			elseif ( !($retval = $this->_checkFuncs($path2, $inPath) === false) )
 			{
-
-				return $retval;
-
+				//break;
 			}
-
 			elseif ( isset( $gAlias[$path2]) && !(($retval = $this->_checkFuncs($gAlias[$path2], $inPath )) === false) )
 			{
-				return $retval;
+				//break;
 			}
 
 			else
@@ -377,17 +364,17 @@
 				// Try to execute the correct funtion
 				if ( isset( $this->Alias[$path2]) && !(($retval = $this->_checkZone($this->Alias[$path2], $inPath)) === false) )
 				{
-					return( $retval );
+					//break;
 				}
 
 				else if ( !(($retval = $this->_checkZone($path2, $inPath)) === false) )
 				{
-					return( $retval );
+					//break;
 				}
 
 				else if ( isset( $gAlias[$path2]) && !(($retval = $this->_checkZone($gAlias[$path2], $inPath)) === false) )
 				{
-					return( $retval );
+					//break;
 				}
 
 				else
@@ -397,13 +384,19 @@
 					if (REQUEST_TYPE == "XMLRPC")
 					{
 						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $path2");
-						return true;
+						$retval = true;
 					}
 
 					array_unshift($inPath, 'default');
-					return( $this->_checkFuncs("Default", $inPath) );
+					$retval = $this->_checkFuncs("Default", $inPath) ;
 				}
 			}
+			if($this->zonename == '@ROOT')
+			{
+				global $globalTime;
+				logprofile($globalTime);
+			}
+			return $retval;
 		}
 
 		/**
@@ -431,6 +424,8 @@
 					{
 						$funcName = "post" . $curPath;
 						$GLOBALS['current_function'] = $funcName;
+						global $logpath;
+						$logpath[] = "$curPath/post";
 						$this->initPages($inPath);
 						$tmp = $this->$funcName($inPath);
 						$this->closePages($inPath);
@@ -439,6 +434,8 @@
 					}
 					else if(method_exists($this, "page" . $curPath))
 					{
+						global $logpath;
+						$logpath[] = "$curPath/post";
 						//$funcName = "page" . $curPAth;
 						$this->initPages($inPath);
 						//$this->$funcName($inPath);
@@ -449,9 +446,10 @@
 				}
 				if (method_exists($this, "page" . $curPath))
 				{
+					global $logpath;
+					$logpath[] = "$curPath/get";
 	   				$funcName = "page" . $curPath;
 					$GLOBALS['current_function'] = $funcName;
-
 					$this->initPages($inPath);
 					$tmp = $this->$funcName($inPath);
 
@@ -793,6 +791,33 @@
 			global $gUrlVars;
 			return $gUrlVars;
 		}
+		
+		/**
+		 * getZoneParam
+		 *
+		 * @access public
+		 * @return void
+		 */
+		function getZoneParam($paramName)
+		{
+			global $gUrlVars;
+			return $gUrlVars[$paramName];
+		}
+		
+		/**
+		 * setZoneParamValue
+		 *
+		 * @access public
+		 * @return void
+		 */
+		function setZoneParamValue($paramName, $value)
+		{
+			bug("this is not yet a useful function, setting this parameter will not change zone urls.");
+			global $gUrlVars;
+			$gUrlVars[$paramName] = $value;
+		}
+		
+		
 
 		//deprecated
 		/**
@@ -855,7 +880,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZoneUrl($depth = 0)//this function should return a complete url, not a path
+		function getZoneUrl($depth = 0)
 		{
 			global $gZoneUrls;
 			return SCRIPT_URL . $gZoneUrls[$depth];
@@ -869,7 +894,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZonePath($depth = 0)//use this function from now on, until we fix the function above
+		function getZonePath($depth = 0)
 		{
 			global $gZoneUrls;
 			return $gZoneUrls[$depth];
@@ -888,7 +913,7 @@
 		{
 			BaseRedirect( $this->url . "/" . $inUrl, $redirectType);
 		}
-
+		
 		/**
 		 * hideNext
 		 *
