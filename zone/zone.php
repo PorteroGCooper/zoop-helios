@@ -3,7 +3,7 @@
 * @package zone
 */
 
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -45,6 +45,7 @@
 	 * @author Richard Bateman
 	 * @author John Lesueur
 	 * @author Steve Francia <webmaster@supernerd.com>
+	 * @author Andrew Hayward <andrew@gratuitousPawn.com>
 	 * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
 	 */
 	class zone
@@ -94,7 +95,7 @@
 		 * @access public
 		 */
 		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
-		
+
 		/**
 		 * parent
 		 *
@@ -141,6 +142,14 @@
 		 * @access public
 		 */
 		var $returnPaths = array();
+
+		/**
+		 * ancestors
+		 *
+		 * @var array
+		 * @access public
+		 */
+		var $ancestors = array();
 
 
 		/* ADDED BY SPF - MAY 05 -
@@ -299,7 +308,12 @@
 						$varValue = array_shift( $inPath );
 						if(defined("strip_url_vars") && strip_url_vars)
 							if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
-								trigger_error("a parameter must be supplied for this zone");
+							{
+								$varValue = $this->missingParameter($varName);
+								if (is_null($varValue))
+	 								trigger_error("The parameter '$varName' must be supplied for this zone");
+							}
+
 						$gUrlVars[ $varName ] = $varValue;
 						$gPathParts[] = $varValue;
 					}
@@ -717,6 +731,11 @@
 			// This function is run after any page or post function in the zone.
 		}
 
+		function getName()
+		{
+			return $this->zonename;
+		}
+
 		/**
 		 * getZoneParamNames
 		 *
@@ -795,29 +814,17 @@
 		/**
 		 * getZoneParam
 		 *
+		 * @param mixed $inName
 		 * @access public
 		 * @return void
 		 */
-		function getZoneParam($paramName)
+		function getZoneParam($inName)
 		{
 			global $gUrlVars;
-			return $gUrlVars[$paramName];
+		
+			if ( isset( $gUrlVars[$inName] ) )
+				return $gUrlVars[$inName];
 		}
-		
-		/**
-		 * setZoneParamValue
-		 *
-		 * @access public
-		 * @return void
-		 */
-		function setZoneParamValue($paramName, $value)
-		{
-			bug("this is not yet a useful function, setting this parameter will not change zone urls.");
-			global $gUrlVars;
-			$gUrlVars[$paramName] = $value;
-		}
-		
-		
 
 		//deprecated
 		/**
@@ -862,6 +869,33 @@
 			return $parent_zones;
 		}
 
+		function getAncestors()
+		{
+			if (isset($this->parent) && !empty($this->parent))
+				return $this->ancestors = array_merge((array)$this->parent->getName(), $this->parent->getAncestors());
+			else
+				return array();
+		}
+
+		function isAncestor($str)
+		{
+			$strs = (array) $str;
+			$ancestors = $this->getAncestors();
+			foreach ( $strs as $str )
+				if (in_array($str, $ancestors))
+					return true;
+			return false;
+		}
+
+		function areAncestors($strs)
+		{
+			$strs = (array) $strs;
+			foreach ( $strs as $str )
+				if ( !$this->isAncestor($str) )
+					return false;
+			return true;
+		}
+
 		/**
 		 * initParents
 		 *
@@ -880,7 +914,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZoneUrl($depth = 0)
+		function getZoneUrl($depth = 0)//this function should return a complete url, not a path
 		{
 			global $gZoneUrls;
 			return SCRIPT_URL . $gZoneUrls[$depth];
@@ -894,7 +928,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function getZonePath($depth = 0)
+		function getZonePath($depth = 0)//use this function from now on, until we fix the function above
 		{
 			global $gZoneUrls;
 			return $gZoneUrls[$depth];
@@ -911,7 +945,11 @@
 		 */
 		function zoneRedirect( $inUrl = '', $redirectType = HEADER_REDIRECT)
 		{
-			BaseRedirect( $this->url . "/" . $inUrl, $redirectType);
+			if (empty($inUrl))
+				$url = $this->url;
+			else
+				$url = $this->url . "/" . $inUrl;
+			BaseRedirect( $url, $redirectType);
 		}
 		
 		/**
@@ -952,14 +990,40 @@
 		{
 			global $gui;
 
-			//	get the name of the directory that the class should be in
-			//	this logic could maybe be put in the contructor and reused???
-			$className = get_class($this);
-			$parts = explode('_', $className);
-			array_shift($parts);
-			$dirName = implode('_', $parts);
+			$gui->display( $this->canonicalizeTemplate($inTemplateName) );
+		}
 
-			$gui->display($dirName . '/'. $inTemplateName);
+		/**
+		 * guiCaching
+		 * enable caching of file to display and set lifetime.
+		 * @param int $ttl
+		 * @access public
+		 * @return void
+		 */
+		function guiCaching($ttl = null)
+		{
+			global $gui;
+			if (!defined("gui_caching") || gui_caching == 0)
+				return;
+			else
+			{
+				$gui->caching = gui_caching;
+				if (is_null($ttl) && defined(gui_cache_lifetime))
+					$gui->cache_lifetime = gui_cache_lifetime;
+				else
+					$gui->cache_lifetime = $ttl;
+			}
+		}
+
+		function guiIsCached($tplFile, $cache_id)
+		{
+			global $gui;
+
+			return $gui->is_cached($tplFile, $cache_id);
+		}
+
+		function missingParameter()
+		{
 		}
 
 		/**
@@ -971,12 +1035,20 @@
 		 */
 		function initZoneCache()
 		{
-			$className = get_class($this);
-			$parts = explode('_', $className);
-			array_shift($parts);
-			$dirName = implode('_', $parts);
+			$dirName = substr ( strstr ( get_class ( $this ), '_' ), 1 );
 			$this->cacheBase = "zones/$dirName/";
 			$this->zcache = new zcache(array('base'=> $this->cacheBase));
 		}
+
+		function canonicalizeTemplate ( $tplName )
+		{
+			if ( substr ( $tplName, 0, 1 ) == "/" )
+				return substr ( $tplName, 1 );
+
+			if ( !isset ( $this->templateBase ) )
+				$this->templateBase = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			return $this->templateBase . '/' . $tplName;
+		}
+
 	}
 ?>

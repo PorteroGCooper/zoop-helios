@@ -117,6 +117,21 @@ class zoop
 	}
 
 	/**
+	 * addClass
+	 *
+	 * @param mixed $name
+	 * @access public
+	 * @return void
+	 */
+	function addClass($name)
+	{
+		$file = $this->appPath . "/classes/$name.php";
+		$this->addInclude($name, $file);
+		//if (file_exists($file))
+		//	include($file);
+	}	
+	
+	/**
 	 * addInclude
 	 *
 	 * @param mixed $name
