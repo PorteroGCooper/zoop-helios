@@ -8,7 +8,7 @@
 * @subpackage globals
 */
 
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -35,6 +35,7 @@
 //
 //
 //////////////////////////////////////////////
+
 /**
 *
 *	ensure that PATH_INFO is getting to us in a format we like.
@@ -93,14 +94,14 @@ else
 	//if url_rewrites are on, strip index.php...
 	if(app_url_rewrite)
 	{
-		$GLOBALS['Sname'] = dirname($GLOBALS['Sname']);
+		$GLOBALS['Sname'] = substr(dirname($GLOBALS['Sname']), 0, strrpos(dirname($GLOBALS['Sname']), "/"));
 	}
 }
 //	do something to find the scriptName, parse REQUEST_URI
 //if we are isapi
 //	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
 //	
-if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
+if (!app_url_rewrite && (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname'])))
 {
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
 }
@@ -122,15 +123,15 @@ if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
 		$preht = "http://";
 	}
 
-	if (app_url_rewrite)//strtoupper( substr($GLOBALS['Sname'],-4) ) != ".PHP" && substr($GLOBALS['Sname'], -2) != '.4' && substr($GLOBALS['Sname'],-1,1) != "/" )
+	// using mod rewrite
+	if (defined("app_url_rewrite") && app_url_rewrite)
 	{
-
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . '/');
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("HOME_URL", SCRIPT_URL);
 		define("SCRIPT_BASE", SCRIPT_URL);
 	}
-	else
+	else // no mod rewrite
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("SCRIPT_BASE",$preht . $_SERVER["HTTP_HOST"] . substr($GLOBALS['Sname'],0, strrpos($GLOBALS['Sname'], "/")));
@@ -163,8 +164,12 @@ if (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname']))
 **/
 
 	define("ORIG_PATH", $GLOBALS['PATH_INFO']);
+	define("VIRTUAL_PATH", ORIG_PATH);
 
-	define("VIRTUAL_URL", SCRIPT_URL . ORIG_PATH);
+	define("VIRTUAL_URL", SCRIPT_URL . VIRTUAL_PATH);
+
+	define("REQUESTED_PATH", $_SERVER['REQUEST_URI']);
+	define("REQUESTED_URL", SCRIPT_URL . REQUESTED_PATH);
 
 	$GLOBALS['PATH_ARRAY'] = explode("/", ORIG_PATH);
 

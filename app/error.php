@@ -8,7 +8,7 @@
 * @subpackage error
 */
 
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -66,6 +66,23 @@ function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 	
 	if($type == 'Unknown')
 		return;
+
+// SPF made changes to the error handling to provide a better live experience, not throwing errors unless necessary.
+
+
+	if(app_status == 'live' && $type != 'Fatal Error')
+	{
+		if ($type == 'Warning')
+			LogError($errno, $errstr, $errfile, $errline, $context);
+		return;
+	}
+
+	if(app_status == 'test' && ( $type != 'Fatal Error' && $type != 'Warning') )
+	{
+		LogError($errno, $errstr, $errfile, $errline, $context);
+		return;
+	}
+
 	if($type == 'Strict' && $errstr == 'Assigning the return value of new by reference is deprecated')
 		return;
 	while (ob_get_level() > __zoop_error_ob_start )

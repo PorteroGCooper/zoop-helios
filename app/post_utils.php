@@ -248,7 +248,7 @@ function unsetPost($inName)
  */
 function getPostKeys($inName = false)
 {
-	return array_keys(findPostItem($POSTCOPY));
+	return array_keys(findPostItem($inName));
 }
 
 /**
