@@ -13,17 +13,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-//require(dirname(__file__) . "/forms2.php");
-//require(dirname(__file__) . "/forms.php");
-//require(dirname(__file__) . "/table.php");
-//require(dirname(__file__) . "/record.php");
-//require(dirname(__file__) . "/field.php");
-//require(dirname(__file__) . "/cell.php");
-
-// require_once('Cache/Lite.php');
-//require_once("XML/Serializer.php");
-
-
 /**
 * @package forms
 */
@@ -38,13 +27,14 @@ class component_forms extends component
 	 
 	function getIncludes()
 	{
+		$file = dirname(__file__);
 		return array(
-				"form2" => dirname(__file__) . "/forms2.php",
-				"form" => dirname(__file__) . "/forms.php",
-				"table" => dirname(__file__) . "/table.php",
-				"record" => dirname(__file__) . "/record.php",
-				"field" => dirname(__file__) . "/field.php",
-				"cell" => dirname(__file__) . "/cell.php",
+				"form2" => $file . "/forms2.php",
+				"form" => $file . "/forms.php",
+				"table" => $file . "/table.php",
+				"record" => $file . "/record.php",
+				"field" => $file . "/field.php",
+				"cell" => $file . "/cell.php",
 				"xml_serializer" => "XML/Serializer.php"
 		);
 	}
@@ -57,16 +47,5 @@ class component_forms extends component
 		$this->requireComponent('cache');
 		$this->requireComponent('validate');
 	}
-
-	/**
-	 * init 
-	 * 
-	 * @access public
-	 * @return void
-	 */
-// 	function init()
-// 	{
-// 		mkdirr(app_temp_dir . '/cache/forms/', 0770);
-// 	}
 }
 ?>

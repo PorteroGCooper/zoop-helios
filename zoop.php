@@ -97,7 +97,11 @@ class zoop
 	function addZone($name)
 	{
 		$this->addComponent('zone');
-		$this->addInclude("zone_{$name}", $this->appPath . "/zone_{$name}.php");
+		if (defined('legacy_zones') && !legacy_zones ) {
+			$this->addInclude("zone_{$name}", $this->appPath . "/zones/{$name}.php");
+		} else {
+			$this->addInclude("zone_{$name}", $this->appPath . "/zone_{$name}.php");
+		}
 		//include($this->appPath . "/zone_{$name}.php");
 	}
 

@@ -14,8 +14,8 @@
 // FOR A PARTICULAR PURPOSE.
 
 define_once("app_cache_dir", app_temp_dir . '/cache/');
-require_once('Cache/Lite.php');
-include(dirname(__file__) . "/zcache.php");
+// require_once('Cache/Lite.php');
+// include(dirname(__file__) . "/zcache.php");
 
 
 /**
@@ -42,5 +42,13 @@ class component_cache extends component
  		mkdirr(app_cache_dir);
 	}
 
+	function getIncludes()
+	{
+		$file = dirname(__file__);
+		return array(
+				"zcache" => $file . "/zcache.php",
+				"cacheLite" => 'Cache/Lite.php'
+		);
+	}	
 }
 ?>
