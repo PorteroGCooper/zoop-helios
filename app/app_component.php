@@ -31,32 +31,22 @@
 */
 class component_app extends component
 {
-	function defaultConstants()
-	{
-		define_once('app_status', 'dev');
-		define_once('app_url_rewrite', false);
-		define_once('logprofile', false);
-	}
-	
 	function component_app()
 	{
 		//inlude the define_once function
-		include(dirname(__file__) . "/define.php");
-		$this->defaultConstants();
+		include($this->getBasePath() . "/define.php");
 		//include errorhandling, as soon as possible
-		include(dirname(__file__) . "/error.php");
-		include(dirname(__file__) . "/xmlrpcClasses.php");
-		include(dirname(__file__) . "/utils.php");
-		if(isset($_SERVER["HTTP_HOST"]))
-		{	
+		include($this->getBasePath() . "/error.php");
+		include($this->getBasePath() . "/xmlrpcClasses.php");
+		include($this->getBasePath() . "/utils.php");
+		if(isset($_SERVER["HTTP_HOST"])) {	
 		        //globals.php only deals with http variables.
-		        include(dirname(__file__) . "/globals.php");
+		        include($this->getBasePath() . "/globals.php");
 		}
-		
 		
 		$globalTime = &$GLOBALS['globalTime'];
 		logprofile($globalTime);
-		include(dirname(__file__) . "/post_utils.php");
+		include($this->getBasePath() . "/post_utils.php");
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());
@@ -64,7 +54,6 @@ class component_app extends component
 		error_reporting(E_ALL);
 		$debugmode = app_status;
 		//$debugmode = 'test';
-
 
 		if(php_sapi_name() != "cli")
 		{

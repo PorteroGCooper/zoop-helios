@@ -52,7 +52,11 @@ class zauth
 			self::failed();
 		}
 	}
-
+	function echoDefaults()
+	{
+		echo AUTH_USER_TABLE;
+		echo AUTH_USER_GROUP_TABLE; 
+	}
 	function populateActiveUser($user_id)
 	{
 		$user = sql_fetch_assoc("
@@ -60,8 +64,8 @@ class zauth
 			FROM " . AUTH_USER_TABLE . " u 
 			WHERE user_id = $user_id
 			");
-
-		if (!empty(AUTH_GROUP_TABLE)) {
+	// DON'T KNOW WHY THE NEXT BLOCK DOESN'T COMPILE
+	/*	if (!empty(AUTH_GROUP_TABLE)) {
 			$groups = sql_fetch_assoc("
 				SELECT g.group_id, g.name 
 				FROM " . AUTH_GROUP_TABLE . " g
@@ -86,6 +90,7 @@ class zauth
 			$roles = array();
 		}
 
+*/
 		$_SESSION[AUTH_SESSION_USER] = array('user' => $user, 'groups' => $groups, 'roles' => $roles);
 	}
 
@@ -98,7 +103,7 @@ class zauth
 
 	function logIn($username, $password)
 	{
-		if ($user_id = self::checkPassword($username, $password)
+		if ($user_id = self::checkPassword($username, $password))
 		{
 			self::populateActiveUser($user_id);
 			return true;

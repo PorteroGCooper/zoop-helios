@@ -117,8 +117,6 @@ class zoop_create
 		$dirstring = "config classes guiplugins GuiControls GuiWidgets mail objects public/resources templates/default/admin templates/default/layout tmp/gui zones";
 		$dirstring = str_replace('/', DIRECTORY_SEPARATOR, $dirstring);
 		$dirs = explode(" ", $dirstring);
-//		echo_r($dirs);
-//		echo_r($this->projectPath);
 
 		foreach ($dirs as $dir) {
 			mkdirr( $this->projectPath . DIRECTORY_SEPARATOR . "$dir");

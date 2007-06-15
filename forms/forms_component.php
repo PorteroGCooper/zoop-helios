@@ -3,7 +3,7 @@
 * @category zoop
 * @package forms
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -13,21 +13,19 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/**
-* @package forms
-*/
+ /**
+ * @package forms
+ * @uses component
+ * @version $id$
+ * @copyright 1997-2007 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}/
+ */
 class component_forms extends component
 {
-	/**
-	 * component_forms 
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	 
 	function getIncludes()
 	{
-		$file = dirname(__file__);
+		$file = $this->getBasePath();
 		return array(
 				"form2" => $file . "/forms2.php",
 				"form" => $file . "/forms.php",
@@ -39,13 +37,9 @@ class component_forms extends component
 		);
 	}
 	 
-	function component_forms()
+	function getRequiredComponents()
 	{
-		$this->requireComponent('db');
-		$this->requireComponent('gui');
-		$this->requireComponent('guicontrol');
-		$this->requireComponent('cache');
-		$this->requireComponent('validate');
+		return array('db', 'gui', 'guicontrol', 'cache', 'validate');
 	}
 }
 ?>

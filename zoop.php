@@ -4,7 +4,7 @@
 * @package zoop
 */
 
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -31,7 +31,7 @@ if(!defined('zoop_autoload') || zoop_autoload)
  *
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
@@ -77,6 +77,8 @@ class zoop
 			include($this->path . "/$name/{$name}_component.php");
 			$class = "component_{$name}";
 			$currComponent = &new $class();
+			$this->includeConfig($name);
+			$currComponent->defaultConstants();
 			$components = &$currComponent->getRequiredComponents();
 			foreach($components as $newname)
 			{
@@ -193,7 +195,7 @@ class zoop
 		{
 			if(!isset($this->init[$name]) || !$this->init[$name])
 			{
-				$this->includeConfig($name);
+				//$object->defaultConstants();
 				$object->init();
 				$this->init[$name] = true;
 			}
@@ -234,7 +236,7 @@ class zoop
  *
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
@@ -248,6 +250,26 @@ class component
 	 */
 	var $required = array();
 
+	function getBasePath()
+	{
+		return zoop_dir . "/" . $this->getName();
+	}
+
+	function getName()
+	{
+		$className = get_class($this);
+		return $componentName = substr($className, 10);
+	}
+
+	/**
+	 * defaultContstants
+	 * @access public
+	 */
+	function defaultConstants()
+	{
+		include($this->getBasePath() . "/defaultConstants.php");
+	}
+	
 	/**
 	 * component
 	 *

@@ -3,7 +3,7 @@
 * @category zoop
 * @package cache
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-define_once("app_cache_dir", app_temp_dir . '/cache/');
 // require_once('Cache/Lite.php');
 // include(dirname(__file__) . "/zcache.php");
 
@@ -24,7 +23,7 @@ define_once("app_cache_dir", app_temp_dir . '/cache/');
  * @uses component
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
@@ -44,9 +43,8 @@ class component_cache extends component
 
 	function getIncludes()
 	{
-		$file = dirname(__file__);
 		return array(
-				"zcache" => $file . "/zcache.php",
+				"zcache" =>  $this->getBasePath() . "/zcache.php",
 				"cacheLite" => 'Cache/Lite.php'
 		);
 	}	

@@ -1134,7 +1134,6 @@ function mkdir_r($filename)
      $next_pathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
      if (mkdirr($next_pathname, $mode)) {
          if (!file_exists($pathname)) {
-				echo ($pathname);
              return mkdir($pathname, $mode);
          }
      }

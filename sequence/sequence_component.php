@@ -3,7 +3,7 @@
 * @category zoop
 * @package sequence
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -13,17 +13,18 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
-include(dirname(__file__) . "/SequenceData.php");
-include(dirname(__file__) . "/SequenceParser.php");
-include(dirname(__file__) . "/ZoneSequence.php");
-
 class component_sequence extends component
 {
 	function component_sequence()
 	{
-		$this->requireComponent('session');
-		$this->requireComponent('xml');
+		include(dirname(__file__) . "/SequenceData.php");
+		include(dirname(__file__) . "/SequenceParser.php");
+		include(dirname(__file__) . "/ZoneSequence.php");
+	}
+
+	function getRequiredComponents()
+	{
+		return array('session', 'xml');
 	}
 
 	function init()

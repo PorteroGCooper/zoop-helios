@@ -1,37 +1,54 @@
 <?
-
-
-
-//require_once(dirname(__file__) . '/CustomDiv.php');
-//require_once(dirname(__file__) . '/CustomParser.php');
-//require_once(dirname(__file__) . '/CustomObject.php');
+/**
+* @category zoop
+* @package chart
+*/
+// Copyright (c) 2007 Supernerd LLC and Contributors.
+// All Rights Reserved.
+//
+// This software is subject to the provisions of the Zope Public License,
+// Version 2.1 (ZPL). A copy of the ZPL should accompany this distribution.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+// WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+// FOR A PARTICULAR PURPOSE.
+/**
+ * component_chart 
+ * 
+ * @uses component
+ * @package chart
+ * @version $id$
+ * @copyright 1997-2007 Supernerd LLC
+ * @author Steve Francia <webmaster@supernerd.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ */
 
 class component_chart extends component
 {
-	function component_chart()
+	function getRequiredComponents()
 	{
-		$this->requireComponent('graphic');
+		return array('graphic');
 	}
 	
 	function getIncludes()
 	{
 		return array(
-			'chartparser' => dirname(__file__) . '/ChartParser.php',
-			'chartobjectparser' => dirname(__file__) . '/ChartObjectParser.php',
-			'chartobject' => dirname(__file__) . '/ChartObject.php',
-			'chartplot' => dirname(__file__) . '/ChartPlot.php',
-			'chartlegend' => dirname(__file__) . '/ChartLegend.php',
-			'chartstring' => dirname(__file__) . '/ChartString.php',
-			'chart' => dirname(__file__) . '/Chart.php',
-			'piechart' => dirname(__file__) . '/PieChart.php',
-			'barchart' => dirname(__file__) . '/BarChart.php',
-			'barchartdatagroup' => dirname(__file__) . '/BarChartDataGroup.php',
-			'horizontalbarchart' => dirname(__file__) . '/HorizontalBarChart.php',
-			'verticalbarchart' => dirname(__file__) . '/VerticalBarChart.php',
-			'deepverticalbarchart' => dirname(__file__) . '/DeepVerticalBarChart.php',
-			'sideverticalbarchart' => dirname(__file__) . '/SideVerticalBarChart.php',
-			'linechart' => dirname(__file__) . '/LineChart.php',
-			'linechartdatagroup' => dirname(__file__) . '/LineChartDataGroup.php',
+			'chartparser' => $this->getBasePath() . '/ChartParser.php',
+			'chartobjectparser' => $this->getBasePath() . '/ChartObjectParser.php',
+			'chartobject' => $this->getBasePath() . '/ChartObject.php',
+			'chartplot' => $this->getBasePath() . '/ChartPlot.php',
+			'chartlegend' => $this->getBasePath() . '/ChartLegend.php',
+			'chartstring' => $this->getBasePath() . '/ChartString.php',
+			'chart' => $this->getBasePath() . '/Chart.php',
+			'piechart' => $this->getBasePath() . '/PieChart.php',
+			'barchart' => $this->getBasePath() . '/BarChart.php',
+			'barchartdatagroup' => $this->getBasePath() . '/BarChartDataGroup.php',
+			'horizontalbarchart' => $this->getBasePath() . '/HorizontalBarChart.php',
+			'verticalbarchart' => $this->getBasePath() . '/VerticalBarChart.php',
+			'deepverticalbarchart' => $this->getBasePath() . '/DeepVerticalBarChart.php',
+			'sideverticalbarchart' => $this->getBasePath() . '/SideVerticalBarChart.php',
+			'linechart' => $this->getBasePath() . '/LineChart.php',
+			'linechartdatagroup' => $this->getBasePath() . '/LineChartDataGroup.php',
 		);
 	}
 }

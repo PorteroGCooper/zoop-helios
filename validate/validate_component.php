@@ -2,7 +2,7 @@
 /**
 * @package storage
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -18,20 +18,9 @@
 */
 class component_validate extends component
 {
-	/**
-	 * component_validate
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function component_validate()
-	{
-
-	}
-
 	function getIncludes()
 	{
-		return array('Validator' => dirname(__file__) . '/validate.php');
+		return array('Validator' => $this->getBasePath(). '/validate.php');
 	}
 
 	/**

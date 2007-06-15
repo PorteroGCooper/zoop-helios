@@ -3,7 +3,7 @@
 * @category zoop
 * @package db
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -18,16 +18,12 @@
  * @uses component
  * @package 
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component_db extends component
 {
-	function defaultConstants()
-	{
-		define_once('db_RDBMS', 'pgsql');
-	}
 	/**
 	 * init 
 	 * 
@@ -36,26 +32,25 @@ class component_db extends component
 	 */
 	function init()
 	{
-		$this->defaultConstants();
 		//require_once('DB.php');
-		//include(dirname(__file__) . "/database.php");
-		include(dirname(__file__) . "/" . db_RDBMS . ".php");
-		include(dirname(__file__) . "/db_utils.php");
+		//include($this->getBasePath() . "/database.php");
+		include($this->getBasePath() . "/" . db_RDBMS . ".php");
+		include($this->getBasePath() . "/db_utils.php");
 	}
 	
 	function getIncludes()
 	{
 		$includes = array();
 		if(class_exists('PDO'))
-			$includes['database'] = dirname(__file__) . '/PDO_database.php';
+			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
 		else
 		{
 			$includes['db'] = 'DB.php';
-			$includes['database'] =  dirname(__file__) . "/database.php";
+			$includes['database'] =  $this->getBasePath() . "/database.php";
 		}
 		return $includes + array(
-				"complexupdate" => dirname(__file__) . "/ComplexUpdate.php",
-				"complexinsert" => dirname(__file__) . "/ComplexInsert.php"
+				"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
+				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
 				);
 	}
 

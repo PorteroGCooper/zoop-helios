@@ -20,7 +20,7 @@ require_once(dirname(__file__) . "/Smarty.class.php");
  * @uses Smarty
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
  * @author Rick Gigger
  * @author John Lesueur
@@ -90,16 +90,15 @@ class gui extends Smarty
 
 		$this->assign("app_dir", app_dir);
 
-		if (defined("app_default_title")) 	$this->assign("title", app_default_title);
-		if (defined("public_web_path"))  $this->assign("public_web_path", public_web_path);
+		if (defined("app_default_title")) {
+			$this->assign("title", app_default_title);
+		}
+		if (defined("public_web_path")) {
+			$this->assign("public_web_path", public_web_path);
+		}
 
 		$this->register_zcache();
-
 		$this->init_registrations();
-// 		$this->assignbrowser();
-
-		//	what does this do
-// 		$this->debugging = 1;
 	}
 
     function register_zcache()
@@ -135,15 +134,12 @@ class gui extends Smarty
 		}
 
 		if ( in_array( substr( $path, 0, 1 ), array( '/', '\\' ) )) {
-
 			if ( substr( $path, 0, strlen( $template_dir )) == $template_dir ) {
 				$result = substr( $path, strlen( $template_dir ) );
-
 			} else {
 				// we don't know this template path so we throw a fatal error
 				$this->trigger_error( "The path for '{$path}' is not in the template path ('{$template_dir}'). ", E_USER_ERROR );
 			}
-
 		} else {
 			// if recieved path is already relative, do nothing
 			$result = $path;
@@ -169,15 +165,6 @@ class gui extends Smarty
 		$this->cache_dir = $inDir;
 	}
 
-	/*======================================================================*\
-		Function:   fetch()
-		Purpose:    executes & returns or displays the template results
-		Notes:		Do NOT call this funciton using fw_gui_look or a /
-					before the template file!
-
-					This function is used by display.
-	\*======================================================================*/
-
 	/**
 	 * fetch
 	 *
@@ -189,11 +176,10 @@ class gui extends Smarty
 	 */
 	function fetch($tpl_file, $cache_id = null, $compile_id = null)
 	{
-		if (defined("gui_look") )
-		{
+		if (defined("gui_look") ) {
 			$tpl_file = gui_look . "/" . $tpl_file;
 		}
-
+		
 		return Smarty::fetch($tpl_file, $cache_id, $compile_id);
 	}
 
@@ -244,8 +230,7 @@ class gui extends Smarty
 	 */
 	function _smarty_include($params)
 	{
-		if (defined("gui_look") )
-		{
+		if (defined("gui_look") ) {
 			$params['smarty_include_tpl_file'] = gui_look . "/" . $params['smarty_include_tpl_file'];
 		}
 
@@ -260,21 +245,16 @@ class gui extends Smarty
 	*/
 	function assign($tpl_var, $value = null)
 	{
-			if ($tpl_var != '')
+			if ($tpl_var != '') {
 				$this->_tpl_vars[$tpl_var] = $value;
+			}
 	}
 
 	/**
-	* assigns an array of values to template variables
-	*
-	* @param array $tpl_var the template variable name(s)
-	*
-	*/
-
-	/**
 	 * assign_array
+	 * assigns an array of values to template variables
 	 *
-	 * @param mixed $tpl_var
+	 * @param mixed $tpl_var the template variable name(s)
 	 * @access public
 	 * @return void
 	 */
@@ -287,10 +267,10 @@ class gui extends Smarty
 			}
 		}
 	}
-
-	// A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
+ 
 	/**
 	 * generate
+	 * A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
 	 *
 	 * @param mixed $inBodytpl
 	 * @param mixed $inSidebartpl
@@ -359,7 +339,8 @@ class gui extends Smarty
 		$this->register_block('dynamic', array('gui', 'smarty_block_dynamic'), false);
 	}
 
-	function smarty_block_dynamic($param, $content, &$smarty) {
+	function smarty_block_dynamic($param, $content, &$smarty) 
+	{
 		return $content;
 	}
 

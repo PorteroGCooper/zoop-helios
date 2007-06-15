@@ -3,7 +3,7 @@
 * @category zoop
 * @package spell
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -13,20 +13,25 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
-	include(dirname(__file__) . "/spellBase.php");
-	include(dirname(__file__) . "/spell.php");
-	include(dirname(__file__) . "/guispell.php");
 /**
 * @package spell
 */
 class component_spell extends component
 {
-	function spell_component()
+	function getRequiredComponents()
 	{
-		$this->requireComponent('db');
-		$this->requireComponent('gui');
+		return array('db', 'gui');
 	}
+
+	function getIncludes()
+	{
+		return array(
+			'spellbase' => $this->getBasePath() . "/spellBase.php",
+			'spell' => $this->getBasePath() . "/spell.php",
+			'guispell' => $this->getBasePath() . "/guispell.php"
+		);
+			
+	}	
 
 	function init()
 	{

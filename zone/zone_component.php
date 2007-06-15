@@ -4,7 +4,7 @@
 * @package zone
 */
 
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -20,31 +20,27 @@
  * @uses component
  * @package 
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component_zone extends component
 {
-	/**
-	 * component_zone 
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	function component_zone()
+	function getRequiredComponents()
 	{
-		$this->requireComponent('app');
-		if(!defined('zone_saveinsession')  || zone_saveinsession)
-			$this->requireComponent('session');
+		$rc[] = 'app';
+		if(!defined('zone_saveinsession')  || zone_saveinsession) {
+			$rc[] = 'session';
+		}
+		return $rc;
 	}
 	
 	function getIncludes()
 	{
 		return array(
-						"zone" => dirname(__file__) . "/zone.php",
-						"zone_sequence" => dirname(__file__) . "/zone_sequence.php",
-						"zone_zoopfile" => dirname(__file__) . "/zone_zoopfile.php"
+						"zone" => $this->getBasePath() . "/zone.php",
+						"zone_sequence" => $this->getBasePath() . "/zone_sequence.php",
+						"zone_zoopfile" => $this->getBasePath() . "/zone_zoopfile.php"
 					);
 	}
 

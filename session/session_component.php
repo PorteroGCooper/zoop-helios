@@ -3,7 +3,7 @@
 * @category zoop
 * @package session
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -21,17 +21,12 @@
  * @uses component
  * @package 
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
+ * @copyright 1997-2007 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
 class component_session extends component
 {
-	function defaultConstants()
-	{
-		define_once('session_type', 'files');
-	}
-	
 	/**
 	 * init 
 	 * 
@@ -40,8 +35,7 @@ class component_session extends component
 	 */
 	function init()
 	{
-		$this->defaultConstants();
-		include(dirname(__file__) . "/session_handler_" . session_type . ".php");
+		include($this->getBasePath() . "/session_handler_" . session_type . ".php");
 
 		if (isset($HTTP_GET_VARS["cache_limiter"]))
 		{
