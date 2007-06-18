@@ -1,6 +1,6 @@
 <?php
 
-class zauth
+class auth
 {
 	function requireLoggedIn()
 	{
@@ -54,7 +54,7 @@ class zauth
 	}
 	function echoDefaults()
 	{
-		echo AUTH_USER_TABLE;
+		echo AUTH_USER_TABLE . "<br>";
 		echo AUTH_USER_GROUP_TABLE; 
 	}
 	function populateActiveUser($user_id)
@@ -65,7 +65,7 @@ class zauth
 			WHERE user_id = $user_id
 			");
 	// DON'T KNOW WHY THE NEXT BLOCK DOESN'T COMPILE
-	/*	if (!empty(AUTH_GROUP_TABLE)) {
+		if ( defined('AUTH_GROUP_TABLE') && AUTH_GROUP_TABLE != '' ) {
 			$groups = sql_fetch_assoc("
 				SELECT g.group_id, g.name 
 				FROM " . AUTH_GROUP_TABLE . " g
@@ -77,7 +77,7 @@ class zauth
 			$groups = array();
 		}
 
-		if (!empty(AUTH_ROLE_TABLE)) {
+		if ( defined('AUTH_ROLE_TABLE') && AUTH_ROLE_TABLE != '' ) {
 			$roles = sql_fetch_assoc("
 				SELECT r.role_id, r.name
 				FROM " . AUTH_ROLE_TABLE . " r
@@ -90,7 +90,7 @@ class zauth
 			$roles = array();
 		}
 
-*/
+
 		$_SESSION[AUTH_SESSION_USER] = array('user' => $user, 'groups' => $groups, 'roles' => $roles);
 	}
 

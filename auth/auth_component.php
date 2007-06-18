@@ -29,7 +29,7 @@ class component_auth extends component
 	function getIncludes()
 	{
 		return array(
-				"zauth" => $this->getBasePath() . "/zauth.php"
+				"auth" => $this->getBasePath() . "/auth.php"
 		);
 	}
 
