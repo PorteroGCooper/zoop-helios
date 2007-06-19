@@ -37,7 +37,9 @@ if (isset( $_SERVER['argc'] ) && $_SERVER['argc'] > 0 )
 		case 'zone':
 			$create->zone( $_SERVER['argv'][2] );
 			break;
-
+		case 'config':
+			$create->config( $_SERVER['argv'][2] );
+			break;
 		default:
 			echo ("NOT A VALID COMMAND");			
 			break;
@@ -151,6 +153,10 @@ include_once(zoop_dir . "/zoop.php");
 
 \$zoop = &new zoop(dirname(__file__));
 
+////////////////////////////////////////////////////
+// COMPONENTS									  //
+////////////////////////////////////////////////////
+
 // \$zoop->addComponent('db');
 \$zoop->addComponent('gui');
 \$zoop->addComponent('guicontrol');
@@ -164,21 +170,22 @@ include_once(zoop_dir . "/zoop.php");
 // \$zoop->addComponent('zcache');
 
 ////////////////////////////////////////////////////
-//  include all zone subclasses here 		      //
+//  ZONES (CONTROLLERS)							  //
+//  Located in $this->projectPath/zones/		  //
 ////////////////////////////////////////////////////
 
 \$zoop->addZone('default');
 \$zoop->addZone('admin');
 
 ////////////////////////////////////////////////////
-//  include all of your objects here		      //
+//  OBJECTS									      //
 //	Located in $this->projectPath/objects/		  //	
 ////////////////////////////////////////////////////
 
 // \$zoop->addObject('blocks');
 
 ////////////////////////////////////////////////////
-//  include all of your classes here		      //
+//  CLASSES										  //
 //	Located in $this->projectPath/classes/		  //
 ////////////////////////////////////////////////////
 
@@ -265,6 +272,16 @@ $this->oTag;
 $this->cTag;
 CONFIG;
 		$this->setFile("config.php", $config);
+	}
+
+	function config ($name)
+	{
+		$configFile = $this->appPath . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "$name.php";
+		if (!file_exists($configFile ) ) {
+			copy ( $this->path . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . "defaultConstants.php", $configFile);
+		} else {
+			echo " File already exists";
+		}
 	}
 
 	function zone ($name, $functions = null)
