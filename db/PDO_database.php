@@ -10,8 +10,8 @@ class database
 		logprofile($globalTime, true);	
 		try 
 		{
-			//echo("{$dsn['phptype']}: host={$dsn['hostspec']} port={$dsn['port']} dbname={$dsn['database']} user={$dsn['username']}" . (empty($dsn['password']) ? '' : " password={$dsn['password']}"));
-			$this->db = new PDO("{$dsn['phptype']}: host={$dsn['hostspec']} port={$dsn['port']} dbname={$dsn['database']} user={$dsn['username']}" . (empty($dsn['password']) ? '' : " password={$dsn['password']}"));
+
+			$this->db = new PDO("{$dsn['phptype']}:host={$dsn['hostspec']};port={$dsn['port']};dbname={$dsn['database']};user={$dsn['username']}" . (empty($dsn['password']) ? '' : ";password={$dsn['password']}"), $dsn['username'], $dsn['password']);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 		catch(PDOException $e)

@@ -32,8 +32,6 @@ class component_db extends component
 	 */
 	function init()
 	{
-		//require_once('DB.php');
-		//include($this->getBasePath() . "/database.php");
 		include($this->getBasePath() . "/" . db_RDBMS . ".php");
 		include($this->getBasePath() . "/db_utils.php");
 	}
