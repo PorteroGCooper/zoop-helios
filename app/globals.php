@@ -32,18 +32,14 @@
 //	*	ORIG_PATH = $PATH_INFO varible
 //	*	RELATIVE_PATH = path to script relative to the virtual location
 //			i.e. ../../../
-//
+//	* 	GLOBALS['Sname'] is the script name ... ie the path from the / to the index.php
 //
 //////////////////////////////////////////////
 
 /**
-*
 *	ensure that PATH_INFO is getting to us in a format we like.
 *	PATH_INFO is everything between the filename and the ? in the url
-*
 **/
-
-
 
 if(!isset($_SERVER["PATH_INFO"]))
 {
@@ -56,11 +52,13 @@ elseif (empty($_SERVER["PATH_INFO"])) // This ensures Zoop works as a fastcgi sc
 else
 {
 	//	add a slash to the front if it's not already there
-	if(substr($_SERVER["PATH_INFO"],0,1) == "/")
+	if(substr($_SERVER["PATH_INFO"],0,1) == "/") {
 		$GLOBALS['PATH_INFO'] = $_SERVER["PATH_INFO"];
-	else
+	} else {
 		$GLOBALS['PATH_INFO'] = "/" . $_SERVER["PATH_INFO"];
+	}
 }
+
 //find the url encoded path_info, strip that off the end of REQUEST_URI, that is SCRIPT_URL
 //this handles spaces in the path_info. I think we shouldn't have to support it, but a bug made it possible.
 //we'll support it until we know that no one uses that bug.
@@ -86,15 +84,17 @@ if(isset($_ENV['REQUEST_URI']))
 		$GLOBALS['Sname'] .= 'index.php';
 	}
 }
+
 //if we are mod_php
 //if(function_exists("apache_lookup_uri"))
 else
 {
 	$GLOBALS['Sname'] = $_SERVER["SCRIPT_NAME"];
+
 	//if url_rewrites are on, strip index.php...
-	if(app_url_rewrite)
+	if( app_url_rewrite )
 	{
-		$GLOBALS['Sname'] = substr(dirname($GLOBALS['Sname']), 0, strrpos(dirname($GLOBALS['Sname']), "/"));
+		$GLOBALS['Sname'] = substr($GLOBALS['Sname'], 0, strrpos($GLOBALS['Sname'], "/"));
 	}
 }
 //	do something to find the scriptName, parse REQUEST_URI
@@ -107,12 +107,10 @@ if (!app_url_rewrite && (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname'])))
 }
 
 /**
-*
 *	Build SCRIPT_REF and SCRIPT_URL
 *
 *	SCRIPT_REF: base ref for the script (trailing /)
 *	SCRIPT_URL: actual URL of the script (no path_info or querystring)
-*
 **/
 	if($_SERVER["SERVER_PORT"] == 443)
 	{
@@ -147,7 +145,6 @@ if (!app_url_rewrite && (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname'])))
 
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
 		define("HOME_URL", dirname(SCRIPT_URL));
-		//die(SCRIPT_URL);
 	}
 
 	define("BASE_HREF", SCRIPT_REF);
