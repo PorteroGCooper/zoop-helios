@@ -147,6 +147,7 @@ class database
 		try
 		{
 			$result = &$this->db->query($inQueryString);
+			$result = $result->fetchAll();
 		}
 		catch(PDOException $e)
 		{
@@ -714,4 +715,17 @@ class database
 	{
 		return $this->db->quote($string);
 	}
+
+	function get_table_info($Table)
+	{
+		if ($this->db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') {
+		  echo "Running on mysql; doing something mysql specific here\n";
+		}
+
+#		sql_connect();
+#		global $defaultdb;
+#  		$return = $defaultdb->get_table_info($Table);
+#  		return $return;
+	}
 }
+
