@@ -256,7 +256,6 @@ class database
 	
 	function &getCol(&$query)
 	{
-		die('hi');
 		$this->verifyQuery($query);
 		global $globalTime;
 		logprofile($globalTime, true);

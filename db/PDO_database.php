@@ -97,8 +97,12 @@ class database
 		}
 		//echo substr($inQueryString, 0, 1200) . "<br>" . 
 		//echo_r($result);
-		$error = $this->db->errorInfo();
-		trigger_error($error[2]);
+		if (isset( $this->db ) && $this->db) {
+			$error = $this->db->errorInfo();
+			trigger_error($error[2]);
+		} else { 
+			trigger_error("db object does not exist, it is likely the connection failed. Please check your settings");
+		}
 		die();
 	}
 	
@@ -139,7 +143,7 @@ class database
 		return $result;
 	}
 	
-	function &getAll(&$inQueryString)
+	function &getAll($inQueryString)
 	{
 		$this->verifyQuery($inQueryString);
 		global $globalTime;
@@ -716,16 +720,32 @@ class database
 		return $this->db->quote($string);
 	}
 
-	function get_table_info($Table)
+	function get_table_info($table)
 	{
 		if ($this->db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') {
-		  echo "Running on mysql; doing something mysql specific here\n";
+			//echo "Running on mysql; doing something mysql specific here\n";
+			$a = $this->getAll("describe $table");
+			//echo_r($a);
+			foreach ($a as $field ) {
+				$field_info = array();
+				$field_info['table'] = $table;
+				$field_info['name'] = $field['Field'];
+				$field_info['type'] = substr($field['Type'], 0, strpos($field['Type'], "("));
+				$field_info['len'] = substr($field['Type'], strpos($field['Type'], "(")+1, strpos($field['Type'], ")")+1);
+				$extra = array();
+				$extra[] = $field['Extra'];
+				if ($field['Key'] == 'PRI' ) {
+					$extra[] = "primary_key";
+				}
+				if ($field['Null'] == "NO") {
+					$extra[] = "not_null";
+				}
+				$field_info['flags'] = implode($extra, " ");
+				
+				$table_info[] = $field_info;
+			}
+			return $table_info;
 		}
-
-#		sql_connect();
-#		global $defaultdb;
-#  		$return = $defaultdb->get_table_info($Table);
-#  		return $return;
 	}
 }
 

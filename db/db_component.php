@@ -39,10 +39,9 @@ class component_db extends component
 	function getIncludes()
 	{
 		$includes = array();
-		if(class_exists('PDO'))
+		if(class_exists('PDO') && use_pdo ) {
 			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
-		else
-		{
+		} else	{
 			$includes['db'] = 'DB.php';
 			$includes['database'] =  $this->getBasePath() . "/database.php";
 		}
