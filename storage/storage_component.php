@@ -28,5 +28,13 @@ class component_storage extends component
 	function init()
 	{
 	}
+	
+	function getIncludes()
+	{
+		$includes = array();
+		$includes['storage'] = $this->getBasePath() . "/Storage.php";
+		$includes['filestorage'] = $this->getBasePath() . "/fileStorage.php";
+		$includes['sqlitestorage'] = $this->getBasePath() . "/SqliteStorage.php";
+	}
 }
 ?>

@@ -12,7 +12,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-define_once('filestorage_root', '');
 /**
 * @package storage
 */
@@ -75,4 +74,4 @@ class FileStorage extends Storage
 			return array();
 	}
 }
-?>
+

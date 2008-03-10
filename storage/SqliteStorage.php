@@ -56,4 +56,4 @@ class SqliteStorage extends Storage
 		return base64_decode(sql_fetch_one_cell("select data from file where path = '$path'"));
 	}
 }
-?>
+
