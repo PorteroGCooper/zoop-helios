@@ -85,7 +85,8 @@ class BarChart extends Chart
 	{
 		if(!isset($info['category']))
 			$info['category'] = 'default';
-		
+		if(isset($this->legendData[$info['category']]['value']))
+			$info['catValue'] = $this->legendData[$info['category']]['value'];
 		$simpleGroup = 0;
 		if(!isset($info['group']))
 		{
@@ -175,17 +176,24 @@ class BarChart extends Chart
 		$this->numDivisions = $numDivisions;
 	}
 	
-	function addLegendEntry($name, $text, $color)
+	function addLegendEntry($name, $text, $color, $value = false)
 	{
 		//echo "$name, $text, $color<Br>";
 		$this->legendData[$name]['text'] = $text;
 		$this->legendData[$name]['color'] = $color;
+		$this->legendData[$name]['value'] = $value;
 		$this->context->addColor($name, $color[0], $color[1], $color[2]);
 	}
 	
 	function drawLegend($x, $y, $width, $reallyDraw)
 	{
 		$legendHeight = 30;
+		
+		if(!$reallyDraw)
+			return $legendHeight;
+		
+		if(count($this->legendData) < 2)
+			return 0;
 		
 		//echo_r($this->groups);
 		
@@ -196,50 +204,28 @@ class BarChart extends Chart
 			//echo_r($thisLegendEntry);
 			if(!$this->getCatCount($name))
 				continue;
-			$newWidth = $this->context->getStringWidth($thisLegendEntry['text']) + 30;
-			if($curWidth + $newWidth >= $width)
-			{
-				$curWidth = 10;
-				$legendHeight += 15;
-			}
-			$curWidth += $newWidth;
+			$curWidth += $this->context->getStringWidth($thisLegendEntry['text']) + 30;
 		}
-		
-		if(!$reallyDraw)
-			return $legendHeight;
-		
-		if(count($this->legendData) < 2)
-			return 0;
 		
 		//	draw the box
 		$left = $x;
 		$top = $y;
+		$this->context->addRect($left, $top, $curWidth, $legendHeight);
 		
-		if($legendHeight == 30)
-			$this->context->addRect($left, $top, $curWidth, $legendHeight);
-		else
-			$this->context->addRect($left, $top, $width, $legendHeight);
-			
 		//	draw the text and color boxes
 		$curx = $left + 10;
 		foreach($this->legendData as $name => $thisLegendEntry)
 		{
 			if(!$this->getCatCount($name))
 				continue;
-			$newx = $this->context->getStringWidth($thisLegendEntry['text']) + 10;
-			if(abs($left - ($curx + $newx + 20)) >= $width)
-			{
-				$curx = $left + 10;
-				$top += 15;
-			}
+			
 			$this->context->setCurFillColor($name);
 			$this->context->addRect($curx, $top + 10, 10, 10, 'DF');
 			$curx += 20;
 			$this->context->addText($curx, $top + 20, $thisLegendEntry['text']);
-			$curx += $newx;
+			$curx += $this->context->getStringWidth($thisLegendEntry['text']) + 10;
+			
 		}
-		
-		
 		
 		return $legendHeight;
 	}
@@ -256,11 +242,9 @@ class BarChart extends Chart
 			//echo_r($thisLegendEntry);
 			if(!$this->getCatCount($name))
 				continue;
-			$newWidth = $this->context->getStringWidth($thisLegendEntry['text']) + 30;
-			if($curWidth + $newWidth > $this->context->width)
-				break;
-			$curWidth += $newWidth;
+			$curWidth += $this->context->getStringWidth($thisLegendEntry['text']) + 30;
 		}
+		
 		return $curWidth;
 	}
 	
@@ -373,7 +357,7 @@ class BarChart extends Chart
 		$totals = array();
 		foreach($this->groups as $thisGroup)
 			$totals[] = $thisGroup->getTotal();
-		return max($totals);
+		return empty($totals) ? 0 : max($totals);
 	}
 	
 	function getBiggestItemValue()

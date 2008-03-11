@@ -245,9 +245,9 @@ class gui extends Smarty
 	*/
 	function assign($tpl_var, $value = null)
 	{
-			if ($tpl_var != '') {
-				$this->_tpl_vars[$tpl_var] = $value;
-			}
+		if ($tpl_var != '') {
+			$this->_tpl_vars[$tpl_var] = $value;
+		}
 	}
 
 	/**

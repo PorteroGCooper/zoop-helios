@@ -52,10 +52,7 @@ class PieChart extends Chart
 				$url = isset($thisSlice['url']) ? $thisSlice['url'] : NULL;
 				$this->context->addRect($curx, $cury, 10, 10, 'DF', $url);
 				
-				if($total > 0)
-					$percentage = round($thisSlice['value'] * 100 / $total, 1);
-				else
-					$percentage = 0;
+				$percentage = round($thisSlice['value'] * 100 / $total, 1);
 				
 				$this->context->addText($curx + 20, $cury + 10, "$percentage%");
 				$this->context->addText($curx + 70, $cury + 10, $thisSlice['text']);
@@ -139,7 +136,7 @@ class PieChart extends Chart
 			$thisSliceInfo->percentage = round($thisSlice['value'] * 100 / $total, 1);
 			if( isset($thisSlice['url']) )
 				$thisSliceInfo->url = $thisSlice['url'];
-			$sliceInfo[$name] = $thisSliceInfo;
+			$sliceInfo[$name] = CloneObject($thisSliceInfo);
 
 			//	move on to the next slice
 			$curTheta += $deltaTheta;
@@ -153,14 +150,11 @@ class PieChart extends Chart
 		$textRects = array();
 		
 		//	draw each slice
-		$i = 0;
 		foreach($sliceOrders as $name => $dist)
 		{
 			//if($name == 'color1')
-			
 			$thisSliceInfo = $sliceInfo[$name];
-			if($thisSliceInfo->sTheta == $thisSliceInfo->eTheta)
-				continue;
+			
 			//	we could do adjustments on a per slice basis to pull slices out to hilite them
 			$centerx = $cx;
 			$centery = $cy;
@@ -169,7 +163,6 @@ class PieChart extends Chart
 			{
 				//	set the fill color for this slice
 				$this->context->setCurFillColor("color$name");
-				//$this->context->setCurLineColor("color$name");
 			}
 
 			//	draw the 3D stuff
@@ -178,9 +171,13 @@ class PieChart extends Chart
 				if($reallyDraw)
 				{
 					//	draw the outside face of each slice
-					//echo_r($thisSliceInfo);
-					$this->context->addCylinderSlice($centerx, $centery, $ellipseWidth, $ellipseHeight, $thisSliceInfo->sTheta, 
-														$thisSliceInfo->eTheta, $this->depth, 'DF');
+					if($thisSliceInfo->sTheta <= 180 && $thisSliceInfo->eTheta >= 0)
+					{
+						$sTheta = $thisSliceInfo->sTheta >= 0 ? $thisSliceInfo->sTheta : 0;
+						$eTheta = $thisSliceInfo->eTheta <= 180 ? $thisSliceInfo->eTheta : 180;
+						$this->context->addCylinderSlice($centerx, $centery, $ellipseWidth, $ellipseHeight, $sTheta, 
+															$eTheta, $this->depth, 'DF');
+					}
 				}
 			}
 			
@@ -246,11 +243,6 @@ class PieChart extends Chart
 			
 			//if($reallyDraw)
 			//	$this->context->addText($ellipsex, $ellipsey, $labelText);
-			
-			//if($i >= 3)
-			//	break;
-			
-			$i++;
 		}
 		
 		if($reallyDraw)
