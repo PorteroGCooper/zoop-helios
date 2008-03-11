@@ -440,10 +440,10 @@
 						$GLOBALS['current_function'] = $funcName;
 						global $logpath;
 						$logpath[] = "$curPath/post";
-						$this->initPages($inPath, $gUrlVars);
-						$tmp = $this->$funcName($inPath, $gUrlVars);
-						$this->closePages($inPath, $gUrlVars);
-						$this->closePosts($inPath, $gUrlVars);
+						$this->initPages($inPath, $GLOBALS['gUrlVars']);
+						$tmp = $this->$funcName($inPath, $GLOBALS['gUrlVars']);
+						$this->closePages($inPath, $GLOBALS['gUrlVars']);
+						$this->closePosts($inPath, $GLOBALS['gUrlVars']);
 						return $tmp;
 					}
 					else if(method_exists($this, "page" . $curPath))
@@ -451,10 +451,10 @@
 						global $logpath;
 						$logpath[] = "$curPath/post";
 						//$funcName = "page" . $curPAth;
-						$this->initPages($inPath, $gUrlVars);
+						$this->initPages($inPath, $GLOBALS['gUrlVars']);
 						//$this->$funcName($inPath);
-						$this->closePages($inPath, $gUrlVars);
-						$this->closePosts($inPath, $gUrlVars);
+						$this->closePages($inPath, $GLOBALS['gUrlVars']);
+						$this->closePosts($inPath, $GLOBALS['gUrlVars']);
 						redirect($_SERVER["REQUEST_URI"]);
 					}
 				}
@@ -464,10 +464,10 @@
 					$logpath[] = "$curPath/get";
 	   				$funcName = "page" . $curPath;
 					$GLOBALS['current_function'] = $funcName;
-					$this->initPages($inPath, $gUrlVars);
+					$this->initPages($inPath, $GLOBALS['gUrlVars']);
 					$tmp = $this->$funcName($inPath);
 
-					$this->closePages($inPath, $gUrlVars);
+					$this->closePages($inPath, $GLOBALS['gUrlVars']);
 					return( $tmp );
 				}
 				return false;
@@ -1046,7 +1046,7 @@
 				return substr ( $tplName, 1 );
 
 			if ( !isset ( $this->templateBase ) )
-				$this->templateBase = "zones" . DIRECTORY_SEPARATOR . substr ( strstr ( get_class ( $this ), '_' ), 1 );
+				$this->templateBase = substr ( strstr ( get_class ( $this ), '_' ), 1 );
 			return $this->templateBase . '/' . $tplName;
 		}
 

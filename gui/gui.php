@@ -176,7 +176,7 @@ class gui extends Smarty
 	 */
 	function fetch($tpl_file, $cache_id = null, $compile_id = null)
 	{
-		if (defined("gui_look") ) {
+		if (defined("gui_look") && gui_look != '') {
 			$tpl_file = gui_look . "/" . $tpl_file;
 		}
 		
@@ -230,7 +230,7 @@ class gui extends Smarty
 	 */
 	function _smarty_include($params)
 	{
-		if (defined("gui_look") ) {
+		if (defined("gui_look") && gui_look != '') {
 			$params['smarty_include_tpl_file'] = gui_look . "/" . $params['smarty_include_tpl_file'];
 		}
 
