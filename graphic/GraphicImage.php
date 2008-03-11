@@ -45,7 +45,10 @@ class GraphicImage extends GraphicObject
 	function draw($x, $y, $width, $reallyDraw)
 	{
 		//assert($this->file);
-		$this->context->addImage($this->getFile(), $x, $y, $this->getWidth(), $this->getHeight());
+		if($reallyDraw)
+			$this->context->addImage($this->getFile(), $x, $y, $this->getWidth(), $this->getHeight());
+		
+		return $this->getHeight();
 	}
 }
 ?>

@@ -26,16 +26,16 @@
  */
 class component_auth extends component
 {
+	function component_auth()
+	{
+		$this->requireComponent('db');
+	}
+	
 	function getIncludes()
 	{
 		return array(
 				"auth" => $this->getBasePath() . "/auth.php"
 		);
-	}
-
-	function getRequiredComponents()
-	{
-		return array('db');
 	}
 }
 ?>

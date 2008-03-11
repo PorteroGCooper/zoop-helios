@@ -63,6 +63,11 @@ class GraphicObject
 		return NULL;
 	}
 	
+	function getDocument()
+	{
+		return $this->getAncestor('GraphicDocument');
+	}
+	
 	function setWidth($width)
 	{
 		$this->width = $width;

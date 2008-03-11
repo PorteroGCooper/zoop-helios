@@ -6,12 +6,14 @@ class GraphicDocument extends GraphicDiv
 	var $pageNumberStartPage;
 	var $pageNumberLeft;
 	var $pageNumberTop;
+	var $pageNumber;
 	
 	function GraphicDocument(&$context)
 	{
 		$this->GraphicDiv($context);
 		$this->width = $context->getPageWidth();
 		$this->height = $context->getPageHeight();
+		$this->pageNumber = 1;
 	}
 	
 	function numberPages($startPage, $left, $top)
@@ -33,7 +35,7 @@ class GraphicDocument extends GraphicDiv
 			if($pageNum > 1)
 				$this->breakPage();
 			
-//			echo "new page $pageNum<br>";
+			// echo "new page $pageNum<br>";
 			
 //			echo "new page!<br><br>";
 			/*
@@ -46,6 +48,9 @@ class GraphicDocument extends GraphicDiv
 				}
 			}
 			*/
+			
+			$this->pageNumber = $pageNum;
+			// echo "setting page number = " . $this->pageNumber . '<br>';
 			
 			GraphicDiv::draw($x, $y, $this->width, $reallyDraw);
 //			echo 'document start line ' . $this->startLine . '<br>';
@@ -67,6 +72,12 @@ class GraphicDocument extends GraphicDiv
 			$pageNum++;
 			
 		}
+	}
+	
+	function getPageNumber()
+	{
+		// echo "getting page number = " . $this->pageNumber . '<br>';
+		return $this->pageNumber;
 	}
 	
 	function breakPage()

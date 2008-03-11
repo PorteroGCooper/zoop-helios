@@ -14,7 +14,8 @@ class ImageContext extends GraphicContext
 		
 		//	this should be in a config file
 		if(app_status == 'dev')
-			$this->fontFile = "/usr/share/fonts/bitstream-vera/Vera.ttf";
+			//$this->fontFile = "/home/rick/data/fonts/verdana.ttf";
+			$this->fontFile = "C:\Windows\fonts\verdana.ttf";
 		else
 			$this->fontFile = "/home/apps/data/fonts/verdana.ttf";
 		

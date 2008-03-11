@@ -4,6 +4,7 @@ class SmartPdf extends SmartGraphic
 	var $pageNumberStartPage;
 	var $pageNumberLeft;
 	var $pageNumberTop;
+	var $margins;
 	
 	function SmartPdf($createContext = 1, $dimensions = 'tall')
 	{
@@ -14,6 +15,11 @@ class SmartPdf extends SmartGraphic
 			$context = &new FPdfContext($dimensions);
 			$this->setContext($context);
 		}
+	}
+	
+	function setSideMargin($side, $width)
+	{
+		$this->margins[$side] = $width;
 	}
 	
 	function numberPages($startPage, $left, $top)
@@ -27,7 +33,13 @@ class SmartPdf extends SmartGraphic
 	{
 		//	this is really something that you should be able to set in the xml file
 		//$rootContainer->setMargin(72);
-		$rootContainer->setMargin(24);
+		if(!isset($this->margins))
+			$rootContainer->setMargin(36);
+		else
+		{
+			foreach($this->margins as $side => $width)
+				$rootContainer->setSideMargin($side, $width);
+		}
 		
 		if($this->pageNumberStartPage)
 		{

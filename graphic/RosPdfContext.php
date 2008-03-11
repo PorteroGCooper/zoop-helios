@@ -138,8 +138,8 @@ class RosPdfContext extends GraphicContext
 	//	right now this is limited to jpegs
 	function addImage($file, $x, $y, $w=0, $h=0)
 	{
-		$type = exif_imagetype($file);
-		if($type == IMAGETYPE_JPEG)
+		//$type = exif_imagetype($file);
+		if(true || $type == IMAGETYPE_JPEG)
 		{
 			if($h)
 				$height = $h;

@@ -23,6 +23,15 @@
  */
 class component_forms extends component
 {
+	function component_forms()
+	{
+		$this->requireComponent('db');
+		$this->requireComponent('gui');
+		$this->requireComponent('guicontrol');
+		$this->requireComponent('cache');
+		$this->requireComponent('validate');
+	}
+	
 	function getIncludes()
 	{
 		$file = $this->getBasePath();
@@ -36,10 +45,6 @@ class component_forms extends component
 				"xml_serializer" => "XML/Serializer.php"
 		);
 	}
-	 
-	function getRequiredComponents()
-	{
-		return array('db', 'gui', 'guicontrol', 'cache', 'validate');
-	}
 }
-?>
+
+

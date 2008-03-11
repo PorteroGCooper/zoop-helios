@@ -26,9 +26,11 @@
  */
 class component_graphic extends component
 {
-	function getRequiredComponents()
+	function component_graphic()
 	{
-		return array('xml', 'fpdf', 'pdf');
+		$this->requireComponent('xml');
+		$this->requireComponent('fpdf');
+		$this->requireComponent('pdf');
 	}
 	
 	function getIncludes()

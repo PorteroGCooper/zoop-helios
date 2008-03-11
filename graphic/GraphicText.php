@@ -1,4 +1,4 @@
-<?
+<?php
 class GraphicText extends GraphicObject
 {
 	var $height;
@@ -61,15 +61,21 @@ class GraphicText extends GraphicObject
 		$this->hexColor = $hexColor;
 	}
 	
+	function getSubstitutions()
+	{
+		$document = $this->getDocument();
+		$text = str_replace('%page_number%', $document->getPageNumber(), $this->text);
+		return $text;
+	}
+	
 	function draw($x, $y, $width, $reallyDraw)
 	{
 		if($reallyDraw)
 		{
-			$this->context->addText($x, $y, $this->text, array('angle' => $this->angle));
+			$text = $this->getSubstitutions();
+			$this->context->addText($x, $y, $text, array('angle' => $this->angle));
 		}
 		
 		return 10;
 	}
 }
-
-?>

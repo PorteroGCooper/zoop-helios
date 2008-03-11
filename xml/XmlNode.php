@@ -172,17 +172,18 @@ class XmlNode
 		{
 			if( isset($this->nodeData->attributes[$attributeName]) )
 				return $this->nodeData->attributes[$attributeName];
-			else
-				trigger_error('attribute does not exist: ' . $attributeName);
 		}
 		else
 		{
-			$att = $this->nodeData->attributes->getNamedItem($attributeName);
-			if( !is_null($att) )
-				return $att->value;
-			else
-				trigger_error('attribute does not exist: ' . $attributeName);
+			if($this->nodeData->attributes !== null)
+			{
+				$att = $this->nodeData->attributes->getNamedItem($attributeName);
+				if( !is_null($att) )
+					return $att->value;
+				
+			}
 		}
+		trigger_error('attribute does not exist: ' . $attributeName);
 	}
 	
 	function getAttributes()
@@ -194,9 +195,12 @@ class XmlNode
 		else
 		{
 			$atts = array();
-			foreach($this->nodeData->attributes as $key => $val)
+			if($this->nodeData->attributes)
 			{
-				$atts[$key] = $val->value;
+				foreach($this->nodeData->attributes as $key => $val)
+				{
+					$atts[$key] = $val->value;
+				}
 			}
 			
 			return $atts;

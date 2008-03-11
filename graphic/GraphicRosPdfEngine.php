@@ -1,9 +1,9 @@
-<?
-class GraphicRosPdfEngine extends CPdf
+<?php
+class GraphicRosPdfEngine extends RotatePdf
 {
 	function GraphicRosPdfEngine($bounds)
 	{
-		$this->CPdf($bounds);
+		$this->RotatePdf($bounds);
 	}
 	
 	function setCurrentFont()
@@ -24,4 +24,3 @@ class GraphicRosPdfEngine extends CPdf
 		$this->objects[$this->currentContents]['c'] .= " ";
 	}
 }
-?>

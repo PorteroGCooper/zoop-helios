@@ -18,9 +18,10 @@
 */
 class component_spell extends component
 {
-	function getRequiredComponents()
+	function component_spell()
 	{
-		return array('db', 'gui');
+		$this->requireComponent('db');
+		$this->requireComponent('gui');
 	}
 
 	function getIncludes()

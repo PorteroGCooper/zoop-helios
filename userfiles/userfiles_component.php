@@ -20,9 +20,9 @@
 */
 class component_userfiles extends component
 {
-	function getRequiredComponents()
+	function component_userfiles()
 	{
-		return array('db');
+		$this->requireComponent('db');
 	}
 }
 ?>

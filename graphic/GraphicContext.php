@@ -37,6 +37,7 @@ class GraphicContext
 		$this->setCurFillColor('gray');
 		$this->setCurTextColor('black');
 		$this->lineColorStack = array();
+		$this->fillColorStack = array();
 	}
 	
 	//	it just so happens these are always implemented the same way so far
@@ -101,6 +102,20 @@ class GraphicContext
 		//	is this right?  shouldn't we be setting it to what is on the top AFTER we pop the stack
 		assert(count($this->lineColorStack) > 0);
 		$this->setCurLineColor(array_pop($this->lineColorStack));
+	}
+	
+	function pushFillColor($color)
+	{
+		array_push($this->fillColorStack, $this->curFillColor);
+		$this->setCurFillColor($color);
+	}
+	
+	function popFillColor()
+	{
+		//	is this right?  shouldn't we be setting it to what is on the top AFTER we pop the stack
+		// 	it is correct, because we push the previous color on the stack, not the new color.
+		assert(count($this->fillColorStack) > 0);
+		$this->setCurFillColor(array_pop($this->fillColorStack));
 	}
 	
 	function getPageWidth()

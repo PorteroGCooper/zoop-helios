@@ -25,9 +25,9 @@
 
 class component_chart extends component
 {
-	function getRequiredComponents()
+	function component_chart()
 	{
-		return array('graphic');
+		$this->requireComponent('graphic');
 	}
 	
 	function getIncludes()

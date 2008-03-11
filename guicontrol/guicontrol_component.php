@@ -25,9 +25,9 @@
  */
 class component_guicontrol extends component
 {
-	function getRequiredComponents()
+	function component_guicontrol()
 	{
-		return array('gui');		
+		$this->requireComponent('gui');
 	}
 
 	function getIncludes()

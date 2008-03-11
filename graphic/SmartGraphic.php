@@ -6,6 +6,7 @@ class SmartGraphic
 	var $divParsers;
 	var $parsers;
 	var $colors;
+	var $repeatStatics;
 	
 	function SmartGraphic()
 	{
@@ -13,6 +14,7 @@ class SmartGraphic
 		$this->divParsers = array();
 		$this->parsers = array();
 		$this->colors = array('white' => '#FFFFFF', 'black' => '#000000');
+		$this->repeatStatics = 0;
 	}
 	
 	function setSmarty(&$smarty)
@@ -30,6 +32,11 @@ class SmartGraphic
 		$this->smarty->assign($name, $value);
 	}
 	
+	function repeatStatics()
+	{
+		$this->repeatStatics = 1;
+	}
+	
 	function preProcessText($text)
 	{
 		return str_replace(chr(8), '', $text);
@@ -38,14 +45,13 @@ class SmartGraphic
 	function display($tplFile, $reallyDisplay = 1)
 	{
 		$xml = $this->smarty->fetch($tplFile);
-		
 		$xml = $this->preProcessText($xml);
 		
 		$xml = '<xml><content>' . $xml . '</content></xml>';
-		
-// 		echo_r($xml);
-//		echo_r(htmlentities($xml));
-//		die();
+		// header("Content-type: text/xml");
+ 		// echo_r($xml);
+		// echo_r(htmlentities($xml));
+		// die();
 		
 		$dom = new XmlDom();
 		$rootNode = $dom->parseText($xml);
@@ -58,6 +64,9 @@ class SmartGraphic
 		
 		$styleStack = &new GraphicTextStyleStack();
 		$rootContainer = new GraphicDocument($this->context);
+		
+		if($this->repeatStatics)
+			$rootContainer->redrawStatics();
 
 //		echo_r($rootContainer->context);
 		$this->initRootContainer($rootContainer);
@@ -205,7 +214,7 @@ class SmartGraphic
 	function isTableCellTag($tagName)
 	{
 		$tagName = strtolower($tagName);
-		if($tagName == 'td')
+		if($tagName == 'td' || $tagName == 'th')
 			return 1;
 		else
 			return 0;
@@ -313,7 +322,6 @@ class SmartGraphic
 			else
 				echo '&lt;' . $thisChild->getName() . '&gt;<br>';
 //*/
-			
 			if( isset($this->parsers[$tagName]) )
 			{
 				$this->parsers[$tagName]->handle($thisChild, $styleStack, $curContainer);
@@ -483,7 +491,9 @@ class SmartGraphic
 		if( $curNode->hasAttribute('rowSpacing') )
 			$newTable->setRowSpacing( $curNode->getAttribute('rowSpacing') );
 		if( $curNode->hasAttribute('breakable') )
+		{
 			$newTable->setBreakable( $curNode->getAttribute('breakable') ? 1 : 0 );
+		}
 		
 		//
 		//	handle the style tag if there is one
@@ -597,7 +607,7 @@ class SmartGraphic
 				$this->handleTableCellTag($thisChild, $styleStack, $newTableRow);
 			}
 			else if($thisChild->getName() !== '#text')
-				trigger_error("a table can only contain table rows");
+				trigger_error("a tablerow can only contain table cells");
 		}
 	}
 	
@@ -771,7 +781,14 @@ class SmartGraphic
 		if( $curNode->hasAttribute('width') )
 			$newRect->setWidth( $curNode->getAttribute('width') );
 		if( $curNode->hasAttribute('src') )
-			$newRect->setFile( app_dir . '/' . $curNode->getAttribute('src') );
+		{
+			$src = $curNode->getAttribute('src');
+			if($src[0] != '/')
+				$newRect->setFile( app_dir . '/' . $src );
+			else
+				$newRect->setFile($src);
+		}
+			
 		/*
 		if( $curNode->hasAttribute('lineWidth') )
 			$newRect->setLineWidth( $curNode->getAttribute('lineWidth') );
@@ -1024,7 +1041,7 @@ class SmartGraphic
 						switch($styleAttValue)
 						{
 							case 'static':
-							case 'container';
+							case 'container':
 								$newDiv->setPosition($styleAttValue);
 								break;
 							default:
@@ -1074,7 +1091,7 @@ class SmartGraphic
 								case 'bottom':
 								case 'left':
 								case 'right':
-									$newDiv->setSideBorder($nameParts[1], (float)$styleAttValue);
+									$newDiv->setSideBorder($nameParts[1], $styleAttValue);
 									break;
 							}
 						}

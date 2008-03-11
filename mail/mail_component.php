@@ -25,11 +25,11 @@
  */
 class component_mail extends component
 {
-	function getRequiredComponents()
+	function component_mail()
 	{
-		return array('gui');
+		$this->requireComponent('gui');
 	}
-
+	
 	function getIncludes()
 	{
 		return array( 'message' => $this->getBasePath() . "/message.php" );

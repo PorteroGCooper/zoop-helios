@@ -77,6 +77,8 @@ class GraphicList extends GraphicObject
 			
 //			echo "graphicList : draw ; $reallyDraw ; $height<br>";
 			
+			$this->context->pushLineColor('black');
+			$this->context->pushFillColor('black');
 			if($this->bulletType != NULL)
 			{
 				if($reallyDraw)
@@ -102,6 +104,8 @@ class GraphicList extends GraphicObject
 					}					
 				}
 			}
+			$this->context->popLineColor();
+			$this->context->popFillColor();
 			$cury += $height;
 			$itemNum++;
 		}

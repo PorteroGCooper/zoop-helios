@@ -67,22 +67,33 @@ class GraphicTableRow extends GraphicObject
 	
 	function getColWidth($colNum)
 	{
-		if( $this->parent->hasColWidth($colNum) )
-			return $this->parent->getColWidth($colNum);
-		else
+		$answer = 0;
+		for($i = $colNum; $i < $colNum + $this->cells[$colNum]->getColSpan(); $i++)
 		{
-			$blankCols = 0;
-			$accountedFor = 0;
-			for($curCol = 0; $curCol < count($this->cells); $curCol++)
+			if( $this->parent->hasColWidth($i) )
+				$answer += $this->parent->getColWidth($i);
+			else
 			{
-				if( $this->parent->hasColWidth($curCol) )
-					$accountedFor += $this->parent->getColWidth($curCol);
+				$blankCols = 0;
+				$accountedFor = 0;
+				for($curCol = 0; $curCol < count($this->cells); $curCol++)
+				{
+					if( $this->parent->hasColWidth($curCol) )
+						$accountedFor += $this->parent->getColWidth($curCol);
+					else
+						$blankCols += $this->cells[$curCol]->getColSpan();
+				}
+				//echo "accounted for = $accountedFor : colnum = $colNum : blank cols = $blankCols<br>";
+				if($blankCols == 0)
+				{
+					//die('here');
+					$answer += $this->parent->getWidth() - $accountedFor;
+				}
 				else
-					$blankCols++;
+					$answer += ($this->parent->getWidth() - $accountedFor) / $blankCols;
 			}
-//			echo "accounted for = $accountedFor : colnum = $colNum : blank cols = $blankCols<br>";
-			return ($this->parent->getWidth() - $accountedFor) / $blankCols;
 		}
+		return $answer;
 	}
 	
 	function setColWidth($colNum, $width)
@@ -148,7 +159,6 @@ class GraphicTableRow extends GraphicObject
 			$curCol++;
 		}
 		
-		
 		//	figure out the height of the row
 		$tallest = 0;
 		$curCol = 0;
@@ -181,20 +191,19 @@ class GraphicTableRow extends GraphicObject
 			$colWidth = $this->getColWidth($curCol);
 			
 			$thisCell = &$this->cells[$cellKey];
-			
 			/*
 			//	I'm pretty sure that this colspan stuff doesn't actually work yet
 			$colSpan = $thisCell->getColSpan();
 			if($colSpan > 1)
 			{
-				$colWidth = 0;
+				//$colWidth = 0;
 				
-				for($i = 0; $i < $colSpan; $i++)
+				for($i = 1; $i < $colSpan; $i++)
 				{
 					$colWidth += $this->getColWidth($curCol + $i);
 				}
 			}
-			*/
+			//*/
 			
 			//$thisy = $y + (($tallest - $heights[$curCol]) / 2);
 			$thisy = $y;

@@ -17,14 +17,15 @@ class component_sequence extends component
 {
 	function component_sequence()
 	{
-		include(dirname(__file__) . "/SequenceData.php");
-		include(dirname(__file__) . "/SequenceParser.php");
-		include(dirname(__file__) . "/ZoneSequence.php");
+		$this->requireComponent('session');
+		$this->requireComponent('xml');
 	}
-
-	function getRequiredComponents()
+	
+	function getIncludes()
 	{
-		return array('session', 'xml');
+		return array( 'sequencedata' => $this->getBasePath() . "/SequenceData.php",
+					'sequenceparser' => $this->getBasePath() . "/SequenceParser.php",
+					'zonesequence' => $this->getBasePath() . "/zonesequence.php");
 	}
 
 	function init()

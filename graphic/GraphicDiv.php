@@ -25,7 +25,7 @@ class GraphicDiv extends GraphicObject
 	var $topIndent;
 	var $bottomIndent;
 	var $brokenIntoLines;
-	var $staticsDrawn;
+	var $staticsDrawn, $redrawStatics;
 	
 	function GraphicDiv(&$context)
 	{
@@ -42,6 +42,7 @@ class GraphicDiv extends GraphicObject
 		$this->breakable = 1;
 		$this->brokenIntoLines = 0;
 		$this->staticsDrawn = 0;
+		$this->redrawStatics = 0;
 	}
 	
 	function getUnwrappedWidth()
@@ -60,6 +61,10 @@ class GraphicDiv extends GraphicObject
 		return $max;
 	}
 	
+	function redrawStatics()
+	{
+		$this->redrawStatics = 1;
+	}
 	function setBottomIndent($indent)
 	{
 		$this->bottomIndent = $indent;
@@ -120,8 +125,10 @@ class GraphicDiv extends GraphicObject
 		return $this->bgColor;
 	}
 	
-	function getBorderColor()
+	function getBorderColor($side)
 	{
+		if(is_array($this->borderColor))
+			return $this->borderColor[$side];
 		return $this->borderColor;
 	}
 	
@@ -207,8 +214,23 @@ class GraphicDiv extends GraphicObject
 		if(gettype($this->border) != 'array')
 			$this->border = array('left' => $this->border, 'right' => $this->border,
 									'bottom' => $this->border, 'top' => $this->border);
-		
-		$this->border[$side] = $width;
+		if(!is_numeric($width))
+		{
+			$width = explode(' ', $width);
+			$color = $width[0];
+			$width = (float)$width[1];
+			$this->setSideBorderColor($side, $color);
+		}
+		$this->border[$side] = (float)$width;
+	}
+	
+	function setSideBorderColor($side, $color)
+	{
+		$rgb = HexToRgb($color);
+		$this->context->addColor($color, $rgb[0], $rgb[1], $rgb[2]);
+		if(!is_array($this->borderColor))
+			$this->borderColor = array('top' => $this->borderColor, 'bottom' => $this->borderColor, 'left' => $this->borderColor, 'right' => $this->borderColor);
+		$this->borderColor[$side] = $color;
 	}
 	
 	function getSideBorder($side)
@@ -553,13 +575,14 @@ class GraphicDiv extends GraphicObject
 //		echo "drawing div $reallyDraw<br>";
 //		echo_backtrace();		
 //		echo_r(array_keys($this->children));
-		if(!$this->staticsDrawn && $reallyDraw)
+		if((!$this->staticsDrawn || $this->redrawStatics) && $reallyDraw)
 		{
 			//	loop through all of the children.  If they are not statically positioned then just draw them
 			foreach(array_keys($this->children) as $childKey)
 			{
 				//	get a reference to this child
 				$thisChild = &$this->children[$childKey];
+				
 //				echo get_class($thisChild) . " $reallyDraw ";
 //				echo $thisChild->getPosition();
 //				echo '<br>';
@@ -576,9 +599,7 @@ class GraphicDiv extends GraphicObject
 						break;
 					case 'container':
 						if($reallyDraw)
-						{
 							$thisChild->draw($x + $thisChild->getLeft(), $y + $thisChild->getTop(), $width, $reallyDraw);
-						}
 						continue 2;
 						break;
 					case 'static':
@@ -602,9 +623,10 @@ class GraphicDiv extends GraphicObject
 		{
 			if($reallyDraw)
 			{
-				$this->context->setCurLineColor($this->getBorderColor());
+				$this->context->pushLineColor($this->getBorderColor('top'));
 				//$this->context->addLine($x, $cury, $x + $width, $cury, $topBorderWidth);
 				$this->context->addHorizLine($x, $x + $width, $cury, $topBorderWidth);
+				$this->context->popLineColor();
 			}
 			
 			$cury += $topBorderWidth;
@@ -731,7 +753,9 @@ class GraphicDiv extends GraphicObject
 			if($reallyDraw)
 			{
 				//$this->context->addLine($x, $cury, $x + $width, $cury, $bottomBorderWidth);
+				$this->context->pushLineColor($this->getBorderColor('bottom'));
 				$this->context->addHorizLine($x, $x + $width, $cury, $bottomBorderWidth);
+				$this->context->popLineColor();
 			}
 			
 			$cury += $bottomBorderWidth;
@@ -743,7 +767,9 @@ class GraphicDiv extends GraphicObject
 			if($reallyDraw)
 			{
 				//$this->context->addLine($x, $y, $x, $cury, $leftBorderWidth);
+				$this->context->pushLineColor($this->getBorderColor('left'));
 				$this->context->addVertLine($y, $cury, $x, $leftBorderWidth);
+				$this->context->popLineColor();
 			}
 		}
 		
@@ -753,7 +779,9 @@ class GraphicDiv extends GraphicObject
 			if($reallyDraw)
 			{
 				//$this->context->addLine($x + $width, $y, $x + $width, $cury, $rightBorderWidth);
+				$this->context->pushLineColor($this->getBorderColor('right'));
 				$this->context->addVertLine($y, $cury, $x + $width - $leftBorderWidth, $leftBorderWidth);
+				$this->context->popLineColor();
 			}
 		}
 		

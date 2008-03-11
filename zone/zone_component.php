@@ -26,15 +26,14 @@
  */
 class component_zone extends component
 {
-	function getRequiredComponents()
+	function component_zone()
 	{
-		$rc[] = 'app';
+		$this->requireComponent('app');
 		if(!defined('zone_saveinsession')  || zone_saveinsession) {
-			$rc[] = 'session';
+			$this->requireComponent('session');
 		}
-		return $rc;
 	}
-	
+		
 	function getIncludes()
 	{
 		return array(
