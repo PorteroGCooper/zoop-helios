@@ -195,25 +195,9 @@ class database
 	}
 		
 	//	this should be done differently!!!!!!!!!!!
-	function insert($query, $sequence = NULL)
+	function insert($query)
 	{
 		$result = $this->query($query);
-		if($this->dsn['phptype'] == 'pgsql')
-		{
-			if($sequence !== NULL)
-			{
-				return $this->db->lastInsertId($sequence);
-			}
-			else
-			{
-				$id = $this->db->lastInsertId();
-				return $id;
-			}
-		}
-		else
-		{
-			return $this->db->lastInsertId();
-		}
 	}
 
 	function fetch_sequence( $sequence )

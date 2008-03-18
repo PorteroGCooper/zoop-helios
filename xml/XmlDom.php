@@ -23,7 +23,7 @@ class XmlDom
 		{
 			$this->xmlTree = new DOMDocument();
 			$this->xmlTree->loadXML($xml);
-			return new XmlNode($this->xmlTree->firstChild);
+			return new XmlNode($this->xmlTree->documentElement);
 		}
 	}
 	

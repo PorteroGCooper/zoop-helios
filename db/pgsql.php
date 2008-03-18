@@ -59,12 +59,20 @@
   		return $return;
 	}
 
-	function sql_insert($query, $sequence)
+	function sql_insert($query, $sequence = NULL)
 	{
 		sql_connect();
 		global $defaultdb;
-		$return = $defaultdb->insert($query, $sequence);
-  		//$return = $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)");
+		$return = $defaultdb->insert($query);
+		if($sequence !== NULL)
+		{
+			return $this->fetch_one_cell("SELECT currval('\"$sequence\"'::text)"); 
+		}
+		else
+		{
+			$id = $this->fetch_one_cell('select lastval()');
+			return $id;
+		}
   		return $return;
 	}
 
