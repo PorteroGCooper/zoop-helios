@@ -13,11 +13,11 @@ class ImageContext extends GraphicContext
 		$this->GraphicContext($width, $height);
 		
 		//	this should be in a config file
-		if(app_status == 'dev')
-			//$this->fontFile = "/home/rick/data/fonts/verdana.ttf";
-			$this->fontFile = "C:\Windows\fonts\verdana.ttf";
+		if(defined('graphic_image_fontfile'))
+			$this->fontFile = graphic_image_fontfile;
 		else
-			$this->fontFile = "/home/apps/data/fonts/verdana.ttf";
+			trigger_error('please define "graphic_image_fontfile" with the full path to a truetype font file');
+		
 		
 		
 		//	it defaults to being filled with black, fill it to white
@@ -42,24 +42,6 @@ class ImageContext extends GraphicContext
 	
 	function getStringWidth($string)
 	{
-		/*
-		$str = '20'; //'2005 Overall Competency Rating Distibutions';
-		$sum = 0;
-		$size = 100;
-		for($i = 0; $i < strlen($str); $i++)
-		{
-			$box = imagettfbbox($size, 0, $this->fontFile, $str[$i] . ' ');
-			//echo_r($str[$i] . ' ' . ($box[2] - $box[0]));
-			$sum += $box[2] - $box[0];
-		}
-		echo_r($sum);
-		
-		$box = imagettfbbox($size, 0, $this->fontFile, $str);
-		echo_r(($box[2] - $box[0]));
-		
-		echo_r(($box[2] - $box[0]) - $sum);
-		*/
-		
 		$box = imagettfbbox($this->textSize, 0, $this->fontFile, $string);
 		return $box[2] - $box[0];
 	}
