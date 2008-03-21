@@ -114,12 +114,14 @@ class zoop
 	 * @access public
 	 * @return void
 	 */
-	function addObject($name)
+	function addObject($name, $file = '')
 	{
-		$file = $this->appPath . "/objects/$name.php";
+		if(!empty($file)) {
+			$file = $this->appPath . "/objects/$file.php";
+		} else {
+			$file = $this->appPath . "/objects/$name.php";
+		}
 		$this->addInclude($name, $file);
-		//if (file_exists($file))
-		//	include($file);
 	}
 
 	/**
