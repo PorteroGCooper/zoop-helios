@@ -117,7 +117,7 @@ class zoop
 	function addObject($name, $file = '')
 	{
 		if(!empty($file)) {
-			$file = $this->appPath . "/objects/$file.php";
+			$file = $this->appPath . "/objects/$file";
 		} else {
 			$file = $this->appPath . "/objects/$name.php";
 		}
