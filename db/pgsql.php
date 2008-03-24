@@ -66,11 +66,11 @@
 		$return = $defaultdb->insert($query);
 		if($sequence !== NULL)
 		{
-			return $this->fetch_one_cell("SELECT currval('\"$sequence\"'::text)"); 
+			return $defaultdb->fetch_one_cell("SELECT currval('\"$sequence\"'::text)"); 
 		}
 		else
 		{
-			$id = $this->fetch_one_cell('select lastval()');
+			$id = $defaultdb->fetch_one_cell('select lastval()');
 			return $id;
 		}
   		return $return;
