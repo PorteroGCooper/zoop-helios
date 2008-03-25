@@ -70,6 +70,7 @@ class ChartParser
 						break;
 					default:
 						$object = &new VerticalBarChart($context);
+						$object->setGrouping($grouping);
 						break;
 				}
 				

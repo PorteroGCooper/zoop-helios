@@ -9,6 +9,7 @@ class VerticalBarChart extends BarChart
 		$this->setPlotMargin('right', 0);
 		$this->setPlotMargin('top', 30);
 		$this->setPlotMargin('bottom', 50);
+		$this->grouping = 'simple';
 	}
 
 	function drawAxis($x, $y, $width, $reallyDraw)
@@ -104,11 +105,14 @@ class VerticalBarChart extends BarChart
 	function drawData($x, $y, $width, $reallyDraw)
 	{
 		$curx = $this->plotLeft + $this->dataEntryTopMargin;
-		
+		$grouping = $this->grouping;
 		foreach($this->groups as $name => $thisGroup)
 		{
 			//	draw the text label
-			$groupWidth = $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			if($grouping != 'side')
+				$groupWidth = $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			else
+				$groupWidth = $this->dataEntryThickness * count($thisGroup->getEntries()) + $this->dataEntryMiddleMargin;
 			$textMargin = 2;
 			$this->drawTextBox($curx - (($this->dataEntryMiddleMargin - ($textMargin / 2))/2), 
 								$this->plotBottom + 4, $groupWidth - $textMargin, $thisGroup->getText(), 
@@ -140,19 +144,31 @@ class VerticalBarChart extends BarChart
 										$curx + $this->depthx + $this->dataEntryThickness, $cury - $this->depthy,
 										$curx + $this->dataEntryThickness, $cury), 'DF', $url);
 				}
-				
-				$cury -= $height;
+				if($grouping != 'side')
+					$cury -= $height;
+				else
+					$curx += $this->dataEntryThickness;
 			}
 			
 			//	draw the text that follows each box
 			$texty = isset($this->depthy) ? $cury - $this->depthy - 10 : $cury - 10;
-			
-			if(!$this->getGrandTotal())
-				$this->context->addText($curx + 10, $texty, '0%');
+			if($grouping != 'side')
+			{
+				if(!$this->getGrandTotal())
+					$this->context->addText($curx, $texty, '0%');
+				else
+					$this->context->addText($curx, $texty, Round(($this->groups[$name]->getTotal() / $this->getGrandTotal()) * 100, 1) . '%');
+				
+				$curx += $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			}
 			else
-				$this->context->addText($curx + 10, $texty, Round(($this->groups[$name]->getTotal() / $this->getGrandTotal()) * 100, 1) . '%');
-			
-			$curx += $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			{
+				$curx += $this->dataEntryMiddleMargin;
+			}
+			if($curx - $x  > $width)
+			{
+				return true;
+			}
 		}
 	}
 	
@@ -183,12 +199,38 @@ class VerticalBarChart extends BarChart
 		$totalBarLength = $this->dataEntryBarSpaceRatio * $totalSpace;
 		$totalSpaceLength = $totalSpace - $totalBarLength;
 		
-		//	this will also need to change for real grouped charts
-		$nEntries = count($this->groups);
+		if($this->grouping == 'side')
+		{
+			$nEntries = 0;
+			$nMargins = 1;
+			foreach($this->groups as $group)
+			{
+				$nEntries += count($group->getEntries());
+				$nMargins++;
+			}
+		}
+		else
+		{
+			$nEntries = count($this->groups);
+			$nMargins = $nEntries + 1;
+		}
 		
 		$this->dataEntryThickness = $totalBarLength / $nEntries;
-		$this->dataEntryMiddleMargin = $totalSpaceLength / ($nEntries + 1);
+		$this->dataEntryMiddleMargin = $totalSpaceLength / ($nMargins);
 		$this->dataEntryTopMargin = $this->dataEntryMiddleMargin;
+	}
+	
+	function setGrouping($grouping)
+	{
+		$this->grouping = $grouping;
+	}
+	
+	function getDataMax()
+	{
+		if($this->grouping == 'simple')
+			return $this->getBiggestGroupTotal();
+		else
+			return $this->getBiggestItemValue();
 	}
 }
 ?>
