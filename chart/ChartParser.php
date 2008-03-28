@@ -77,6 +77,14 @@ class ChartParser
 				if($node->hasAttribute('barcolor'))
 					$object->setBarColor($node->getAttribute('barcolor'));
 				break;
+			case 'linechart':
+				$object = &new LineChart($context);
+				if($node->hasAttribute('grouping'))
+				{
+					$grouping = $node->getAttribute('grouping');
+					$object->setGroupType($grouping);
+				}
+				break;
 		}
 		
 		return $object;
