@@ -63,6 +63,8 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
 	global $silentErrors;
+	if(!is_array($silentErrors))
+		$silentErrors = array($silentErrors);
 	$type = GetErrorType($errno);
 	
 	if($type == 'Unknown')
