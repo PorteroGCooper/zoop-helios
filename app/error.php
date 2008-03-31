@@ -62,36 +62,30 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
+	global $silentErrors;
 	$type = GetErrorType($errno);
 	
 	if($type == 'Unknown')
 		return;
-
-// SPF made changes to the error handling to provide a better live experience, not throwing errors unless necessary.
-
-
-	if(app_status == 'live' && $type != 'Fatal Error')
-	{
-		if ($type == 'Warning')
-			LogError($errno, $errstr, $errfile, $errline, $context);
-		return;
-	}
-
-	if(app_status == 'test' && ( $type != 'Fatal Error' && $type != 'Warning') )
-	{
-		LogError($errno, $errstr, $errfile, $errline, $context);
-		return;
-	}
-
+	//This error occurs a lot in PEAR classes.
 	if($type == 'Strict' && $errstr == 'Assigning the return value of new by reference is deprecated')
 		return;
+
+	// SPF made changes to the error handling to provide a better live experience, not throwing errors unless necessary.
+	
+	// RJL Errors should _always_ be logged, and most errors should be displayed. The point is that most errors should be caught 
+	// in live or test mode. Any error that occurs in live mode is an anomaly, behavior is undefined. We'll allow a global var, $silentErrors
+	// to define error types that should be ignored...
+	$num = LogError($errno, $errstr, $errfile, $errline, $context);
+	if(in_array($type, $silentErrors))
+	{
+		return;
+	}
 	while (ob_get_level() > __zoop_error_ob_start )
 	{
 		ob_end_clean();
 	}
-	$num = LogError($errno, $errstr, $errfile, $errline, $context);
-	
-	 echo ' <br />
+	echo ' <br />
 	 		<div align="center">
 	 			<table style="width: 50%;  border: solid 1px #000000;" cellspacing="1" align="center">';
 	echo  "			<tr align=\"center\">
@@ -264,7 +258,7 @@ function LogError($errno, $errstr, $errfile, $errline, $context)
 				<hr width='75%' />";
 	
 	$logFile = LOG_FILE;
-
+	
 	$fp = fopen($logFile, "a+");
 	fwrite($fp, $message);
 	fclose($fp);
