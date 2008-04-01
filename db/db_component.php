@@ -47,7 +47,8 @@ class component_db extends component
 		}
 		return $includes + array(
 				"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
-				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
+				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php",
+				'dbobject' => $this->getBasePath() . '/dbobject.php'
 				);
 	}
 
