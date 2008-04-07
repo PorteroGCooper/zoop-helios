@@ -8,6 +8,28 @@
 * @subpackage error
 */
 
+function ignore_error($errno, $errstr)
+{
+	global $_error_ignored;
+	if(!isset($_error_ignored[$errno]))
+		$_error_ignored[$errno][] = $errstr;
+}
+
+function is_ignore_error($errno, $errstr)
+{
+	if(error_reporting() & $errno === $errno)
+		return true;
+	global $_error_ignored;
+	foreach($_error_ignored[$errno] as $string)
+	{
+		if(strpos($errstr, $string) !== false)
+			return true;
+	}
+	return false;
+	//return isset($_error_ignored[$errstr]) && $_error_ignored[$errstr] == $errno;
+}
+
+
 // Copyright (c) 2007 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -24,6 +46,11 @@
 function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $backtrace = null)
 {
 	$type = GetErrorType($errno);
+	
+	if(is_ignore_error($errno, $errstr))
+	{
+		return;
+	}
 	
 	if($type == 'Unknown')	
 		return;
@@ -62,9 +89,11 @@ function error_debug_handler($errno, $errstr, $errfile, $errline, $context, $bac
 
 function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 {
+	/*
 	global $silentErrors;
 	if(!is_array($silentErrors))
 		$silentErrors = array($silentErrors);
+	*/
 	$type = GetErrorType($errno);
 	
 	if($type == 'Unknown')
@@ -78,11 +107,17 @@ function error_live_handler($errno, $errstr, $errfile, $errline, $context)
 	// RJL Errors should _always_ be logged, and most errors should be displayed. The point is that most errors should be caught 
 	// in live or test mode. Any error that occurs in live mode is an anomaly, behavior is undefined. We'll allow a global var, $silentErrors
 	// to define error types that should be ignored...
+	if(is_ignore_error($errno, $errstr))
+	{
+		return;
+	}
 	$num = LogError($errno, $errstr, $errfile, $errline, $context);
+	/*
 	if(in_array($type, $silentErrors))
 	{
 		return;
 	}
+	*/
 	while (ob_get_level() > __zoop_error_ob_start )
 	{
 		ob_end_clean();
