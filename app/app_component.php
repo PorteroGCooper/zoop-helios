@@ -58,7 +58,7 @@ class component_app extends component
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());
 
-		error_reporting(E_ALL);
+		//error_reporting(E_ALL);
 		$debugmode = app_status;
 		//$debugmode = 'test';
 
