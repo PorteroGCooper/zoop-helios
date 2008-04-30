@@ -61,7 +61,7 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT)
 			header("location: $URL");
 			break;
 		case JS_REDIRECT:
-			echo("<script language=\"JavaScript\" type=\"text/javascript\"><!-- top.location.href = \"$URL\"; --></script>");
+			echo("<script language=\"JavaScript\" type=\"text/javascript\">top.location.href = \"$URL\";</script>");
 			break;
 		default:
 			trigger_error("unknown redirect type");
@@ -1666,6 +1666,21 @@ function logprofile(&$timestruct, $sql = false)
 			}	
 		}
 	}
+}
+
+function makePath($zone, $z, $page, $p)
+{
+	$answer = "/$zone";
+	foreach($z as $key => $value)
+	{
+		$answer .= "/$key:$value";
+	}
+	$answer .= "/$page";
+	foreach($p as $key => $value)
+	{
+		$answer .= "/$key:$value";
+	}
+	return $answer;
 }
 
 if(version_compare(PHP_VERSION, '5.0', '<'))
