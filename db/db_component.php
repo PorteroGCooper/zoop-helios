@@ -45,10 +45,11 @@ class component_db extends component
 			$includes['db'] = 'DB.php';
 			$includes['database'] =  $this->getBasePath() . "/database.php";
 		}
+		if(!version_compare(PHP_VERSION, '5.0', '<'))
+			$includes['dbobject'] = $this->getBasePath() . '/dbobject.php';
 		return $includes + array(
 				"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
-				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php",
-				'dbobject' => $this->getBasePath() . '/dbobject.php'
+				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
 				);
 	}
 

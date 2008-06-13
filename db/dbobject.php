@@ -1,184 +1,57 @@
 <?php
-//	in order to inherit from this class the sublcass should have the following properties:
-//
-//	1)	the class corresponds to one specific table in the database
-//	2)	one instance of the class corresponds to exactly one row in that table
-//	3) 	the table has a single primary key field
-
-class DbObject
+class DbObject implements Iterator
 {
-	var $id;
-	var $scalars;
-	var $autosave;
-	var $originals;
-	var $db;
-	var $hasMany;
-	var $bound;
+	protected $tableName;
+	protected $primaryKey;
+	protected $keyAssignedBy;
+	private $missingKeyFields;
+	private $bound;
+	private $persisted;
+	private $scalars;
+	// private $krumoHack = array();
 	
-	//	static
-	function _getTableName($className)
-	{
-		//	work around lack of "late static binding"
-		$dummy = new $className('static');
-		return $dummy->getTableName();
-	}
+	const keyAssignedBy_db = 1;
+	const keyAssignedBy_dev = 2;
+	const keyAssignedBy_auto = 3;
 	
-	//	static
-	function getDefaults($lookupFields)
+	function __construct($init = NULL)
 	{
-		return array();
-	}
-	
-	//	static
-	function _getOne($className, $lookupFields)
-	{
-		return DbObject::_get($className, $lookupFields);
-	}
-	
-	//	static
-	//	gets one object for one row based on a set of field values that uniquely identify the row
-	//	this code is use right now in the DbObjectiveSet class in perform
-	//	it should be updated to return an array of item
-	//	_getOne should then be updated to verify that there is one result and then return it
-	function _get($className, $lookupFields)
-	{
-		assert(is_array($lookupFields));
+		//	set up some sensible defaults
+		$this->primaryKey = array('id');
+		$this->tableName = $this->getDefaultTableName();
+		$this->bound = false;
+		$this->keyAssignedBy = self::keyAssignedBy_db;
+		$this->scalars = array();
+		$this->persisted = NULL;
 		
-		$tableName = DbObject::_getTableName($className);
+		$this->init($init);
 		
-		$fieldParts = array();
-		foreach($lookupFields as $fieldName => $fieldValue)
+		$this->missingKeyFields = count($this->primaryKey);
+		if($this->keyAssignedBy == self::keyAssignedBy_db && count($this->primaryKey) != 1)
+			trigger_error("in order for 'keyAssignedBy_db' to work you must have a single primary key field");
+		
+		if(is_array($init))
 		{
-			switch(gettype($fieldValue))
-			{
-				case 'string':
-					$fieldValue = ticks($fieldValue);
-					break;
-				
-				case 'integer':
-					$fieldValue = ticks($fieldValue);
-					break;
-				
-				default:
-					trigger_error('unhandled field type: ' . gettype($fieldValue));
-			}
-			
-			$fieldParts[] = "$fieldName = $fieldValue";
+			$this->assignScalars($init);
 		}
-		
-		$fieldClause = implode(' and ', $fieldParts);
-		$row = sql_fetch_one("select * from $tableName where $fieldClause");
-		
-		if($row)
+		else if($init === NULL)
 		{
-			$object = new $className($row);
+			return;
 		}
 		else
 		{
-			$defaults = call_user_func(array($className, 'getDefaults'), $lookupFields);
-			$object = new $className(array_merge($lookupFields, $defaults));
+			assert(count($this->primaryKey) == 1);
+			$this->assignScalars(array($this->primaryKey), $init);
 		}
-		
-		return $object;
 	}
 	
-	function DbObject($init = NULL)
-	{
-		if($init == 'static')
-		{
-			$this->bound = 0;
-			return;
-		}
-				
-		if(is_numeric($init))
-			$init = (int)$init;
-		
-		global $defaultdb;
-		$this->db = $defaultdb;
-		
-		$initType = gettype($init);
-		switch($initType)
-		{
-			case 'integer':
-				$this->id = $init;
-				break;
-			case 'array':
-				if( isset($init['id']) && $init['id'] )
-				{
-					//	in this case we assume that the data has just come from the db so we don't 
-					//	update it in the db
-					$this->id = $init['id'];
-					$this->assignScalars($init);
-				}
-				else
-				{
-					//	in this case we assume the object does not yet exist so we must create it
-					//	update it in the db
-					$this->initScalars($init);
-				}
-				break;
-			case 'NULL':
-				$this->initScalars(NULL);
-				break;
-			default:
-				trigger_error("unknown init type: $initType");
-		}
-		
-		$this->bound = 1;
-		$this->autosave = 1;
-		
-		$this->assignMemberVars();
-				
-		$this->init();
-	}
-	
-	function init()
+	//	second stage constructor
+	protected function init()
 	{
 		//	override this function to setup relationships without having to handle the constructor chaining
 	}
 	
-	/*	
-	function getFields()
-	{
-		$sql = 'select column_name, data_type from information_schema.columns where table_name = ' . $this->getTableName();
-		return $this->db->fetch_simple_map($sql, 'column_name', 'data_type');
-	}
-	*/
-	
-	function assignMemberVars()
-	{
-		$varNames = $this->getMemberVarMap();
-		foreach($varNames as $fieldName => $varName)
-			$this->$varName = $this->getScalar($fieldName);
-	}
-	
-	function getMemberVarMap()
-	{
-		return array();
-	}
-	
-	function setDb($db)
-	{
-		$this->db = $db;
-	}
-	
-	function turnAutosaveOff()
-	{
-		$this->autosave = 0;
-		
-		//	make sure we load up the current data from the db
-		$this->loadScalars();
-		
-		//	clone the original values
-		$this->originals = $this->scalars;
-	}
-	
-	function getId()
-	{
-		return $this->id;
-	}
-	
-	function getTableName()
+	private function getDefaultTableName()
 	{
 		$name = get_class($this);
 
@@ -189,152 +62,203 @@ class DbObject
 		return strtolower($name);		
 	}
 	
-	function getIdFieldName()
+	public function getTableName()
 	{
-		return 'id';
+		return $this->tableName;
 	}
 	
-	function hasDeletedField()
+	public function getId()
 	{
-		return 0;
+		assert(count($this->primaryKey) == 1);
+		return $this->scalars[$this->primaryKey[0]];
 	}
 	
-	function assignScalars($data)
+	public function getString()
 	{
-		foreach($data as $member => $value)
-		{
-			$this->scalars[$member] = $value;
-		}
+		$s = '';
+		$this->loadScalars();
+		foreach($this->scalars as $field => $value)
+			$s .= " $field => $value";
+		return get_class($this) . ':' . $s;
 	}
-	
-	//	initialize the object and the row in the db with these values
-	function initScalars($init)
-	{
-		if(!$init)
-		{
-			if(!$this->hasDeletedField())
-				trigger_error("can't complete insert.  we don't know what any of the fields are");
-			
-			$tableName = $this->getTableName();
-			$sql = "INSERT INTO $tableName (deleted) VALUES (1)";
-			$this->id = $this->db->insert($sql, "{$tableName}_id_seq");
-		}
-		else
-		{
-			$tableName = $this->getTableName();
-			if($this->hasDeletedField())
-				$init['deleted'] = 1;
-			$fields = implode(', ', array_keys($init));
-			$values = implode("', '", array_values($init));
-			$sql = "INSERT INTO $tableName ($fields) VALUES ('$values')";
-			$this->id = $this->db->insert($sql);
-		}
-	}
-	
-	function loadScalars()
-	{
-		$tableName = $this->getTableName();
-		$idFieldName = $this->getIdFieldName();
-		$sql = "SELECT * FROM $tableName WHERE $idFieldName = {$this->id}";
-		$row = $this->db->fetch_one($sql);
-		$this->assignScalars($row);
-	}
-	
-	function setScalars($data)
-	{
-		if($this->autosave)
-		{
-			//	if they passed in an id we don't need to reset it
-			//		just verify that it is the right one
-			if( isset($data['id']) )
-			{
-				assert($data['id'] == $this->id);
-				unset($data['id']);
-			}
-
-			$tableName = $this->getTableName();
-			$idFieldName = $this->getIdFieldName();
-			
-			//	by default we want to make sure things are undeleted when they are updated
-			if($this->hasDeletedField() && !isset($data['deleted']) )
-				$data['deleted'] = 0;
-			
-			$this->assignScalars($data);
-			$updateFields = array();
-			foreach($data as $member => $value)
-			{
-				if($value === null)
-					$updateFields[] = "$member = NULL";
-				else
-					$updateFields[] = "$member = '$value'";
-			}
-			$updateFields = implode(", ", $updateFields);
-			$this->db->query("update $tableName set $updateFields where $idFieldName = $this->id");
-		}
-		else
-		{
-			$this->assignScalars($data);
-		}
-	}
-	
-	function getScalar($field)
-	{
-		if(!isset($this->scalars[$field]))
-			$this->loadScalars();
 		
-		return $this->scalars[$field];
-	}
-	
-	function getScalars()
+	//
+	//	the scalar handlers
+	//
+	//	rewrite them and make them handle primary keys with different names or more than one field
+	//
+		
+	public function getFields()
 	{
 		return $this->scalars;
 	}
 	
-	function setScalar($field, $value)
+	public function setFields($data)
 	{
-		$scalars = array($field => $value);
-		$this->setScalars($scalars);
+		$this->assignScalars($data);
 	}
 	
-	function save()
+	private function getScalar($field)
 	{
-		//	if they passed in an id we don't need to reset it
-		//		just verify that it is the right one
-		if( isset($data['id']) )
+		if(!isset($this->scalars[$field]))
 		{
-			assert($data['id'] == $this->id);
-			unset($data['id']);
+			if(!$this->bound)
+				trigger_error("the field: $field is not present in memory and this object is not yet bound to a database row");
+			$this->loadScalars();
 		}
-
-		$tableName = $this->getTableName();
-		$idFieldName = $this->getIdFieldName();
 		
-		//	by default we want to make sure things are undeleted when they are updated
-		if( !isset($data['deleted']) && $this->hasDeletedField())
-			$data['deleted'] = 0;
+		if(!isset($this->scalars[$field]))
+			trigger_error("the field $field present neither in memory nor in the cooresponding database table");
 		
-		$updateFields = array();
-		foreach($this->scalars as $fieldName => $fieldValue)
+		return $this->scalars[$field];
+	}
+	
+	private function setScalar($field, $value)
+	{
+		$data[$field] = $value;
+		$this->assignScalars($data);
+	}
+	
+	/*
+	private function setScalars($data)
+	{
+		foreach($data as $field => $value)
 		{
-			//	only save the data that has actually changed
-			if($this->originals[$fieldName] != $this->scalars[$fieldName])
+			$this->scalars[$field] = $value;
+		}
+	}
+	*/
+	
+	private function assignScalars($data)
+	{
+		foreach($data as $member => $value)
+		{
+			if(!isset($this->scalars[$member]) && in_array($member, $this->primaryKey))
 			{
-				if($fieldValue === null)
-					$updateFields[] = "$fieldName = NULL";
+				$this->missingKeyFields--;
+				if($this->missingKeyFields == 0)
+					$this->bound = 1;
+			}
+			
+			$this->scalars[$member] = $value;
+		}
+	}
+	
+	private function loadScalars()
+	{
+		assert($this->bound);
+		$row = $this->fetchPersisted();
+		$this->assignPersisted($row);
+	}
+	
+	private function assignPersisted($row)
+	{
+		//	if they manually set a field don't write over it just because they loaded one scalar
+		foreach($row as $field => $value)
+		{
+			if(!isset($this->scalars[$field]))
+				$this->scalars[$field] = $value;
+		}		
+	}
+	
+	private function fetchPersisted()
+	{
+		$wheres = array();
+		$whereValues = array();
+		foreach($this->primaryKey as $keyField)
+		{
+			$wheres[] = "$keyField = :$keyField";
+			$whereValues[$keyField] = $this->scalars[$keyField];
+		}
+		$whereClause = implode(' and ', $wheres);
+		$row = self::_getConnection(get_class($this))->fetchRow("select * from $this->tableName where $whereClause", $whereValues);
+		if($row)
+			$this->persisted = true;
+		else
+			$this->persisted = false;
+		return $row;
+	}
+	
+	private function _persisted()
+	{
+		if(!$this->bound)
+			return false;
+		
+		if($this->keyAssignedBy == self::keyAssignedBy_db)
+			return true;
+		else
+		{
+			$row = $this->fetchPersisted();
+			if($row)
+			{
+				//	we might as well save the results
+				$this->assignPersisted();
+				return true;
+			}
+			
+			return false;
+		}
+	}
+	
+	public function persisted()
+	{
+		if($this->persisted !== NULL)
+			return $this->persisted;
+		else
+			return $this->persisted = $this->_persisted();
+	}
+	
+	public function save()
+	{
+		if(!$this->bound)
+		{
+			if($this->keyAssignedBy == self::keyAssignedBy_db)
+				$this->setScalar($this->primaryKey[0], self::_getConnection(get_class($this))->insertArray($this->tableName, $this->scalars));
+			else
+				trigger_error("you must define all foreign key fields in order by save this object");
+		}
+		else
+		{
+			if($this->keyAssignedBy == self::keyAssignedBy_db)
+			{
+				$updateInfo = DbConnection::generateUpdateInfo($this->tableName, $this->getKeyConditions(), $this->scalars);
+				self::_getConnection(get_class($this))->updateRow($updateInfo['sql'], $updateInfo['params']);
+			}
+			else
+			{
+				if(!$this->persisted())
+					self::_getConnection(get_class($this))->insertArray($this->tableName, $this->scalars, false);
 				else
-					$updateFields[] = "$fieldName = '$fieldValue'";
+				{
+					$updateInfo = DbConnection::generateUpdateInfo($this->tableName, $this->getKeyConditions(), $this->scalars);
+					self::_getConnection(get_class($this))->updateRow($updateInfo['sql'], $updateInfo['params']);
+				}
 			}
 		}
-		
-		//	if nothing changed then we don't need to do the update
-		if(count($updateFields) > 0)
-		{
-			$updateFields = implode(", ", $updateFields);
-			$this->db->query("update $tableName set $updateFields where $idFieldName = $this->id");
-		}
 	}
 	
-	function hasMany($name, $params = NULL)
+	private function getKeyConditions()
+	{
+		assert($this->bound);
+		return array_intersect_key($this->scalars, array_flip($this->primaryKey));
+	}
+	
+	public function destroy()
+	{
+		$deleteInfo = DbConnection::generateDeleteInfo($this->tableName, $this->getKeyConditions());
+		self::_getConnection(get_class($this))->deleteRow($deleteInfo['sql'], $deleteInfo['params']);
+	}
+	
+	//
+	//	end of scalar handlers
+	//
+	
+	
+	//
+	//	vector handlers
+	//
+	/*
+	protected function hasMany($name, $params = NULL)
 	{
 		if(isset($params['class']))
 			$className = $params['class'];
@@ -342,24 +266,25 @@ class DbObject
 			$className = $name;
 		
 		if(isset($params['field']))
-			$remoteKey = $params['field'];
+			$foreignKey = $params['field'];
 		else
-			$remoteKey = $this->getTableName() . '_id';
+			$foreignKey = $this->getTableName() . '_id';
 		
-		$this->hasMany[$name] = array('className' => $className, 'remoteKey' => $remoteKey);
+		$this->hasMany[$name] = array('className' => $className, 'foreignKey' => $foreignKey);
 	}
 	
-	function getMany($name)
+	protected function getMany($name)
 	{
 		$className = $this->hasMany[$name]['className'];
-		$remoteKey = $this->hasMany[$name]['remoteKey'];
-		$sortBy = isset($this->hasMany[$name]['sortBy']) ? $this->hasMany[$name]['sortBy'] : 'id';	
+		$foreignKey = $this->hasMany[$name]['foreignKey'];
 		
-		$tableName = call_user_func(array('DbObject', '_getTableName'), $className);
+		//	work around lack of "late static binding"
+		$dummy = new $className(0);
+		$tableName = $dummy->getTableName();
 		
-		$sql = "select * from $tableName where $remoteKey = " . (int)$this->id . " order by $sortBy";
-		$rows = sql_fetch_rows($sql);
+		$sql = "select * from $tableName where $foreignKey = :id";
 		
+		$rows = SqlFetchRows($sql, array('id' => $this->id));
 		$objects = array();
 		foreach($rows as $thisRow)
 		{
@@ -369,7 +294,7 @@ class DbObject
 		return $objects;
 	}
 	
-	function belongsTo($name, $params = NULL)
+	protected function belongsTo($name, $params = NULL)
 	{
 		//	determine the name of the class we belong to
 		$className = isset($params['class']) ? $params['class'] : $name;
@@ -382,11 +307,188 @@ class DbObject
 		$this->belongsTo[$name] = array('className' => $className, 'localKey' => $localKey);
 	}
 	
-	function getOwner($name)
+	protected function getOwner($name)
 	{
 		$className = $this->belongsTo[$name]['className'];
 		$localKey = $this->belongsTo[$name]['localKey'];
 		$tableName = DbObject::_getTableName($className);
 		return new $className($this->getScalar($localKey));
 	}
+	*/
+	//
+	//	end vector handlers
+	//
+	
+	//
+	//	begin magic functions
+	//
+	
+	function __get($varname)
+	{
+		//	krumo hack
+		// if(substr($varname, 0, 5) == 'krumo')
+		// 	return isset($this->krumoHack[$varname]) ? $this->krumoHack[$varname] : NULL;
+		
+		/*
+		if(isset($this->hasMany[$varname]))
+			return $this->getMany($varname);
+		
+		if(isset($this->belongsTo[$varname]))
+			return $this->getOwner($varname);
+		*/
+		return $this->getScalar($varname);
+	}
+
+	function __set($varname, $value)
+	{
+		//	krumo hack
+		// if(substr($varname, 0, 5) == 'krumo')
+		// 	$this->krumoHack[$varname] = $value;
+		$this->setScalar($varname, $value);
+	}
+	
+	//
+	//	end magic functions
+	//
+	
+	//
+	//	begin iterator functions
+	//
+	
+	public function rewind()
+	{
+		reset($this->scalars);
+	}
+
+	public function current()
+	{
+		$var = current($this->scalars);
+		return $var;
+	}
+
+	public function key()
+	{
+		$var = key($this->scalars);
+		return $var;
+	}
+
+	public function next()
+	{
+		$var = next($this->scalars);
+		return $var;
+	}
+
+	public function valid()
+	{
+		$var = $this->current() !== false;
+		return $var;
+	}
+	
+	//
+	//	end iterator functions
+	//
+	
+	
+	//
+	//	static methods
+	//
+	
+	static private function _getConnectionName($className)
+	{
+		return 'default';
+	}
+	
+	static private function _getConnection($className)
+	{
+		return DbModule::getConnection(call_user_func(array($className, '_getConnectionName'), $className));
+	}
+	
+	static private function _getTableName($className)
+	{
+		//	work around lack of "late static binding"
+		$dummy = new $className();
+		return $dummy->getTableName();
+	}
+	
+	static public function _create($className, $values)
+	{
+		$object = new $className($values);
+		$object->save();
+		return $object;
+	}
+	
+	static public function _insert($className, $values)
+	{
+		self::_getConnection($className)->insertArray(self::_getTableName($className), $values, false);			
+	}
+		
+	static public function _findBySql($className, $sql, $params)
+	{
+		$res = self::_getConnection($className)->query($sql, $params);
+		
+		if(!$res->valid())
+			return array();
+		
+		$objects = array();
+		for($row = $res->current(); $res->valid(); $row = $res->next())
+		{
+			$objects[] = new $className($row);
+		}
+		
+		return $objects;
+	}
+	
+	static public function _findByWhere($className, $where, $params)
+	{
+		$tableName = DbObject::_getTableName($className);
+		return self::_findBySql($className, "select * from $tableName where $where", $params);
+	}
+	
+	static public function _find($className, $conditions = NULL)
+	{
+		$tableName = DbObject::_getTableName($className);
+		if($conditions)
+		{
+			$selectInfo = self::_getConnection($className)->generateSelectInfo($tableName, '*', $conditions);
+			$sql = $selectInfo['sql'];
+			$params = $selectInfo['params'];
+		}
+		else
+		{
+			$sql = "select * from $tableName";
+			$params = array();
+		}
+		
+		return self::_findBySql($className, $sql, $params);
+	}
+	
+	/**
+	 * Retrieve one object from the database and map it to an object
+	 * @param string $className The name of the class corresponding to the table in the database 
+	 * @param array $conditions Key value pair for the fields you want to look up
+	 * @return DbObject
+	 */	
+	
+	static public function _findOne($className, $conditions = NULL)
+	{
+		$a = DbObject::_find($className, $conditions);
+		if(!$a)
+			return false;
+		
+		assert(is_array($a));
+		assert(count($a) == 1);
+		
+		return current($a);
+	}
+	
+	static public function _getOne($className, $conditions = NULL)
+	{
+		$tableName = DbObject::_getTableName($className);
+		$row = self::_getConnection($className)->selsertRow($tableName, "*", $conditions);
+		return new $className($row);
+	}
+	
+	//
+	//	end static methods
+	//
 }

@@ -17,7 +17,7 @@ function ignore_error($errno, $errstr)
 
 function is_ignore_error($errno, $errstr)
 {
-	if(error_reporting() & $errno === $errno)
+	if(error_reporting() & $errno !== $errno)
 		return true;
 	global $_error_ignored;
 	foreach($_error_ignored[$errno] as $string)

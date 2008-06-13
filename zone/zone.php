@@ -1049,6 +1049,30 @@
 				$this->templateBase = substr ( strstr ( get_class ( $this ), '_' ), 1 );
 			return $this->templateBase . '/' . $tplName;
 		}
-
+		
+		function makePath($z, $page, $p)
+		{
+			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			$this->verifyRequiredParams($z);
+			return makePath($zone, $z, $page, $p);
+		}
+		
+		function makeUrl($z, $page, $p)
+		{
+			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			$this->verifyRequiredParams($z);
+			return SCRIPT_URL . makePath($zone, $z, $page, $p);
+		}
+		
+		function verifyRequiredParams($z)
+		{
+			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			$params = $this->getZoneParamNames();
+			foreach($params as $name)
+			{
+				if(!isset($z[$name]))
+					trigger_error("missing param $name for makepath of zone $zone");
+			}
+		}
 	}
 ?>

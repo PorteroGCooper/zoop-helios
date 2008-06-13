@@ -44,7 +44,7 @@ class component_session extends component
 		if (defined("session_path") && session_path == "server")
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), "/");
 		else
-		session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);
+			session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);
 		
 		# starting sessions
 		session_start();
