@@ -249,7 +249,7 @@ $this->oTag;
 //  uncomment one line if using the zoop/libs instead of your systemwide pear libraries.
 
 	ini_set('include_path',ini_get('include_path').':'. zoop_dir . '/lib/pear:'); // FOR UNIX
-//	ini_set('include_path',ini_get('include_path').';'. zoop_dir . '/lib/pear:'); // FOR WINDOWS
+//	ini_set('include_path',ini_get('include_path').';'. zoop_dir . '/lib/pear'); // FOR WINDOWS
 
 //////////////////////////////////////////////////////
 //				Template Stuff		   			    //
