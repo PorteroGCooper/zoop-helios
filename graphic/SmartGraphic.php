@@ -42,16 +42,24 @@ class SmartGraphic
 		return str_replace(chr(8), '', $text);
 	}
 	
+	function debug($tplFile)
+	{
+		//header("Content-type: text/xml");
+		$xml = $this->smarty->fetch($tplFile);
+		$xml = $this->preProcessText($xml);
+		
+		$xml = '<xml><content>' . $xml . '</content></xml>';
+		echo_r($xml);
+		echo_r(htmlentities($xml));
+		die();
+	}
+	
 	function display($tplFile, $reallyDisplay = 1)
 	{
 		$xml = $this->smarty->fetch($tplFile);
 		$xml = $this->preProcessText($xml);
 		
 		$xml = '<xml><content>' . $xml . '</content></xml>';
-		// header("Content-type: text/xml");
- 		// echo_r($xml);
-		// echo_r(htmlentities($xml));
-		// die();
 		
 		$dom = new XmlDom();
 		$rootNode = $dom->parseText($xml);

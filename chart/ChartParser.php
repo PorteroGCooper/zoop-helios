@@ -3,7 +3,7 @@ class ChartParser
 {
 	function getTagList()
 	{
-		return array('piechart', 'horizontalbarchart', 'verticalbarchart', 'percenthorizontalbarchart');
+		return array('piechart', 'horizontalbarchart', 'verticalbarchart', 'percenthorizontalbarchart', 'linechart');
 	}
 	
 	function &getNewContainer($node, &$context)
@@ -83,6 +83,10 @@ class ChartParser
 				{
 					$grouping = $node->getAttribute('grouping');
 					$object->setGroupType($grouping);
+				}
+				if($node->hasAttribute('labelinterval'))
+				{
+					$object->setLabelInterval($node->getAttribute('labelinterval'));
 				}
 				break;
 		}

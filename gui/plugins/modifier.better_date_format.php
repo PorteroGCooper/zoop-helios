@@ -16,13 +16,14 @@ require_once SMARTY_DIR . 'plugins/shared.make_better_timestamp.php';
 require_once 'Date.php';
 function smarty_modifier_better_date_format($string, $format="%b %e, %Y", $nullfiller="", $timezone = "EST")
 {
-    if($string == NULL)
+	if($string == NULL)
 		return $nullfiller;
 	else
 	{
-		//echo($string);
+		
 		///*
-		return formatPostgresDate($string, $format, $timezone);
+		$answer = formatPostgresDate($string, $format, $timezone);
+		return $answer;
 		$parts = explode("-", $string);
 		$date = &new Date();
 		$date->setYear($parts[0]);

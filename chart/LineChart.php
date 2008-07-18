@@ -122,6 +122,11 @@ class LineChart extends Chart
 		$this->dataEntryThickness = $dataEntryThickness;
 	}
 	
+	function setLabelInterval($labelInterval)
+	{
+		$this->labelInterval = $labelInterval;
+	}
+	
 	/*
 	function setDepth($angle, $length)
 	{
@@ -287,7 +292,7 @@ class LineChart extends Chart
 				if($ratio < 3)
 					$extraSegments = 1;
 				else
-					$extraSegments = 2;
+					$extraSegments = 1;
 				$this->max = (floor($biggest / $this->increment) + $extraSegments) * $this->increment;
 				
 				if( ($ratio < 3) && ($this->increment > 1) )
@@ -404,6 +409,10 @@ class LineChart extends Chart
 			$stringWidth = $this->context->getStringWidth($curRealValue);
 			$this->context->addText($this->plotLeft - $stringWidth - 10, $cury + 7, $curRealValue);
 		}
+		$endx = $this->depthx ? $this->plotRight + $this->depthx : $this->plotRight;
+		for($curx = $this->plotLeft + $this->dataEntryTopMargin; $curx <= $endx; $curx += $pixelIncrement)
+		{
+		}
 	}
 	
 	function calcBarSpacing()
@@ -440,29 +449,86 @@ class LineChart extends Chart
 		return false;
 	}
 	
+	function drawXLabels($curx, $y, $width, $reallyDraw)
+	{
+		$width = $this->plotRight - $this->plotLeft;
+		$textMargin = .5;
+		//$this->labelInterval = 2;
+		//	draw the text label
+		if(!isset($this->labelInterval))
+		{
+			$maxWidth = 0;
+			$this->context->setTextSize(8);
+			foreach($this->groups as $name => $thisGroup)
+			{
+				
+				$thisWidth = $this->context->getStringWidth($thisGroup->getText());
+				if($thisWidth > $maxWidth)
+				{
+					$maxWidth = $thisWidth;
+					//dump_r($thisGroup->getText());
+				}
+			}
+			$maxLabels = (int)($width / ($maxWidth + $textMargin * 2));
+			if($maxLabels > count($this->groups))
+				$maxLabels = count($this->groups);
+			$showLabelAt = (int)(count($this->groups) / $maxLabels);
+		}
+		else
+		{
+			$showLabelAt = $this->labelInterval;
+			$maxLabels = count($this->groups) / $showLabelAt;
+			$maxWidth = ($width / $maxLabels) - ($textMargin * 2);
+			//dump_r($showLabelAt);
+			//dump_r($maxLabels);
+			//dump_r($maxWidth);
+		}
+		$i = 0;
+		foreach($this->groups as $name => $thisGroup)
+		{
+			if($i % $showLabelAt == 0)
+			{
+				$labelWidth = $this->context->getStringWidth($thisGroup->getText());
+				$this->drawTextBox($curx - ($labelWidth / 2) + $textMargin, 
+								$this->plotBottom + 4, $labelWidth + $textMargin, $thisGroup->getText(), 
+								array('alignment' => 'center', 'textSize' => 8));
+				$this->context->setCurLineColor('black');
+				$this->context->addLine($curx, $this->plotBottom + 4, $curx, $this->plotBottom, .5);
+			}
+			$groupWidth = $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			$curx += $groupWidth;
+			$i++;
+		}
+		/*
+		$i = 0;
+		foreach($this->groups as $name => $thisGroup)
+		{
+			$groupWidth = $this->dataEntryThickness + $this->dataEntryMiddleMargin;
+			$labelWidth = $this->context->getStringWidth($thisGroup->getText());
+			$textMargin = 1;
+			$i += $groupWidth;
+			if(($i - $textMargin) >  $labelWidth / 2 )
+			{
+				$this->drawTextBox($curx - $labelWidth / 2, 
+								$this->plotBottom + 4, $labelWidth + $textMargin * 2, $thisGroup->getText(), 
+								array('alignment' => 'center', 'textSize' => 8));
+				$this->context->setCurLineColor('black');
+				$this->context->addLine($curx, $this->plotBottom + 4, $curx, $this->plotBottom, .5);
+				$i = -$labelWidth / 2;
+			}
+		}
+		*/
+	}
+	
 	function drawData($x, $y, $width, $reallyDraw)
 	{
 		$curx = $this->plotLeft + $this->dataEntryTopMargin;
 		$i = 0;
+		$showDataPointsAt = .1;//(int)round(count($this->groups) / 1);
+		$dataPoints = 0;
+		$this->drawXLabels($curx, $y, $width, $reallyDraw);
 		foreach($this->groups as $name => $thisGroup)
 		{
-			//	draw the text label
-			$groupWidth = $this->dataEntryThickness + $this->dataEntryMiddleMargin;
-			$textMargin = 1;
-			if($groupWidth - $textMargin > 10)
-			{
-				$this->drawTextBox($curx - (($this->dataEntryMiddleMargin - ($textMargin / 2))/2), 
-								$this->plotBottom + 4, $groupWidth - $textMargin, $thisGroup->getText(), 
-								array('alignment' => 'center', 'textSize' => 8));
-			}
-			else if($i % 2 == 0)
-			{
-				$this->drawTextBox($curx - (($this->dataEntryMiddleMargin - ($textMargin / 2))), 
-								$this->plotBottom + 4, ($groupWidth - $textMargin) * 2, $thisGroup->getText(), 
-								array('alignment' => 'center', 'textSize' => 8));
-				
-			}
-			$i++;
 			//	draw the boxes
 			foreach($thisGroup->getEntries() as $thisEntry)
 			{
@@ -474,7 +540,11 @@ class LineChart extends Chart
 				{
 					$this->context->addLine($prevx, $prevy[$thisEntry['category']], $curx, $cury[$thisEntry['category']], 1);
 				}
-				
+				if(false && $dataPoints % $showDataPointsAt == 0)
+				{
+					$labelWidth = $this->context->getStringWidth($thisEntry['value']);
+					$this->drawTextBox($curx - $labelWidth / 2, $cury[$thisEntry['category']] - 10, $labelWidth +.1, $thisEntry['value'], array('alignment' => 'center', 'textSize' => 8));
+				}
 				$prevy[$thisEntry['category']] = $cury[$thisEntry['category']];
 				//
 				
@@ -493,7 +563,7 @@ class LineChart extends Chart
 				
 				//$cury -= $height;
 			}
-			
+			$dataPoints++;
 			//	draw the text that follows each box
 			/*
 			$texty = isset($this->depthy) ? ($cury[$name] - $this->depthy - 10) : $cury - 10;

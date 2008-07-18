@@ -20,11 +20,12 @@ function is_ignore_error($errno, $errstr)
 	if(error_reporting() & $errno !== $errno)
 		return true;
 	global $_error_ignored;
-	foreach($_error_ignored[$errno] as $string)
-	{
-		if(strpos($errstr, $string) !== false)
-			return true;
-	}
+	if(is_array($_error_ignored))
+		foreach($_error_ignored[$errno] as $string)
+		{
+			if(strpos($errstr, $string) !== false)
+				return true;
+		}
 	return false;
 	//return isset($_error_ignored[$errstr]) && $_error_ignored[$errstr] == $errno;
 }
@@ -298,6 +299,7 @@ function LogError($errno, $errstr, $errfile, $errline, $context)
 	
 	$fp = fopen($logFile, "a+");
 	fwrite($fp, $message);
+	fflush($fp);
 	fclose($fp);
 
 	return $errNum;

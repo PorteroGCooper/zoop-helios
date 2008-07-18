@@ -307,16 +307,14 @@ function sql_format_date($dbdate, $format, $timezone = NULL)
 			$date->setMinute($minutes);
 			$date->setSecond($seconds);
 		}
-
 		$date->setTZ(new Date_TimeZone($tz));
 	}
 	if($timezone != NULL)
 	{
 		$date->convertTZ(new Date_TimeZone($timezone));
 	}
-
 	$timeString = $date->format($format);
-
+	
 	/*
 	$timestamp = mktime ( 0, 0, 0,  $month, $day, $year);
 	$timeString = date($inFormatString, $timestamp);

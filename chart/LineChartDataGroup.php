@@ -1,5 +1,5 @@
 <?
-class LineChartDataGroup
+class LineChartDataGroup extends ChartObject
 {
 	var $entries;
 	var $text;

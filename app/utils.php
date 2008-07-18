@@ -176,7 +176,7 @@ if($dst)
  */
 function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
 {
-	sql_format_date($inPostgresDate, $inFormatString, $inTimeZone);
+	return sql_format_date($inPostgresDate, $inFormatString, $inTimeZone);
 }
 
 

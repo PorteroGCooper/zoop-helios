@@ -47,6 +47,6 @@ class component_cache extends component
 				"zcache" =>  $this->getBasePath() . "/zcache.php",
 				"cacheLite" => 'Cache/Lite.php'
 		);
-	}	
+	}
 }
 ?>
