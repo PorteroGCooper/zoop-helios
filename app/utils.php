@@ -1092,14 +1092,14 @@ function &GetCompletionStatus($statusItemName)
   * @param       string   $pathname    The filename you want to create a directory for.
   * @return      bool     Returns TRUE on success, FALSE on failure
   */
-function mkdir_r($filename)
+function mkdir_r($filename, $mode = 0770)
 {
 	str_replace("\\",'/', $filename);
 	$dir = explode(DIRECTORY_SEPARATOR, $filename);
 	array_pop($dir);
 	$path = implode(DIRECTORY_SEPARATOR, $dir);
 
-	return mkdirr($path, 0770);
+	return mkdirr($path, $mode);
 }
 
  /**

@@ -41,7 +41,7 @@ if (isset( $_SERVER['argc'] ) && $_SERVER['argc'] > 0 )
 			$create->config( $_SERVER['argv'][2] );
 			break;
 		default:
-			echo ("NOT A VALID COMMAND");			
+			echo ("ERROR: NOT A VALID COMMAND\n\rUsage: php zoop/zoop_create.php command param\n\reg. php zoop/zoop_create.php project newProject\n\r");			
 			break;
 	}
 }
@@ -121,14 +121,16 @@ class zoop_create
 		$dirs = explode(" ", $dirstring);
 
 		foreach ($dirs as $dir) {
-			mkdirr( $this->projectPath . DIRECTORY_SEPARATOR . "$dir");
+			mkdirr( $this->projectPath . DIRECTORY_SEPARATOR . "$dir", 0755);
 		}
 	}
 
 	function setFile( $name, $content )
 	{
 		$name = str_replace('/', DIRECTORY_SEPARATOR, $name);	
-		file_set_contents($this->projectPath . DIRECTORY_SEPARATOR . $name, $content);
+		$file_path = $this->projectPath . DIRECTORY_SEPARATOR . $name;
+		file_set_contents($file_path, $content);
+		chmod($file_path, 0644); 
 	}
 
 	function indexFile()
@@ -231,7 +233,6 @@ $this->oTag;
 	//	DEFINE YOUR SYSTEMS zoop DIRECTORY
 	if(app_status == 'dev')
 	{
-		//define('zoop_dir', '/home/steve/Projects/zoop1.0'); //can be absolute or
 		define('zoop_dir', app_dir . "/../zoop"); // it can be relative
 	}
 	else
@@ -269,6 +270,14 @@ $this->oTag;
 	define('zone_saveinsession', 1); //determines whether zone objects are saved in sessions, allowing you to use zones to contain persistent variables
 	//defaults to true, for Backwards Compatibility.
 	define('show_warnings', 1); // determines whether the bug function is displayed or not.
+
+//////////////////////////////////////////////////////
+//				Legacy Compatibility   			    //
+//////////////////////////////////////////////////////
+
+	define("legacy_app_layout", 0);
+
+
 $this->cTag;
 CONFIG;
 		$this->setFile("config.php", $config);
