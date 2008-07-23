@@ -278,7 +278,7 @@ $this->oTag;
 	define("legacy_app_layout", 0);
 
 
-$this->cTag;
+$this->cTag
 CONFIG;
 		$this->setFile("config.php", $config);
 	}

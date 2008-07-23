@@ -104,7 +104,6 @@ class zoop
 		} else {
 			$this->addInclude("zone_{$name}", $this->appPath . "/zone_{$name}.php");
 		}
-		//include($this->appPath . "/zone_{$name}.php");
 	}
 
 	/**
