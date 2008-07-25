@@ -90,7 +90,7 @@ class zoop_create
 			$this->appPath = $appPath;
 	}
 
-	function setProjectPath($path)
+	function setProjectPath($path = "")
 	{
 		if ( !empty ($path ) ) {
 			$this->projectPath = $path;
@@ -295,6 +295,7 @@ CONFIG;
 
 	function zone ($name, $functions = null)
 	{
+		$this->setProjectPath();
 		$zone_name = "zone_{$name}";
 		$default_functions[$zone_name] = "";
 		$default_functions['makePath'] = "return \"/$name\";";
