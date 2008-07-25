@@ -2,7 +2,7 @@
 /**
 * @package gui
 */
-// Copyright (c) 2007 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -20,12 +20,12 @@ require_once(dirname(__file__) . "/Smarty.class.php");
  * @uses Smarty
  * @package
  * @version $id$
- * @copyright 1997-2007 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com>
+ * @copyright 1997-2008 Supernerd LLC
+ * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @author Rick Gigger
  * @author John Lesueur
  * @author Richard Bateman
- * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class gui extends Smarty
 {

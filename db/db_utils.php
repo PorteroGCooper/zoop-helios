@@ -2,12 +2,12 @@
 /**
 * Utilities file
 *
-* @author Steve Francia webmaster@supernerd.com
+* @author Steve Francia steve.francia+zoop@gmail.com
 * @package db
 * @subpackage db_utils
 */
 
-// Copyright (c) 2006 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,

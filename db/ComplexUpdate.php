@@ -2,7 +2,7 @@
 /**
 * @package db
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,

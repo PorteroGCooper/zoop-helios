@@ -3,7 +3,7 @@
 * @package gui
 * @subpackage guicontrol
 */
-// Copyright (c) 2006 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -21,9 +21,9 @@ include_once(zoop_dir . "/gui/plugins/function.html_options.php");
  * @uses GuiControl
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com>
- * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ * @copyright 1997-2008 Supernerd LLC
+ * @author Steve Francia <steve.francia+zoop@gmail.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class select extends GuiMultiValue
 {

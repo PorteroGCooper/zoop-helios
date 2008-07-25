@@ -31,7 +31,7 @@ function is_ignore_error($errno, $errstr)
 }
 
 
-// Copyright (c) 2007 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,

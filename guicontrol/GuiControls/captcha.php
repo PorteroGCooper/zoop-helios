@@ -3,7 +3,7 @@
 * @package gui
 * @subpackage guicontrol
 */
-// Copyright (c) 2005 Supernerd LLC and Contributors.
+// Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
 // This software is subject to the provisions of the Zope Public License,
@@ -23,9 +23,9 @@ require(zoop_dir . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
  * @uses GuiControl
  * @package
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com>
- * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
+ * @copyright 1997-2008 Supernerd LLC
+ * @author Steve Francia <steve.francia+zoop@gmail.com>
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class captcha extends GuiControl
 {
