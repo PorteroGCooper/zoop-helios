@@ -826,6 +826,30 @@
 				return $gUrlVars[$inName];
 		}
 
+		/**
+		 * getPageParams
+		 *
+		 * @access public
+		 * @return void
+		 */
+		function getPageParams()
+		{
+			return $this->pageVars;
+		}
+		
+		/**
+		 * getPageParam
+		 *
+		 * @param mixed $inName
+		 * @access public
+		 * @return void
+		 */
+		function getPageParam($inName)
+		{
+			if ( isset( $this->pageVars[$inName] ) )
+				return $this->pageVars[$inName];
+		}
+
 		//deprecated
 		/**
 		 * getUrlVars
