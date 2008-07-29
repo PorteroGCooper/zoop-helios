@@ -199,8 +199,9 @@ class zoop
 				//$object->defaultConstants();
 				$object->init();
 				$this->init[$name] = true;
-			}
+			}	
 		}
+		spl_autoload_register(array($this,'autoLoad'));
 	}
 
 	/**
