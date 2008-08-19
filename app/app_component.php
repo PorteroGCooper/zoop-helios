@@ -72,8 +72,6 @@ class component_app extends component
 			set_error_handler('error_debug_handler');
 		}
 	}
-
-
 }
 
 ?>

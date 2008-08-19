@@ -244,6 +244,11 @@ class component_guicontrol extends component
 	 */
 	function includeGuiControl($type)
 	{
+		if($type == 'date')
+		{
+			deprecated('The Date guicontrol has been renamed to datecontrol, because date is not a smart thing to name a class.');
+			$type = 'datecontrol';
+		}
  		$filename = strtolower($type).".php";
 
 		if(file_exists(app_guicontrol_dir. "$filename"))
@@ -268,6 +273,11 @@ class component_guicontrol extends component
  */
 function &getGuiControl($type, $name, $useGlobal = true)
 {
+	if($type == 'date')
+	{
+		deprecated('The Date guicontrol has been renamed to datecontrol, because date is not a smart thing to name a class.');
+		$type = 'datecontrol';
+	}
 	if($useGlobal)
 	{
 		global $controls;

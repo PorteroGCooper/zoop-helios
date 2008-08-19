@@ -53,31 +53,23 @@ class component_zone extends component
 	function run()
 	{
 		global $PATH_ARRAY;
-		if(defined('zone_saveinsession')  && zone_saveinsession)
-		{
-			if (!isset($_SESSION["thsZone"]))
-			{
-				if(!class_exists('zone_default'))
-				{
+		if(defined('zone_saveinsession')  && zone_saveinsession) {
+			if (!isset($_SESSION["thsZone"])) {
+				if(!class_exists('zone_default')) {
 					trigger_error("Please create zone_default");
 				}
 				session_register("thsZone");
 				$_SESSION["thsZone"] = &new zone_default();
 			}
 			$thsZone = &$_SESSION['thsZone'];
-			if(!is_a($thsZone, 'zone'))
-			{
+			if(!is_a($thsZone, 'zone')) {
 				trigger_error("Please include zone_default.php before calling run()");
 			}
-		}
-		else
-		{
-			if(!class_exists('zone_default'))
-			{
+		} else {
+			if(!class_exists('zone_default')) {
 				trigger_error("Please create zone_default");
 			}
 			$thsZone = &new zone_default();
-
 		}
 		$thsZone->handleRequest($PATH_ARRAY);
 	}

@@ -2,6 +2,9 @@
 /**
 * @category zoop
 * @package zoop
+*
+* Two classes are contained in this file. 
+* The Zoop class, and the Compontent base.
 */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
@@ -28,6 +31,8 @@ if(!defined('zoop_autoload') || zoop_autoload)
 
 /**
  * zoop
+ * The Zoop class is the glue that brings all the different components together.
+ * It ties the config to the code and launches the controller
  *
  * @package
  * @version $id$
@@ -47,13 +52,13 @@ class zoop
 
 	/**
 	 * zoop
+	 * Constructor, adds in the "app" component, required of all zoop apps.
 	 *
 	 * @param mixed $appPath
 	 * @access public
 	 * @return void
 	 */
-	function zoop($appPath = NULL)
-	{
+	function zoop($appPath = NULL) {
 		$this->path = dirname(__file__);
 		if($appPath == NULL)
 			$this->appPath = $this->path;
@@ -65,13 +70,15 @@ class zoop
 
 	/**
 	 * addComponent
+	 * Includes the component, the configuration for the component
+	 * and the dependencies. 
+	 * Will use autoload if available.
 	 *
 	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
-	function addComponent($name)
-	{
+	function addComponent($name) {
 		if(!isset($this->components[$name]))
 		{
 			include($this->path . "/$name/{$name}_component.php");
@@ -92,12 +99,16 @@ class zoop
 	/**
 	 * addZone
 	 *
+	 * Add a zone for the application. 
+	 * A zone is a section of the controller. Similar to a directory.
+	 *
+	 * Will use autoload if available
+	 *
 	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
-	function addZone($name)
-	{
+	function addZone($name) {
 		$this->addComponent('zone');
 		if (defined('legacy_app_layout') && !legacy_app_layout ) {
 			$this->addInclude("zone_{$name}", $this->appPath . "/zones/{$name}.php");
@@ -113,8 +124,7 @@ class zoop
 	 * @access public
 	 * @return void
 	 */
-	function addObject($name, $file = '')
-	{
+	function addObject($name, $file = '') {
 		if(!empty($file)) {
 			$file = $this->appPath . "/objects/$file";
 		} else {
@@ -130,8 +140,7 @@ class zoop
 	 * @access public
 	 * @return void
 	 */
-	function addClass($name)
-	{
+	function addClass($name) {
 		$file = $this->appPath . "/classes/$name.php";
 		$this->addInclude($name, $file);
 		//if (file_exists($file))
@@ -140,14 +149,18 @@ class zoop
 	
 	/**
 	 * addInclude
+	 * Zoop includer.
+	 * In a php 5+ environment with autoinclude it will maintain a hash
+	 * of all includes and using autoinclude, will only include each file one time.
+	 *
+	 * In a php 4 environment, wrapper for include_once
 	 *
 	 * @param mixed $name
 	 * @param mixed $file
 	 * @access public
 	 * @return void
 	 */
-	function addInclude($name, $file)
-	{
+	function addInclude($name, $file) {
 		$this->includes[strtolower($name)] = $file;
 		if(version_compare(PHP_VERSION, "5.0", "<"))
 			include_once($file);
@@ -155,29 +168,28 @@ class zoop
 
 	/**
 	 * addInclude
+	 * Simply a helper function to include many files with addInclude
 	 *
 	 * @param array $classes
 	 * @access public
 	 * @return void
 	 */
-	function addIncludes($classes)
-	{
-		foreach($classes as $name => $file)
+	function addIncludes($classes) {
+		foreach($classes as $name => $file) {
 			$this->addInclude($name, $file);
+		}
 	}
 
 	/**
-	 * autoLoad($name)
+	 * autoLoad
 	 *
 	 * @param mixed $name
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 */
-	function autoLoad($name)
-	{
+	function autoLoad($name) {
  		$name = strtolower($name);
-		if( isset( $this->includes[$name]))
-		{
+		if( isset( $this->includes[$name])) {
 			include_once($this->includes[$name]);
 			return true;
 		}
@@ -186,17 +198,15 @@ class zoop
 
 	/**
 	 * init
+	 * Initalizes the components.
+	 * Calls the init method for each component.
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
-		foreach($this->components as $name => $object)
-		{
-			if(!isset($this->init[$name]) || !$this->init[$name])
-			{
-				//$object->defaultConstants();
+	function init() {
+		foreach($this->components as $name => $object) {
+			if(!isset($this->init[$name]) || !$this->init[$name]) {
 				$object->init();
 				$this->init[$name] = true;
 			}	
@@ -206,14 +216,17 @@ class zoop
 
 	/**
 	 * run
+	 * runs the components.
+	 * Calls the run method for each component.
+	 *
+	 * Most components will not have a run method.
+	 * Special cases, would be the db and app
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function run()
-	{
-		foreach($this->components as $name => $object)
-		{
+	function run() {
+		foreach($this->components as $name => $object) {
 			$object->run();
 		}
 	}
@@ -235,6 +248,10 @@ class zoop
 
 /**
  * component
+ * The component class is a meta class of sorts. 
+ * For each component a "component class" is required. 
+ *
+ * This is the base class for those "component classes"
  *
  * @package
  * @version $id$
@@ -252,91 +269,136 @@ class component
 	 */
 	var $required = array();
 
-	function getBasePath()
-	{
+	/**
+	 * component
+	 * Default constructor does nothing
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function component() { }
+
+	/**
+	 * getBasePath 
+	 * Returns the base path for _this_ specific component.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getBasePath() {
 		return zoop_dir . "/" . $this->getName();
 	}
 
-	function getName()
-	{
+	/**
+	 * getName 
+	 * Returns the name of the component
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getName() {
 		$className = get_class($this);
 		return $componentName = substr($className, 10);
 	}
 
 	/**
 	 * defaultContstants
-	 * @access public
-	 */
-	function defaultConstants()
-	{
-		include($this->getBasePath() . "/defaultConstants.php");
-	}
-	
-	/**
-	 * component
+	 * Returns the default configuration constants.
+	 * Included from the defaultConstants file bundled in the component.
 	 *
 	 * @access public
-	 * @return void
 	 */
-	function component()
-	{
-		//default constructor does nothing
+	function defaultConstants() {
+		include($this->getBasePath() . "/defaultConstants.php");
 	}
 
 	/**
 	 * requireComponent
 	 *
+	 * Setup a dependency of this component.
+	 *
+	 * @code
+	 * $this->requireComponent('db');
+	 * @endcode
+	 *
 	 * @param mixed $name
 	 * @access public
 	 * @return void
 	 */
-	function requireComponent($name)
-	{
+	function requireComponent($name) {
 		$this->required[] = $name;
 	}
 
 	/**
 	 * &getRequiredComponents
+	 * Return components this component is dependant on. 
 	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &getRequiredComponents()
-	{
+	function &getRequiredComponents() {
 		return $this->required;
 	}
 
 	/**
 	 * getIncludes
 	 *
+	 * To be overloaded. 
+	 * Typically this method will establish all the files that this 
+	 * component needs to run 
+	 *
+	 * It returns an array. An example of this is
+	 * @code
+	 * $file = $this->getBasePath();
+	 * return array(
+	 * 			"form2" => $file . "/forms2.php",
+	 *			"form" => $file . "/forms.php",
+	 *			"table" => $file . "/table.php",
+	 *			"record" => $file . "/record.php",
+	 *			"field" => $file . "/field.php",
+	 *			"cell" => $file . "/cell.php",
+	 *			"xml_serializer" => "XML/Serializer.php"
+	 *	);
+	 *	@endcode
+	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 *
 	 */
-	function getIncludes()
-	{
+	function getIncludes() {
 		return array();
 	}
 
 	/**
 	 * init
 	 *
+	 * To be overloaded. 
+	 * Some times a component may require some logic before the getIncludes. 
+	 * The init method is a hook to be called before Including the component files
+	 * with the getIncludes method.
+	 *
+	 * Will not be commonly used. Used in db.
+	 * Run before getIncludes
+	 *
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
+	function init() {
 		//default init does nothing
 	}
 
 	/**
 	 * run
+	 * The run method is a hook for the special case for when a component needs
+	 * to run code upon inclusion. Most of the time it will be empty.
+	 * Special cases are the db and app components.
+	 *
+	 * Run after getIncludes
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function run()
-	{
+	function run() {
 		//really shouldn't do anything, unless its the app_component
 	}
 }

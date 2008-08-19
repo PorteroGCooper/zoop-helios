@@ -174,7 +174,7 @@ function VerifyInt($inNumber)
 	{
 		foreach($inNumber as $key => $value)
 		{
-			$inNumber[$key] = VerifyInt($inNumber);
+			$inNumber[$key] = VerifyInt($value);
 		}
 	}
 	else if($inNumber === '')//blank is ok, because we're not checking that it's set to a value, just that if it has one, it is an integer.

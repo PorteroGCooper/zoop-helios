@@ -56,76 +56,84 @@
 
 		/**
 		 * error
+		 * The last error message recorded.
 		 *
 		 * @var string
 		 * @access public
 		 */
-		var $error = "";		// The last error message recorded.
+		var $error = "";
 		/**
 		 * errornum
 		 *
-		 * @var float
+		 * @var int
 		 * @access public
 		 */
 		var $errornum = 0;
 
 		/**
 		 * zonename
+		 * Contains the pathname of this zone.
+		 * It will also contain the variable if urlvars
+		 * is enabled for this class.
 		 *
 		 * @var string
 		 * @access public
 		 */
-		var $zonename = "";		/* This will contain the pathname of this zone.
-								 * It will also contain the variable if urlvars
-								 * is enabled for this class.
-								 */
+		var $zonename = "";	
 
 		/**
 		 * zonetype
+		 * Contains the name of this zone.
 		 *
 		 * @var string
 		 * @access public
 		 */
-		var $zonetype = "";		// this will always contain the name of this zone
+		var $zonetype = "";	
 
 		/**
 		 * urlvar
+		 * A legacy variable that should be left alone or set to false
 		 *
 		 * @var array
 		 * @access public
 		 */
-		var $urlvar = array();		// this is a legacy variable that should be left alone or set to false
+		var $urlvar = array();
 
 		/**
 		 * parent
+		 * Reference to the parent of this zone
 		 *
 		 * @var mixed
 		 * @access public
 		 */
-		var $parent = null;		// Reference to the parent of this zone
+		var $parent = null;	
 
 		/**
 		 * _zone
+		 * Array of subclasses for this zone
 		 *
 		 * @var array
 		 * @access protected
 		 */
-		var $_zone = array();	// array of subclasses for this zone
+		var $_zone = array();	// 
 
 		/**
 		 * allowed_children
+		 * These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
 		 *
 		 * @var array
 		 * @access public
 		 */
-		var $allowed_children = array();	// These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
+		var $allowed_children = array();
+
 		/**
 		 * allowed_parents
+		 * These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
 		 *
 		 * @var array
 		 * @access public
 		 */
-		var $allowed_parents = array();	// These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
+		var $allowed_parents = array();	
 
 		/**
 		 * zoneParamNames
@@ -151,16 +159,14 @@
 		 */
 		var $ancestors = array();
 
-
-		/* ADDED BY SPF - MAY 05 -
-								   * extra security, require by default the post must be recieved by
-								   * the page of the same name, this is for exceptions
-								   */
-		/* replaced with a open by default, restrict as requested
-			rjl 8/25/2005 */
-		//var $allowed_remote_post = array();
 		/**
 		 * restricted_remote_post
+	   	 * Extra security, require by default the post must be recieved by
+	     * the page of the same name, this is for exceptions
+		 * ADDED BY SPF - MAY 05
+		 *
+		 * Replaced with a open by default, restrict as requested
+		 * rjl 8/25/2005 
 		 *
 		 * @var array
 		 * @access public
@@ -183,6 +189,7 @@
 		 * @access public
 		 */
 		var $url = "";
+
         //////////////////////////////////////////////////////////////
         //  These are settings that will be overridden by subclass  //
         //////////////////////////////////////////////////////////////
@@ -208,7 +215,6 @@
 		/**
 		* zone has urlvars
 		*
-		*
 		* if $urlvars == <num of levels> then the fw will look for variables
 		* in the path immediately after the name of this class up to <num> levels
 		* and snag those variables and store them in the $this->urlvar array.
@@ -216,24 +222,19 @@
 		* http://localhost/index.php/user/12/add
 		*
 		* goes to pageadd() in class user, but stores a ["12"] in the
-			* $this->urlvar array.
-			*
-			* $urlzones is the same except it stores individual instances.
-			* The name is stored in $this->zonename.  The reason for individual
-			* instances is that each class instance exists in sessions.
-			* So $this->Var1 in /user/12 and $this->Var1 in /user/3
+		* $this->urlvar array.
+		*
+		* $urlzones is the same except it stores individual instances.
+		* The name is stored in $this->zonename.  The reason for individual
+		* instances is that each class instance exists in sessions.
+		* So $this->Var1 in /user/12 and $this->Var1 in /user/3
 		* are different.
 		*
+		* @var mixed
 		* @access public
 		**/
+		var $urlvars = false;
 
-        	/**
-        	 * urlvars
-        	 *
-        	 * @var mixed
-        	 * @access public
-        	 */
-        	var $urlvars = false;
 		/**
 		 * urlzones
 		 *
@@ -250,12 +251,27 @@
 		 */
 		var $zcache;
 
-		/*
-		* Set $this->Alias["alias"] = "Aliastarget"
-		*/
+		/**
+		 * Alias 
+		 * An array of all the page aliases for this zone.
+		 *
+		 * @code
+		 * Set $this->Alias["alias"] = "Aliastarget" 
+		 * @endcode
+		 *
+		 * @var array
+		 * @access public
+		 */
 		var $Alias = array();
 
-		function Zone()		// Constructor
+
+		/**
+		 * Zone Constructor
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		function Zone()	
 		{
 			if (defined("zone_cache") && zone_cache)
 				$this->initZoneCache();
@@ -615,24 +631,6 @@
 		}
 
 		/**
-		* If you don't store the zone in the session (defined in config.php),
-		* Then the zone can be included dynamically.
-		* This is useful if many requests would only use one or two zones.
-		* If you use this do not include zones in includes.php other than default.
-		* @since Version 1.2
-		* @param string $name name of zone
-		*/
-// 		function include_zone($name)
-// 		{
-// 			if(!isset($this->included['zones'][$name]))
-// 			{
-// 				if (file_exists(app_dir . "/" . $name . ".php"))
-// 					include(app_dir . "/" . $name . ".php");
-// 				$this->included['zones'][$name] = 1;
-// 			}
-// 		}
-
-		/**
 		* Useful if one is not storing the zones in the session (defined in config.php),
 		* for storing zone variables in the session without the overhead of the entire session.
 		* also used for retriving that variable from the session.
@@ -658,7 +656,11 @@
 		}
 
 		/**
-		 * pageDefault
+		 * Catchall for any unhanled request to the zone.
+		 * Should be overridden to be the default function 
+		 * (in case there is either A: no path info, or B: no matching function or class for the path";
+		 * If zone has wildcards on it will handle all requests.
+		 *
 		 *
 		 * @param mixed $inPath
 		 * @access public
@@ -666,73 +668,71 @@
 		 */
 		function pageDefault($inPath)
 		{
-			// This function should be overridden to be the default function (in case there is either A: no path info, or B: no matching function or class for the path";
+			// 
 
 			die("You haven't overridden pagedefault!");
 		}
 
 		/**
-		 * initZone
+		 * Initialize the zone.
+		 * Should be overridden in each zone if you would like code 
+		 * to execute each time it hits the zone's handleRequest function.
 		 *
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
-		function initZone($inPath)
-		{
-			// This function should be overridden in each zone if you would like code to execute each time it hits the zone's handleRequest function.
-		}
+		function initZone($inPath) { }
 
 		/**
-		 * closeZone
+		 * Close the zone.
+		 * Should be overridden in each zone if you would like code 
+		 * to execute each time before it leaves the zone's 
+		 * handleRequest function.
 		 *
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
-		function closeZone($inPath)
-		{
-			// This function should be overridden in each zone if you would like code to execute each time before it leaves the zone's handleRequest function.
-		}
+		function closeZone($inPath) { } 
 
 		/**
 		 * initPages
+		 * Executed before any page or post function in the zone.
 		 *
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
-		function initPages($inPath)
-		{
-			// This function is run before any page or post function in the zone.
-		}
+		function initPages($inPath) { }
 
 		/**
 		 * closePages
+		 * Executed after any page or post function in the zone.
 		 *
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
-		function closePages($inPath)
-		{
-			// This function is run after any page or post function in the zone.
-		}
+		function closePages($inPath) { }
 
 		/**
 		 * closePosts
+		 * Executed after any post function in the zone.
 		 *
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
 		 */
-		function closePosts($inPath)
-		{
-			// This function is run after any page or post function in the zone.
-		}
+		function closePosts($inPath) { }
 
-		function getName()
-		{
+		/**
+		 * getName 
+		 * 
+		 * @access public
+		 * @return string The name of the current Zone
+		 */
+		function getName() {
 			return $this->zonename;
 		}
 
@@ -740,7 +740,7 @@
 		 * getZoneParamNames
 		 *
 		 * @access public
-		 * @return void
+		 * @return array Zone parameter names.
 		 */
 		function getZoneParamNames()
 		{
@@ -1064,6 +1064,14 @@
 			$this->zcache = new zcache(array('base'=> $this->cacheBase));
 		}
 
+		/**
+		 * canonicalizeTemplate 
+		 * Based on zoneName provide a canonical template name
+		 * 
+		 * @param mixed $tplName 
+		 * @access public
+		 * @return string
+		 */
 		function canonicalizeTemplate ( $tplName )
 		{
 			if ( substr ( $tplName, 0, 1 ) == "/" )
@@ -1074,6 +1082,15 @@
 			return $this->templateBase . '/' . $tplName;
 		}
 		
+		/**
+		 * Given zone, page and $page params return a path
+		 * 
+		 * @param mixed $z zone params
+		 * @param mixed $page page name
+		 * @param mixed $p page params
+		 * @access public
+		 * @return string path
+		 */
 		function makePath($z, $page, $p)
 		{
 			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
@@ -1081,6 +1098,15 @@
 			return makePath($zone, $z, $page, $p);
 		}
 		
+		/**
+		 * Given zone, page and $page params return a url
+		 * 
+		 * @param mixed $z 
+		 * @param mixed $page 
+		 * @param mixed $p 
+		 * @access public
+		 * @return string url
+		 */
 		function makeUrl($z, $page, $p)
 		{
 			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
@@ -1088,6 +1114,14 @@
 			return SCRIPT_URL . makePath($zone, $z, $page, $p);
 		}
 		
+		/**
+		 * Called when a required param is missing.
+		 * Can be overloaded to change functionality
+		 * 
+		 * @param mixed $z 
+		 * @access public
+		 * @return void
+		 */
 		function verifyRequiredParams($z)
 		{
 			$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
