@@ -311,7 +311,6 @@ class zone
 			// SINCE THIS IS NULL SET ZONENAME TO @ROOT
 			$this->zonename = "@ROOT";
 		}
-		}
 
 		if (!$this->zonetype) {
 			// SET $this->zonetype TO THE ZONENAME OR TO DEFAULT IF $this->zonename == @ROOT
@@ -477,13 +476,6 @@ class zone
 		foreach ($path_array as $key => $value ) {
 			$new_path_array = array_merge($new_path_array, $this->_urlStringToArray($value));
 		}
-		if($this->zonename == '@ROOT')
-		{
-			global $globalTime;
-			logprofile($globalTime);
-		}
-		return $retval;
-	}
 
 		$this->pageVars = $new_path_array;
 	}
