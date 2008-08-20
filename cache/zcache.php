@@ -29,13 +29,9 @@
 class zcache
 {
 
-/**
-* Reference to the cacheLite object
-*
-* @var object
-* @access public
-*/
-	var $cacheLite;
+var $driver_map;  // mapping of easy name to class name
+var $driver; // holds the driver object
+var $drivername; // holds the driver class name
 
 /**
 * Constructor.
@@ -48,6 +44,12 @@ class zcache
 */
 	function &zcache($options = array())
 	{
+		// make sure to add to this map if you add drivers
+		$this->driver_map = array('memcache'=>'zcache_driver_memcache',
+								  'cachelite'=>'zcache_driver_cachelite');
+
+		zcache::_setDriver($options);
+
 		if (defined('default_cache_lifeTime'))
 			$default_lifeTime = default_cache_lifeTime;
 		else
@@ -81,22 +83,36 @@ class zcache
 
 		$cacheoptions = array_merge($DefaultOptions, $options);
 
-		if (isset($options['base']))
-			$cacheoptions['cacheDir'] .= $options['base'];
-
-		mkdirr($cacheoptions['cacheDir']);
-
-		$cacheLite = new Cache_Lite($cacheoptions);
+		// instantiate driver
+		require_once("{$this->drivername}.php");
+		$driver = new $this->drivername($cacheoptions); 	
 
 	  	if (isset($this) && is_object($this)  && "zcache" == strtolower(get_class($this)))
 	  	{
-		 	$this->cacheLite =& $cacheLite;
-			$this->group = $cacheoptions['group'];
-			return $this->cacheLite;
+			return $this->driver =& $driver;
 		}
 		else
 		{
-			return $cacheLite;
+			return $driver;
+		}
+	}
+
+	// static
+	function _setDriver($options) {
+		$default_cache_driver = "";
+		if (isset($options['cache_driver'])) {
+			$default_cache_driver = $options['cache_driver'];
+		} else if (defined('cache_driver')) {
+			$default_cache_driver = cache_driver;  
+		} else {
+			$default_cache_driver = 'file'; 
+		}
+
+ 		if (array_key_exists($default_cache_driver, $this->driver_map)) {
+			$this->drivername = $this->driver_map[$default_cache_driver];
+		} else {
+			// driver is invalid
+			trigger_error("could not instantiate driver: {$this->drivername}");
 		}
 	}
 
@@ -112,7 +128,7 @@ class zcache
 	{
 		if (isset($this) && is_object($this) && "zcache" == strtolower(get_class($this)))
 		{
-			return $this->cacheLite;
+			return $this->driver;
 		}
 		else
 		{
@@ -121,27 +137,6 @@ class zcache
 		}
 	}
 
-	/**
-	 * getGroup
-	 * get the group name (default = 'default').
-	 * Used by cache and get.
-	 *
-	 * @param string $id
-	 * @param mixed $data
-	 * @param array $options
-	 * @access public
-	 * @return boolean
-	 */
-	function _getGroup($options = array())
-	{
-		if (isset($options['group']))
-			return $options['group'];
-
-		if (isset($this) && is_object($this) && "zcache" == strtolower(get_class($this)) && isset($this->group))
-			return $this->group;
-
-		return 'default';
-	}
 
 	/**
 	 * cache
@@ -157,11 +152,7 @@ class zcache
   	function cache($id, $data, $options = array())
   	{
 		$co = zcache::_getCacheObj($options);
-
-		if (isset($options['lifeTime']))
-			$co->setLifeTime($options['lifeTime']);
-
-		return $co->save($data, $id, zcache::_getGroup($options));
+		return $co->cache($id, $data, $options);
 	}
 
 
@@ -177,7 +168,9 @@ class zcache
 	 */
 	function cacheData($id, $data, $options = array())
 	{
-		$options = array_merge($options, array('automaticSerialization' => true));
+		$co = zcache::_getCacheObj($options);
+		// serialize data
+		$data = serialize($data);
 		return zcache::cache($id, $data, $options);
 	}
 
@@ -193,8 +186,8 @@ class zcache
 	 */
 	function cacheString($id, $data, $options = array())
 	{
-		$options = array_merge($options, array('automaticSerialization' => false));
-		return zcache::cache($id, $data, $options);
+		$co = zcache::_getCacheObj($options);
+		return $co->cacheData($id, $data, $options);
 	}
 
 	/**
@@ -210,7 +203,7 @@ class zcache
 	function get($id, $options = array())
   	{
 		$co = zcache::_getCacheObj($options);
-		return $co->get($id, zcache::_getGroup($options));
+		return $co->get($id, $options);
 	}
 
 	/**
@@ -225,8 +218,8 @@ class zcache
 	 */
 	function getData($id, $options = array())
   	{
-  		$options = array_merge($options, array('automaticSerialization' => true));
-  		return zcache::get($id, $options);
+  		$data = zcache::get($id, $options);
+		return unserialize($data);
 	}
 
 	/**
@@ -257,7 +250,7 @@ class zcache
   	function clear($id, $options = array())
   	{
 	    $co = zcache::_getCacheObj($options);
-	    return $co->remove($id, zcache::_getGroup($options));
+	    return $co->clear($id, $options);
 	}
 
 	/**
@@ -273,9 +266,9 @@ class zcache
 	{
 		if ($mode == "normal") // only mode implemented now
 		{
-			$options = array_merge($options, array('group' => $group));
+			$options = array_merge($options, array('group' => $group)); // probably not necessary
 			$co = zcache::_getCacheObj($options);
-			return $co->clean($group, $options);
+			return $co->clearGroup($group, $options);
 		}
 		else
 		{
@@ -293,7 +286,8 @@ class zcache
 	 */
 	function clearBase($base)
 	{
-		return rmrf(app_cache_dir . "$base");
+	    $co = zcache::_getCacheObj(array());
+		return $co->clearBase($base);
 	}
 
 	/**
@@ -305,8 +299,7 @@ class zcache
 	 */
 	function clearAllCache()
 	{
-		rmrf(app_cache_dir . "/");
-		mkdirr(app_cache_dir);
+	    $co = zcache::_getCacheObj(array());
+		$co->clearAllCache();
 	}
 }
-?>

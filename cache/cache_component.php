@@ -13,9 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-// require_once('Cache/Lite.php');
-// include(dirname(__file__) . "/zcache.php");
-
+define_once("app_cache_dir", app_temp_dir . '/cache/'); // only used for file cache
 
 /**
  * component_cache
@@ -38,14 +36,14 @@ class component_cache extends component
 	function init()
 	{
 		// make sure the directories are writable and exist or are created properly
- 		mkdirr(app_cache_dir);
+ 		//mkdirr(app_cache_dir);
 	}
 
 	function getIncludes()
 	{
 		return array(
-				"zcache" =>  $this->getBasePath() . "/zcache.php",
-				"cacheLite" => 'Cache/Lite.php'
+				"zcache_driver" =>  $this->getBasePath() . "/zcache_driver.php",
+				"zcache" =>  $this->getBasePath() . "/zcache.php"
 		);
 	}
 }

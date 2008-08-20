@@ -1,11 +1,11 @@
 <?php
 /**
-* @category zoop
-* @package zoop
-*
-* Two classes are contained in this file. 
-* The Zoop class, and the Compontent base.
-*/
+ * @file
+ *
+ * Two classes are contained in this file: the Zoop class, and the Compontent base.
+ *
+ * @group zoop
+ */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,6 +17,37 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+/**
+ * @mainpage Welcome to the Zoop Framework
+ * 
+ * Welcome to the Zoop Framework. Newcomers to Zoop should check out
+ * {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop},
+ * a beginner's guide to Zoop.
+ *
+ * - {@link http://zoopframework.com/docs Zoop Documentation}
+ *   - {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop}
+ * - {@link components Zoop Components}
+ *   - {@link app App}
+ *   - {@link auth Auth}
+ *   - {@link cache Cache}
+ *   - {@link chart Chart}
+ *   - {@link db DB}
+ *   - {@link forms Forms}
+ *   - {@link fpdf FPDF}
+ *   - {@link graphic Graphic}
+ *   - {@link gui GUI}
+ *   - {@link mail Mail}
+ *   - {@link pdf PDF}
+ *   - {@link sequence Sequence}
+ *   - {@link session Session}
+ *   - {@link spell Spell}
+ *   - {@link storage Storage}
+ *   - {@link userfiles Userfiles}
+ *   - {@link validate Validate}
+ *   - {@link xml XML}
+ *   - {@link zone Zone}
+ */
+
 if(!defined('zoop_autoload') || zoop_autoload)
 {
 	function __autoload($name)
@@ -25,16 +56,16 @@ if(!defined('zoop_autoload') || zoop_autoload)
 		if($zoop->autoLoad($name))
 			return true;
 		else
-			return false;//trigger_error("class $name not registered with the \$zoop object, try \$zoop->include(\"$name\",\"<fileName>\")");
+			return false; //trigger_error("class $name not registered with the \$zoop object, try \$zoop->include(\"$name\",\"<fileName>\")");
 	}
 }
 
 /**
- * zoop
- * The Zoop class is the glue that brings all the different components together.
- * It ties the config to the code and launches the controller
+ * The zoop class.
  *
- * @package
+ * The Zoop class is the glue that brings all the different components together.
+ * It ties the config to the code and launches the controller.
+ *
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
@@ -51,8 +82,9 @@ class zoop
 	var $init = array();
 
 	/**
-	 * zoop
-	 * Constructor, adds in the "app" component, required of all zoop apps.
+	 * The zoop constructor.
+	 *
+	 * The constructor adds in the "app" component, which required for all zoop apps.
 	 *
 	 * @param mixed $appPath
 	 * @access public
@@ -65,16 +97,16 @@ class zoop
 		else
 			$this->appPath = $appPath;
 
-		$this->addComponent('app');//zoop always includes app_component
+		$this->addComponent('app'); //zoop always includes app_component
 	}
 
 	/**
-	 * addComponent
-	 * Includes the component, the configuration for the component
-	 * and the dependencies. 
-	 * Will use autoload if available.
+	 * Add a Zoop component.
 	 *
-	 * @param mixed $name
+	 * Includes the component, the configuration for the component
+	 * and all dependencies. addComponent will use autoload if available.
+	 *
+	 * @param string $name The name of the component to include.
 	 * @access public
 	 * @return void
 	 */
@@ -97,14 +129,12 @@ class zoop
 	}
 
 	/**
-	 * addZone
+	 * Add a zone to the application.
+	 * 
+	 * A zone is a section of the controller. Zones are analagous to a directory.
+	 * addZone use autoload if available.
 	 *
-	 * Add a zone for the application. 
-	 * A zone is a section of the controller. Similar to a directory.
-	 *
-	 * Will use autoload if available
-	 *
-	 * @param mixed $name
+	 * @param string $name The name of the zone to add.
 	 * @access public
 	 * @return void
 	 */
@@ -120,7 +150,8 @@ class zoop
 	/**
 	 * addObject
 	 *
-	 * @param mixed $name
+	 * @param string $name
+	 * @param string $file Optionally, speficify the filename of the object to add.
 	 * @access public
 	 * @return void
 	 */
@@ -148,12 +179,12 @@ class zoop
 	}	
 	
 	/**
-	 * addInclude
 	 * Zoop includer.
+	 *
 	 * In a php 5+ environment with autoinclude it will maintain a hash
 	 * of all includes and using autoinclude, will only include each file one time.
 	 *
-	 * In a php 4 environment, wrapper for include_once
+	 * In a php 4 environment, this is a wrapper for include_once()
 	 *
 	 * @param mixed $name
 	 * @param mixed $file
@@ -167,8 +198,11 @@ class zoop
 	}
 
 	/**
-	 * addInclude
-	 * Simply a helper function to include many files with addInclude
+	 * addIncludes
+	 * 
+	 * Simply a helper function to include many files with addInclude.
+	 *
+	 * @see zoop::addIncludes()
 	 *
 	 * @param array $classes
 	 * @access public
