@@ -18,25 +18,21 @@ $GLOBALS['gPathParts'] = array();
 $GLOBALS['gZoneUrls'] = array();
 
 /**
-* zone class.
-*
-* <p>Extend this class any time you need
-* a new section on your site.	 File names
-* should be "zones/{zonename}.php" 
-
-* <p>This class is instantiated and called by the
-* zoop->run function called from the
-* index.php file.	 It will check path
-* and if a class member function of each
-* name exists (/path = path) information
-* and will automatically execute</p>
-*
-* rmb 7-20-2001
-* @package zone
-*/
-
-/**
  * zone
+ * Extend this class any time you need
+ * a new section on your site.	 File names
+ * should be "zone_{zonename}.php" and
+ * should be in the same directory as index.php
+ *
+ * This class is instantiated and the
+ * handlerequest function called from the
+ * index.php file.	 It will check path
+ * and if a class member function of each
+ * name exists (/path = path) information
+ * and will automatically execute
+ *
+ * rmb 7-20-2001
+ * @package zone
  *
  * @package
  * @version $id$
@@ -226,7 +222,6 @@ class zone
 	 * pagethese function.
 	 *
 	 * @access public
-	 * @since Version 1.0
 	 *
 	 **/
 	var $wildcards = false;
@@ -986,6 +981,7 @@ class zone
 	 * @return void
 	 */
 	function getMyParents() {
+
 		/**
 		 * parent_zones
 		 *
@@ -994,6 +990,7 @@ class zone
 		 * @access public
 		 */
 		static $parent_zones;
+
 		if ($parent_zones) return ($parent_zones);
 		foreach ($this->allowed_parents as $zone) {
 			$parent_zone = 'zone_' . $zone;
@@ -1009,7 +1006,7 @@ class zone
 	 * getAncestors 
 	 * 
 	 * @access public
-	 * @return void
+	 * @return array the zones that are ancestors of this zone (parent, grandparent,...)
 	 */
 	function getAncestors()
 	{
@@ -1021,10 +1018,11 @@ class zone
 
 	/**
 	 * isAncestor 
+	 * Check if ancestor of current zone
 	 * 
-	 * @param mixed $str 
+	 * @param mixed $str zone name 
 	 * @access public
-	 * @return void
+	 * @return bool True if zone passed in is an ancestor of current zone
 	 */
 	function isAncestor($str)
 	{
@@ -1038,10 +1036,12 @@ class zone
 
 	/**
 	 * areAncestors 
+	 * helper method, wraps isAncestor, accepts multiple input
 	 * 
-	 * @param mixed $strs 
+	 * @see isAncestor
+	 * @param array $strs 
 	 * @access public
-	 * @return void
+	 * @return bool True if any passed are ancestors
 	 */
 	function areAncestors($strs)
 	{
@@ -1058,18 +1058,15 @@ class zone
 	 * @access public
 	 * @return void
 	 */
-	function initParents() {
-
-	}
+	function initParents() { }
 
 	/**
-	 * getZoneUrl
-	 * should return an url to this zone
-	 * this function should return a complete url, not a path
+	 * Returns a complete url to this zone, not a path
+	 * 
 	 *
 	 * @param int $depth
 	 * @access public
-	 * @return void
+	 * @return string A complete url to this zone, not a path
 	 */
 	function getZoneUrl($depth = 0)
 	{
@@ -1078,12 +1075,11 @@ class zone
 	}
 
 	/**
-	 * getZonePath
-	 * should return an app path to this zone
+	 * Returns an app path to this zone
 	 *
 	 * @param int $depth
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function getZonePath($depth = 0)//use this function from now on, until we fix the function above
 	{
@@ -1093,7 +1089,7 @@ class zone
 
 	/**
 	 * zoneRedirect
-	 * should redirect us in the zone to the page $inUrl
+	 * Redirect to the page and url in the current zone
 	 *
 	 * @param string $inUrl
 	 * @param mixed $redirectType
@@ -1153,6 +1149,7 @@ class zone
 	/**
 	 * guiCaching
 	 * enable caching of file to display and set lifetime.
+	 *
 	 * @param int $ttl
 	 * @access public
 	 * @return void
@@ -1178,7 +1175,7 @@ class zone
 	 * @param mixed $tplFile 
 	 * @param mixed $cache_id 
 	 * @access public
-	 * @return void
+	 * @return bool
 	 */
 	function guiIsCached($tplFile, $cache_id)
 	{
@@ -1188,14 +1185,13 @@ class zone
 	}
 
 	/**
-	 * missingParameter 
+	 * Called when a required zone parameter is missing.
+	 * To be overloaded to change the default functionality.
 	 * 
 	 * @access public
 	 * @return void
 	 */
-	function missingParameter()
-	{
-	}
+	function missingParameter() { }
 
 	/**
 	 * initZoneCache
@@ -1262,8 +1258,7 @@ class zone
 	}
 
 	/**
-	 * Called when a required param is missing.
-	 * Can be overloaded to change functionality
+	 * Ensure that required params are passed when using makepath
 	 * 
 	 * @param mixed $z 
 	 * @access public
