@@ -90,15 +90,6 @@
 		var $zonetype = "";	
 
 		/**
-		 * urlvar
-		 * A legacy variable that should be left alone or set to false
-		 *
-		 * @var array
-		 * @access public
-		 */
-		var $urlvar = array();
-
-		/**
 		 * parent
 		 * Reference to the parent of this zone
 		 *
@@ -261,7 +252,6 @@
 		* @var mixed
 		* @access public
 		*/
-        	var $urlvars = false;
 		var $urlvars = false;
 
 		/**
@@ -834,7 +824,6 @@
 		}
 
 		/**
-		 * initZone
 		 * Initialize the zone.
 		 * Should be overridden in each zone if you would like code 
 		 * to execute each time it hits the zone's handleRequest function.
@@ -903,7 +892,7 @@
 		 *
 		 * @param mixed $inParamNames
 		 * @access public
-		 * @return void
+		 * @return bool
 		 */
 		function setZoneParams($inParamNames)
 		{
