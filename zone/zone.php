@@ -177,6 +177,16 @@
 		var $pageVars = array();
 
 		/**
+		 * _zoneParams 
+		 * Place to store the zone parameter array with values
+		 * 
+		 * @var array
+		 * @since Version 2.0
+		 * @access private
+		 */
+		var $_zoneParams = array();
+
+		/**
 		 * restricted_remote_post
 	   	 * Extra security, require by default the post must be recieved by
 	     * the page of the same name, this is for exceptions
@@ -336,31 +346,60 @@
 			// CHECK THE ZONE TO SEE IF ANY VARIABLES ARE IN THE PATH.
 			if($urlVarNames = $this->getZoneParamNames())
 			{
+				// loop once for each name
 				foreach ($urlVarNames as $index => $varName)
 				{
 					if( count($this->_inPath) > 0 )
 					{
-						$varValue = array_shift( $this->_inPath );
-						if(defined("strip_url_vars") && strip_url_vars)
-							if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
-							{
-								$varValue = $this->missingParameter($varName);
-								if (is_null($varValue))
-	 								trigger_error("The parameter '$varName' must be supplied for this zone");
-							}
+						// we need to handle special names
+						$origVarName = $varName;
+						if ($varName == "*") $varName = "{0,..}";
+						if ($varName == "+") $varName = "{1,..}";
+						if ($varName == "?") $varName = "{1,1}";
 
-						$gUrlVars[ $varName ] = $varValue;
-						$gPathParts[] = $varValue;
-					}
-					else
-					{
+						if (preg_match('/\{(\s?[\d]*\s?),(\s?[\d]*\s?|\s?\.\.\s?)\}/', $varName,$range)) {
+							$min = $range[1];
+							$max = $range[2];
+							if ($max == "..") $max = PHP_INT_MAX; // Translate .. to a number
+
+							$count = 0;
+							while ($count < $max) {
+								$tmpVar = array_shift($this->_inPath);
+								if ( strpos ( $tmpVar, ":") ) {
+									$this->_zoneParams = array_merge($this->_zoneParams, $this->_urlStringToArray($tmpVar));
+									$count++;
+								} else {
+									if ($count < $min ) {
+										trigger_error("A parameter is missing for '$origVarName' for this zone");
+										$count = 100000;
+										break;
+									} else {
+										array_unshift($this->_inPath, $tmpVar);
+										$count = 100000;
+										break;
+									}
+								}
+							}
+						} else {
+							$varValue = array_shift( $this->_inPath );
+							if(defined("strip_url_vars") && strip_url_vars)
+								if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
+								{
+									$varValue = $this->missingParameter($varName);
+									if (is_null($varValue))
+										trigger_error("The parameter '$varName' must be supplied for this zone");
+								}
+
+							$this->_zoneParams[ $varName ] = $varValue;
+							$gUrlVars[ $varName ] = $varValue;
+							$gPathParts[] = $varValue;
+						}
+					} else {
 						break;
 					}
 				}
 			}
-
 		}
-
 
 		/**
 		 * checkPathForSequences 
@@ -397,6 +436,12 @@
 		}
 
 
+		/**
+		 * findAndRunChildZone 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function findAndRunChildZone () {
 			global $gAlias;
 			global $gUrlVars;
@@ -465,19 +510,37 @@
 
 			$new_path_array = array();
 			foreach ($path_array as $key => $value ) {
-				$tmp = explode(":", $value);
-
-				if (count($tmp) == 1) {
-					$new_path_array[$key] = $value;
-				} elseif (count($tmp)  == 2 ) {
-					$new_path_array[$tmp[0]] = $tmp[1];
-				} else {
-					$new_key = array_shift($tmp);
-					$new_path_array[$new_key] = $tmp;
-				}
+				$new_path_array = array_merge($new_path_array, $this->_urlStringToArray($value));
 			}
 
 			$this->pageVars = $new_path_array;
+		}
+
+		/**
+		 * _urlStringToArray 
+		 * This method is used to take a string in one of the formats 
+		 * value
+		 * key:value 
+		 * key:value:value2:value3:... 
+		 * and return an array with the proper structure.
+		 * 
+		 * @param mixed $inString 
+		 * @access protected
+		 * @return array
+		 */
+		function _urlStringToArray($inString) {
+			$tmp = explode(":", $inString);
+
+			if (count($tmp) == 1) {
+				$new_array[] = $inString;
+			} elseif (count($tmp)  == 2 ) {
+				$new_array[$tmp[0]] = $tmp[1];
+			} else {
+				$new_key = array_shift($tmp);
+				$new_array[$new_key] = $tmp;
+			}
+
+			return $new_array;
 		}
 
 		/**
@@ -828,17 +891,6 @@
 		}
 
 		/**
-		 * getZoneParamNames
-		 *
-		 * @access public
-		 * @return array Zone parameter names.
-		 */
-		function getZoneParamNames()
-		{
-			return $this->zoneParamNames;
-		}
-
-		/**
 		 * setZoneParams
 		 * alias for setZoneParamsNames
 		 *
@@ -864,6 +916,17 @@
 		}
 
 		/**
+		 * getZoneParamNames
+		 *
+		 * @access public
+		 * @return void
+		 */
+		function getZoneParamNames()
+		{
+			return $this->zoneParamNames;
+		}
+
+		/**
 		 * getZoneParams
 		 *
 		 * @access public
@@ -871,8 +934,7 @@
 		 */
 		function getZoneParams()
 		{
-			global $gUrlVars;
-			return $gUrlVars;
+			return $this->_zoneParams;
 		}
 		
 		/**
@@ -884,10 +946,8 @@
 		 */
 		function getZoneParam($inName)
 		{
-			global $gUrlVars;
-		
-			if ( isset( $gUrlVars[$inName] ) )
-				return $gUrlVars[$inName];
+			if ( isset( $this->_zoneParams[$inName] ) )
+				return $this->_zoneParams[$inName];
 		}
 
 		/**
@@ -941,6 +1001,12 @@
 			return $parent_zones;
 		}
 
+		/**
+		 * getAncestors 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function getAncestors()
 		{
 			if (isset($this->parent) && !empty($this->parent))
@@ -949,6 +1015,13 @@
 				return array();
 		}
 
+		/**
+		 * isAncestor 
+		 * 
+		 * @param mixed $str 
+		 * @access public
+		 * @return void
+		 */
 		function isAncestor($str)
 		{
 			$strs = (array) $str;
@@ -959,6 +1032,13 @@
 			return false;
 		}
 
+		/**
+		 * areAncestors 
+		 * 
+		 * @param mixed $strs 
+		 * @access public
+		 * @return void
+		 */
 		function areAncestors($strs)
 		{
 			$strs = (array) $strs;
@@ -1088,6 +1168,14 @@
 			}
 		}
 
+		/**
+		 * guiIsCached 
+		 * 
+		 * @param mixed $tplFile 
+		 * @param mixed $cache_id 
+		 * @access public
+		 * @return void
+		 */
 		function guiIsCached($tplFile, $cache_id)
 		{
 			global $gui;
@@ -1095,6 +1183,12 @@
 			return $gui->is_cached($tplFile, $cache_id);
 		}
 
+		/**
+		 * missingParameter 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function missingParameter()
 		{
 		}
