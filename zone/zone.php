@@ -168,6 +168,15 @@
 		var $ancestors = array();
 
 		/**
+		 * pageVars 
+		 * 
+		 * @var array
+		 * @since Version 2.0
+		 * @access public
+		 */
+		var $pageVars = array();
+
+		/**
 		 * restricted_remote_post
 	   	 * Extra security, require by default the post must be recieved by
 	     * the page of the same name, this is for exceptions
@@ -441,6 +450,37 @@
 		}
 
 		/**
+		 * setPageVars 
+		 * Support the new key:value or key:value:value url page parameter structure.
+		 * Populate the $this->pageVars variable
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		function setPageVars() {
+			$inPath = $this->_inPath;
+			$pageName = array_shift($inPath);
+				
+			$path_array = $inPath;
+
+			$new_path_array = array();
+			foreach ($path_array as $key => $value ) {
+				$tmp = explode(":", $value);
+
+				if (count($tmp) == 1) {
+					$new_path_array[$key] = $value;
+				} elseif (count($tmp)  == 2 ) {
+					$new_path_array[$tmp[0]] = $tmp[1];
+				} else {
+					$new_key = array_shift($tmp);
+					$new_path_array[$new_key] = $tmp;
+				}
+			}
+
+			$this->pageVars = $new_path_array;
+		}
+
+		/**
 		 * handleRequest
 		 * Where most of the magic of the controller happens
 		 *
@@ -467,6 +507,7 @@
 
 			$this->findZoneParams();
 			$this->checkPathForSequences();
+			$this->setPageVars();
 			$this->initZone($this->_inPath);
 			$retval = $this->findAndRunChildZone();
 
