@@ -293,7 +293,6 @@
 		 */
 		var $Alias = array();
 
-
 		/**
 		 * Zone Constructor
 		 * 
@@ -306,8 +305,12 @@
 				$this->initZoneCache();
 		}
 
-
-
+		/**
+		 * findZoneName 
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function findZoneName() {
 
 			global $gPathParts; //an array of all the parts of the path so far
@@ -338,10 +341,8 @@
 		 * @return void
 		 */
 		function findZoneParams() {
-			global $gAlias;
 			global $gUrlVars;
 			global $gPathParts;//an array of all the parts of the path so far
-			global $gZoneUrls;
 
 			// CHECK THE ZONE TO SEE IF ANY VARIABLES ARE IN THE PATH.
 			if($urlVarNames = $this->getZoneParamNames())
@@ -349,53 +350,48 @@
 				// loop once for each name
 				foreach ($urlVarNames as $index => $varName)
 				{
-					if( count($this->_inPath) > 0 )
-					{
-						// we need to handle special names
-						$origVarName = $varName;
-						if ($varName == "*") $varName = "{0,..}";
-						if ($varName == "+") $varName = "{1,..}";
-						if ($varName == "?") $varName = "{1,1}";
+					// we need to handle special names
+					$origVarName = $varName;
+					if ($varName == "*") $varName = "{0,..}";
+					if ($varName == "+") $varName = "{1,..}";
+					if ($varName == "?") $varName = "{1,1}";
 
-						if (preg_match('/\{(\s?[\d]*\s?),(\s?[\d]*\s?|\s?\.\.\s?)\}/', $varName,$range)) {
-							$min = $range[1];
-							$max = $range[2];
-							if ($max == "..") $max = PHP_INT_MAX; // Translate .. to a number
+					if (preg_match('/\{(\s?[\d]*\s?),(\s?[\d]*\s?|\s?\.\.\s?)\}/', $varName,$range)) {
+						$min = $range[1];
+						$max = $range[2];
+						if ($max == "..") $max = PHP_INT_MAX; // Translate .. to a number
 
-							$count = 0;
-							while ($count < $max) {
-								$tmpVar = array_shift($this->_inPath);
-								if ( strpos ( $tmpVar, ":") ) {
-									$this->_zoneParams = array_merge($this->_zoneParams, $this->_urlStringToArray($tmpVar));
-									$count++;
+						$count = 0;
+						while ($count < $max) {
+							$tmpVar = array_shift($this->_inPath);
+							if ( strpos ( $tmpVar, ":") ) {
+								$this->_zoneParams = array_merge($this->_zoneParams, $this->_urlStringToArray($tmpVar));
+								$count++;
+							} else {
+								if ($count < $min ) {
+									trigger_error("A parameter is missing for '$origVarName' for this zone");
+									$count = $max + 1;
+									break;
 								} else {
-									if ($count < $min ) {
-										trigger_error("A parameter is missing for '$origVarName' for this zone");
-										$count = 100000;
-										break;
-									} else {
-										array_unshift($this->_inPath, $tmpVar);
-										$count = 100000;
-										break;
-									}
+									array_unshift($this->_inPath, $tmpVar);
+									$count = $max + 1;
+									break;
 								}
 							}
-						} else {
-							$varValue = array_shift( $this->_inPath );
-							if(defined("strip_url_vars") && strip_url_vars)
-								if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
-								{
-									$varValue = $this->missingParameter($varName);
-									if (is_null($varValue))
-										trigger_error("The parameter '$varName' must be supplied for this zone");
-								}
-
-							$this->_zoneParams[ $varName ] = $varValue;
-							$gUrlVars[ $varName ] = $varValue;
-							$gPathParts[] = $varValue;
 						}
 					} else {
-						break;
+						$varValue = array_shift( $this->_inPath );
+						if(defined("strip_url_vars") && strip_url_vars)
+							if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
+							{
+								$varValue = $this->missingParameter($varName);
+								if (is_null($varValue))
+									trigger_error("The parameter '$varName' must be supplied for this zone");
+							}
+
+						$this->_zoneParams[ $varName ] = $varValue;
+						$gUrlVars[ $varName ] = $varValue;
+						$gPathParts[] = $varValue;
 					}
 				}
 			}
@@ -408,8 +404,6 @@
 		 * @return void
 		 */
 		function checkPathForSequences () {
-			global $gAlias;
-			global $gUrlVars;
 			global $gPathParts;//an array of all the parts of the path so far
 			global $gZoneUrls;
 
@@ -437,52 +431,37 @@
 
 
 		/**
-		 * findAndRunChildZone 
+		 * executeNextFunction 
+		 * This function will either run the page name, or will execute the child zone,
+		 * depending on what is found in the url passed
+		 *
+		 * How the method runs:
+		 * Establish Index as the "/" and Default as the fall back method names
+		 * If there is an alias, lets use it's value, rather than the url
+		 * First we check the current zone for a matching page, if none exists we look for 
+		 * a zone to match. 
+		 * Lastly, if nothing matches, run default.
+		 *
 		 * 
 		 * @access public
 		 * @return void
 		 */
-		function findAndRunChildZone () {
-			global $gAlias;
-			global $gUrlVars;
-			global $gPathParts;//an array of all the parts of the path so far
-			global $gZoneUrls;
-
-			// THE SECOND STEP IS TO SEE IF THERE IS ANOTHER ZONE TO RUN.
-
-			//	if there is something at all in the path
-
+		function executeNextFunction () {
 			if ( isset($this->_inPath[0]) && $this->_inPath[0] !== '' ) {
-				$path2 = $this->_inPath[0]; //SET $path2 TO THE NEXT ZONENAME
+				$pathToken = $this->_inPath[0]; //SET $pathToken TO THE NEXT ZONENAME
 			} else {
-				$path2 = "Index";
+				$pathToken = "Index";
 			} 
+
+			if ( isset ( $this->Alias[$pathToken] ) ) { $pathToken = $this->Alias[$pathToken]; }
 			
-			if ( isset( $this->Alias[$path2]) && !(($retval = $this->_checkFuncs($this->Alias[$path2], $this->_inPath)) === false) ) {
-				//break;
-			} elseif ( !($retval = $this->_checkFuncs($path2, $this->_inPath) === false) ) {
-				//break;
-			} elseif ( isset( $gAlias[$path2]) && !(($retval = $this->_checkFuncs($gAlias[$path2], $this->_inPath )) === false) ) {
-				//break;
-			} else {
+			if ( ($retval = $this->_checkFuncs($pathToken, $this->_inPath) === false) ) {
 				// Try to execute the correct funtion
-				if ( 
-					isset( $this->Alias[$path2]) 
-					&& !(($retval = $this->_checkZone($this->Alias[$path2], $this->_inPath)) === false) 
-					) {
-					//break;
-				} else if ( !(($retval = $this->_checkZone($path2, $this->_inPath)) === false) ) {
-					//break;
-				} else if ( 
-					isset( $gAlias[$path2]) 
-					&& !(($retval = $this->_checkZone($gAlias[$path2], $this->_inPath)) === false) 
-					) {
-					//break;
-				} else {
-					$this->error = "The name found in the path ($path2) was not a valid function or class.  Perhaps this class should have wildcards enabled?  Executing pageDefault function.";
+				if ( (($retval = $this->_checkZone($pathToken, $this->_inPath)) === false) ) {
+					$this->error = "The name found in the path ($pathToken) was not a valid function or class.  Perhaps this class should have wildcards enabled?  Executing pageDefault function.";
 
 					if (REQUEST_TYPE == "XMLRPC") {
-						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $path2");
+						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $pathToken");
 						$retval = true;
 					}
 
@@ -551,13 +530,7 @@
 		 * @access public
 		 * @return void
 		 */
-		function handleRequest( $inPath )
-		{
-			global $gAlias;
-			global $gUrlVars;
-			global $gPathParts;//an array of all the parts of the path so far
-			global $gZoneUrls;
-
+		function handleRequest( $inPath ) {
 			$this->_inPath = $inPath;
 
 			$this->findZoneName( );
@@ -572,8 +545,7 @@
 			$this->checkPathForSequences();
 			$this->setPageVars();
 			$this->initZone($this->_inPath);
-			$retval = $this->findAndRunChildZone();
-
+			$retval = $this->executeNextFunction();
 
 			if($this->zonename == '@ROOT') {
 				global $globalTime;
