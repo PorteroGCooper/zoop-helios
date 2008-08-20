@@ -455,7 +455,7 @@
 			if ( isset($this->_inPath[0]) && $this->_inPath[0] !== '' ) {
 				$path2 = $this->_inPath[0]; //SET $path2 TO THE NEXT ZONENAME
 			} else {
-				$path2 = "Default";
+				$path2 = "Index";
 			} 
 			
 			if ( isset( $this->Alias[$path2]) && !(($retval = $this->_checkFuncs($this->Alias[$path2], $this->_inPath)) === false) ) {
@@ -814,8 +814,9 @@
 		 * Should be overridden to be the default function 
 		 * (in case there is either A: no path info, or B: no matching function or class for the path";
 		 * If zone has wildcards on it will handle all requests.
+		 * If the url doesn't match any zone pages or childzones then this method is called. By default it is a 404 page.
 		 *
-		 *
+		 * @since 1.0
 		 * @param mixed $inPath
 		 * @access public
 		 * @return void
@@ -823,11 +824,45 @@
 		function pageDefault($inPath)
 		{
 			// 
+			$this->responsePage404();
 
-			die("You haven't overridden pagedefault!");
 		}
 
 		/**
+		 * pageIndex 
+		 * This is the method that gets called when a request is made to host/zone/
+		 * By default it will call $this->pageDefault which will in turn result in a 404 by default. 
+		 * Please overload this method.
+		 * 
+		 * @since 2.0
+		 * @param mixed $inPath 
+		 * @access public
+		 * @return void
+		 */
+		function pageIndex($inPath) {
+			$this->pageDefault($inPath);
+		}
+
+		/**
+		 * responsePage404 
+		 * a default 404 page to be called throughout the application whenever a page is not found.
+		 * This is a placeholder.. Please modify it to be a better function. 
+		 * Perhaps a subclass with all (many) of the response headers would be in order. 
+		 * Would need to be able to be extended so apps could stylize their own.
+		 *
+		 * @since 2.0
+		 * @access public
+		 * @return void
+		 */
+		function responsePage404() {
+			header ('HTTP/1.1 404 Not Found');
+
+			echo("<h1>404 Page not found</h1>");
+
+		}
+
+		/**
+		 * initZone
 		 * Initialize the zone.
 		 * Should be overridden in each zone if you would like code 
 		 * to execute each time it hits the zone's handleRequest function.
