@@ -1,7 +1,7 @@
 <?
 /**
-* @package cache
-*/
+ * @group cache
+ */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -14,34 +14,34 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* An easy to use, high performance, and secure caching system.
-* zcache functions are intended to be called statically or from an instantiated object.
-* We currently use the pear library, cacheLite to handle our dirty work.
-*
-* @author Steve Francia <sfrancia@supernerd.com>
-* @version 1.1
-* @since 1.2
-* @package cache
-* @access public
-* @copyright Supernerd LLC and Contributors
-*
-*/
+ * An easy to use, high performance, and secure caching system.
+ * zcache functions are intended to be called statically or from an instantiated object.
+ * We currently use the pear library, cacheLite to handle our dirty work.
+ *
+ * @author Steve Francia <sfrancia@supernerd.com>
+ * @version 1.1
+ * @since 1.2
+ * @package cache
+ * @access public
+ * @copyright Supernerd LLC and Contributors
+ *
+ */
 class zcache
 {
 
-var $driver_map;  // mapping of easy name to class name
-var $driver; // holds the driver object
-var $drivername; // holds the driver class name
-
-/**
-* Constructor.
-* Can be used to instantiate the object
-*
-* @param array $options  alter the options used from the default by passing new values in an array.
- the record
-* @return the object
-* @access public
-*/
+	var $driver_map;  // mapping of easy name to class name
+	var $driver; // holds the driver object
+	var $drivername; // holds the driver class name
+	
+	/**
+	 * Constructor.
+	 * Can be used to instantiate the object
+	 *
+	 * @param array $options
+	 *   alter the options used from the default by passing new values in an array.
+	 * @return the object
+	 * @access public
+	 */
 	function &zcache($options = array())
 	{
 		// make sure to add to this map if you add drivers
@@ -105,7 +105,7 @@ var $drivername; // holds the driver class name
 		} else if (defined('cache_driver')) {
 			$default_cache_driver = cache_driver;  
 		} else {
-			$default_cache_driver = 'file'; 
+			$default_cache_driver = 'cachelite'; 
 		}
 
  		if (array_key_exists($default_cache_driver, $this->driver_map)) {

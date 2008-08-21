@@ -1668,6 +1668,23 @@ function logprofile(&$timestruct, $sql = false)
 	}
 }
 
+/**
+ * take an array of directories and join them 
+ * to form a valid path -- allows for trailing slashes
+ *
+ * @param array $dirs
+ * @access public
+ * @return string the full path with trailing slash
+ */
+function join_dirs($dirs)
+{
+	foreach($dirs as $k=>$dir)
+	{ // strip off the slashes except for the first (root) slash
+		$dirs[$k] = ereg_replace ( ($k==0)?"\/$":"(^\/|\/$)", "" , $dir );
+	}
+	return implode(DIRECTORY_SEPARATOR, $dirs).DIRECTORY_SEPARATOR;
+}
+
 function makePath($zone, $z, $page, $p)
 {
 	$answer = "/$zone";
