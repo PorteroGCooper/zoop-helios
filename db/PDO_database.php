@@ -99,8 +99,9 @@ class database
 		if (isset( $this->db ) && $this->db) {
 			$error = $this->db->errorInfo();
 			trigger_error($error[2]);
-		} else { 
-			trigger_error("db object does not exist, it is likely the connection failed. Please check your settings");
+		} else {
+			$msg = ($result !== null) ? 'PDO reported: ' . $result->getMessage() : 'Please check your settings.';
+			trigger_error("db object does not exist, it is likely the connection failed. " . $msg);
 		}
 		die();
 	}
