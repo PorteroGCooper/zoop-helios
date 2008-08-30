@@ -403,6 +403,45 @@ class component
 		return array();
 	}
 
+
+
+	/**
+	 * getConfigPath 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getConfigPath()                                                                                                                                                                                                         
+	{
+		return $this->name;
+	}
+
+	/**
+	 * loadConfig 
+	 * 
+	 * @access private
+	 * @return void
+	 */
+	private function loadConfig()
+	{
+		Config::suggest(zoop_dir . '/' . $this->name . '/' . 'config.yaml', 'zoop.' . $this->getConfigPath());
+	}
+
+	/**
+	 * Returns the configuration options using the Config class.
+	 * Returns config options from "zoop.<modulename>.<path>"
+	 * Path is optional and may be omitted.
+	 *
+	 * @param string $path
+	 * @return array of configuration options
+	 */
+	function getConfig($path = '')
+	{
+		$config = Config::get('zoop.' . $this->getConfigPath() . $path);
+		echo_r($config);
+		return $config;
+	}
+
 	/**
 	 * init
 	 *
