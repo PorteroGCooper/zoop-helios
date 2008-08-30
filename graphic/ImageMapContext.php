@@ -11,7 +11,7 @@ class ImageMapContext extends GraphicContext
 		$this->GraphicContext($width, $height);
 		
 		//	this should be in a config file
-		if(app_status == 'dev')
+		if(APP_STATUS == 'dev')
 			$this->fontFile = "/home/rick/data/fonts/verdana.ttf";
 		else
 			$this->fontFile = "/home/apps/data/fonts/verdana.ttf";
@@ -159,7 +159,7 @@ class ImageMapContext extends GraphicContext
 		$this->height = $height;
 		
 		//	this should be in a config file
-		if(app_status == 'dev')
+		if(APP_STATUS == 'dev')
 			$this->fontFile = "/home/rick/data/fonts/verdana.ttf";
 		else
 			$this->fontFile = "/home/apps/data/fonts/verdana.ttf";

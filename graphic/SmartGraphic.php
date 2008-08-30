@@ -792,7 +792,7 @@ class SmartGraphic
 		{
 			$src = $curNode->getAttribute('src');
 			if($src[0] != '/')
-				$newRect->setFile( app_dir . '/' . $src );
+				$newRect->setFile( APP_DIR . '/' . $src );
 			else
 				$newRect->setFile($src);
 		}

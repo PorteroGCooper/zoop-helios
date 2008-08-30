@@ -36,10 +36,11 @@ class component_doctrine extends component
 	{
 		require_once('Doctrine.php');
 		spl_autoload_register(array('Doctrine', 'autoload'));
-		Doctrine_Manager::connection(DOC_RDBMS . '://' . DOC_USER . ":" . DOC_PASS . "@" . DOC_HOST . "/" . DOC_DB);
+		$dsn = Config::get('zoop.doctrine.dsn');
+		Doctrine_Manager::connection($dsn);
 
 		Doctrine_Manager::getInstance()->setAttribute('model_loading', 'conservative');
-		Doctrine::loadModels(app_dir . '/models'); // This call will not require the found .php files
+		Doctrine::loadModels(APP_DIR . '/models'); // This call will not require the found .php files
 
 	}
 	
@@ -57,5 +58,3 @@ class component_doctrine extends component
 #		);
 #	}
 }
-
-

@@ -197,7 +197,7 @@ class table
 
 		$dbname = $$dbconnname->dsn['database'];
 
-		if (app_status == 'live' && $tablecache = zcache::getData($table, array('base'=> 'forms/processed_table_info/', 'group' => $dbname))) 
+		if (APP_STATUS == 'live' && $tablecache = zcache::getData($table, array('base'=> 'forms/processed_table_info/', 'group' => $dbname))) 
 		{
 			$this->fields = $tablecache->fields;
 			$this->idfield = $tablecache->idfield;

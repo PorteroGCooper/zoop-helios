@@ -113,7 +113,7 @@ class record
 
 		if ($this->id == "new")
 		{
-			if (app_status == 'live' && $rows = zcache::getData($table, array('base'=> 'forms/table_info/', 'group' => $dbname))) 
+			if (APP_STATUS == 'live' && $rows = zcache::getData($table, array('base'=> 'forms/table_info/', 'group' => $dbname))) 
 			{
 				$rows = $rows;
 			}

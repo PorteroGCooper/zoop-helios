@@ -49,7 +49,7 @@ class zone_zoopfile extends zone
 		array_shift($inPath);
 		$module = array_shift($inPath);
 
-		$jsfile = zoop_dir . '/' . $module . '/public/' . implode('/', $inPath);
+		$jsfile = ZOOP_DIR . '/' . $module . '/public/' . implode('/', $inPath);
 
 		if(file_exists($jsfile))
 			$mtime = filemtime($jsfile);
@@ -100,7 +100,7 @@ class zone_zoopfile extends zone
 
 	function pageCaptchaImage($inPath)
 	{
-		$file = app_dir . '/tmp/captcha/' . $inPath[1];
+		$file = APP_DIR . '/tmp/captcha/' . $inPath[1];
 		$mtime = filemtime($file);
  		header("Content-Type: image/jpeg");
 
@@ -113,7 +113,7 @@ class zone_zoopfile extends zone
 	{
 		array_shift($inPath);
 
-		$file = zoop_dir . '/gui/public/images/' . implode('/', $inPath);
+		$file = ZOOP_DIR . '/gui/public/images/' . implode('/', $inPath);
 
 		if(file_exists($file))
 			$mtime = filemtime($file);

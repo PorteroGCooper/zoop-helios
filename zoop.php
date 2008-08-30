@@ -53,10 +53,13 @@ if(!defined('zoop_autoload') || zoop_autoload)
 	function __autoload($name)
 	{
 		global $zoop;
-		if($zoop->autoLoad($name))
+
+		if($zoop->autoLoad($name)) {
 			return true;
-		else
-			return false; //trigger_error("class $name not registered with the \$zoop object, try \$zoop->include(\"$name\",\"<fileName>\")");
+		} else {
+			return false; 
+			//trigger_error("class $name not registered with the \$zoop object, try \$zoop->include(\"$name\",\"<fileName>\")");
+		}
 	}
 }
 
@@ -99,7 +102,6 @@ class zoop
 		}
 
 		$this->addComponent('config');
-		$this->addComponent('app'); //zoop always includes app_component
 	}
 
 
@@ -119,11 +121,16 @@ class zoop
 			include($this->path . "/$name/{$name}_component.php");
 			$class = "component_{$name}";
 			$currComponent = &new $class();
-			$this->includeConfig($name);
-			$currComponent->defaultConstants();
+			//$currComponent->defaultConstants();
+
+			if ($name != 'spyc' && $name != 'config') {
+				$this->includeConfig($name);
+				/* can't load config before config component is loaded */
+				$currComponent->loadConfig();
+			}
+			
 			$components = &$currComponent->getRequiredComponents();
-			foreach($components as $newname)
-			{
+			foreach($components as $newname) {
 				$this->addComponent($newname);
 			}
 			$this->addIncludes($currComponent->getIncludes());
@@ -143,42 +150,97 @@ class zoop
 	 */
 	function addZone($name) {
 		$this->addComponent('zone');
-		if (defined('legacy_app_layout') && !legacy_app_layout ) {
-			$this->addInclude("zone_{$name}", $this->appPath . "/zones/{$name}.php");
-		} else {
-			$this->addInclude("zone_{$name}", $this->appPath . "/zone_{$name}.php");
-		}
+		$zone_dir = Config::get('zoop.zone.directory');
+		$this->addInclude("zone_{$name}",  "$zone_dir/{$name}.php");
 	}
 
 	/**
-	 * addObject
+	 * Loads a Model object
+	 * A model is a model object representative of a database table, view, etc. 
+	 * You may roll your own, use doctrine or other. 
 	 *
+	 * @see addModel
+	 * @depreciated
 	 * @param string $name
 	 * @param string $file Optionally, speficify the filename of the object to add.
 	 * @access public
 	 * @return void
 	 */
 	function addObject($name, $file = '') {
+		$dir = Config::get('zoop.app.directories.objects');
 		if(!empty($file)) {
-			$file = $this->appPath . "/objects/$file";
+			$file = "$dir/$file";
 		} else {
-			$file = $this->appPath . "/objects/$name.php";
+			$file = "$dir/$name.php";
 		}
-		$this->addInclude($name, $file);
+		$this->addInclude("model_$name", $file);
+		$this->addModel($name, $file);
+	}
+
+	/**
+	 * Loads a Model object or class.
+	 * 
+	 * ********************************************************************
+	 * Not sure if this is useful. Leaving in here for now. 
+	 * Added by SPF Aug 29th
+	 * ********************************************************************
+	 *
+	 * A model is a model class or object representative of a database table, view, etc. 
+	 * You may roll your own, use doctrine or other. 
+	 *
+	 * @param string $name
+	 * @param string $file Optionally, speficify the filename of the object to add within the models directory
+	 * @access public
+	 * @return void
+	 */
+	function addModel($name, $file = '') {
+		$dir = Config::get('zoop.app.directories.model');
+		if(!empty($file)) {
+			$file = "$dir/$file";
+		} else {
+			$file = "$dir/$name.php";
+		}
+		$this->addInclude("model_$name", $file);
 	}
 
 	/**
 	 * addClass
+	 * Set a class for inclusion. 
+	 * Classes are found in APP_DIR/lib by default, the same as lib
 	 *
-	 * @param mixed $name
+	 * @param string $name
+	 * @param string $file Optionally, speficify the filename of the object to add within the classes directory
 	 * @access public
 	 * @return void
 	 */
-	function addClass($name) {
-		$file = $this->appPath . "/classes/$name.php";
-		$this->addInclude($name, $file);
-		//if (file_exists($file))
-		//	include($file);
+	function addClass($name, $file = '') {
+		$dir = Config::get('zoop.app.directories.classes');
+		if(!empty($file)) {
+			$file = "$dir/$file";
+		} else {
+			$file = "$dir/$name.php";
+		}
+		$this->addInclude("class_$name", $file);
+	}	
+	
+	/**
+	 * addLib
+	 * Sets a lib (library file) for inclusion.
+	 * Libs are found in APP_DIR/lib by default, the same as classes
+	 *
+	 * @param string $name
+	 * @param string $file Optionally, speficify the filename of the object to add within the lib directory
+	 * @access public
+	 * @return void
+	 */
+	function addLib($name, $file = '') {
+		$dir = Config::get('zoop.app.directories.lib');
+		if(!empty($file)) {
+			$file = "$dir/$file";
+		} else {
+			$file = "$dir/$name.php";
+		}
+		$this->addInclude("lib_$name", $file);
 	}	
 	
 	/**
@@ -196,8 +258,9 @@ class zoop
 	 */
 	function addInclude($name, $file) {
 		$this->includes[strtolower($name)] = $file;
-		if(version_compare(PHP_VERSION, "5.0", "<"))
+		if(version_compare(PHP_VERSION, "5.0", "<")) {
 			include_once($file);
+		}
 	}
 
 	/**
@@ -278,8 +341,10 @@ class zoop
 	function includeConfig($name)
 	{
 		$name = strtolower($name);
-		if (file_exists($this->appPath . "/config/$name.php"))
-			include($this->appPath . "/config/$name.php");
+		$dir = Config::get('zoop.app.directories.config');
+		if (file_exists("$dir/$name.yaml")) {
+			Config::suggest("$dir/$name.yaml");
+		}
 	}
 }
 
@@ -323,7 +388,7 @@ class component
 	 * @return void
 	 */
 	function getBasePath() {
-		return zoop_dir . "/" . $this->getName();
+		return ZOOP_DIR . "/" . $this->getName();
 	}
 
 	/**
@@ -406,11 +471,11 @@ class component
 		return array();
 	}
 
-
-
 	/**
 	 * getConfigPath 
-	 * 
+	 * The location in the config variable to find this component's config
+	 * By default it is the name of the component.
+	 *	
 	 * @access public
 	 * @return void
 	 */
@@ -421,13 +486,15 @@ class component
 
 	/**
 	 * loadConfig 
+	 * Loads the config.yaml file from the component directory.
+	 * Sets these values as the defaults for the app to overwrite.
 	 * 
+	 * @see Config::suggest
 	 * @access private
 	 * @return void
 	 */
-	private function loadConfig()
-	{
-		Config::suggest(zoop_dir . '/' . $this->getName() . '/' . 'config.yaml', 'zoop.' . $this->getConfigPath());
+	function loadConfig() {
+		Config::suggest(ZOOP_DIR . '/' . $this->getName() . '/' . 'config.yaml', 'zoop.' . $this->getConfigPath());
 	}
 
 	/**
@@ -441,7 +508,6 @@ class component
 	function getConfig($path = '')
 	{
 		$config = Config::get('zoop.' . $this->getConfigPath() . $path);
-		//echo_r($config);
 		return $config;
 	}
 
@@ -478,5 +544,3 @@ class component
 		//really shouldn't do anything, unless its the app_component
 	}
 }
-
-?>

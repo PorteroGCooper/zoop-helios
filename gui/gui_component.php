@@ -32,7 +32,6 @@ class component_gui extends component
 	 */
 	function component_gui()
 	{
-		mkdirr(app_temp_dir . "/gui");
 		$this->requireComponent('session');
 		$this->requireComponent('validate');
 	}
@@ -45,6 +44,8 @@ class component_gui extends component
 	 */
 	function init()
 	{
+		$config = Config::get('zoop.gui');
+		mkdirr($config['directories']['temp']);
 		$GLOBALS['gui'] = new gui();
 	}
 	

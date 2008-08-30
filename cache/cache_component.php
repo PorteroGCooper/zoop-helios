@@ -13,8 +13,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-define_once("app_cache_dir", app_temp_dir . '/cache/'); // only used for file cache
-
 /**
  * component_cache
  *

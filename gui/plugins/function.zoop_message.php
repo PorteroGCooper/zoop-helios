@@ -1,5 +1,5 @@
 <?php
-include_once(zoop_dir . "/gui/plugins/function.zoop_image.php");
+include_once(ZOOP_DIR . "/gui/plugins/function.zoop_image.php");
 
 /**
  * Zoop Smarty plugin

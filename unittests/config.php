@@ -1,11 +1,11 @@
 <?
-	define("app_dir", dirname(__file__));	// we should use this whenever including a file from our application
-	define("app_status", "dev");
-	define('zoop_dir', app_dir . "/../"); // it can be relative
-	define("LOG_FILE", app_dir . "/log/errors.log.html");
+	define("APP_DIR", dirname(__file__));	// we should use this whenever including a file from our application
+	define("APP_STATUS", "dev");
+	define('ZOOP_DIR', APP_DIR . "/../"); // it can be relative
+	define("LOG_FILE", APP_DIR . "/log/errors.log.html");
 //  	uncomment one of the following two lines if using the zoop/libs instead of your systemwide pear libraries.
-	ini_set('include_path',ini_get('include_path').':'. zoop_dir . '/lib/pear:'); // FOR UNIX
-//	ini_set('include_path',ini_get('include_path').';'. zoop_dir . '/lib/pear:'); // FOR WINDOWS
+	ini_set('include_path',ini_get('include_path').':'. ZOOP_DIR . '/lib/pear:'); // FOR UNIX
+//	ini_set('include_path',ini_get('include_path').';'. ZOOP_DIR . '/lib/pear:'); // FOR WINDOWS
 
 	define("app_temp_dir", dirname(__file__) . '/tmp');
 

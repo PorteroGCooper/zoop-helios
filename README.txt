@@ -93,7 +93,7 @@ For Programmers:
 * A working php above version 4.3.0
 * The following PEAR packages:
 	Starting with ZooP 1.2 the necessary pear packages can be found from at http://zoopframework.com
-	ZooP 1.2 and later can read from zoop_dir/libs as well as the system wide pear repository.
+	ZooP 1.2 and later can read from ZOOP_DIR/libs as well as the system wide pear repository.
 
 	DATE
 	XML_TREE

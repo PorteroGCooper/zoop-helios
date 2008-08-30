@@ -1,2 +1,2 @@
 <?php 
-define ("app_status", "dev");
+define ("APP_STATUS", "dev");

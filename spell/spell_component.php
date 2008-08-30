@@ -24,8 +24,7 @@ class component_spell extends component
 		$this->requireComponent('gui');
 	}
 
-	function getIncludes()
-	{
+	function getIncludes() {
 		return array(
 			'spellbase' => $this->getBasePath() . "/spellBase.php",
 			'spell' => $this->getBasePath() . "/spell.php",
@@ -34,16 +33,11 @@ class component_spell extends component
 			
 	}	
 
-	function init()
-	{
-		if(spell_DB_separate)
-		{
-			$GLOBALS['spelldsn'] = database::makeDSN(spellDB_RDBMS, spellDB_Server, spellDB_Port, spellDB_Username, spellDB_Password, spellDB_Database);
-			$spelldb = &new database($GLOBALS['spelldsn']);
-		}
-		else
-		{
-			//$GLOBALS['spelldsn'] = $GLOBALS['defaultdsn'];
+	function init() {
+		$config = $this->getConfig();	
+		if($config['seperate_db']) {
+			$spelldb = &new database($config['dsn']);
+		} else {
 			$spelldb = &$defaultdb;
 		}
 

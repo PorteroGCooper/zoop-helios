@@ -32,14 +32,16 @@ class component_db extends component
 	 */
 	function init()
 	{
-		include($this->getBasePath() . "/" . db_RDBMS . ".php");
+		$config = Config::get('zoop.db');
+		include($this->getBasePath() . "/" . $config['rdbms']. ".php");
 		include($this->getBasePath() . "/db_utils.php");
 	}
 	
 	function getIncludes()
 	{
 		$includes = array();
-		if(class_exists('PDO') && use_pdo ) {
+		$config = Config::get('zoop.db');
+		if(class_exists('PDO') && $config['use_pdo'] ) {
 			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
 		} else	{
 			$includes['db'] = 'DB.php';

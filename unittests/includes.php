@@ -1,9 +1,9 @@
 <?
 include_once(dirname(__file__) . "/config.php");
 
-include_once(zoop_dir . "/zoop.php");
+include_once(ZOOP_DIR . "/zoop.php");
 
-$zoop = &new zoop(app_dir);
+$zoop = &new zoop(APP_DIR);
 
 $zoop->addComponent('db');
 $zoop->addComponent('gui');

@@ -1,4 +1,4 @@
 <?php
-define("zoop_guicontrol_dir", zoop_dir . "/guicontrol/GuiControls/");
-define("app_guicontrol_dir", app_dir . "/GuiControls/");
+define("zoop_guicontrol_dir", ZOOP_DIR . "/guicontrol/GuiControls/");
+define("app_guicontrol_dir", APP_DIR . "/GuiControls/");
 ?>

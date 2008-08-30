@@ -32,9 +32,10 @@ class component_guicontrol extends component
 
 	function getIncludes()
 	{
-		return array("GuiControl" => zoop_guicontrol_dir. 'GuiControl.php',
-		"GuiContainer" => zoop_guicontrol_dir. 'GuiContainer.php',
-		"GuiMultiValue" => zoop_guicontrol_dir. 'GuiMultiValue.php');
+		$dir = Config::get('zoop.guicontrol.directories.zoop');
+		return array("GuiControl" => "$dir/GuiControl.php",
+		"GuiContainer" => "$dir/GuiContainer.php",
+		"GuiMultiValue" => "$dir/GuiMultiValue.php");
 	}
 
 	/**
@@ -251,14 +252,17 @@ class component_guicontrol extends component
 		}
  		$filename = strtolower($type).".php";
 
-		if(file_exists(app_guicontrol_dir. "$filename"))
-			include_once(app_guicontrol_dir. "$filename");
-		else if(file_exists(zoop_guicontrol_dir. "$filename"))
-			include_once(zoop_guicontrol_dir. "$filename");
+		$app_dir = Config::get('zoop.guicontrol.directories.zoop');
+		$zoop_dir = Config::get('zoop.guicontrol.directories.app');
+
+		if(file_exists("$app_dir/$filename"))
+			include_once("$app_dir/$filename");
+		else if(file_exists("$zoop_dir/$filename"))
+			include_once( "$zoop_dir/$filename");
 		else
 			trigger_error("Please Implement a $type Control and place it in " .
-						app_guicontrol_dir. "$filename" . " or " .
-						zoop_guicontrol_dir. "$filename");
+						"$app_dir/$filename" . " or " .
+						"$zoop_dir/$filename");
 	}
 }
 

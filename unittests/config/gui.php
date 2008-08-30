@@ -3,7 +3,7 @@
 //  Define Template constants here				  //
 ////////////////////////////////////////////////////
 
-	define("gui_base", app_dir . "/templates");		// root of templates directory.  defaults to templates/
+	define("gui_base", APP_DIR . "/templates");		// root of templates directory.  defaults to templates/
 
 	define("gui_look", "default");	// under that directory, this scheme is in gui_base (make it easy to change schemes
 

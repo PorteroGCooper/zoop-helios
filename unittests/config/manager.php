@@ -18,7 +18,7 @@
 	   Able to create directories is nice, but not necessary.
 */
 
-$IMConfig['default']['base_dir'] = app_dir . '/public/uploads/';
+$IMConfig['default']['base_dir'] = APP_DIR . '/public/uploads/';
 
 /*
  The URL to the above path, the web browser needs to be able to see it.
@@ -148,7 +148,7 @@ $IMConfig['default']['tmp_prefix'] = '.editor_';
   Where the icons are stored for the thumbnails of files that aren't images.
 */
 
-$IMConfig['default']['icon_directory'] = app_dir .'/public/resources/icons';
+$IMConfig['default']['icon_directory'] = APP_DIR .'/public/resources/icons';
 
 
 // AN EXAMPLE OF A SECOND CONFIGURATION

@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once(zoop_dir . "/gui/plugins/function.html_options.php");
+include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 
 /**
  * select

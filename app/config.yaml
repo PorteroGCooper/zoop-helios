@@ -1,0 +1,21 @@
+status: %APP_STATUS%
+log_profile: 0
+mod_rewrite: 1
+directories:
+    zoop: %ZOOP_DIR%
+    app: %APP_DIR%
+    temp: %APP_TEMP_DIR%
+    model: %APP_DIR%/model
+    objects: %APP_DIR%/model/objects
+    lib: %APP_DIR%/lib
+    classes: %APP_DIR%/lib/classes
+    config: %APP_DIR%/config
+log_file: %APP_DIR%/log/errors.log.html
+title: My Zoop Application
+legacy_layout: 0
+security:
+    strip_uri_vars: 1
+    verify_queries: 1
+    filter_input: 1
+    hide_post: 1
+    show_warnings: 1

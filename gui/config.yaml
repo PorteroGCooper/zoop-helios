@@ -1,0 +1,11 @@
+directories: 
+    temp: %APP_TEMP_DIR%/gui
+    base: %APP_DIR%/view/templates
+    template: %APP_DIR%/view/templates
+    compile: %APP_TEMP_DIR%/gui/compiled
+    cache: %APP_TEMP_DIR%/gui/cache
+    plugins:
+        - %APP_DIR%/view/guiplugins
+        - %ZOOP_DIR%/gui/plugins
+strip_html: false
+caching: 1

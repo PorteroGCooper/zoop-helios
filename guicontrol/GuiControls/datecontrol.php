@@ -78,7 +78,7 @@ class dateControl extends GuiControl
 		$html = "<input $attrs value=\"$value\" $ni onfocus=\"show_Calendar(id);\">";
 		$html .= "<img src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
 		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>";
-		$html .= file_get_contents(zoop_dir . "/guicontrol/public/js/datechooser/cal_div.htm");
+		$html .= file_get_contents(ZOOP_DIR . "/guicontrol/public/js/datechooser/cal_div.htm");
 		if(!empty($value))
 		{
 			//make the cool calendar choosing thing start on the month that my value is.

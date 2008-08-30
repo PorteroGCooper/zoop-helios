@@ -4,7 +4,7 @@
 //              Session Options               	  //
 ////////////////////////////////////////////////////
 
-	if(app_status == "desktop") 				//or whatever
+	if(APP_STATUS == "desktop") 				//or whatever
 		define("session_type", "files");
 	else
 	{

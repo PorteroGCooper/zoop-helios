@@ -1,0 +1,16 @@
+tables:
+   user: user
+   group: group
+   role: role
+   user_group: user_group
+   user_role: user_role
+fields:
+   username: username
+   password: password
+password_encryption: true
+encryption: md5
+session_user: activeUser
+locations:
+   deined: /denied
+   login: /login
+   logout: /

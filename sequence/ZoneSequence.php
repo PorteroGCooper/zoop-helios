@@ -205,7 +205,7 @@ class ZoneSequence
 	function getParamMap()
 	{
 		global $sequenceData;
-		if(app_status != 'live')
+		if(APP_STATUS != 'live')
 		{
 			$paramMap = &$this->verifyParams();
 		}

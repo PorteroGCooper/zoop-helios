@@ -1,0 +1,3 @@
+directories:
+    zoop: %ZOOP_DIR%/guiwidget/GuiWidgets/
+    app: %APP_DIR%/view/GuiWidgets/

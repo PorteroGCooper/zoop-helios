@@ -7,7 +7,7 @@ require_once ( "templates.php" );
  *
  */
 
-if ( app_status == "dev" || app_status == "test") {
+if ( APP_STATUS == "dev" || APP_STATUS == "test") {
 	$site['server_type'] = 'DEV';
 	$ROOT_PATH = '/var/www';
 	$SITE_DIR  = '';

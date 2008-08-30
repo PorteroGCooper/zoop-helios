@@ -41,44 +41,39 @@ class gui extends Smarty
 
 		$this->Smarty();
 
+		$guiConfig = Config::get('zoop.gui');
+		$dirs = $guiConfig['directories'];
 		//	set the default for the base template dir
 		if(!defined("gui_base") )
-			define("gui_base", app_dir . "/templates");
+			define("gui_base", $dirs['base']);
 
-		$this->template_dir = gui_base;
-		$this->setCompileDir(app_temp_dir . "/gui");
-		$this->setCacheDir(app_temp_dir . "/gui/cache");
+		$this->template_dir = $dirs['template'];
+		$this->setCompileDir($dirs['compile']);
+		$this->setCacheDir($dirs['cache']);
+		$this->caching = $guiConfig['caching'];
 
-		if (defined("strip_html") && strip_html)
-		{
+		if ($guiConfig['strip_html']) {
 			$this->autoload_filters = array('pre' => array("strip_html"));
-		}
-		else
-		{
+		} else {
 			$this->autoload_filters = array();
 		}
 
-		$this->plugins_dir = array(app_dir . "/guiplugins", dirname(__file__) . "/plugins");
+		//$this->plugins_dir = array(APP_DIR . "/guiplugins", dirname(__file__) . "/plugins");
+		$this->plugins_dir = $dirs['plugins'];
 
-		if(defined("gui_look") )
-		{
-			//	what exactly does the config directory do???
-			$this->config_dir = $this->template_dir . "/" . gui_look . "/configs";
-			$this->debug_tpl = "file:" . gui_look . "/debug.tpl";
-			$this->assign("template_root", gui_look);
+		if($look = Config::get('app.gui.look')) {
+			$this->config_dir = $this->template_dir . "/" . $look . "/configs";
+			$this->debug_tpl = "file:" . $look . "/debug.tpl";
+			$this->assign("template_root", $look);
 			$this->assign("RES_ROOT", "public/resources/");
-		}
-		else
-		{
-			//	what exactly does the config directory do???
+		} else {
 			$this->config_dir = $this->template_dir . "/configs";
-			$this->assign("template_root", gui_base);
+			$this->assign("template_root", $dirs['base']);
 		}
 
 		//	it should probably only do this if they are defined so you can use it
 		//	without using the zone stuff
-		if(defined("SCRIPT_URL") || defined("SCRIPT_REF") || defined("ORIG_PATH"))
-		{
+		if(defined("SCRIPT_URL") || defined("SCRIPT_REF") || defined("ORIG_PATH")) {
 			$this->assign("VIRTUAL_URL", SCRIPT_URL . ORIG_PATH);
 			$this->assign("VIRTUAL_PATH", ORIG_PATH);
 			$this->assign("REQUESTED_URL", REQUESTED_URL);
@@ -88,13 +83,15 @@ class gui extends Smarty
 			$this->assign("SCRIPT_BASE", SCRIPT_BASE);
 		}
 
-		$this->assign("app_dir", app_dir);
+		$this->assign("APP_DIR", APP_DIR);
+		$this->assign("app_dir", APP_DIR);
 
-		if (defined("app_default_title")) {
-			$this->assign("title", app_default_title);
+		if ($title = Config::get('app.title')) {
+			$this->assign("title", $title);
 		}
-		if (defined("public_web_path")) {
-			$this->assign("public_web_path", public_web_path);
+
+		if ($public_web_path = Config::get('app.public_web_path')) {
+			$this->assign("public_web_path", $public_web_path);
 		}
 
 		$this->register_zcache();
@@ -176,8 +173,9 @@ class gui extends Smarty
 	 */
 	function fetch($tpl_file, $cache_id = null, $compile_id = null)
 	{
-		if (defined("gui_look") && gui_look != '') {
-			$tpl_file = gui_look . "/" . $tpl_file;
+
+		if($look = Config::get('app.gui.look')) {
+			$tpl_file = $look . "/" . $tpl_file;
 		}
 		
 		return Smarty::fetch($tpl_file, $cache_id, $compile_id);
@@ -230,8 +228,8 @@ class gui extends Smarty
 	 */
 	function _smarty_include($params)
 	{
-		if (defined("gui_look") && gui_look != '') {
-			$params['smarty_include_tpl_file'] = gui_look . "/" . $params['smarty_include_tpl_file'];
+		if($look = Config::get('app.gui.look')) {
+			$params['smarty_include_tpl_file'] = $look . "/" . $params['smarty_include_tpl_file'];
 		}
 
 		Smarty::_smarty_include($params);
@@ -324,12 +322,9 @@ class gui extends Smarty
 
 	function is_cached($inTpl, $cache_id = null,  $compile_id = null)
 	{
-		if ( defined ( "gui_caching" ) )
-			$this->caching = gui_caching;
 
-		if (defined("gui_look") )
-		{
-			$inTpl = gui_look . "/" . $inTpl;
+		if($look = Config::get('app.gui.look')) {
+			$inTpl = $look . "/" . $inTpl;
 		}
 		return  parent::is_cached($inTpl, $cache_id, $compile_id);
 	}

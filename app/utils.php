@@ -264,7 +264,7 @@ function xorDecrypt($message, $key)
 */
 function echo_r($mixed)
 {
-// 	if(app_status == "live")
+// 	if(APP_STATUS == "live")
 // 		return;
 
 	echo "<pre>";
@@ -382,7 +382,7 @@ function getmicrotime()
  */
 function markprofile($running_total = 0)
 {
-	if(app_status == 'dev')
+	if(APP_STATUS == 'dev')
 	{
 		global $_profile_time;
 		$backtrace = debug_backtrace();
@@ -581,7 +581,7 @@ function BUG($desc = "")
 	if (show_warnings == false)
 		return;
 
-	if(app_status == "dev")
+	if(APP_STATUS == "dev")
 	{
 		$functioninfo = debug_backtrace();
 		$string = 	"bug in <b>" .
@@ -808,7 +808,7 @@ function RequireCondition($bool)
 		if(defined("app_login_page"))
 		{
 			//should dev be redirected?
-			if(app_status != 'dev')
+			if(APP_STATUS != 'dev')
 			{
 				trigger_error("Condition Failed");
 				die();
@@ -1051,7 +1051,7 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
 	if($goodEnd == NULL)
 		$goodEnd = $oldStatus['goodEnd'];
 
-	file_set_contents(app_status_dir . "/" . $statusItemName, "$start $end $goodEnd");
+	file_set_contents(APP_STATUS_dir . "/" . $statusItemName, "$start $end $goodEnd");
 }
 
 /**
@@ -1063,7 +1063,7 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
  */
 function &GetCompletionStatus($statusItemName)
 {
-	$data = file_get_contents(app_status_dir . "/" . $statusItemName);
+	$data = file_get_contents(APP_STATUS_dir . "/" . $statusItemName);
 
 	$parts = explode(" ", $data);
 

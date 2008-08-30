@@ -236,7 +236,7 @@ class PdfTextBox extends PdfObject
 				}
 			}
 			$this->lines = $lines;
-			//$this->pdf->selectFont(zoop_dir . "/pdf/fonts/Helvetica-Bold.afm");
+			//$this->pdf->selectFont(ZOOP_DIR . "/pdf/fonts/Helvetica-Bold.afm");
 			//echo_r($lines);
 			//echo 'font = ' . $this->textFont . ' bold = ' . ($this->bold ? 1 : 0) . ' italics = ' . ($this->italics ? 1 : 0) . ' size = ' . $this->textSize . ' ' . $this->bold . ' ' . $this->bold . '<br>';
 			//echo 'true length = ' . $this->pdf->getTextWidth($this->textSize, 'asdfkla sdfklasdfjlkas;dfgj aslkfj alkw[sfjeoifjsa fi;awesfil;ifas efjilse;filaws eji iiiiiiiiiiiiiii') . '<br>';

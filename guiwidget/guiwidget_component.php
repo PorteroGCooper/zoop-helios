@@ -34,7 +34,7 @@ class component_guiwidget extends component
 	{
 		return array("GuiWidget" => zoop_guiwidget_dir. 'GuiWidget.php',
 // 		"GuiContainer" => zoop_guiwidget_dir. 'GuiContainer.php',
-		"WidgetGui" => zoop_dir . "/guiwidget/widgetgui.php");
+		"WidgetGui" => ZOOP_DIR . "/guiwidget/widgetgui.php");
 	}
 
 	/**

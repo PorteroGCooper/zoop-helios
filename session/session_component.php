@@ -35,13 +35,14 @@ class component_session extends component
 	 */
 	function init()
 	{
-		include($this->getBasePath() . "/session_handler_" . session_type . ".php");
+		$sessionConfig = Config::get('zoop.session');
 
-		if (isset($HTTP_GET_VARS["cache_limiter"]))
-		{
+		include($this->getBasePath() . "/session_handler_" . $sessionConfig['type'] . ".php");
+
+		if (isset($HTTP_GET_VARS["cache_limiter"])) {
 			session_cache_limiter($HTTP_GET_VARS["cache_limiter"]);
 		}
-		if (defined("session_path") && session_path == "server")
+		if ($sessionConfig['path'] == "server")
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), "/");
 		else
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);

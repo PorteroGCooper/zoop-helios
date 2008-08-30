@@ -14,7 +14,7 @@
 // FOR A PARTICULAR PURPOSE.
 
 // include captcha class
-require(zoop_dir . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
+require(ZOOP_DIR . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
 
 /**
  * captcha
@@ -68,7 +68,7 @@ class captcha extends GuiControl
 		$_SESSION['captchaTS'] = base64_encode(microtime());
 
 		$filename = $_SESSION['captchaTS'] . ".jpg";
-		$path = app_dir . '/tmp/captcha/';
+		$path = APP_DIR . '/tmp/captcha/';
 		$file = $path . $filename;
 
 		if (file_exists($path))

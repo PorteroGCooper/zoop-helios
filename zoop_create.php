@@ -151,7 +151,7 @@ INDEX;
 $this->oTag
 include_once(dirname(__file__) . "/config.php");
 
-include_once(zoop_dir . "/zoop.php");
+include_once(ZOOP_DIR . "/zoop.php");
 
 \$zoop = &new zoop(dirname(__file__));
 
@@ -225,23 +225,23 @@ $this->oTag;
 
 	// DEFINE THE APPLICATION STATUS - affects error handling and useful for making deployment specific config options
 	// use dev, test or live
-	define("app_status", 'dev');
+	define("APP_STATUS", 'dev');
 
 	// DEFINE YOUR APPLICATIONS DIRECTORY - use this when including files from your application
-	define("app_dir", dirname(__file__));	// we should use this whenever including a file from our application
+	define("APP_DIR", dirname(__file__));	// we should use this whenever including a file from our application
 
 	//	DEFINE YOUR SYSTEMS zoop DIRECTORY
-	if(app_status == 'dev')
+	if(APP_STATUS == 'dev')
 	{
-		define('zoop_dir', app_dir . "/../zoop"); // it can be relative
+		define('ZOOP_DIR', APP_DIR . "/../zoop"); // it can be relative
 	}
 	else
 	{
 		//when deploying to live or test servers, you may want to deploy with zoop in the current directory
-		define('zoop_dir', dirname(__file__));
+		define('ZOOP_DIR', dirname(__file__));
 	}
 
-	define("LOG_FILE", app_dir . "/../log/errors.log.html");
+	define("LOG_FILE", APP_DIR . "/../log/errors.log.html");
 	define("app_temp_dir", dirname(__file__) . '/tmp');
 
 //////////////////////////////////////////////////////
@@ -249,8 +249,8 @@ $this->oTag;
 //////////////////////////////////////////////////////
 //  uncomment one line if using the zoop/libs instead of your systemwide pear libraries.
 
-	ini_set('include_path',ini_get('include_path').':'. zoop_dir . '/lib/pear:'); // FOR UNIX
-//	ini_set('include_path',ini_get('include_path').';'. zoop_dir . '/lib/pear'); // FOR WINDOWS
+	ini_set('include_path',ini_get('include_path').':'. ZOOP_DIR . '/lib/pear:'); // FOR UNIX
+//	ini_set('include_path',ini_get('include_path').';'. ZOOP_DIR . '/lib/pear'); // FOR WINDOWS
 
 //////////////////////////////////////////////////////
 //				Template Stuff		   			    //

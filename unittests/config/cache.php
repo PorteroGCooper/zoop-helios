@@ -14,7 +14,7 @@
 	define("cache_driver", "cachelite"); // can be "cachelite" or "memcache"
 
 	$memcache_servers = array();
-	if (defined(app_status)&&app_status=="live") {
+	if (defined(APP_STATUS)&&APP_STATUS=="live") {
 		$memcache_servers[] = "web2";
 	} else {
 		$memcache_servers[] = "localhost";

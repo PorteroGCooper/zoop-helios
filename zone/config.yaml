@@ -1,0 +1,2 @@
+save_in_session: false
+directory: %APP_DIR%/zones

@@ -128,7 +128,7 @@ class message extends gui
 	 */
 	function sendEmail($from, $to, $cc, $subject, $body, $type = "text")
 	{
-		if(app_status == "dev")
+		if(APP_STATUS == "dev")
 		{
 			if (defined("dev_email_address"))
 			{

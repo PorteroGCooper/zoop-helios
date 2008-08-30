@@ -122,7 +122,7 @@ if (!app_url_rewrite && (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname'])))
 	}
 
 	// using mod rewrite
-	if (defined("app_url_rewrite") && app_url_rewrite)
+	if (Config::get('zoop.app.mod_rewrite'))
 	{
 		define("SCRIPT_REF", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname'] . '/');
 		define("SCRIPT_URL", $preht . $_SERVER["HTTP_HOST"] . $GLOBALS['Sname']);
@@ -217,8 +217,7 @@ if (!app_url_rewrite && (!isset($GLOBALS['Sname']) || empty($GLOBALS['Sname'])))
 **/
 	$GLOBALS['POSTCOPY'] = $_POST;
 
-	if(defined("hide_post") && hide_post == 1)
-	{
+	if(Config::get('zoop.app.security.hide_post')) {
 		unset($_POST);
 	}
 

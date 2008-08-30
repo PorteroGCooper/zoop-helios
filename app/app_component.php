@@ -34,13 +34,13 @@ class component_app extends component
 	function component_app()
 	{
 		//inlude the define_once function
-		include($this->getBasePath() . "/define.php");
+//		include($this->getBasePath() . "/define.php");
 
 		// here we need the config for app, because error.php, and globals.php need it.
 		// but since this is called in the contructor of zoop, we can't access the global zoop object use it to include the config/app.php file. 
 		// easiest solution... Place the config lines from config/app.php into config.php 
 		// then including the defaults here.
-		$this->defaultConstants();
+//		$this->defaultConstants();
 
 		//include errorhandling, as soon as possible
 		include($this->getBasePath() . "/error.php");
@@ -59,8 +59,7 @@ class component_app extends component
 		define('__zoop_error_ob_start', ob_get_level());
 
 		//error_reporting(E_ALL);
-		$debugmode = app_status;
-		//$debugmode = 'test';
+		$debugmode = APP_STATUS;
 
 		if(php_sapi_name() != "cli") {
 			if ($debugmode == "dev" || $debugmode == 'desktop') {
@@ -71,6 +70,7 @@ class component_app extends component
 		} else {
 			set_error_handler('error_debug_handler');
 		}
+
 	}
 }
 
