@@ -2,7 +2,7 @@
 /**
  * @file
  *
- * Two classes are contained in this file: the Zoop class, and the Compontent base.
+ * Two classes are contained in this file: the Zoop class, and the Component base.
  *
  * @group zoop
  */
@@ -92,13 +92,16 @@ class zoop
 	 */
 	function zoop($appPath = NULL) {
 		$this->path = dirname(__file__);
-		if($appPath == NULL)
+		if ($appPath == NULL) {
 			$this->appPath = $this->path;
-		else
+		} else {
 			$this->appPath = $appPath;
+		}
 
+		$this->addComponent('config');
 		$this->addComponent('app'); //zoop always includes app_component
 	}
+
 
 	/**
 	 * Add a Zoop component.
@@ -411,9 +414,9 @@ class component
 	 * @access public
 	 * @return void
 	 */
-	function getConfigPath()                                                                                                                                                                                                         
+	function getConfigPath()
 	{
-		return $this->name;
+		return $this->getName();
 	}
 
 	/**
@@ -424,7 +427,7 @@ class component
 	 */
 	private function loadConfig()
 	{
-		Config::suggest(zoop_dir . '/' . $this->name . '/' . 'config.yaml', 'zoop.' . $this->getConfigPath());
+		Config::suggest(zoop_dir . '/' . $this->getName() . '/' . 'config.yaml', 'zoop.' . $this->getConfigPath());
 	}
 
 	/**
@@ -438,7 +441,7 @@ class component
 	function getConfig($path = '')
 	{
 		$config = Config::get('zoop.' . $this->getConfigPath() . $path);
-		echo_r($config);
+		//echo_r($config);
 		return $config;
 	}
 

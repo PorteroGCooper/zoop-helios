@@ -14,7 +14,7 @@ class component_spyc extends component
 	function getIncludes()
 	{
 		return array(
-				"spyc_php5" =>  $this->getBasePath() . "/spyc.php5",
+				"spyc" =>  $this->getBasePath() . "/spyc.php5",
 		);
 	}
 }

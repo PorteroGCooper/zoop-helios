@@ -10,6 +10,15 @@ class Config
 	private static $info = array();
 	private static $file;
 	
+	/**
+	 * suggest a value if one isn't already set
+	 * 
+	 * @param mixed $file 
+	 * @param mixed $prefix 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
 	static public function suggest($file, $prefix = NULL)
 	{
 		if($prefix)
@@ -19,6 +28,15 @@ class Config
 		$root = array_merge(Yaml::read($file), $root);
 	}
 	
+	/**
+	 * insist on a value, even if one is set
+	 * 
+	 * @param mixed $file 
+	 * @param mixed $prefix 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
 	static public function insist($file, $prefix = NULL)
 	{
 		$root = $prefix ? self::getReference($prefix) : self::$info;
@@ -70,6 +88,16 @@ class Config
 		return $cur;
 	}	
 	
+	/**
+	 * &getReference 
+	 * Operates like get, but instead passes a reference 
+	 * to the variable, rather than a copy
+	 * 
+	 * @param mixed $path 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
 	static function &getReference($path)
 	{
 		$parts = explode('.', $path);
