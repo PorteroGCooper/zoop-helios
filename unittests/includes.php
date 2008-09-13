@@ -17,7 +17,5 @@ $zoop->addComponent('sequence');
 $zoop->addComponent('forms');
 $zoop->addComponent('mail');
 $zoop->addComponent('cache');
-$zoop->addComponent('nusoap');
-$zoop->addComponent('cache');
 
 $zoop->init();

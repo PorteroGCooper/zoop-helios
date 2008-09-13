@@ -1,10 +1,11 @@
 <?php
 /**
-* Utilities file
-*
-* @package app
-* @subpackage utils
-*/
+ * Utilities file
+ *
+ * @group app
+ * @group utils
+ * @todo split utils.php into logical subgroup files.
+ */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,13 +18,13 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* write to a log
-*
-* Append $content to $filename.
-*
-* @param string $content message to be written
-* @param string $filename filename to write to
-*/
+ * write to a log
+ *
+ * Append $content to $filename.
+ *
+ * @param string $content message to be written
+ * @param string $filename filename to write to
+ */
 function logwrite($content, $filename = '/tmp/phplog')
 {
 	append_to_file($filename, $content);
@@ -45,20 +46,31 @@ define("HEADER_REDIRECT", 1);
 define("JS_REDIRECT", 2);
 
 /**
-* redirect to an URL
-*
-* redirect to $URL using method $redirectType and terminate the program.
-*
-* @param string $URL Full url, http://example.com
-* @param integer $redirectType possible values are {@link HEADER_REDIRECT} and {@link JS_REDIRECT}
-*/
-function Redirect( $URL, $redirectType = HEADER_REDIRECT)
+ * Redirect to an URL
+ *
+ * Redirect to $URL using method $redirectType and terminate the program.
+ * Optionally return an HTTP response code:
+ * - 301 Moved Permanently (probably should be default...)
+ * - 302 Found (default value, don't need to specify)
+ * - 303 See Other
+ * - 307 Temporary Redirect
+ *
+ * @param string $URL Full url, http://example.com
+ * @param integer $redirectType possible values are {@link HEADER_REDIRECT} and {@link JS_REDIRECT}
+ * @param integer $response_code Optional response HTTP code to return. 
+ */
+function Redirect( $URL, $redirectType = HEADER_REDIRECT, $response_code = null)
 {
 	global $globalTime;
 	switch($redirectType)
 	{
 		case HEADER_REDIRECT:
-			header("location: $URL");
+			if ($response_code) {
+				header("location: $URL", TRUE, $response_code);
+			}
+			else {
+				header("location: $URL");
+			}
 			break;
 		case JS_REDIRECT:
 			echo("<script language=\"JavaScript\" type=\"text/javascript\">top.location.href = \"$URL\";</script>");
