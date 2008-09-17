@@ -21,40 +21,15 @@
  * @author Steve Francia <webmaster@supernerd.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}/
  */
-class component_doctrine extends component
-{
-	function component_doctrine()
-	{
-#		$this->requireComponent('db');
-#		$this->requireComponent('gui');
-#		$this->requireComponent('guicontrol');
-#		$this->requireComponent('cache');
-#		$this->requireComponent('validate');
-	}
-
-	function init()
-	{
+class component_doctrine extends component {
+	function init() {
 		require_once('Doctrine.php');
 		spl_autoload_register(array('Doctrine', 'autoload'));
 		$dsn = Config::get('zoop.doctrine.dsn');
+		$model_dir = Config::get('zoop.doctrine.model_dir');
 		Doctrine_Manager::connection($dsn);
 
 		Doctrine_Manager::getInstance()->setAttribute('model_loading', 'conservative');
-		Doctrine::loadModels(APP_DIR . '/models'); // This call will not require the found .php files
-
+		Doctrine::loadModels($model_dir); // This call will not require the found .php files
 	}
-	
-#	function getIncludes()
-#	{
-#		$file = $this->getBasePath();
-#		return array(
-#				"form2" => $file . "/doctrine2.php",
-#				"form" => $file . "/doctrine.php",
-#				"table" => $file . "/table.php",
-#				"record" => $file . "/record.php",
-#				"field" => $file . "/field.php",
-#				"cell" => $file . "/cell.php",
-#				"xml_serializer" => "XML/Serializer.php"
-#		);
-#	}
 }

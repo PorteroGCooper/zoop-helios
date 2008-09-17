@@ -1,2 +1,3 @@
 rdbms: mysql 
 dsn:
+model_dir: %APP_DIR%/model/models
