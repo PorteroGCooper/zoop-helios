@@ -6,6 +6,8 @@ class database
 	function database($dsn)
 	{
 		global $globalTime;
+		
+		if (!is_array($dsn)) $dsn = database::makeDSNFromString($dsn);
 		$this->dsn = $dsn;
 		logprofile($globalTime, true);	
 		try 
@@ -64,6 +66,26 @@ class database
 			'port'     => $port,
 			//'socket'   => false,
 			'database' => $database,
+		);
+	}
+	
+	/**
+	 * Make a DSN config array from a string.
+	 *
+	 * @param string $dsn_string a string of the format mysql://username:password@localhost/dbname
+	 */
+	function makeDSNFromString($dsn_string) {
+		$dsn = parse_url($dsn_string);
+		return array(
+			'phptype' => $dsn['scheme'],
+		    //'dbsyntax' => false,
+		    'username' => $dsn['user'],
+		    'password' => $dsn['pass'],
+		    //'protocol' => false,
+		    'hostspec' => $dsn['host'],
+		    'port'     => (isset($dsn['port'])) ? $dsn['port'] : 3306,
+		    //'socket'   => false,
+		    'database' => substr($dsn['path'],1),
 		);
 	}
 	

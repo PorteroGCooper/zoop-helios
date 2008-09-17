@@ -56,6 +56,8 @@ class database
 		);
 		if (defined('db_persistent'))
 			$options['persistent'] = db_persistent;
+			
+		if (!is_array($dsn)) $dsn = database::makeDSNFromString($dsn);
 		$this->dsn = &$dsn;
 		global $globalTime;
 		logprofile($globalTime, true);
@@ -138,6 +140,26 @@ class database
 		    'database' => $database,
 
 	   );
+	}
+	
+	/**
+	 * Make a DSN config array from a string.
+	 *
+	 * @param string $dsn_string a string of the format mysql://username:password@localhost/dbname
+	 */
+	function makeDSNFromString($dsn_string) {
+		$dsn = parse_url($dsn_string);
+		return array(
+			'phptype' => $dsn['scheme'],
+		    //'dbsyntax' => false,
+		    'username' => $dsn['user'],
+		    'password' => $dsn['pass'],
+		    //'protocol' => false,
+		    'hostspec' => $dsn['host'],
+		    'port'     => ($dsn['port']) ? $dsn['port'] : 3306,
+		    //'socket'   => false,
+		    'database' => substr($dsn['path'],1),
+		);
 	}
 
 	/**
