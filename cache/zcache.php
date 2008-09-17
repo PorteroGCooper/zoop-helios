@@ -62,7 +62,7 @@ class zcache
 				'writeControl' => false,
 				'fileNameProtection' => false,
 				'automaticSerialization' => true,
-				'cacheDir' => app_cache_dir,
+				'cacheDir' => Config::get('zoop.cache.cache_dir'),
 				'group' => 'default',
 				'lifeTime' => $default_lifeTime,
 				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing
@@ -73,7 +73,7 @@ class zcache
 		{
 			$DefaultOptions = array(
 				'automaticSerialization' => true,
-				'cacheDir' => app_cache_dir,
+				'cacheDir' => Config::get('zoop.cache.cache_dir'),
 				'group' => 'default',
 				'lifeTime' => $default_lifeTime,
 				//'hashedDirectoryLevel' => 1, // in large directories helps to have subdirectories for indexing
