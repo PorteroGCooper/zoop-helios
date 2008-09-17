@@ -9,7 +9,7 @@ class Config
 {
 	private static $info = array();
 	private static $file;
-	
+
 	/**
 	 * suggest a value if one isn't already set
 	 * takes a yaml file and places the values into $self::$info
@@ -25,7 +25,7 @@ class Config
 			$root = &self::getReference($prefix);
 		else
 			$root = &self::$info;
-		$root = array_merge(self::_replaceConstantsInArray(Yaml::read($file)), $root);
+		$root = self::merge(self::_replaceConstantsInArray(Yaml::read($file)), $root);
 	}
 	
 	/**
@@ -40,7 +40,7 @@ class Config
 	 */
 	public static function insist($file, $prefix = NULL) {
 		$root = $prefix ? self::getReference($prefix) : self::$info;
-		self::$info = array_merge($root, self::_replaceConstantsInArray(Yaml::read($file)));
+		self::$info = self::merge($root, self::_replaceConstantsInArray(Yaml::read($file)));
 	}
 		
 	/**
@@ -253,4 +253,65 @@ class Config
 	public static function &getAllReference() {
 		return self::$info;
 	}
+	
+	
+	/**
+	 * Recursively merge arrays, ensure identical keys are replaced, not converted to arrays.
+	 *
+	 * @author Paha <paha at paha dot hu>
+	 * @link http://us.php.net/manual/en/function.array-merge-recursive.php#73843
+	 */
+	public static function merge($array0, $array1) {
+		$arrays = func_get_args();
+		$remains = $arrays;
+	
+		// We walk through each arrays and put value in the results (without
+		// considering previous value).
+		$result = array();
+	
+		// loop available array
+		foreach($arrays as $array) {
+	
+			// The first remaining array is $array. We are processing it. So
+			// we remove it from remaing arrays.
+			array_shift($remains);
+	
+			// We don't care non array param, like array_merge since PHP 5.0.
+			if(is_array($array)) {
+				// Loop values
+				foreach($array as $key => $value) {
+					if(is_array($value)) {
+						// we gather all remaining arrays that have such key available
+						$args = array();
+						foreach($remains as $remain) {
+							if(array_key_exists($key, $remain)) {
+								array_push($args, $remain[$key]);
+							}
+						}
+	
+						if(count($args) > 2) {
+							// put the recursion
+							$result[$key] = call_user_func_array(__FUNCTION__, $args);
+						} else {
+							foreach($value as $vkey => $vval) {
+								$result[$key][$vkey] = $vval;
+							}
+						}
+					} else {
+						// simply put the value
+						$result[$key] = $value;
+					}
+				}
+			}
+		}
+		return $result;
+	}
 }
+
+
+
+
+
+
+
+
