@@ -303,10 +303,11 @@ class GuiControl
 	 * @access public
 	 * @return string
 	 */
-	function getNameIdString()
-	{
+	function getNameIdString() {
 		$name = $this->getLabelName();
-          return "name=\"$name\" id=\"$name\"";
+		$id = str_replace(array('[', ']'), array('-', ''), $name);
+		
+		return "name=\"$name\" id=\"$id\"";
 	}
 
 	/**

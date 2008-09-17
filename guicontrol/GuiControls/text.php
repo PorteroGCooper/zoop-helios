@@ -87,7 +87,7 @@ class text extends GuiControl
 		$ni = $this->getNameIdString();
 		$v = $this->getValue();
 
-		$html = "<input class=\"$vc\" $ni $attrs value=\"$v\" type=\"$thistype\">";
+		$html = "<input class=\"$vc\" $ni $attrs value=\"$v\" type=\"$thistype\" />";
 
 		return $html;
 	}
