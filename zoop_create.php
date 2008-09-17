@@ -166,6 +166,7 @@ include_once(ZOOP_DIR . "/zoop.php");
 // \$zoop->addComponent('spell');
 // \$zoop->addComponent('userfiles');
 // \$zoop->addComponent('sequence');
+// \$zoop->addComponent('formz');
 // \$zoop->addComponent('forms');
 // \$zoop->addComponent('mail');
 // \$zoop->addComponent('auth');
