@@ -1,0 +1,8 @@
+driver: forms
+type: list
+lotsa_classes: true
+relations:
+    display_field_priority:
+        - name
+        - label
+        - alias
