@@ -412,8 +412,7 @@ class zone
 
 
 	/**
-	 * This function will either run the page/post function, or will execute the child zone,
-	 * depending on what is found in the token of the url passed
+	 * This function will either run the page/post function, or will execute the child zone, * depending on what is found in the token of the url passed
 	 *
 	 * How the method runs:
 	 * Establish Index as the "/" and Default as the fall back method names
@@ -533,7 +532,6 @@ class zone
 
 		$this->findZoneParams();
 		$this->checkPathForSequences();
-		$this->setPageVars();
 		$this->initZone($this->_inPath);
 		$retval = $this->executeNextFunction();
 
@@ -555,6 +553,8 @@ class zone
 	 * @return void
 	 */
 	function _checkFuncs($curPath, $inPath) {
+		$this->setPageVars();
+
 		if (REQUEST_TYPE == "XMLRPC") {
 			return $this->_xmlrpcDispatch($curPath, $this->_inPath);
 		} else {
@@ -571,6 +571,7 @@ class zone
 					$this->closePosts($this->_inPath, $GLOBALS['gUrlVars']);
 					return $tmp;
 				} else if(method_exists($this, "page" . $curPath)) {
+					// I DON'T KNOW IF THIS IS EVEN USED, DOESN'T APPEAR TO BE
 					global $logpath;
 					$logpath[] = "$curPath/post";
 					//$funcName = "page" . $curPAth;
