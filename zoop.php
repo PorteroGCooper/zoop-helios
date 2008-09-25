@@ -18,11 +18,11 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * @mainpage Welcome to the Zoop Framework
+ * @mainpage Welcome to the Zoop Framework 'Lunar' branch
  * 
  * Welcome to the Zoop Framework 'Lunar' branch. Lunar is currently a development branch
  * for testing new features and ideas for Zoop Framework 2.0. So if you use this branch,
- * Please expect things to break :)
+ * please expect things to break :)
  *
  * Newcomers to Zoop should check out
  * {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop},
