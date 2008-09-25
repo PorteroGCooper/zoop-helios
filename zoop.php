@@ -20,13 +20,19 @@
 /**
  * @mainpage Welcome to the Zoop Framework
  * 
- * Welcome to the Zoop Framework. Newcomers to Zoop should check out
+ * Welcome to the Zoop Framework 'Lunar' branch. Lunar is currently a development branch
+ * for testing new features and ideas for Zoop Framework 2.0. So if you use this branch,
+ * Please expect things to break :)
+ *
+ * Newcomers to Zoop should check out
  * {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop},
  * a beginner's guide to Zoop.
  *
  * - {@link http://zoopframework.com/docs Zoop Documentation}
  *   - {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop}
- * - {@link components Zoop Components}
+ *   - {@link http://zoopframework.com/docs/users-manual The Zoop Users Manual}
+ *   - {@link http://zoopframework.com/docs/cookbook The Zoop Cookbook}
+ * - {@link http://zoopframework.com/docs/user-manual/components Zoop Components}
  *   - {@link app App}
  *   - {@link auth Auth}
  *   - {@link cache Cache}
@@ -47,6 +53,7 @@
  *   - {@link xml XML}
  *   - {@link zone Zone}
  */
+
 
 if(!defined('zoop_autoload') || zoop_autoload)
 {
