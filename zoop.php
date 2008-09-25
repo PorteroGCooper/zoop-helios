@@ -71,7 +71,7 @@ if(!defined('zoop_autoload') || zoop_autoload)
 }
 
 /**
- * The zoop class.
+ * The Zoop class.
  *
  * The Zoop class is the glue that brings all the different components together.
  * It ties the config to the code and launches the controller.
