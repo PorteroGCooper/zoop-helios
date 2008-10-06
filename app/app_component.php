@@ -70,7 +70,17 @@ class component_app extends component
 		} else {
 			set_error_handler('error_debug_handler');
 		}
-
+		
+		/**************
+		find the current timezone.....
+		**************/
+		global $tz;
+		$tz = date('T');
+		$dst = date('Z');
+		if($dst)
+		{
+			$tz = str_replace('D', 'S', $tz);
+		}
 	}
 }
 

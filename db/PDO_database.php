@@ -1,4 +1,4 @@
-<?
+<?php
 class database
 {
 	var $db = null;
@@ -173,7 +173,7 @@ class database
 		try
 		{
 			$result = &$this->db->query($inQueryString);
-			$result = $result->fetchAll();
+			$result = $result->fetchAll(PDO::FETCH_ASSOC);
 		}
 		catch(PDOException $e)
 		{
@@ -235,7 +235,7 @@ class database
 	{
 		$result = $this->query($query);
 		
-		if($result->fetch() !== false)
+		if($result->fetch(PDO::FETCH_ASSOC) !== false)
 		{
 			//$result->closeCursor();
 			return 0;

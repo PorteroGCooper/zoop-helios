@@ -1,55 +1,24 @@
-     oooooooooooo                     ooooooooo.        .o        .oooo.   
-     '""""""d888'                     `888   `Y88.    o888      .dP""Y88b  
-          .888P    .ooooo.   .ooooo.   888   .d88'     888            ]8P' 
-         d888'    d88' `88b d88' `88b  888ooo88P'      888          .d8P'  
-       .888P      888   888 888   888  888             888        .dP'     
-      d888'    .  888   888 888   888  888             888  .o. .oP     .o 
-    .8888888888P  `Y8bod8P' `Y8bod8P' o888o           o888o Y8P 8888888888 
-                                                                           
-The Zoop Object Oriented Php Framework, The Zoop Framework for short, A framework 
-written in and for php.
+ oooooooooooo                                     .o        oooooooo 
+d'""""""d888'                                   o888       dP""""""" 
+      .888P    .ooooo.   .ooooo.  oo.ooooo.      888      d88888b.   
+     d888'    d88' `88b d88' `88b  888' `88b     888          `Y88b  
+   .888P      888   888 888   888  888   888     888            ]88  
+  d888'    .P 888   888 888   888  888   888     888  .o. o.   .88P  
+.8888888888P  `Y8bod8P' `Y8bod8P'  888bod8P'    o888o Y8P `8bd88P'   
+                                   888                               
+                                  o888o                              
 
-Zoop is an object oriented framework for PHP based on a front controller. It is 
-designed to be very fast and efficient and very nice for the programmer to work 
-with. It is easily extensible, and you need only include the functionality you use.
+Zoop is a recursive acronym which stands for Zoop Object Oriented PHP Framework.
 
+Far from being Yet Another PHP Framework or Rails clone, Zoop has been in development since 2001 and in use for the last 6 years in a number of different production environments. While it predates the recent proliferation of PHP frameworks, it's based on solid MVC principles, including separation of display, logic, and data layers. It's designed to be efficient, modular, and extensible, striking a balance between lightweight and fully-featured.
 
-Zoop is based on the pehppy framework and is developed by the same group. 
-In essence Zoop 1.x is the next major version of pehppy. 
-We decided to rename it to zoop because:
+With Zoop an inexperienced coder can make secure web applications quickly. More experienced coders will appreciate the design and flexibility. Both will benefit from the shortcuts it provides to handle common and mundane tasks.
 
-	1. This version broke compatibility with pehppy without reconfiguring and
-	   some rewriting of code.
-	2. This version more than doubles the features had in pehppy.
-	3. We didn't really like the name pehppy all that much.
+Zoop's integrated error handling can be configured to log errors for production environments, and is highly informative and readable which makes bugs easy to find and squash.
 
-Zoop integrates many different projects including smarty
-(http://smarty.php.net) and the prototype AJAX framework. It also makes use of
-many PEAR functions (http://pear.php.net)
-
-With Zoop an inexperienced coder can make secure web applications
-quickly. It will even look fairly attractive. A more experienced coder
-will really appreciate how flexible Zoop is. The experienced coder will
-appreciate the automations that are at his/her disposal to handle mundane tasks.
+The Zoop Framework is inclusive, cooperating with and containing components integrated from some existing projects including Smarty, the Prototype JS Framework, and a number of Pear Modules. We're not content just to cobble pieces together, however -- for example, we've combined the above into an implementation that brings GuiControls to PHP, providing developers with easy access to rich form widgets with client-side validation completely integrated. We're also working to include support for pieces from some of the latest and greatest PHP and Javascript projects, including the Zend Framework, PHP Doctrine, and jQuery, among others. 
 
 The Zoop Framework can be found at http://zoopframework.com
-
-					 ------------
-					| Zoop Group |
-					 ------------
-Zoop has been developed over the past 5 years by a core group of coders mostly
-affiliated with Supernerd LLC (http://supernerd.com).
-
-Project Manager:
-		Steve Francia : sfrancia@supernerd.com
-Lead Developers:
-		John LeSueur : john@supernerd.com
-		Steve Francia : sfrancia@supernerd.com
-Contributors:
-		Rick Gigger : rgigger@supernerd.com
-		Richard Bateman : rbateman@supernerd.com
-
-
 
 					 ----------
 					| FEATURES |
@@ -59,7 +28,7 @@ Zoop has the following enhanced features:
 For Programmers:
 
 * Extensible component architecture
-* Supports popular database servers provided by PEAR-DB including:
+* Supports popular database servers provided by PDO or PEAR-DB including:
 	mysql
 	mysqli
 	pgsql
@@ -86,12 +55,56 @@ For Programmers:
 * A Nice Skeleton program to get you started on any project
 * Compatible with mod_php as well as php-cli and php-fcgi (fastCGI)
 
+
+
+
+					 -----------
+					| CHANGELOG |
+					 -----------
+
+This version of The Zoop Framework brings a number of major enhancements, new components as well as the usual bug fixes and performance optimizations.
+
+Improvements
+* Zcache now has modular back end, supporting file-based or MemCached caching.
+* View and Controller Zcache integration.
+* Inline template caching with {zcache id=$X group=$Y ttl=$Z} Cached Content {/zcache}
+* Improved user input filtering.
+* guiControl API redesigned and standardized. 
+* JS Validation provided by Prototype, integrated with back end validation through guiControls.
+* FastCGI support. 
+* PDO now default back end for Zoop DB.
+* Full configurable support for mod_rewrite.
+* Zoop Create script to generate projects, zones and config from the CLI.
+* Better error handling.
+* Better security.
+* Controller Zones further relationships supporting full ancestry. 
+* Further integration of View and Controller with new $zone->guiDisplay.
+* Introduction of new canonicalizeTemplate function to standardize templating.
+* GUI now supports inline template caching. 
+* Forms2 refined to automate CRUD operations. 
+* Full soap support through integration of Nusoap component.
+* Rewrite of Mail component for better support including sending personalized emails to multiple recipients.
+* Application structure cleanup, controller zones can be placed in a zones/ subdirectory.
+* Example apps.
+* Updated and revised Skeleton.
+
+New Components
+* Auth. Providing Authentication and group, role and users based permissions. (beta).
+* Simpletest. Provides a standard unittesting framework for Zoop and Zoop based applications. 
+* Nusoap. Provides full soap server and client.
+* Graphic. Outputs PDFs and images from Smarty templates.
+* Chart. Extends Graphic to support bar, line and pie charts. 
+* guiWidgets. Introduced as a simplified version of a guiControl. 
+* guiWidgets are not tied into a form, nor do they validate, they simply render data into html. An OO approach to designing HTML. 
+* Full Zcache Rewrite
+* Full DB Rewrite
+
 				  --------------
 				 | REQUIREMENTS |
 				  --------------
 
-* A working php above version 4.3.0
-* The following PEAR packages:
+* A working php version 4.3.10 and up
+* Optionally The following PEAR packages:
 	Starting with ZooP 1.2 the necessary pear packages can be found from at http://zoopframework.com
 	ZooP 1.2 and later can read from ZOOP_DIR/libs as well as the system wide pear repository.
 
@@ -103,7 +116,7 @@ For Programmers:
 	Mail_Mime 		(only if using mail framework)
 	VFS_SQL 		(only if using storage framework)
 	VFS 			(only if using userfiles framework)
-	XML_Serializer 	(only if using forms)
+	XML_Serializer 		(only if using forms)
 
 				 -----------------
 				| HOW TO USE ZOOP |

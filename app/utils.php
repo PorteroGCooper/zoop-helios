@@ -164,19 +164,6 @@ function checkValidDate( $datestring )
 	}
 }
 
-/**************
-find the current timezone.....
-**************/
-/*
-JOHN WHAT IS THIS, IT WAS JUST SITTING OUTSIDE OF ANY FUNCTION
-*/
-$tz = date('T');
-$dst = date('Z');
-if($dst)
-{
-	$tz = str_replace('D', 'S', $tz);
-}
-
 /**
  * FormatPostgresDate
  *
@@ -597,6 +584,31 @@ function BUG($desc = "")
 	{
 		$functioninfo = debug_backtrace();
 		$string = 	"bug in <b>" .
+					$functioninfo[0]["file"] .
+					"</b> on line <b>" .
+					$functioninfo[0]["line"] .
+					"</b> in function <b>" .
+					$functioninfo[1]["function"] .
+					"</b><br>Description:<b>$desc</b><br>";
+		echo($string);
+	}
+}
+
+/**
+ * deprecated
+ *
+ * @param string $desc
+ * @access public
+ * @return void
+ */
+function deprecated($desc = "")
+{
+	if(show_warnings == false)
+		return;
+	if(app_status == 'dev')
+	{
+		$functioninfo = debug_backtrace();
+		$string = 	"deprecated functionality in <b>" .
 					$functioninfo[0]["file"] .
 					"</b> on line <b>" .
 					$functioninfo[0]["line"] .

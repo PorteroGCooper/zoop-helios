@@ -269,7 +269,7 @@ class form
 		if ($id == "new" && $this->tables->$table->fields[$idfield]->autoincrement)
 			unset($record->values[$idfield]); // only unset this if the table is set to autoincrement
 
-		if ($$dbconnname->db->phptype == "mysql" || $$dbconnname->db->phptype == "mysqli")
+		if ($$dbconnname->dsn['phptype'] == "mysql" || $$dbconnname->dsn['phptype'] == "mysqli")
 			$colquote = '`';
 		else
 			$colquote = '"';
@@ -317,7 +317,7 @@ class form
 			$setpart = substr($setpart, 0, -1);
 			$returnid = $id;
 
-			$id = $$dbconnname->db->quoteSmart($id);
+			$id = $$dbconnname->escape_string($id);
 
 			$query = "UPDATE $table set $setpart where $idfield = $id";
 

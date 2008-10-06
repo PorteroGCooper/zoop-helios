@@ -108,22 +108,23 @@ function smarty_function_forms_form($params, &$smarty)
 				$type = isset($field->description->html['type']) ? $field->description->html['type'] : 'text';
 				$index = $field->description->index;
 
-				if ($form_type == "form")
-				{
-					if ((strlen($field->value) == 0) && (isset($field->description->default) && strlen($field->description->default)))
-					{
+				if ($form_type == "form") {
+					if ((strlen($field->value) == 0) && (isset($field->description->default) && strlen($field->description->default))) {
 						$value = $field->description->default;
 					}
 
 					$control = &getGuiControl($type, $name);
 
-					if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor')		// No need for htmlspecialchars function to run.
+					if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor') {		// No need for htmlspecialchars function to run.
 						$control->setValue($value);
-					else
+					} else {
 						$control->setValue(htmlspecialchars($value));
+					}
 
-					if (isset($field->description->validation))
+					if (isset($field->description->validation)) {
 						$control->setParam('validate', $field->description->validation);
+					}
+
 					$control->setParam('index', $index);
 					$control->setParams($field->description->html);
 
@@ -135,13 +136,11 @@ function smarty_function_forms_form($params, &$smarty)
 							$editor++;
 							break;
 					}
-					$labelname = $control->getLabelName();
-					$formpart = $control->render();
-					$formpart .= "\r";
-				}
-				else
-				{
 
+					$labelname = $control->getLabelName();
+					$formpart = $control->renderControl();
+					$formpart .= "\r";
+				} else { 
 					$control = &getGuiControl($type, $name);
 					$control->setParam('value', $value);
 					$control->setParam('index', $index);
@@ -161,8 +160,7 @@ function smarty_function_forms_form($params, &$smarty)
 				$output .= "</tr>";
 
 
-				if ($counter == $break)
-				{
+				if ($counter == $break) {
 					$output .= "</table></td><td valign=\"top\"><table cellpadding=0 cellspacing=0 border=0 width='100%'>";
 					$counter = -1;
 				}
@@ -172,8 +170,7 @@ function smarty_function_forms_form($params, &$smarty)
         }
         $output .= "</table></td></tr></table>";
 
-	  if ($form_type == "form")
-	  {
+	  if ($form_type == "form") {
 		$output .= "<input type=\"hidden\" name=\"recordid\" value=\"$recordid\">";
 		$output .= "<input type=\"hidden\" name=\"recordtable\" value=\"$recordtable\">";
 		$output .= "<br><input type=\"button\" name=\"SubmitButton\" class=\"submit\" id=\"SubmitButton\" value=\"$submitlabel\" onclick=\"$onclick\">";

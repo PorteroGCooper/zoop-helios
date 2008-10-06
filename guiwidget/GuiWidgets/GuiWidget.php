@@ -235,6 +235,13 @@ class GuiWidget
 		echo ($this->render(true));
 	}
 
+	/**
+	 * renderWidget 
+	 * 
+	 * @param bool $echo 
+	 * @access public
+	 * @return void
+	 */
 	function renderWidget($echo = false)
 	{
 		$html = $this->render();
