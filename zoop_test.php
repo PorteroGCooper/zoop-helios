@@ -28,6 +28,8 @@ $x = false; //change to true to debug;
 
 include_once(ZOOP_DIR . "/zoop.php");
 $zoop = &new zoop(dirname(__file__));
+$zoop->init();
+$zoop->run();
 //Config::Load();
 
 // PATH_SEPARATOR is : on Mac OS X? Not since HFS+ on OS 9, I think
@@ -89,12 +91,12 @@ foreach($targets as $target) {
 						$className = $matches[1];
 						if(class_exists($className)) {
 							echo "\nTest Set $className\n";
-							$testSet = new $className();
+							$testSet =& new $className();
 							$testSet->init();
-							$testSet->runTests();
+							$testSet->run();
+							// $testSet->runTests();
 						}					
-					}
-				else {
+				} else {
 					if ($x) echo " doesn't have a php extension";
 				}
 			}
@@ -102,4 +104,3 @@ foreach($targets as $target) {
 	}
 }
 echo "\n";
-?>

@@ -67,16 +67,21 @@ class Validator
 
 		$function = strtolower("validate{$validate['type']}");
 
+		$exists = true;
+		if (is_string($value)) {
+			if (strlen ($value) < 1 ) { $exists = false; }
+		} elseif ( is_array($value)) {
+			if (count($value) < 1 ) { $exists = false; }
+		}
+
 		// handle required right here.
-		if (isset($validate['required']) && $validate['required'] && strlen($value) < 1)
-		{
+		if (isset($validate['required']) && $validate['required'] && !$exists ) {
 			$result['message'] = "This field is required";
 			$result['result'] = false;
 			return $result;
 		}
 
-		if ((!isset($validate['required']) || $validate['required'] == false) && strlen($value) < 1)
-		{
+		if ((!isset($validate['required']) || $validate['required'] == false) && !$exists) {
 			$result['result'] = true;
 			return $result;
 		}
@@ -112,7 +117,7 @@ class Validator
 	}
 
 	/**
-	 * validateStack
+	 * validateSTack
 	 * a function to stack validators together.
 	 * This function will validate more than one validator, stacked in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
 	 * It will return as soon as one of the validators fails. This is particularly useful if one of the validators performs a sql check.

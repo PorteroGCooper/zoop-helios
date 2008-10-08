@@ -11,7 +11,7 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 
-class ZoopTestSuite {
+class ZoopTestSuite extends UnitTestCase {
 
 	var $suiteName = null;
 	var $msgs = array();
@@ -92,6 +92,41 @@ class ZoopTestSuite {
 				$this->result($testName,$rv,$this->getMsgs());
 			}
 		}	
+	}
+
+	/**
+	 * Overload run with a bit easier calling convention, defaulted to text output 
+	 * 
+	 * @param string $type 
+	 * @access public
+	 * @return void
+	 */
+	function run($type = 'text') {
+		if ( $type == 'html' ) {
+			return $this->runHtml();
+		} else {
+			return $this->runText();
+		} 
+	}
+
+	/**
+	 * Wrapper for run with Text output
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function runText() {
+		return parent::run( new TextReporter() );
+	}
+
+	/**
+	 * Wrapper for run with HTML output
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function runHtml() {
+		return parent::run( new HtmlReporter() );
 	}
 	
 	/**
