@@ -17,6 +17,7 @@ class ValidateTestSuite extends ZoopTestSuite {
 		$this->assertFalse (Validator::boolvalidate('funny dog', array('type' => 'numeric'))) ;
 		$this->assertTrue  (Validator::boolvalidate('1924', array('type' => 'numeric'))) ;
 		$this->assertTrue  (Validator::boolvalidate('1924.13', array('type' => 'numeric'))); 
+		$this->assertTrue  (Validator::boolvalidate('-1924', array('type' => 'numeric'))); 
 		$this->assertFalse (Validator::boolvalidate('1924-13', array('type' => 'numeric'))); 
 		$this->assertFalse (Validator::boolvalidate('19is a great number', array('type' => 'numeric'))); 
 		$this->assertFalse (Validator::boolvalidate('three', array('type' => 'numeric'))); 
@@ -59,11 +60,27 @@ class ValidateTestSuite extends ZoopTestSuite {
 	}
 
 	function testInt () {
-	
+		$this->assertFalse (Validator::boolvalidate('funny dog', array('type' => 'int'))) ;
+		$this->assertTrue  (Validator::boolvalidate('1924', array('type' => 'int'))) ;
+		$this->assertTrue  (Validator::boolvalidate(1924, array('type' => 'int'))) ;
+		$this->assertTrue  (Validator::boolvalidate(1924-13, array('type' => 'int'))) ;
+		$this->assertFalse (Validator::boolvalidate('1924.13', array('type' => 'int'))); 
+		$this->assertTrue  (Validator::boolvalidate('-1924', array('type' => 'int'))); 
+		$this->assertFalse (Validator::boolvalidate('1924-13', array('type' => 'int'))); 
+		$this->assertFalse (Validator::boolvalidate('19is a great number', array('type' => 'int'))); 
+		$this->assertFalse (Validator::boolvalidate('three', array('type' => 'int'))); 
 	}
 
 	function testFloat () {
-	
+		$this->assertFalse (Validator::boolvalidate('funny dog', array('type' => 'float'))) ;
+		$this->assertTrue  (Validator::boolvalidate('1924', array('type' => 'float'))) ;
+		$this->assertTrue  (Validator::boolvalidate(1924, array('type' => 'float'))) ;
+		$this->assertTrue  (Validator::boolvalidate(1924-13, array('type' => 'float'))) ;
+		$this->assertTrue  (Validator::boolvalidate('1924.13', array('type' => 'float'))); 
+		$this->assertTrue  (Validator::boolvalidate('-1924', array('type' => 'float'))); 
+		$this->assertFalse (Validator::boolvalidate('1924-13', array('type' => 'float'))); 
+		$this->assertFalse (Validator::boolvalidate('19is a great number', array('type' => 'float'))); 
+		$this->assertFalse (Validator::boolvalidate('three', array('type' => 'float'))); 
 	}
 
 	function testMoney () {
