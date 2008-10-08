@@ -13,7 +13,7 @@ $zoop = &new zoop(dirname(__file__));
 // PATH_SEPARATOR is : on Mac OS X? Not since HFS+ on OS 9, I think
 //	require_once($zoop_dir . '/' . 'zoop.php');		
 $zoop_dir = ZOOP_DIR;
-require_once($zoop_dir . '/' . 'test/ZoopTestSet.php');
+require_once($zoop_dir . '/' . 'test/ZoopTestSuite.php');
 
 array_shift($argv); // get rid of the "script" argv
 $flags = array();

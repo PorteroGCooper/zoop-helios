@@ -1,6 +1,6 @@
 <?php
 
-class FiboTestSet extends ZoopTestSet {
+class FiboTestSuite extends ZoopTestSuite {
 
 	function testComponentFiboLoads() {
 		global $zoop;

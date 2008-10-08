@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ZoopTestSet 
+ * ZoopTestSuite
  * 
  * @package 
  * @version $id$
@@ -9,40 +9,43 @@
  * @author Weston Cann
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class ZoopTestSet {
 
-	var $setName = null;
-	var $dsn = null;
+class ZoopTestSuite {
+
+	var $suiteName = null;
 	var $msgs = array();
 	var $logger;
 
 	/**
-	 * ZoopTestSet 
+	 * ZoopTestSuite
 	 * 
-	 * @param mixed $setName 
-	 * @param mixed $logger 
+	 * @param string $suiteName 
+	 * @param object $logger 
 	 * @access public
 	 * @return void
 	 */
-	function ZoopTestSet($setName=null,$logger=null) {
-		$this->setName = $setName ? $setName : get_class($this);
+
+	function ZoopTestSuite($suiteName=null,$logger=null) {
+		$this->suiteName = $suiteName ? $suiteName : get_class($this);
 		$this->logger = $logger;
 	}
 
 	/**
+	 * loadConfig
 	 * Load a yaml config file for the tests
-	 *
+	 * currently unimplemented
 	 * 
 	 * @access public
 	 * @return void
 	 */
 	function loadConfig() {
 		// to be written when needed
-
 	}
 
 	/**
 	 * runTests 
+	 * automatically invoked by zoop_test. Examines object methods,
+	 * executes all those beginning with the word "test".
 	 * 
 	 * @access public
 	 * @return void
@@ -61,6 +64,7 @@ class ZoopTestSet {
 	
 	/**
 	 * clearMsgs 
+	 * clears messages placed on the test suite message queue during test method execution
 	 * 
 	 * @access public
 	 * @return void
@@ -71,8 +75,9 @@ class ZoopTestSet {
 
 	/**
 	 * msg 
+	 * adds a message string to test suitemessage queue. Meant to be used inside of test methods
 	 * 
-	 * @param mixed $m 
+	 * @param string $m 
 	 * @access public
 	 * @return void
 	 */
@@ -82,6 +87,7 @@ class ZoopTestSet {
 
 	/**
 	 * getMsgs 
+	 * retreives message strings on the test message queue, joined by the argument to getMsgs, or, by default, "\n"
 	 * 
 	 * @param string $sep 
 	 * @access public
@@ -93,17 +99,19 @@ class ZoopTestSet {
 
 	/**
 	 * result 
+	 * echoes and potentially logs (if a logger is set) the name of a test, its result value, and any messages that may accompany the result.
 	 * 
-	 * @param mixed $testName 
+	 * @param string $testName 
 	 * @param mixed $testResult 
-	 * @param mixed $msg 
+	 * @param string $msg 
 	 * @access public
 	 * @return void
 	 */
+
 	function result($testName,$testResult,$msg) {
 		echo "\n$testName: $testResult - $msg\n";
 		if(is_object($this->logger) && method_exists($this->logger,'logTest')) {
-			$this->logger->logTest($this->setName,$testName,$testResult,$msg);
+			$this->logger->logTest($this->suiteName,$testName,$testResult,$msg);
 		}
 	}
 }
