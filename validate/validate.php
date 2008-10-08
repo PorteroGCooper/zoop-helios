@@ -329,6 +329,7 @@ class Validator
 	/**
 	 * validatePhone
 	 *
+	 * @todo Add an international phone number validation method.
   	 * @param mixed $value The value to be validated.
   	 * @param array $validate
 	 * @access public
@@ -337,7 +338,7 @@ class Validator
 	function validatePhone($value, $validate) // FOR PHP VALIDATION
 	{
 		$result = array('message' => "Must be a properly formatted (US) phone number with areacode, eg: 800-555-5555");
-		if (preg_match('/\\(?[0-9]{3}\\)?[-. ]?[0-9]{3}[-. ]?[0-9]{4}/', $value))
+		if (preg_match('/^(1[-. ]?)?\\(?[0-9]{3}\\)?[-. ]?[0-9]{3}[-. ]?[0-9]{4}$/', $value))
 			$result['result'] = true;
 		else
 			$result['result'] = false;
@@ -542,20 +543,18 @@ class Validator
 	{
 		$result = array('message' => "Must be an integer");
 
-		if (is_numeric($value) && preg_match('/\\b\\d+\\b/', $value))
-		{
-			if (isset($validate['min']) && $value < $validate['min'])
-			{
+		if (is_numeric($value) && ((int)$value == (string)$value)) {
+			if (isset($validate['min']) && $value < $validate['min']) {
 				$result['result'] = false;
 				$result['message'] .=  ", larger than {$validate['min']}";
 			}
-			elseif (isset($validate['max']) && $value > $validate['max'])
-			{
+			elseif (isset($validate['max']) && $value > $validate['max']) {
 				$result['result'] = false;
 				$result['message'] .=  ", smaller than {$validate['max']}";
 			}
-			else
+			else {
 				$result['result'] = true;
+			}
 		}
 		else
 			$result['result'] = false;
