@@ -908,16 +908,22 @@ class Validator
 	 * @access public
   	 * @return array
 	 */
-	function validateEmail($value, $validate = array())
-	{
+	function validateEmail($value, $validate = array()) {
 		$result = array('message' => "Must be a properly formatted valid email address, eg: user@domain.com");
 
-		if (preg_match('/\\b[A-Z0-9._%-]+@[A-Z0-9._%-]+\\.[A-Z]{2,4}\\b/i', $value))
-		{
-   			$result['result'] = true;
-		}
-		else
+		// split it on the @sign, validate the first half as email, second half as domain...
+		$chunks = explode('@', $value);
+		
+		// try the domain half, then the username half
+		if (count($chunks) < 2) {
 			$result['result'] = false;
+		} else if (!self::boolvalidate($chunks[1], array('type' => 'domain'))) {
+			$result['result'] = false;
+		} else if (preg_match('/^[-+_A-Z0-9]+(\.[-+_A-Z0-9]+)*$/i', $chunks[0])) {
+   			$result['result'] = true;
+		} else {
+			$result['result'] = false;
+		}
 
 		return $result;
 	}

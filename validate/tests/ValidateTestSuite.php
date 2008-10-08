@@ -112,6 +112,10 @@ class ValidateTestSuite extends ZoopTestSuite {
 	}
 
 	function testEmail () {
+		// empty string
+		$this->assertTrue	(Validator::boolvalidate('', array('type' => 'email', 'required' => false))) ;
+		$this->assertFalse	(Validator::boolvalidate('', array('type' => 'email', 'required' => true))) ;
+
 		// simple cases
 		$this->assertTrue	(Validator::boolvalidate('test@example.com', array('type' => 'email'))) ;
 		$this->assertTrue	(Validator::boolvalidate('test@mail.example.com', array('type' => 'email'))) ;
@@ -141,8 +145,7 @@ class ValidateTestSuite extends ZoopTestSuite {
 		$this->assertTrue	(Validator::boolvalidate('test-two@example.com', array('type' => 'email'))) ;
 		$this->assertTrue	(Validator::boolvalidate('test+three@example.com', array('type' => 'email'))) ;
 		$this->assertTrue	(Validator::boolvalidate('test.four@example.com', array('type' => 'email'))) ;
-		$this->assertTrue	(Validator::boolvalidate('test~five@example.com', array('type' => 'email'))) ;
-
+		
 		// and a beastly combination of all of the above
 		$this->assertTrue	(Validator::boolvalidate('test-hyphen_underscore.dot+plus@example.com', array('type' => 'email'))) ;
 
@@ -154,33 +157,44 @@ class ValidateTestSuite extends ZoopTestSuite {
 */
 
 		// not actually email addresses
-
+		$this->assertFalse	(Validator::boolvalidate('example', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('@example.com', array('type' => 'email'))) ;
+		
 		// invalid domain
 		$this->assertFalse	(Validator::boolvalidate('test@example', array('type' => 'email'))) ;
+
+		// currently failing because of domain name validation
+		$this->assertFalse	(Validator::boolvalidate('test@', array('type' => 'email'))) ;
 		$this->assertFalse	(Validator::boolvalidate('test@exa mple.com', array('type' => 'email'))) ;
 
 		// invalid characters
-//		$this->assertFalse	(Validator::boolvalidate('test one@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test,two@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test>three@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test<four@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test"five@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test@six@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test()seven@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test[]eight@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test;nine@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test:ten@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test\eleven@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test one@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test,two@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test>three@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test<four@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test"five@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test@six@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test()seven@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test[]eight@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test;nine@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test:ten@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test\eleven@example.com', array('type' => 'email'))) ;
 		
 		// dots in the wrong place
-//		$this->assertFalse	(Validator::boolvalidate('.test@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test.@example.com', array('type' => 'email'))) ;
-//		$this->assertFalse	(Validator::boolvalidate('test..fails@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('.test@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test.@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('test..fails@example.com', array('type' => 'email'))) ;
 
 	}
 
 	function testDomain () {
-	
+		// empty string
+		$this->assertTrue	(Validator::boolvalidate('', array('type' => 'domain', 'required' => false))) ;
+		$this->assertFalse	(Validator::boolvalidate('', array('type' => 'domain', 'required' => true))) ;
+
+		$this->assertTrue	(Validator::boolvalidate('example.com', array('type' => 'domain'))) ;	
+ 		$this->assertFalse	(Validator::boolvalidate('exa mple.com', array('type' => 'domain'))) ;
 	}
 
 	function testUrl () {
