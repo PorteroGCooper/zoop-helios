@@ -112,7 +112,7 @@ class Validator
 	}
 
 	/**
-	 * validateSTack
+	 * validateStack
 	 * a function to stack validators together.
 	 * This function will validate more than one validator, stacked in order one at a time. Permits validating things like Alpahnumeric & Length together for example.
 	 * It will return as soon as one of the validators fails. This is particularly useful if one of the validators performs a sql check.
