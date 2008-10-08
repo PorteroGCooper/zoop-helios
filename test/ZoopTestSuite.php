@@ -7,6 +7,7 @@
  * @version $id$
  * @copyright 2008 Portero Inc.
  * @author Weston Cann
+ * @author Steve Francia
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 
@@ -15,6 +16,7 @@ class ZoopTestSuite {
 	var $suiteName = null;
 	var $msgs = array();
 	var $logger;
+	var $requiredComponents = array();
 
 	/**
 	 * ZoopTestSuite
@@ -40,6 +42,36 @@ class ZoopTestSuite {
 	 */
 	function loadConfig() {
 		// to be written when needed
+	}
+
+	/**
+	 * Include a Zoop Component for testing. 
+	 * This will automatically handle dependencies .
+	 * 
+	 * @param mixed $component 
+	 * @access public
+	 * @return void
+	 */
+	function addComponent($component = false) {
+		global $zoop;
+		if ($component) {
+			$zoop->addComponent($component);
+		}
+	}
+
+	/**
+	 * Initialize the test.
+	 * Load the necessary components. Load the config file.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function init() {
+		foreach ($this->requiredComponents as $component) {
+			$this->addComponent($component);
+		}
+
+		$this->loadConfig();
 	}
 
 	/**

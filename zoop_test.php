@@ -1,4 +1,24 @@
+#!/usr/bin/php -q
 <?php
+/**
+* @category zoop_test
+* @package zoop_test
+*/
+
+// Copyright (c) 2008 Supernerd LLC and Contributors.
+// All Rights Reserved.
+//
+// This software is subject to the provisions of the Zope Public License,
+// Version 2.1 (ZPL). A copy of the ZPL should accompany this distribution.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+// WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+// FOR A PARTICULAR PURPOSE.
+
+/**
+ * This is a script meant to be called from the cli. 
+ */
+
 //define("APP_STATUS", 'dev');
 //define("APP_DIR", dirname(__file__));
 //define("APP_TEMP_DIR", APP_DIR . "/tmp");
@@ -70,7 +90,7 @@ foreach($targets as $target) {
 						if(class_exists($className)) {
 							echo "\nTest Set $className\n";
 							$testSet = new $className();
-							$testSet->loadConfig();
+							$testSet->init();
 							$testSet->runTests();
 						}					
 					}
