@@ -28,6 +28,7 @@ $x = false; //change to true to debug;
 
 include_once(ZOOP_DIR . "/zoop.php");
 $zoop = &new zoop(dirname(__file__));
+$zoop->addComponent('simpletest');
 $zoop->init();
 $zoop->run();
 //Config::Load();
@@ -74,6 +75,7 @@ foreach($targets as $target) {
 	if ($x) echo "\nTest target: $target";
 	if(file_exists($target) && is_dir($target) && ($target != 'tests')) {
 		chdir($target) || die("\nCan't change to target $target\n");
+		$zoop->addComponent($target);
 	}
 	if ($x) echo " (in dir: ".getcwd().")";
 	if(file_exists('tests') && is_dir('tests')) {

@@ -148,6 +148,13 @@ class ValidateTestSuite extends ZoopTestSuite {
 		
 		// and a beastly combination of all of the above
 		$this->assertTrue	(Validator::boolvalidate('test-hyphen_underscore.dot+plus@example.com', array('type' => 'email'))) ;
+		
+		
+		// length based validation (see RFC 3696 sec 3)
+		$this->assertTrue	(Validator::boolvalidate('abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmn@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmno@example.com', array('type' => 'email'))) ;
+		$this->assertTrue	(Validator::boolvalidate('abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmn@example.com', array('type' => 'email'))) ;
+		$this->assertFalse	(Validator::boolvalidate('abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxy@abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxya.com', array('type' => 'email'))) ;
 
 /*		
 		// ugly uncommon but valid characters

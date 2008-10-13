@@ -30,7 +30,7 @@
  *
  * - {@link http://zoopframework.com/docs Zoop Documentation}
  *   - {@link http://zoopframework.com/docs/from-a-to-zoop From A to Zoop}
- *   - {@link http://zoopframework.com/docs/users-manual The Zoop Users Manual}
+ *   - {@link http://zoopframework.com/docs/user-manual The Zoop Users Manual}
  *   - {@link http://zoopframework.com/docs/cookbook The Zoop Cookbook}
  * - {@link http://zoopframework.com/docs/user-manual/components Zoop Components}
  *   - App
