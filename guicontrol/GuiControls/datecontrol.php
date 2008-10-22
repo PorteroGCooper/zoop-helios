@@ -16,7 +16,7 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * date
+ * dateControl
  *
  * @uses GuiControl
  * @package

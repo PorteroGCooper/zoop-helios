@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class openwysiwyg extends GuiControl
+class openwysiwygControl extends GuiControl
 {
 	function getPersistentParams()
 	{

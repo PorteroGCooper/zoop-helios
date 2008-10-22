@@ -16,7 +16,7 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_radios.php");
 
 /**
- * radio
+ * radioControl
  *
  * @uses GuiControl
  * @package
@@ -25,7 +25,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_radios.php");
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class radio extends GuiControl
+class radioControl extends GuiControl
 {
 	/**
 	 * getPersistentParams

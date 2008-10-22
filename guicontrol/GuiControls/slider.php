@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class slider extends GuiControl
+class sliderControl extends GuiControl
 {
 	function getPersistentParams()
 	{

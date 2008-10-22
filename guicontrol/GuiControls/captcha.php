@@ -27,7 +27,7 @@ require(ZOOP_DIR . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class captcha extends GuiControl
+class captchaControl extends GuiControl
 {
 	function validate()
 	{

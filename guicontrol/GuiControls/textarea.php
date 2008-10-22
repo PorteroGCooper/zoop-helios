@@ -13,7 +13,7 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class textarea extends GuiControl
+class textareaControl extends GuiControl
 {
 	function getPersistentParams()
 	{

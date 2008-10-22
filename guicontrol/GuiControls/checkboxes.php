@@ -18,7 +18,7 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
 
 /**
- * checkboxes
+ * checkboxesControl
  *
  * @uses GuiControl
  * @package
@@ -27,7 +27,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class checkboxes extends GuiMultiValue
+class checkboxesControl extends GuiMultiValue
 {
 	/**
 	 * validate

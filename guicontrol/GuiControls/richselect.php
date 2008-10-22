@@ -16,7 +16,7 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 
 /**
- * select
+ * richselectControl
  *
  * @uses GuiControl
  * @package
@@ -25,7 +25,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class richselect extends guicontrol
+class richselectControl extends guicontrol
 {
 
 	function view()

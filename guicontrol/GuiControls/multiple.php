@@ -4,7 +4,7 @@
 * @subpackage guicontrol
 */
 include_once(dirname(__file__) . "/select.php");
-class multiple extends select
+class multipleControl extends selectControl
 {
 	function render()
 	{

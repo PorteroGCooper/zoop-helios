@@ -7,6 +7,6 @@
 
 include_once(dirname(__file__) . "/text.php");
 
-class button extends text {
+class buttonControl extends textControl {
 
 }

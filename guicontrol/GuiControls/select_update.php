@@ -15,7 +15,7 @@
 
 include_once(zoop_guicontrol_dir. "select.php");
 
-class select_update extends select
+class select_updateControl extends select
 {
 
 	function render()

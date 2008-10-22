@@ -3,11 +3,11 @@
 * Zoop Guicontrol
 * @package gui
 * @subpackage guicontrol
-* 
+*
 */
 
 include_once(dirname(__file__) . "/editor.php");
-class fulleditor extends editor
+class fulleditorControl extends editorControl
 {
 }
 ?>

@@ -6,6 +6,6 @@
  */
 include_once(dirname(__file__) . "/text.php");
 
-class hidden extends text {
-	
+class hiddenControl extends textControl {
+
 }

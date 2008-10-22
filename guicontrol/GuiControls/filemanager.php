@@ -17,7 +17,7 @@
 
 include_once(ZOOP_DIR . "/gui/plugins/function.loadmanager.php");
 
-class filemanager extends GuiControl
+class filemanagerControl extends GuiControl
 {
 	function getPersistentParams()
 	{

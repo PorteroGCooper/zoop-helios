@@ -15,7 +15,7 @@
 
 
 /**
- * text
+ * textControl
  *
  * @uses GuiControl
  * @package
@@ -24,7 +24,7 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class text extends GuiControl
+class textControl extends GuiControl
 {
 	/**
 	 * getPersistentParams

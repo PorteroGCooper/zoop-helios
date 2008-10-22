@@ -18,7 +18,7 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.loadeditor.php");
 
 /**
- * editor
+ * editorControl
  *
  * @uses GuiControl
  * @package
@@ -27,7 +27,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.loadeditor.php");
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class editor extends GuiControl
+class editorControl extends GuiControl
 {
 	/**
 	 * getPersistentParams

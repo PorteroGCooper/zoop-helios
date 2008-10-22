@@ -243,13 +243,7 @@ class component_guicontrol extends component
 	 * @access public
 	 * @return void
 	 */
-	function includeGuiControl($type)
-	{
-		if($type == 'date')
-		{
-			deprecated('The Date guicontrol has been renamed to datecontrol, because date is not a smart thing to name a class.');
-			$type = 'datecontrol';
-		}
+	function includeGuiControl($type) {
  		$filename = strtolower($type).".php";
 
 		$app_dir = Config::get('zoop.guicontrol.directories.zoop');
@@ -264,6 +258,17 @@ class component_guicontrol extends component
 						"$app_dir/$filename" . " or " .
 						"$zoop_dir/$filename");
 	}
+
+	/**
+	 * Provide the class name for a GuiControl based on it's type
+	 *
+	 * @param string $type
+	 * @return string $classname
+	 */
+	function getGuiControlClassName($type) {
+		return $type . "Control";
+	}
+
 }
 
 /**
@@ -275,33 +280,30 @@ class component_guicontrol extends component
  * @access public
  * @return void
  */
-function &getGuiControl($type, $name, $useGlobal = true)
-{
-	if($type == 'date')
-	{
-		deprecated('The Date guicontrol has been renamed to datecontrol, because date is not a smart thing to name a class.');
-		$type = 'datecontrol';
-	}
-	if($useGlobal)
-	{
+function &getGuiControl($type, $name, $useGlobal = true) {
+
+
+	if($useGlobal) {
 		global $controls;
-		if(isset($controls[$type][$name]))
-		{
+
+		if(isset($controls[$type][$name])) {
 			return $controls[$type][$name];
 		}
 	}
 
 	component_guicontrol::includeGuiControl($type);
 
-	if($useGlobal)
-	{
-		$controls[$type][$name] = &new $type($name);
+	$className = component_guicontrol::getGuiControlClassName($type);
+
+
+	if($useGlobal) {
+		$controls[$type][$name] = &new $className($name);
 		return $controls[$type][$name];
-	}
-	else
-	{
-		$control = &new $type($name);
+	} else {
+		$control = &new $className($name);
 		return $control;
 	}
 }
+
+
 ?>
