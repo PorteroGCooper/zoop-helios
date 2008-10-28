@@ -1845,11 +1845,8 @@ function nv_title_skip_dotted($matches) {
 
 
 
-if(version_compare(PHP_VERSION, '5.0', '<'))
-{
+if(version_compare(PHP_VERSION, '5.0', '<')) {
 	include_once(dirname(__FILE__) . '/utils4.php');
-}
-else
-{
+} else {
 	include_once(dirname(__FILE__) . '/utils5.php');
 }

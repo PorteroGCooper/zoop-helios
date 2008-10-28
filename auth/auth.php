@@ -1,49 +1,135 @@
 <?php
 
-class auth
-{
+/**
+ * auth 
+ * 
+ * @auth 
+ * @version $id$
+ * @copyright 1997-2008 Portero Inc.
+ * @author Steve Francia <steve.francia+zoop@gmail.com> 
+ * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
+ */
+class auth {
+
+	/**
+	* The following variables and methods should be duplicated in each class that extends this one
+	*/
+
+	private static $instance;
+
+	/**
+	 * The private construct prevents instantiating the class externally.  
+	 * 
+	 * @access private
+	 * @return void
+	 */
+	private function __construct() { }
+
+	/**
+	 * Prevents external instantiation of copies of the Singleton class,
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function __clone() {
+		trigger_error('Clone is not allowed.', E_USER_ERROR);
+	}
+
+	/**
+	 * Prevents external instantiation of copies of the Singleton class,
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function __wakeup() {
+		trigger_error('Deserializing is not allowed.', E_USER_ERROR);
+	}
+
+	/**
+	 * get Instance: a singleton method 
+	 * 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
+	public static function gi() {
+		if (!self::$instance instanceof self) { 
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Path to the location in the config to find the configuration for (this instance of) auth. 
+	 * 
+	 * @var string
+	 * @access public
+	 */
 	var $configBase = "zoop.auth";
 
 	/**
-	 * Pull the active user from the database and place it into the session.
+	* End of necessary duplicated lines
+	*/
+
+	/**
+	 * reference to the driver loaded 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
+	var $driver;
+
+	/**
+	 * Get the backend driver and load it into the instance var. 
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	function _loadDriver() {
+		global $zoop;
+		$backend = $this->getConfig('backend');
+		$name = "auth_driver_" . $backend;
+		$zoop->addInclude($name, ZOOP_DIR . "/auth/drivers/$backend.php");
+		$this->driver = new $name($this);
+		return $this->driver;
+	}
+
+	/**
+	 * get the backend driver 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getDriver() {
+		if (!$this->driver) {
+			$this->_loadDriver();
+		}
+
+		return $this->driver;
+	}
+
+	/**
+	 * Get the Driver and call test on it. 
+	 * Driver->test() will connect to the store and return true; 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function testDriver() {
+		$drv = $this->getDriver();
+		return $drv->test();
+	}
+
+	/**
+	 * Pull the active user from the backend and place it into the session
 	 *
 	 * @param mixed $user_id
 	 * @access public
 	 * @return void
 	 */
 	function populateActiveUser($user_id) {
-		$user = sql_fetch_map("
-			SELECT u.*
-			FROM " . $this->getConfig('tables.user') . " u
-			WHERE " . $this->getConfig('fields.user.id') . " = $user_id
-			", $this->getConfig('fields.user.id'));
-		// DON'T KNOW WHY THE NEXT BLOCK DOESN'T COMPILE
-		$groups = array();
-		if ( $this->getConfig('use_groups') ) {
-			$groups = sql_fetch_map("
-				SELECT g." . $this->getConfig('fields.group.id') . ", g." . $this->getConfig('fields.group.name') .  "
-				FROM " . $this->getConfig('tables.group') . " g
-				 , " . $this->getConfig('tables.user_group') . " ug
-				WHERE g." . $this->getConfig('fields.group.id') . " = ug." . $this->getConfig('fields.user_group.fk_group_id') . "
-				 AND ug." . $this->getConfig('fields.user_group.fk_user_id') . " = $user_id
-				", $this->getConfig('fields.group.id'));
-		}
-
-		$roles = array();
-		if ( $this->getConfig('use_roles') ) {
-			$roles = sql_fetch_map("
-				SELECT r." . $this->getConfig('fields.role.id') . ", r." . $this->getConfig('fields.role.name') .
-				"FROM " . $this->getConfig('tables.role') . " r
-				 , " . $this->getConfig('tables.user_role') . " ur
-				WHERE r." . $this->getConfig('fields.role.id') ." = ur." . $this->getConfig('fields.user_role.fk_role_id') . "
-				 AND ur." . $this->getConfig('fields.user_role.fk_user_id') . " = $user_id
-				", $this->getConfig('fields.role.id'));
-
-		}
-
-		$_SESSION['auth'][$this->getConfig('session_user')] = array('user' => $user, 'groups' => $groups, 'roles' => $roles);
+		$this->getDriver()->populateActiveUser($user_id);
 	}
-
 
 	/**
 	 * Return active user if use is logged in (false otherwise).
@@ -68,7 +154,7 @@ class auth
 	 * @return bool
 	 */
 	function requireLoggedIn() {
-		return self::requireCondition(self::getActiveUser());
+		return $this->requireCondition($this->getActiveUser());
 	}
 
 	/**
@@ -81,7 +167,7 @@ class auth
 	 * @return bool
 	 */
 	function checkUserId($user_id) {
-		return self::_checkActiveUser(self::_arrayize($user_id), $this->getConfig('fields.user.id'));
+		return $this->_checkActiveUser($this->_arrayize($user_id), $this->getConfig('fields.user.id'));
 	}
 
 	/**
@@ -94,9 +180,9 @@ class auth
 	 * @return bool
 	 */
 	function checkUser($user) {
-		return self::_checkActiveUser($self::_arrayize($user), $this->getConfig('fields.user.username'));
+		return $this->_checkActiveUser($this->_arrayize($user), $this->getConfig('fields.user.username'));
 	}
-	
+
 	/**
 	 * Check an array of values to see if one of the values is found in the active user.
 	 * 
@@ -106,7 +192,7 @@ class auth
 	 * @return boolean, $field
 	 */
 	function _checkActiveUser($array, $field) {
-		$au = self::getActiveUser();
+		$au = $this->getActiveUser();
 		return (isset($au[$field]) && !empty($au[$field]) && in_array($au[$field], $array));
 	}
 
@@ -119,7 +205,7 @@ class auth
 	 * @return bool
 	 */
 	function requireUser($user) {
-		return self::requireCondition(self::checkUser($user));
+		return $this->requireCondition($this->checkUser($user));
 	}
 
 	/**
@@ -131,7 +217,7 @@ class auth
 	 * @return bool
 	 */
 	function requireUserId($user_id) {
-		return self::requireCondition(self::checkUserId($user_id));
+		return $this->requireCondition($this->checkUserId($user_id));
 	}
 
 	/**
@@ -142,13 +228,13 @@ class auth
 	 * @return mixed
 	 */
 	function getGroups($user = false) {
-		if (!$user) { $user = self::getActiveUser(); }
+		if (!$user) { $user = $this->getActiveUser(); }
 
-		if ( isset($user['groups']) && !empty($user['groups']) ) {
-			return $user['groups'];
-		} else {
-		    	return false;
-		}
+			if ( isset($user['groups']) && !empty($user['groups']) ) {
+				return $user['groups'];
+			} else {
+				return array();
+			}
 	}
 
 	/**
@@ -162,7 +248,7 @@ class auth
 	 * @return boolean
 	 */
 	function checkGroupId($group_id, $user = false) {
-		return self::_foundInSet($group_id, self::getGroups($user));
+		return $this->_foundInSet($group_id, $this->getGroups($user));
 	}
 
 	/**
@@ -177,7 +263,7 @@ class auth
 	 * @return boolean
 	 */
 	function checkGroup($group, $user = false ) {
-		return self::checkGroupId(self::_groupNametoId($group), $user);
+		return $this->checkGroupId($this->_groupNametoId($group), $user);
 	}
 
 	/**
@@ -189,7 +275,7 @@ class auth
 	 * @return bool
 	 */
 	function requireGroup($group) {
-		return self::requireGroupId(self::_groupNametoId($group));
+		return $this->requireGroupId($this->_groupNametoId($group));
 	}
 
 	/**
@@ -201,7 +287,7 @@ class auth
 	 * @return bool
 	 */
 	function requireGroupId($group_id) {
-		return self::requireCondition(self::checkGroupId($group_id));
+		return $this->requireCondition($this->checkGroupId($group_id));
 	}
 
 	/**
@@ -212,12 +298,9 @@ class auth
 	 * @return void
 	 */
 	function _groupNametoId($name) {
-		$name = self::_arrayize($name);
+		//$name = $this->_arrayize($name);
 
-		return sql_fetch_rows("
-				SELECT r." . $this->getConfig('fields.group.id') .  
-				"FROM " . $this->getConfig('tables.group') . " r
-				WHERE r." . $this->getConfig('fields.group.name') ."= '$name'");
+		return $this->getDriver()->_groupNametoId($name);
 	}
 
 
@@ -229,13 +312,13 @@ class auth
 	 * @return mixed
 	 */
 	function getRoles($user = false) {
-		if (!$user) { $user = self::getActiveUser(); }
+		if (!$user) { $user = $this->getActiveUser(); }
 
-		if ( isset($user['roles']) && !empty($user['roles']) ) {
-			return $user['roles'];
-		} else {
-		    	return false;
-		}
+			if ( isset($user['roles']) && !empty($user['roles']) ) {
+				return $user['roles'];
+			} else {
+				return array();
+			}
 	}
 
 	/**
@@ -249,7 +332,7 @@ class auth
 	 * @return boolean
 	 */
 	function checkRoleId($role_id, $user = false) {
-		return self::_foundInSet($role_id, self::getRoles($user));
+		return $this->_foundInSet($role_id, $this->getRoles($user));
 	}
 
 	/**
@@ -264,7 +347,7 @@ class auth
 	 * @return boolean
 	 */
 	function checkRole($role, $user = false ) {
-		return self::checkRoleId(self::_roleNametoId($role), $user);
+		return $this->checkRoleId($this->_roleNametoId($role), $user);
 	}
 
 	/**
@@ -276,7 +359,7 @@ class auth
 	 * @return bool
 	 */
 	function requireRole($role) {
-		return self::requireRoleId(self::_roleNametoId($role));
+		return $this->requireRoleId($this->_roleNametoId($role));
 	}
 
 	/**
@@ -288,23 +371,18 @@ class auth
 	 * @return bool
 	 */
 	function requireRoleId($role_id) {
-		return self::requireCondition(self::checkRoleId($role_id));
+		return $this->requireCondition($this->checkRoleId($role_id));
 	}
 
 	/**
-	 * Pulls the role id from the db for a given role name. 
+	 * Pulls the role id from the backend for a given role name. 
 	 * 
 	 * @param mixed $name 
 	 * @access protected
 	 * @return array
 	 */
 	function _roleNametoId($name) {
-		$name = self::_arrayize($name);
-
-		return sql_fetch_rows("
-				SELECT r." . $this->getConfig('fields.role.id') .  
-				"FROM " . $this->getConfig('tables.role') . " r
-				WHERE r." . $this->getConfig('fields.role.name') ."= '$name'");
+		return $this->getDriver()->_roleNametoId($name);
 	}
 
 
@@ -316,23 +394,23 @@ class auth
 	 * @access public
 	 * @return mixed
 	 */
-/*
- *    function requireInRoles($roles) {
- *        $return = false;
- *
- *        foreach ($roles as $role) {
- *            if (self::checkRole($role) == true) {
- *                $return = true;
- *            }
- *        }
- *
- *        return self::requireCondition($return);
- *    }
- */
+	/*
+	 *    function requireInRoles($roles) {
+	 *        $return = false;
+	 *
+	 *        foreach ($roles as $role) {
+	 *            if ($this->checkRole($role) == true) {
+	 *                $return = true;
+	 *            }
+	 *        }
+	 *
+	 *        return $this->requireCondition($return);
+	 *    }
+	 */
 
 
 	/**
-	 * If the provided value is true, return true, otherwise call self::failed.
+	 * If the provided value is true, return true, otherwise call $this->failed.
 	 *
 	 * @see auth::failed
 	 * @param mixed $var
@@ -343,7 +421,7 @@ class auth
 		if ($var) {
 			return true;
 		} else {
-			self::failed();
+			$this->failed();
 		}
 	}
 
@@ -356,9 +434,7 @@ class auth
 	 * @return void
 	 */
 	function _checkPassword($username, $password) {
-		$encryptFunction = $this->getConfig('password_encryption');
-		$pw = $encryptFunction($password);
-		return sql_fetch_one("SELECT " . $this->getConfig('fields.user.id') . " FROM " . $this->getConfig('tables.user') . " u WHERE " . $this->getConfig('fields.user.username') . " = $username AND " . $this->getConfig('fields.user.password') . " = $pw");
+		return $this->getDriver()->_checkPassword($username, $password);
 	}
 
 	/**
@@ -372,8 +448,8 @@ class auth
 	 * @return void
 	 */
 	function logIn($username, $password) {
-		if ($user_id = self::_checkPassword($username, $password))	{
-			self::populateActiveUser($user_id);
+		if ($user_id = $this->_checkPassword($username, $password))	{
+			$this->populateActiveUser($user_id);
 			return true;
 		} else {
 			return false;
@@ -388,7 +464,7 @@ class auth
 	 * @return void
 	 */
 	function logOut() {
-	    	self::_logout();
+		$this->_logout();
 		BaseRedirect($this->getConfig('locations.post_logout'));
 	}
 
@@ -401,7 +477,7 @@ class auth
 	 * @return void
 	 */
 	function failed() {
-	    	self::_logout();
+		$this->_logout();
 		BaseRedirect( $this->getConfig('locations.denied') );
 		return false;
 	}
@@ -440,14 +516,7 @@ class auth
 	 * @return void
 	 */
 	function _foundInSet($needles, $hay) {
-		$needles = self::_arrayize($needle);
-		foreach ($needles as $needle) {
-			if ( array_key_exists($needle, $hay) || in_array($needle, $hay) ) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->getDriver()->_foundInSet($needles, $hay);
 	}
 
 	/**
@@ -461,6 +530,17 @@ class auth
 			$path = "." . $path;
 		}
 
-		return Config::get($configBase . $path );
+		return Config::get($this->configBase . $path );
+	}
+
+	/**
+	 * To overwrite/set the configBase var
+	 * 
+	 * @param mixed $path 
+	 * @access protected
+	 * @return void
+	 */
+	function _setConfigBase($path) {
+		$this->configBase = $path;
 	}
 }

@@ -346,8 +346,7 @@ class zoop
 	 * @access public
 	 * @return void
 	 */
-	function includeConfig($name)
-	{
+	function includeConfig($name) {
 		$name = strtolower($name);
 		$dir = Config::get('zoop.app.directories.config');
 		if (file_exists("$dir/$name.yaml")) {
@@ -513,8 +512,7 @@ class component
 	 * @param string $path
 	 * @return array of configuration options
 	 */
-	function getConfig($path = '')
-	{
+	function getConfig($path = '') {
 		$config = Config::get('zoop.' . $this->getConfigPath() . $path);
 		return $config;
 	}

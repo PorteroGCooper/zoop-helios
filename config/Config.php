@@ -7,7 +7,7 @@
  */
 class Config
 {
-	private static $info = array();
+	static $info = array();
 	private static $file;
 
 	/**
@@ -182,7 +182,31 @@ class Config
     */
 	public static function set($path, $value) {
 		$array = self::_path2array($path, $value);
-		self::$info = array_merge_recursive(self::$info, $array);
+		self::better_array_merge_recursive(self::$info, $array);
+	}
+
+	/**
+	 * The php array_merge_recursive doesn't quite work the way we need it to. 
+	 * This one enables the set method to work properly
+	 * 
+	 * @param mixed $cur 
+	 * @param mixed $array 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
+	public static function better_array_merge_recursive(&$cur, $array) {
+		if (!is_array($array)) {
+			return $cur = $array;
+		}
+
+		foreach ($array as $key => $value ) {
+			if (isset($cur[$key])) {
+				self::better_array_merge_recursive($cur[$key], $value);
+			} else {
+				$cur[$key] = $value;
+			}
+		}
 	}
 
 	/**
@@ -200,7 +224,7 @@ class Config
 		$array = array();
 		$cur =& $array;
 		$count = 1;
-		$total = count($parts);
+		$total = count($parts) ;
 		foreach ($parts as $part) {
 			if ($count < $total) {
 				$cur[$part] = array();

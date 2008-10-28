@@ -6,20 +6,18 @@ class database
 	function database($dsn)
 	{
 		global $globalTime;
-		
-		if (!is_array($dsn)) $dsn = database::makeDSNFromString($dsn);
+
+		//if (!is_array($dsn)) $dsn = database::makeDSNFromString($dsn);
 		$this->dsn = $dsn;
 		logprofile($globalTime, true);	
-		try 
-		{
-			$this->db = new PDO("{$dsn['phptype']}:host={$dsn['hostspec']};port={$dsn['port']};dbname={$dsn['database']};user={$dsn['username']}" . (empty($dsn['password']) ? '' : ";password={$dsn['password']}"), $dsn['username'], $dsn['password']);
+		try {
+			$this->db = new PDO($dsn);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		}
-		catch(PDOException $e)
-		{
+		} catch(PDOException $e) {
 			$this->error($e);
 		}
-		logprofile($globalTime, "connect: {$dsn['phptype']}://{$dsn['hostspec']}:{$dsn['port']}/{$dsn['database']}");
+
+		logprofile($globalTime, "connect: $dsn");
 		//log connection time
 		//$this->db->setFetchMode(DB_FETCHMODE_ASSOC);
 		//there are sometimes when this is a good thing, but mostly not.

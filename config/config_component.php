@@ -19,7 +19,6 @@ class component_config extends component
 	function getIncludes()
 	{
 		return array(
-				"yaml" =>  $this->getBasePath() . "/Yaml.php",
 				"config" =>  $this->getBasePath() . "/Config.php"
 		);
 	}

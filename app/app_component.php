@@ -59,7 +59,11 @@ class component_app extends component
 		define('__zoop_error_ob_start', ob_get_level());
 
 		//error_reporting(E_ALL);
-		$debugmode = APP_STATUS;
+		if (defined('APP_STATUS')) {
+			$debugmode = APP_STATUS;
+		} else {
+			$debugmode = 'live';
+		}
 
 		if(php_sapi_name() != "cli") {
 			if ($debugmode == "dev" || $debugmode == 'desktop') {

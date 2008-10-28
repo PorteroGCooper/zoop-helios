@@ -1,0 +1,38 @@
+users:
+    bob:
+        password: test
+        active: 1
+        groups:
+            - one
+            - two
+            - three
+        roles:
+            - police
+            - fire
+            - mayor
+    steve:
+        password: testing
+        active: 1
+        groups:
+            - one
+            - three
+        roles:
+            - police
+            - fire
+    ryan:
+        password: tester
+        active: 0
+        groups:
+            - one
+        roles:
+            - root
+groups:
+    - one
+    - two
+    - three
+    - four
+roles:
+    - police
+    - fire
+    - mayor
+    - root

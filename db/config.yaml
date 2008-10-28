@@ -1,2 +1,3 @@
 rdbms: mysqli
+dsn:
 use_pdo: true

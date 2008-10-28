@@ -15,6 +15,7 @@ class component_spyc extends component
 	{
 		return array(
 			"spyc" =>  $this->getBasePath() . "/spyc.php5",
+			"Yaml" =>  $this->getBasePath() . "/Yaml.php"
 		);
 	}
 }

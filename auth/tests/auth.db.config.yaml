@@ -37,4 +37,3 @@ locations:
    login: /login
    logout: /logout
    post_logout: /
-

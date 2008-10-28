@@ -19,17 +19,14 @@
 */
 class component_db extends component
 {
-	function init()
-	{
-		if(defined('db_Database'))
-		{
-			$GLOBALS['defaultdb'] = &new database(database::makeDSN(db_RDBMS, NULL, NULL, NULL, NULL, db_Database));
+	function init() {
+		if( Config::get('zoop.db.dsn') ) {
+			$GLOBALS['defaultdb'] = &new database( Config::get('zoop.db.dsn') );
 			sqlite_create_function($defaultdb->db->connection, 'age', 'sqlite_age', 1);
 			sqlite_create_function($defaultdb->db->connection, 'date_part', 'sqlite_date_part', 2);
 			sqlite_create_function($defaultdb->db->connection, 'substr', 'sqlite_substr', 2);
 			sqlite_create_function($defaultdb->db->connection, 'rand', 'sqlite_rand', 0);
-			if(sqlite_last_error($defaultdb->db->connection))
-			{
+			if(sqlite_last_error($defaultdb->db->connection)) {
 				echo(sqlite_error_string(sqlite_error()));
 			}
 		}

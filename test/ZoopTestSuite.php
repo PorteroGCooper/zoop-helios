@@ -66,12 +66,28 @@ class ZoopTestSuite extends UnitTestCase {
 	 * @access public
 	 * @return void
 	 */
-	function init() {
+	function initialize() {
 		foreach ($this->requiredComponents as $component) {
 			$this->addComponent($component);
 		}
 
+		global $zoop;
+		$zoop->init();
+
 		$this->loadConfig();
+
+		$this->init();
+	}
+
+	/**
+	 * Hook to be run at the end of initialize.
+	 * To be overloaded by the extending classes 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function init() {
+
 	}
 
 	/**

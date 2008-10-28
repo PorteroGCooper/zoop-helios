@@ -16,7 +16,7 @@
 	function sql_connect()
 	{
 		if (!isset($GLOBALS['defaultdb']) || $GLOBALS['defaultdb'] == NULL)
-			$GLOBALS['defaultdb'] = &new database(database::makeDSN(db_RDBMS, db_Server, db_Port, db_Username, db_Password, db_Database));
+			$GLOBALS['defaultdb'] = &new database( Config::get('zoop.db.dsn') );
 	}
 
 	function sql_begin_transaction( $Db = -1 )

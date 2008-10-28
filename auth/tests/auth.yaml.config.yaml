@@ -1,0 +1,14 @@
+backend: yaml
+file: %ZOOP_DIR%/auth/tests/users.yaml
+use_groups: 1
+use_roles: 1
+use_active: 1
+active_value: 1
+password_encryption: false
+encryption: md5
+session_user: activeUser
+locations:
+   denied: /denied
+   login: /login
+   logout: /logout
+   post_logout: /
