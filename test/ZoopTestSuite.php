@@ -74,7 +74,6 @@ class ZoopTestSuite extends UnitTestCase {
 		global $zoop;
 		$zoop->init();
 
-
 		$this->loadConfig();
 
 		$this->init();
