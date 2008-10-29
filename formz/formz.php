@@ -41,14 +41,6 @@ class Formz {
 	
 	var $timestampable = false;
 
-	
-	/**
-	 * Formz database driver type.
-	 *
-	 * @access private
-	 */
-	var $driver_type;
-
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
 	 *
@@ -82,7 +74,6 @@ class Formz {
 
 		$this->tablename = $tablename;
 		$this->type = Config::get('zoop.formz.type','list');
-		$this->driver_type = $driver_type;
 		
 		switch ($driver_type) {
 			case 'doctrine':
@@ -116,7 +107,7 @@ class Formz {
 	 *
 	 * @param mixed $id
 	 * @access public
-	 * @return void
+	 * @return int Record ID
 	 */
 	function getRecord($id = 'new') {
 		$this->record_id = $this->driver->getRecord($id);
@@ -127,6 +118,7 @@ class Formz {
 	}
 	
 	function getRecords($search = false) {
+/* 		die_r($this->driver->getRecords($search)); */
 		return $this->driver->getRecords($search);
 	}
 	
@@ -302,7 +294,7 @@ class Formz {
 	 * Get an array of all field data for this form.
 	 */
 	function getData() {
-		return $this->driver->getData();	
+		return $this->driver->getData();
 	}
 	
 	function getRelation($name) {

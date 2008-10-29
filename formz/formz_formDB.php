@@ -146,7 +146,17 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @return array An array of form field values for the record or records.
 	 */
 	function getData() {
-		return $this->table->getRecords();
+		if (isset($this->record) && is_object($this->record)) {
+			$ret = array();
+			foreach ($this->record->values as $key => $field) {
+				$ret[$key] = $field->value;
+			}
+			return $ret;
+		}
+		else {
+			$this->table->getRecords();
+			return $this->table->records;
+		}
 	}
 	
 	
@@ -606,35 +616,45 @@ class Formz_FormDB implements formz_driver_interface {
 			$this->setParam("limit", $limit);
 
 		$this->table->getRecords();
+		die_r($this->table->records);
+		
+		$ret = array();
+		foreach ($this->table->records as $key => $record) {
+			$rec = array();
+			foreach ($record->values as $j => $field) {
+				$rec[$j] = $field->value;
+			}
+			$ret[$key] = $rec;
+		}
+		return $ret;
 	}
 
 	/**
-	 * getRecord
-	 * Requests the requested record from the database (as would be used in a record).
+	 * Request the record with given ID from the database.
 	 *
 	 * @param mixed $id
 	 * @access public
-	 * @return void
+	 * @return int Record ID
 	 */
-	function getRecord($id = false)
-	{
+	function getRecord($id = false) {
 		if ($id === false)
 			$id = $this->id;
+		else $this->id = $id;
 
 		$this->record = &$this->passRecord($this->tablename, $id);
 		$this->DescIntoFields($this->tablename, $id);
 
-		return $this->record;
+		return $this->id;
 	}
 
 	/**
-	 * saveRecord
-	 * Takes the current record and writes its content to the database.
+	 * Write the current record to the database.
 	 * If the record is new it will insert it, if not it will update it.
 	 *
-	 * @param mixed $POST
+	 * @param mixed $values A POSTlike array of values to save to this record.
+	 * @param int $id Record ID
 	 * @access public
-	 * @return void
+	 * @return int Record ID
 	 */
 	function saveRecord($values, $id = null)
 	{

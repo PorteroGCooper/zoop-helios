@@ -236,23 +236,23 @@ class table
 				{
 					case strstr($field["type"], "int"):
 						$this->fields[$fieldname]->datatype = "numeric";
-						$this->fields[$fieldname]->html['type'] = "text";
+/* 						$this->fields[$fieldname]->html['type'] = "text"; */
 						$this->fields[$fieldname]->validation['type'] = "numeric";
 						$this->fields[$fieldname]->search["type"] = "exact";
 						break;
 					case strstr($field["type"], "string"):
 						$this->fields[$fieldname]->datatype = "text";
-						$this->fields[$fieldname]->html['type'] = "text";
+/* 						$this->fields[$fieldname]->html['type'] = "text"; */
 						$this->fields[$fieldname]->search["type"] = "contains";
 						break;
 					case strstr($field["type"], "blob"):
 						$this->fields[$fieldname]->datatype = "text";
-						$this->fields[$fieldname]->html['type'] = "text";
+/* 						$this->fields[$fieldname]->html['type'] = "text"; */
 						$this->fields[$fieldname]->search["type"] = "contains";
 						break;
 					case strstr($field["type"], "date"):
 						$this->fields[$fieldname]->datatype = "date";
-						$this->fields[$fieldname]->html['type'] = "date";
+/* 						$this->fields[$fieldname]->html['type'] = "date"; */
 						$this->fields[$fieldname]->search["type"] = "range";
 						break;
 				}
@@ -586,6 +586,7 @@ class table
 
 		$this->sql = $query;
 		$results = $$dbconnname->fetch_rows($query);
+
 		foreach ($results as $array)
 		{
 				$idfield = $this->idfield;

@@ -30,12 +30,34 @@
  */
 function smarty_function_formz_list($params, &$smarty) {
 	if (!isset($params['form'])) return;
-	
-	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
-
-	$html = '';
-	$html .= "\n\n<table>";
 	$form = $params['form'];
+
+	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
+	$tablename = strtolower($form->tablename);
+	
+	
+	$html = "\n\n";
+
+	// figure out class names for this form.
+	$form_classes = (isset($form->display['class'])) ? $form->display['class'] : array();
+	if (!is_array($form_classes)) $form_classes = explode(' ', $form_classes);
+	$form_classes[] = 'formz';
+	$form_classes[] = 'formz-list';
+	
+	if ($lotsa_classes) {
+		$form_classes[] = 'formz-' . strtolower($form->tablename);
+	}	
+	if ($form->editable) {
+		$form_action = (isset($form->callback) && $form->callback != '') ? ' action="' . $form->callback .'"' : '';
+		$form_classes[] = 'formz-editable';
+		$form_classes[] = 'formz-list-editable';
+		$html .= '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
+	}
+	else {
+		$html .= '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
+	}
+	
+	$html .= "\n<table>";
 	
 	$fields = $form->getFields();
 	
@@ -101,6 +123,13 @@ function smarty_function_formz_list($params, &$smarty) {
 				// deal with the callback...
 				$value = '<a href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
 			}
+/*
+			// make this bad boy editable...
+			else if ($form->editable) {
+				die($value);
+			}
+*/
+
 			
 			$row[] = '<td>' . $value . '</td>';
 			
@@ -111,7 +140,9 @@ function smarty_function_formz_list($params, &$smarty) {
 	
 
 	$html .= implode("\n\t\t", $rows);
-	$html .= "\t</tbody>\n</table>\n\n";
+	$html .= "\t</tbody>\n</table>\n";
+
+	$html .= ($form->editable) ? "</form>\n\n" : "</div>\n\n";
 
 	return $html;
 }

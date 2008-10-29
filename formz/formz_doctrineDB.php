@@ -478,7 +478,6 @@ class formz_doctrineDB implements formz_driver_interface {
 		if ($limit !== false)
 			$this->setParam("limit", $limit);
 */
-
 		return $this->table->findAll()->toArray();
 	}
 
@@ -667,27 +666,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	{
 		return $this->tablename;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

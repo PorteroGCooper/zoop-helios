@@ -149,6 +149,7 @@ class record
 			}
 			else
 			{
+			die_r($array);
 				foreach( $array as $key => $value)
 				{
 					$cell = new cell($key, $value);
