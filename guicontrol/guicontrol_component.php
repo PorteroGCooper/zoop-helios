@@ -79,8 +79,6 @@ class component_guicontrol extends component
 		{
 			$validate = true;
 			
-			echo_r($controlData);
-
 			component_guicontrol::loadChildControls($controlData);
 
 			$GLOBALS['controls'] = &component_guicontrol::parseControlData($controlData);
