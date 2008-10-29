@@ -27,7 +27,7 @@ define("CONFIG_FILE", ZOOP_DIR . "/test/config.yaml");
 define("DEBUG", false); //change to true to debug;
 
 // include the utils
-//include_once(ZOOP_DIR . "/app/utils.php");
+include_once(ZOOP_DIR . "/app/utils.php");
 
 include_once(ZOOP_DIR . "/zoop.php");
 $zoop = &new zoop(dirname(__file__));
