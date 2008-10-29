@@ -1,3 +1,2 @@
-rdbms: mysql 
 dsn:
-model_dir: %APP_DIR%/model/models
+model_dir: %APP_DIR%/model/doctrineModels

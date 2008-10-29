@@ -26,11 +26,36 @@ define('ZOOP_DIR', dirname(__file__));
 define("CONFIG_FILE", ZOOP_DIR . "/test/config.yaml");
 define("DEBUG", false); //change to true to debug;
 
-// include the utils
-include_once(ZOOP_DIR . "/app/utils.php");
-
 include_once(ZOOP_DIR . "/zoop.php");
-$zoop = &new zoop(dirname(__file__));
+
+class TestZoop extends zoop {
+
+	function addComponent($name, &$curTest = false) {
+		if(!isset($this->components[$name])) {
+			$currComponent = $this->instantiateComponent($name);
+			$this->addComponentConfig($name, $currComponent);
+			$this->addRequiredComponents($currComponent, $curTest);
+			if ($curTest) {
+				$this->overloadConfig($curTest);
+			}
+
+			$this->addIncludes($currComponent->getIncludes());
+			$this->components[$name] = &$currComponent;
+		}
+	}
+
+	function addRequiredComponents(&$currComponent, &$curTest ) {
+		$components = $currComponent->getRequiredComponents();
+		foreach($components as $newname) {
+			$this->addComponent($newname, $curTest);
+		}
+	}
+
+	function overloadConfig(&$curTest) {
+		$curTest->overloadConfig();
+	}
+}
+$zoop = &new TestZoop(dirname(__file__));
 $zoop->addComponent('simpletest');
 $zoop->init();
 $zoop->run();
@@ -79,7 +104,8 @@ foreach($targets as $target) {
 	if (DEBUG) echo "\nTest target: $target";
 	if(file_exists($target) && is_dir($target) && ($target != 'tests')) {
 		chdir($target) || die("\nCan't change to target $target\n");
-		$zoop->addComponent($target);
+		$targetComponent = $target;
+		//$zoop->addComponent($target);
 	}
 	if (DEBUG) echo " \n(in dir: ".getcwd().")";
 	if(file_exists('tests') && is_dir('tests')) {
@@ -113,6 +139,7 @@ foreach($targets as $target) {
 						if(class_exists($className)) {
 							echo "\nTest Set $className\n";
 							$testSet =& new $className();
+							$testSet->requiredComponents += array($targetComponent);
 							$testSet->initialize();
 							$testSet->run();
 							// $testSet->runTests();

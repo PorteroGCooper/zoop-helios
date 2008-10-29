@@ -33,16 +33,13 @@ class ZoopTestSuite extends UnitTestCase {
 	}
 
 	/**
-	 * loadConfig
-	 * Load a yaml config file for the tests
-	 * currently unimplemented
+	 * Gives the test suite an opportunity to overload the Zoop config defaults before initialization
+	 * Is run before the components are added, and before the test suite init
 	 * 
 	 * @access public
 	 * @return void
 	 */
-	function loadConfig() {
-		// to be written when needed
-	}
+	function overloadConfig() { }
 
 	/**
 	 * Include a Zoop Component for testing. 
@@ -54,8 +51,9 @@ class ZoopTestSuite extends UnitTestCase {
 	 */
 	function addComponent($component = false) {
 		global $zoop;
+
 		if ($component) {
-			$zoop->addComponent($component);
+			$zoop->addComponent($component, $this);
 		}
 	}
 
@@ -67,14 +65,13 @@ class ZoopTestSuite extends UnitTestCase {
 	 * @return void
 	 */
 	function initialize() {
+
 		foreach ($this->requiredComponents as $component) {
 			$this->addComponent($component);
 		}
-		
+
 		global $zoop;
 		$zoop->init();
-
-		$this->loadConfig();
 
 		$this->init();
 	}
@@ -100,9 +97,7 @@ class ZoopTestSuite extends UnitTestCase {
 	 * @access public
 	 * @return void
 	 */
-	function init() {
-
-	}
+	function init() { }
 
 	/**
 	 * runTests 

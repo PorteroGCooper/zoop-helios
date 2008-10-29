@@ -33,7 +33,7 @@ class component_db extends component
 	function init() {
 		$config = Config::get('zoop.db');
 		$rdbms = substr($config['dsn'], 0, strpos($config['dsn'], ":"));
-		include($this->getBasePath() . "/" . $config['rdbms']. ".php");
+		include($this->getBasePath() . "/" . $rdbms . ".php");
 		include($this->getBasePath() . "/db_utils.php");
 	}
 	

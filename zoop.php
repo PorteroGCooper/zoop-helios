@@ -118,30 +118,81 @@ class zoop
 	 * Includes the component, the configuration for the component
 	 * and all dependencies. addComponent will use autoload if available.
 	 *
+	 * Broken up to facilitate easier overloading required for the zoop_test script
+	 *
 	 * @param string $name The name of the component to include.
 	 * @access public
 	 * @return void
 	 */
 	function addComponent($name) {
-		if(!isset($this->components[$name]))
-		{
-			include($this->path . "/$name/{$name}_component.php");
-			$class = "component_{$name}";
-			$currComponent = &new $class();
-			//$currComponent->defaultConstants();
-
-			if ($name != 'spyc' && $name != 'config') {
-				$this->includeConfig($name);
-				/* can't load config before config component is loaded */
-				$currComponent->loadConfig();
-			}
-			
-			$components = &$currComponent->getRequiredComponents();
-			foreach($components as $newname) {
-				$this->addComponent($newname);
-			}
+		if(!isset($this->components[$name])) {
+			$currComponent = $this->instantiateComponent($name);
+			$this->addComponentConfig($name, $currComponent);
+			$this->addRequiredComponents($currComponent);
 			$this->addIncludes($currComponent->getIncludes());
 			$this->components[$name] = &$currComponent;
+		}
+	}
+
+	/**
+	 * Find and instantiate the component 
+	 * 
+	 * @param mixed $name 
+	 * @access public
+	 * @return void
+	 */
+	function instantiateComponent($name) {
+		include($this->path . "/$name/{$name}_component.php");
+		$class = "component_{$name}";
+		$currComponent = &new $class();
+		return $currComponent;
+	}
+
+	/**
+	 * Load the config for the component 
+	 * 
+	 * @param mixed $name 
+	 * @param mixed $currComponent 
+	 * @access public
+	 * @return void
+	 */
+	function addComponentConfig($name, &$currComponent) {
+		if ($name != 'spyc' && $name != 'config') {
+			$this->includeConfig($name);
+			/* can't load config before config component is loaded */
+			$currComponent->loadConfig();
+		}
+	}
+
+	/**
+	 * Find and add all required components 
+	 * 
+	 * @param mixed $currComponent 
+	 * @access public
+	 * @return void
+	 */
+	function addRequiredComponents(&$currComponent) {
+		$components = $currComponent->getRequiredComponents();
+		foreach($components as $newname) {
+			$this->addComponent($newname);
+		}
+	}
+
+
+	/**
+	 * Accessor for a component 
+	 * Will load component if it has not been loaded.
+	 * 
+	 * @param mixed $name 
+	 * @access public
+	 * @return void
+	 */
+	function component($name) {
+		$this->addComponent($name);
+		if (isset($this->components[$name])) {
+			return $this->components[$name];
+		} else {
+			trigger_error("Component $name does not exist");
 		}
 	}
 
