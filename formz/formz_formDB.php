@@ -14,14 +14,14 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * formDB is a forms2 based database connection for formz.
+ * formDB is a forms2 based database connection for Formz.
  *
  * @version $id$
  * @author Justin Hileman <justin@justinhileman.info>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  * @copyright 1997-2008 Supernerd LLC
  */
-class formz_formDB implements formz_driver_interface {
+class Formz_FormDB implements formz_driver_interface {
 
 	/**
 	 * Name of current table in the database
@@ -108,7 +108,7 @@ class formz_formDB implements formz_driver_interface {
 	 * @return NULL
 	 * @access public
 	 */
-	function formz_formDB($tablename) {
+	function Formz_FormDB($tablename) {
 		$this->tablename = strtolower($tablename);
 		$this->initTable($this->tablename);
 /*

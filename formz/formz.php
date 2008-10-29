@@ -9,12 +9,12 @@
  * and requirements.
  *
  * @author Justin Hileman <justin@justinhileman.info>
- * @package formz
+ * @package Formz
  * @access public
  * @copyright Supernerd LLC and Contributors
  *
  */
-class formz {
+class Formz {
 	/**
 	 * Formz database driver object.
 	 *
@@ -50,23 +50,23 @@ class formz {
 	var $driver_type;
 
 	/**
-	 * Formz constructor. Returns an object implementing the formz interface.
+	 * Formz constructor. Returns an object implementing the Formz interface.
 	 *
 	 * @param string $tablename  table name in the database
 	 * @param string $type  OPTIONAL, can be 'list', 'search' or 'record'
 	 * @param mixed  $int  OPTIONAL, if $type = 'list' than an int that represents the limit,
 	 * if $type = 'record' then required and is the id of the record
-	 * @return object implementing formz interface
+	 * @return object implementing Formz interface
 	 * @access public
 	 */
-	function formz($tablename, $driver_type = 'default') {
+	function Formz($tablename, $driver_type = 'default') {
 		$this->valid_properties = get_class_vars(get_class($this));
 
 /*
 		@TODO finish clone logic...
 		
-		// clone the formz object passed
-		if (is_object($tablename) && get_class($tablename) == 'formz') {
+		// clone the Formz object passed
+		if (is_object($tablename) && get_class($tablename) == 'Formz') {
 			$clone = $tablename;
 			$tablename = $clone->getTablename();
 			
@@ -77,7 +77,7 @@ class formz {
 		}
 */
 		
-		// get the default formz ORM driver
+		// get the default Formz ORM driver
 		if ($driver_type == 'default') $driver_type = Config::get('zoop.formz.driver');
 
 		$this->tablename = $tablename;
@@ -86,13 +86,13 @@ class formz {
 		
 		switch ($driver_type) {
 			case 'doctrine':
-				$this->driver = new formz_doctrineDB($tablename);
+				$this->driver = new Formz_DoctrineDB($tablename);
 				break;
 			case 'forms':
-				$this->driver = new formz_formDB($tablename);
+				$this->driver = new Formz_FormDB($tablename);
 				break;
 			default:
-				trigger_error($driver_type . " is not a valid formz type.");
+				trigger_error($driver_type . " is not a valid Formz type.");
 				break;
 		}
 		
@@ -206,8 +206,8 @@ class formz {
 		}
 	}
 	
-	function getId() {
-		return $this->driver->getId();
+	function getIdField() {
+		return $this->driver->getIdField();
 	}
 	
 	/**
@@ -217,7 +217,7 @@ class formz {
 		$fields = $this->fields;
 		
 		// hide the record id by default.		
-		$id = $this->driver->getId();
+		$id = $this->driver->getIdField();
 		if (!isset($fields[$id]['display']['type'])) {
 			$fields[$id]['display']['type'] = 'hidden';
 		}
@@ -435,7 +435,7 @@ class formz {
 		);
 		
 		// capitalize default label...
-		$defaults['label'] = formz::format_label($defaults['label']);
+		$defaults['label'] = Formz::format_label($defaults['label']);
 		$defaults['value'] = $defaults['label'];
 		
 		switch (strtolower($name)) {
@@ -539,7 +539,7 @@ class formz {
 			else return null;
 		}
 		else {
-			trigger_error($method . " method undefined on formz object.");
+			trigger_error($method . " method undefined on Formz object.");
 		}
 	}
 	

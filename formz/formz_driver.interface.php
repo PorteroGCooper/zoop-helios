@@ -1,6 +1,6 @@
 <?php
 /**
- * @group forms
+ * @group Formz
  */
 
  // Copyright (c) 2008 Supernerd LLC and Contributors.
@@ -20,217 +20,109 @@
  * formDB (a combination of Zoop 1.x forms and forms2).
  *
  * @author Justin Hileman <justin@justinhileman.info>
- * @package formz
  * @access public
  * @copyright Supernerd LLC and Contributors
  */
 interface formz_driver_interface {
-	/**
-	 * setParam
-	 *
-	 * Set a table based parameter
-	 *
-	 * @param string $name
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setParam($name, $value);
-	
-	/**
-	 * setInnerParam
-	 *
-	 * Set a table based inner parameter
-	 *
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setInnerParam($name, $innername, $value);
 
 	/**
-	 * setFieldParam
+	 * Return the name of the id field for this table.
 	 *
-	 * Set a field specific parameter
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $name
-	 * @param mixed $value
 	 * @access public
-	 * @return void
+	 * @return string ID field name
 	 */
-	function setFieldParam($fieldname, $name, $value);
-	
-	/**
-	 * setFieldWhere
-	 *
-	 * Set a field specific parameter
-	 *
-	 * @param mixed $fieldname must be the name of a field
-	 * @param string $where is a sql statment predicate, like 'between 4 and 5' or '= 4'
-	 * @param mixed $junction is 'AND' or 'OR'
-	 * @access public
-	 * @return void
-	 */
-	function addFieldWhere($fieldname, $where, $junction = 'AND');
-	
-	/**
-	 * hideField
-	 *
-	 * Don't show the field in a list and don't show it in a form.
-	 *
-	 * @param mixed $fieldname must be the name of a field or an array of fields
-	 * @access public
-	 * @return void
-	 */
-	function hideField($fieldname);
-	
-	/**
-	 * setFieldName
-	 *
-	 * The label to give the field when displaying.
-	 *
-	 * @param mixed $fieldname must be the name of a field or an array of fields
-	 * @access public
-	 * @return void
-	 */
-/* 	function setFieldName($fieldname, $name); */
-	
-	/**
-	 * formatField
-	 *
-	 * A format string to use(especially on dates) when displaying in lists.
-	 *
-	 * @param mixed $fieldname must be the name of a field or an array of fields
-	 * @access public
-	 * @return void
-	 */
-	function formatField($fieldname, $format);
-	
-	/**
-	 * showDelete
-	 *
-	 * show a column of delete links for each record in the listing
-	 *
-	 * @param mixed $path must be the path (not including the zoneUrl) to the delete page.
-	 * An id will be added to the end of the path that is give as a page parameter.
-	 * @access public
-	 * @return void
-	 */
-	function showDelete($path);
-	
-	/**
-	 * setRowClasses
-	 *
-	 * set a map of css classes that will be used to display rows.
-	 *
-	 * @param string $field is the field that will be used to index the class map
-	 * @param mixed $map is the map of field values to css classnames
-	 * @access public
-	 * @return void
-	 */
-	function setRowClasses($field, $map);
+	function getIdField();
 
 	/**
-	 * setFieldIndexTable
+	 * Return an array of fields in this class/table/form.
 	 *
-	 * Setup an index table for a specific field, especially useful for things like select boxes and the like.
-	 * Used to grab a list of possible values and labels from another table in the database
-	 *
-	 * @param string $fieldname
-	 * @param string $tablename
-	 * @param string $id fieldname in the indexed table that has the values in it
-	 * @param string $label fieldname in the indexed table that has the labels in it
-	 * @param string $restriction something like "date = $date"
 	 * @access public
-	 * @return void
+	 * @return array Field data
 	 */
-	function setFieldIndexTable($fieldname, $tablename, $id, $label, $restriction = null);
+	function getFields();
 
 	/**
-	 * setFieldIndex
+	 * Return all data associated with this form.
 	 *
-	 * Setup an index for a specific field, especially useful for things like select boxes and the like.
-	 * here an array is passed in and key = value, value = label
-	 *
-	 * @param mixed $fieldname
-	 * @param mixed $index
 	 * @access public
-	 * @return void
+	 * @return array An array of form field values for the record or records.
 	 */
-	function setFieldIndex($fieldname, $index);
+	function getData();
 
 	/**
-	 * setAllFieldsParam
+	 * Requests all records from the database.
 	 *
-	 * Sets all existing fields to have a specific value for a specific property.
-	 * Useful when you have a table with like 30 fields, but only want to show two in a list.
-	 * setAllFieldsParam('listshow', false); then set the two necessary ones to true
+	 * This is generally used for a list or gridedit view.
 	 *
-	 * @param mixed $name
-	 * @param mixed $value
+	 * @param mixed $limit
 	 * @access public
-	 * @return void
+	 * @return ??
 	 */
-	function setAllFieldsParam($name, $value);
+	function getRecords($limit = false);
 
 	/**
-	 * setAllFieldsInnerParam
+	 * Requests the requested record from the database (as would be used in a record).
+	 * If no ID is specified, return the record currently associated with this form.
 	 *
-	 * Sets all existing fields to have a specific value for a specific property's parameter.
-	 * Some field parameters like html and validate have their own parameters, this function is used to
-	 * change one of their parameters without changing the entire html or validate parameter.
-	 *
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
+	 * @param mixed $id (optional) record id
 	 * @access public
-	 * @return void
+	 * @return ??
 	 */
-	function setAllFieldsInnerParam($name, $innername, $value);
+	function getRecord($id = false);
 
 	/**
-	 * setFieldInnerParam
+	 * Save an array of POST formatted data to a record.
+	 * If the record is new it will insert it, if not it will update it.
 	 *
-	 * Some field parameters like html and validate have their own parameters, this function is used to
-	 * change one of their parameters without changing the entire html or validate parameter.
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
+	 * @param mixed $values POST formatted values to save in this record.
 	 * @access public
-	 * @return void
+	 * @return int Save status: ID if successful, false if failed.
 	 */
-	function setFieldInnerParam($fieldname, $name, $innername, $value);
+	function saveRecord($values, $id = null);
 
 	/**
-	 * setHTMLoptions
-	 * Setup the html display options used when rendering the form for this field.
-	 * Should be something like $value = array("type" => "text");
-	 * Values of the array other than type are the parameters required/supported by the type of guicontrol.
+	 * Remove a record from the database
 	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param array $value
+	 * @param mixed $id
 	 * @access public
 	 * @return void
-	 * @see guicontrol
 	 */
-	function setHTMLoptions($fieldname, $value);
+	function deleteRecord($id);
 
 	/**
-	 * setHTMLoption
-	 * Setup a specific html display options to be used when rendering the form for this field.
+	 * Get all db relations.
 	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $innername option like type
-	 * @param mixed $value
 	 * @access public
-	 * @return void
-	 * @see guicontrol
+	 * @return array Array of relations associated with this class.
 	 */
-	function setHTMLoption($fieldname, $innername, $value);
+	function getRelations();
+
+	/**
+	 * Get the named relation data.
+	 *
+	 * @param string $name Relation name
+	 * @access public
+	 * @return array relation data as an array.
+	 */
+	function getRelation($name);
+
+	/**
+	 * Is this table/form/relation timestampable?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isTimestampable();
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * setValidationOptions
@@ -244,7 +136,7 @@ interface formz_driver_interface {
 	 * @return void
 	 * @see validate
 	 */
-	function setValidationOptions($fieldname, $value);
+/* 	function setValidationOptions($fieldname, $value); */
 
 	/**
 	 * setValidationOption
@@ -259,7 +151,7 @@ interface formz_driver_interface {
 	 * @return void
 	 * @see validate
 	 */
-	function setValidationOption($fieldname, $innername, $value);
+/* 	function setValidationOption($fieldname, $innername, $value); */
 
 	/**
 	 * required
@@ -270,7 +162,7 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function required($fieldname, $value = true);
+/* 	function required($fieldname, $value = true); */
 
 	/**
 	 * getValue
@@ -280,74 +172,8 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return mixed $value
 	 */
-	function getValue($fieldname);
+/* 	function getValue($fieldname); */
+	
 
-	/**
-	 * getRecords
-	 * Requests the necessary records from the database (as would be used in a listing).
-	 *
-	 * @param mixed $limit
-	 * @access public
-	 * @return void
-	 */
-	function getRecords($limit = false);
-
-	/**
-	 * getRecord
-	 * Requests the requested record from the database (as would be used in a record).
-	 *
-	 * @param mixed $id
-	 * @access public
-	 * @return void
-	 */
-	function getRecord($id = false);
-
-	/**
-	 * saveRecord
-	 * Takes the current record and writes its content to the database.
-	 * If the record is new it will insert it, if not it will update it.
-	 *
-	 * @param mixed $POST
-	 * @access public
-	 * @return void
-	 */
-	function saveRecord($values, $id = null);
-
-	/**
-	 * deleteRecord
-	 * Removes a record from the database
-	 *
-	 * @param mixed $id
-	 * @access public
-	 * @return void
-	 */
-	function deleteRecord($id);
-
-	/**
-	 * sort
-	 * tells the getRecords function a sorting to get the records in from the database.
-	 *
-	 * @param string $fieldname fieldname to sort on
-	 * @param string $direction either ASC or DESC
-	 * @access public
-	 * @return void
-	 */
-	function sort($fieldname, $direction = "ASC");
-
-	/**
-	 * returns the current Record
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	function &returnRecord();
-
-	/**
-	 * returns the current TableName
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	function &returnTableName();
-
+	
 }

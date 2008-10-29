@@ -537,7 +537,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 *
 	 * @return string Record ID field name
 	 */
-	function getId() {
+	function getIdField() {
 		$id = $this->table->getIdentifier();
 		if (is_array($id)) $id = array_shift($id);
 		
