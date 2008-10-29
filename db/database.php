@@ -148,17 +148,31 @@ class database
 	 * @param string $dsn_string a string of the format mysql://username:password@localhost/dbname
 	 */
 	function makeDSNFromString($dsn_string) {
+		$default_ports = array(
+			'mysql' => 3306,
+			'pgsql' => 5432
+		);
+		
 		$dsn = parse_url($dsn_string);
+		
+		// add default ports if one isn't specified.
+		if (!isset($dsn['port'])) {
+			$dsn['port'] = (isset($default_ports[$dsn['scheme']])) ? $default_ports[$dsn['scheme']] : null;
+		}
+		
+		// strip leading slash if this is a mysql or pg database name
+		if ($dsn['scheme'] != 'sqlite' && $dsn['path'][0] == '/') $dsn['path'] = substr($dsn['path'],1);
+		
 		return array(
 			'phptype' => $dsn['scheme'],
 		    //'dbsyntax' => false,
-		    'username' => $dsn['user'],
-		    'password' => $dsn['pass'],
+		    'username' => isset($dsn['user']) ? $dsn['user'] : null,
+		    'password' => isset($dsn['pass']) ? $dsn['pass'] : null,
 		    //'protocol' => false,
-		    'hostspec' => $dsn['host'],
-		    'port'     => ($dsn['port']) ? $dsn['port'] : 3306,
+		    'hostspec' => isset($dsn['host']) ? $dsn['host'] : null,
+		    'port'     => $dsn['port'],
 		    //'socket'   => false,
-		    'database' => substr($dsn['path'],1),
+		    'database' => $dsn['path'],
 		);
 	}
 
