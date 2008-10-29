@@ -37,13 +37,12 @@ class component_gui extends component
 	}
 
 	/**
-	 * init
+	 * run
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
+	function run() {
 		$config = Config::get('zoop.gui');
 		mkdirr($config['directories']['temp']);
 		$GLOBALS['gui'] = new gui();

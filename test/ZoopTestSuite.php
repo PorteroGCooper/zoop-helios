@@ -70,14 +70,29 @@ class ZoopTestSuite extends UnitTestCase {
 		foreach ($this->requiredComponents as $component) {
 			$this->addComponent($component);
 		}
-
+		
 		global $zoop;
 		$zoop->init();
+
 
 		$this->loadConfig();
 
 		$this->init();
 	}
+
+/*
+
+	function init() {
+		foreach($this->components as $name => $object) {
+			if(!isset($this->init[$name]) || !$this->init[$name]) {
+				$object->init();
+				$this->init[$name] = true;
+			}	
+		}
+		spl_autoload_register(array($this,'autoLoad'));
+	}
+
+*/
 
 	/**
 	 * Hook to be run at the end of initialize.

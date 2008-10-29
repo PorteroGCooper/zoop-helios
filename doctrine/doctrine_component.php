@@ -25,6 +25,9 @@ class component_doctrine extends component {
 	function init() {
 		require_once('Doctrine.php');
 		spl_autoload_register(array('Doctrine', 'autoload'));
+	}
+	
+	function run() {
 		$dsn = Config::get('zoop.doctrine.dsn');
 		$model_dir = Config::get('zoop.doctrine.model_dir');
 		Doctrine_Manager::connection($dsn);

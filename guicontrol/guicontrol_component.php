@@ -39,12 +39,12 @@ class component_guicontrol extends component
 	}
 
 	/**
-	 * init
+	 * run
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function init()
+	function run()
 	{
 		global $controlData;
 

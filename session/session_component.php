@@ -33,8 +33,7 @@ class component_session extends component
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
+	function init() {
 		$sessionConfig = Config::get('zoop.session');
 
 		include($this->getBasePath() . "/session_handler_" . $sessionConfig['type'] . ".php");
@@ -46,7 +45,14 @@ class component_session extends component
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), "/");
 		else
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);
-		
+	}
+	
+	/**
+	 * Start session
+	 *
+	 * @return void
+	 */
+	function run() {
 		# starting sessions
 		session_start();
 
