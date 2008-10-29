@@ -1,0 +1,2 @@
+driver: doctrine
+dsn: sqlite://%ZOOP_DIR%/test/test.sqlite
