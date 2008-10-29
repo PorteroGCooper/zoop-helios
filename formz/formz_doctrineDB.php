@@ -1,7 +1,4 @@
 <?php
-/**
- * @group forms
- */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -16,6 +13,7 @@
 /**
  * doctrineDB is a Doctrine connector library for formz.
  *
+ * @ingroup forms
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Justin Hileman <justin@justinhileman.info>
@@ -51,10 +49,13 @@ class formz_doctrineDB implements formz_driver_interface {
 	
 	
 	
-	
-	
-	
-	
+
+	/**
+	 * Return an array of fields in this class/table/form.
+	 *
+	 * @access public
+	 * @return array Field data
+	 */
 	function getFields() {
 		return $this->table->getColumns();
 	}
@@ -556,11 +557,24 @@ class formz_doctrineDB implements formz_driver_interface {
 		$this->_deleteRecord($this->tablename, $id);
 	}
 	
+	/**
+	 * Get the named relation data.
+	 *
+	 * @param string $name Relation name
+	 * @access public
+	 * @return array relation data as an array.
+	 */
 	function getRelation($name) {
 		$rel = $this->getRelations();
 		return (isset($rel[$name])) ? $rel[$name] : false;
 	}
 	
+	/**
+	 * Get all db relations.
+	 *
+	 * @access public
+	 * @return array Array of relations associated with this class.
+	 */
 	function getRelations() {
 		$ret = array();
 				

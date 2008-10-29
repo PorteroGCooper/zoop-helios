@@ -37,8 +37,8 @@ class component_formz extends component {
 		return array(
 				"formz" => $base . "/formz.php",
 				"formz_driver_interface" => $base . "/formz_driver.interface.php",
-				"formz_doctrineDB" => $base . "/Formz_DoctrineDB.php",
-				"formz_formDB" => $base . "/Formz_FormDB.php",
+				"formz_doctrineDB" => $base . "/formz_doctrineDB.php",
+				"formz_formDB" => $base . "/formz_formDB.php",
 
 				"table" => $base . "/table.php",
 				"record" => $base . "/record.php",

@@ -3,7 +3,7 @@
  * Zoop Smarty plugin
  * @group gui
  * @group plugins
- * @group formz
+ * @group Formz
  *
  * @author Justin Hileman
  */
@@ -102,7 +102,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_item = '';
 		
 		if (!isset($field['display']['type']) || $field['display']['type'] != 'hidden') {
-			$label = (isset($field['display']['label'])) ? $field['display']['label'] : formz::format_label($key);
+			$label = (isset($field['display']['label'])) ? $field['display']['label'] : Formz::format_label($key);
 			$required = (isset($field['required']) && $field['required']) ? '<span class="required" title="Required">*</span>' : '';
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';

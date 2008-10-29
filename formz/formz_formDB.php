@@ -94,8 +94,6 @@ class Formz_FormDB implements formz_driver_interface {
 	var $timestampable = false;
 	
 	
-	
-	
 	/**
 	 * FormDB constructor.
 	 *
@@ -117,6 +115,79 @@ class Formz_FormDB implements formz_driver_interface {
 
 */
 	}
+	
+	
+		
+	/**
+	 * Return the name of the id field for this table.
+	 *
+	 * @access public
+	 * @return string ID field name
+	 */
+	function getIdField() {
+		return $this->table->idfield;
+	}
+	
+	/**
+	 * Return an array of fields in this class/table/form.
+	 *
+	 * @access public
+	 * @return array Field data
+	 */
+	function getFields() {
+/* 		return array_keys($this->table->fields); */
+		return $this->fields;
+	}
+	
+	/**
+	 * Return all data associated with this form.
+	 *
+	 * @access public
+	 * @return array An array of form field values for the record or records.
+	 */
+	function getData() {
+		return $this->table->getRecords();
+	}
+	
+	
+	
+	/**
+	 * Get all db relations.
+	 *
+	 * @todo implement this function
+	 * @access public
+	 * @return array Array of relations associated with this class.
+	 */
+	function getRelations() {
+/* 		trigger_error('getRelations() not implemented in formDB formz driver'); */
+		return array();
+	}
+	
+	/**
+	 * Get the named relation data.
+	 *
+	 * @todo implement this function
+	 * @param string $name Relation name
+	 * @access public
+	 * @return array relation data as an array.
+	 */
+	function getRelation($name) {
+/* 		trigger_error('getRelation() not implemented in formDB formz driver'); */
+		return array();
+	}
+	
+	/**
+	 * Is this table/form/relation timestampable?
+	 *
+	 * @todo implement this function
+	 * @access public
+	 * @return bool
+	 */
+	function isTimestampable() {
+/* 		trigger_error('isTimestampable() not implemented in formDB formz driver'); */
+		return false;
+	}
+	
 
 	/**
 	 * setParam
@@ -565,14 +636,14 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function saveRecord($POST = false)
+	function saveRecord($values, $id = null)
 	{
 		if (!isset($this->id))
 			trigger_error("Forms2 does not have a current record to save");
-		if ($POST === false)
-			$POST = getPost();
+		if ($values === false)
+			$values = getPost();
 
-		$this->setvaluesfrompost($POST);
+		$this->setvaluesfrompost($values);
 		$this->id = $this->storeRecord($this->tablename, $this->id);
 		return $this->id;
 	}
@@ -688,6 +759,19 @@ class Formz_FormDB implements formz_driver_interface {
 			$this->table = new table($table, $dbconnname);
  		else
  			$this->table->setDbconnname($dbconnname);
+ 			
+ 		$fields = $this->table->fields;
+ 		$this->fields = array();
+ 		
+ 		foreach ($fields as $key => $field) {
+ 			$this->fields[$key] = array();
+ 			if ($field->type) $this->fields[$key]['type'] = $field->type;
+ 			else $this->fields[$key]['type'] = 'string'; // this is 100 percent ghetto :-/
+ 			if ($field->length) $this->fields[$key]['length'] = $field->length;
+ 			if ($field->autoincrement) $this->fields[$key]['autoincrement'] = $field->autoincrement;
+ 			if ($field->key) $this->fields[$key]['primary'] = $field->key;
+/* 			$this->fields[$key]['required'] = $field->required; */
+ 		}
 	}
 
 	/**
@@ -964,6 +1048,7 @@ else
 	 *
 	 * @param bool $value
 	 */
+/*
 	function setTimestampable($value = true) {
 		$this->timestampable = $value;
 
@@ -971,4 +1056,6 @@ else
 			$this->setFieldParam(array("created_at", "updated_at"), "formshow", false);
 		}
 	}
+
+*/
 }

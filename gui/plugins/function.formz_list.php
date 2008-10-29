@@ -3,7 +3,7 @@
  * Zoop Smarty plugin
  * @group gui
  * @group plugins
- * @group formz
+ * @group Formz
  *
  * @author Justin Hileman
  */
@@ -45,8 +45,8 @@ function smarty_function_formz_list($params, &$smarty) {
 		if (isset($fields[$key]['listshow']) && $fields[$key]['listshow'] == false) {
 			unset($fields[$key]);
 		} else {
-			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : formz::format_label($key);
-			$row[] = '<th>' . formz::format_label($label) . '</th>';
+			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : Formz::format_label($key);
+			$row[] = '<th>' . Formz::format_label($label) . '</th>';
 		}
 	}
 	$html .= "\n\t<thead>\n\t\t<tr>\n\t\t\t";
@@ -55,7 +55,7 @@ function smarty_function_formz_list($params, &$smarty) {
 
 	// grab the field names we care about
 	$field_names = array_keys($fields);
-	$id_field = $form->getId();
+	$id_field = $form->getIdField();
 	
 	// build the table...
 	$html .= "\t<tbody>\n\t\t";
