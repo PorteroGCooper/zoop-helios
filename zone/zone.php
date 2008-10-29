@@ -268,15 +268,39 @@ class zone
 	/**
 	 * Alias 
 	 * An array of all the page aliases for this zone.
+	 * This is not the ideal way to do aliases anymore.
 	 *
 	 * @code
-	 * Set $this->Alias["alias"] = "Aliastarget" 
+	 * Set $this->Alias["alias"] = "Aliastarget"
 	 * @endcode
 	 *
+	 * @see addAlias()
+	 * @deprecated since 2.0
 	 * @var array
 	 * @access public
 	 */
 	var $Alias = array();
+	
+	/**
+	 * Private array of path aliases, used by addAlias() and getAlias()
+	 *
+	 * @see addAlias()
+	 * @see getAlias()
+	 * @var array
+	 * @access private
+	 */
+	var $_pathAliases = array();
+	
+	/**
+	 * Private array of reverse path aliases, used by Global Redirect.
+	 *
+	 * @see addAlias()
+	 * @see getAlias()
+	 * @var array
+	 * @access private
+	 */
+	var $_redirectAliases = array();
+	
 
 	/**
 	 * Zone Constructor
@@ -315,7 +339,8 @@ class zone
 			// SET $this->zonetype TO THE ZONENAME OR TO DEFAULT IF $this->zonename == @ROOT
 			$this->zonetype = ($this->zonename != "@ROOT") ? $this->zonename : "Default";  
 		}
-
+		
+		$this->url = implode('/', $gPathParts);
 	}
 
 	/**
@@ -326,8 +351,8 @@ class zone
 	 */
 	function findZoneParams() {
 		global $gUrlVars;
-		global $gPathParts;//an array of all the parts of the path so far
-
+		global $gPathParts; //an array of all the parts of the path so far
+		
 		// CHECK THE ZONE TO SEE IF ANY VARIABLES ARE IN THE PATH.
 		if($urlVarNames = $this->getZoneParamNames()) {
 			// loop once for each name
@@ -363,13 +388,13 @@ class zone
 					}
 				} else {
 					$varValue = array_shift( $this->_inPath );
-					if(defined("strip_url_vars") && strip_url_vars)
-						if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue)
-						{
+					if(Config::get('zoop.security.strip_uri_vars')) {
+						if (strtok($varValue, " \t\r\n\0\x0B") !== $varValue) {
 							$varValue = $this->missingParameter($varName);
 							if (is_null($varValue))
 								trigger_error("The parameter '$varName' must be supplied for this zone");
 						}
+					}
 
 					$this->_zoneParams[ $varName ] = $varValue;
 					$gUrlVars[ $varName ] = $varValue;
@@ -412,7 +437,8 @@ class zone
 
 
 	/**
-	 * This function will either run the page/post function, or will execute the child zone, * depending on what is found in the token of the url passed
+	 * This function will either run the page/post function, or will execute the child zone,
+	 * depending on what is found in the token of the url passed
 	 *
 	 * How the method runs:
 	 * Establish Index as the "/" and Default as the fall back method names
@@ -508,6 +534,7 @@ class zone
 	 * and determine which methods to call and (child) zones to run. 
 	 *
 	 * Basic logic is as follows..
+	 * * Convert the current path using path aliases for the current zone
 	 * * If wildcards are enabled, run Default functions (page or post Default)
 	 * * Capture Parameters for this Zone.
 	 * * Check for Sequences.
@@ -515,6 +542,7 @@ class zone
 	 * * Initialize this zone.
 	 * * Determine if next token (part of the url) is a page or a zone and execute
 	 *
+	 * @see zone::addAlias
 	 * @see zone::executeNextFunction
 	 * @param array $inPath
 	 * @access public
@@ -522,8 +550,9 @@ class zone
 	 */
 	function handleRequest( $inPath ) {
 		$this->_inPath = $inPath;
-		$this->findZoneName( );
-
+		$this->findZoneName();
+		$this->checkAlias();
+		
 		// when wildcards are enabled, always execute the default function.
 		if ($this->wildcards) {
 			array_unshift($this->_inPath, 'default');
@@ -539,7 +568,6 @@ class zone
 			global $globalTime;
 			logprofile($globalTime);
 		}
-
 		return $retval;
 	}
 
@@ -1299,5 +1327,169 @@ class zone
 				trigger_error("missing param $name for makepath of zone $zone");
 		}
 	}
+	
+	/**
+	 * Set Zone level path aliases. These aliases have way more magic than the old aliases.
+	 *
+	 * Aliases can be static (like 'create' -> 'new/update') or contain variables
+	 * ('%id%/edit' -> '%id%/update'). Variables are denoted by wrapping the variable name
+	 * in '%'. A fairly common name is '%id%'. Variables can be named just about anything, as long
+	 * as the name contains only letters and numbers. Variable position and order need not
+	 * stay the same. For example, '%first%/foo/%second%' might alias to '%second%/bar/%first%'.
+	 *
+	 * Aliases must be added in the zone constructor so that they are available early enough
+	 * to do some good.
+	 *
+	 * @code
+	 * // zone constructor
+	 * function zone_myZone() {
+	 *   $this->addAlias('%id%/edit', '%id%/update');
+	 *   $this->addAlias('create', 'new/update');
+	 *   $this->addAlias('%first%/swap/%second%', '%second%/swapped/%first%');
+	 * }
+	 * @endcode
+	 *
+	 * Zone::addAlias() and Zone::checkAlias() can be overloaded by extending classes to provide
+	 * even more awesome. One might use database lookup driven aliases, for cool paths like
+	 * 'blog/2008/10/my-post-title' ...
+	 *
+	 * @see Zone::checkAlias
+	 * @param string $alias_from The URL in the address bar of the browser.
+	 * @param string $alias_to The zoop zone/page/param path (or path chunk) which will be called.
+	 * @access public
+	 **/
+	function addAlias($from_alias, $to_alias) {
+		$matches = array();
+		preg_match_all('#%[a-zA-Z0-9]*%#', $from_alias, $matches);
+
+		$from_re = $redirect_to = $from_alias;
+		$to_re = $redirect_from = $to_alias;
+		$callback = 0;
+
+		// build a regex. this could get ugly.
+		if (count($matches)) {
+			foreach($matches[0] as $match) {
+				if (strpos($to_re, $match) !== false) {
+					$callback++;
+										
+					// aliases
+					$from_re = str_replace($match, '([^/]+)', $from_re);
+					$to_re = str_replace($match, "\\" . $callback, $to_re);
+				}
+			}
+			
+			if (Config::get('zoop.zone.aliases.global_redirect')) {
+				foreach($matches[0] as $match) {
+					if (strpos($redirect_to, $match) !== false) {
+						// backwards regexes for redirects
+						$redirect_to = str_replace($match, "\\" . $callback, $redirect_to);
+						$redirect_from = str_replace($match, '([^/]+)', $redirect_from);
+						$callback--;
+					}
+				}
+			}	
+		}
+		
+		$from_re = '#^' . $from_re . '#';
+		if (isset($this->_pathAliases[$from_re])) {
+			trigger_error("An alias for `$from_alias` is already set, unable to add another alias.");
+			return false;
+		}
+		$this->_pathAliases[$from_re] = $to_re;
+		
+		if (Config::get('zoop.zone.aliases.global_redirect')) {
+			$redirect_from = '#^' . $redirect_from . '#';
+			$this->_redirectAliases[$redirect_from] = $redirect_to;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Add a bunch of aliases at once.
+	 *
+	 * @code
+	 *   $this->addAliases(array(
+	 *     '%id%/edit' => '%id%/update',
+	 *     'create' => 'new/update',
+	 *     '%first%/swap/%second%' => '%second%/swapped/%first%',
+	 *   ));
+	 * @endcode
+	 *
+	 * @see Zone::addAlias
+	 * @param array $aliases
+	 * @access public
+	 **/ 
+	function addAliases($aliases) {
+		foreach ($aliases as $from => $to) {
+			$this->addAlias($from, $to);
+		}
+	}
+	
+	/**
+	 * Check the current path against zone alias rules, converting if necessary.
+	 *
+	 * If no $path parameter is passed, this function will check the zone's $inPath chunk against
+	 * the alias rules. If a match is found, it will set the $inPath to the new, aliasified
+	 * path, and return true.
+	 *
+	 * If a $path parameter is specified, checkAlias() will check it against this zone's alias
+	 * rules, converting it if necessary, and returning it in the form in which it was received
+	 * (array or string).
+	 *
+	 * If global redirects are enabled (zoop.zone.aliases.global_redirect) and the checked path
+	 * has a canonical alias, this function will do an external redirect to the canonical url.
+	 * This will change the url in the user's browser to the correct (canonical) url. This will
+	 * aid in search engine optimization efforts by removing 'duplicate content', or pages
+	 * accessible from multiple urls.
+	 *
+	 * CAVEAT: checkAlias will currently only resolve one level of aliases. For example, assume
+	 * `x` is aliased to `y`, and `y` is aliased to `z`. If a user visits `x`, he will be shown
+	 * content for url `y` (or lack of content). Consider the action of checkAlias to be undefined
+	 * in this instance, and program accordingly. This will probably change at a later date. To avoid
+	 * problems, please choose your aliases wisely. For example, alias `x` to `z` and `y` to `z`.
+	 *
+	 * @see Zone::addAlias
+	 * @param mixed $path An (optional) array or string path to check against this zone's aliases.
+	 * @access public
+	 * @return mixed A new, easier to use, thunked path, as an array or string.
+	 **/
+	function checkAlias($path = null) {
+		$path_alias = $path;
+	
+		if ($path_alias === null) {
+			$path_alias = $this->_inPath;
+		}
+		
+		if (is_array($path_alias)) $path_alias = implode('/', $path_alias);
+		
+		// External redirect to the canonical alias, if applicable.
+		if (Config::get('zoop.zone.aliases.global_redirect')) {
+			foreach($this->_redirectAliases as $redirect_from => $redirect_to) {
+				if (preg_match($redirect_from, $path_alias)) {
+					$this->zoneRedirect(preg_replace($redirect_from, $redirect_to, $path_alias));
+				}
+			}
+		}
+		
+		$success = false;
+		foreach($this->_pathAliases as $from_re => $to_re) {
+			$path_alias = preg_replace($from_re, $to_re, $path_alias, -1, $success);
+			if ($success) continue;
+		}
+		
+		// return the resulting path in whatever form it came to us.
+		if ($path === null) {
+			$this->_inPath = explode('/', $path_alias);
+			return true;
+		} else if (is_array($path)) {
+			return explode('/', $path_alias);
+		} else {
+			return $path_alias;
+		}
+	}
+	
+	
+	
+	
 }
-?>

@@ -1,2 +1,4 @@
 save_in_session: false
 directory: %APP_DIR%/zones
+aliases:
+    global_redirect: 0

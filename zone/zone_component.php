@@ -38,6 +38,7 @@ class component_zone extends component
 	{
 		return array(
 						"zone" => $this->getBasePath() . "/zone.php",
+						"crudZone" => $this->getBasePath() . '/crudZone.php',
 						"zone_sequence" => $this->getBasePath() . "/zone_sequence.php",
 						"zone_zoopfile" => $this->getBasePath() . "/zone_zoopfile.php"
 					);
