@@ -78,6 +78,8 @@ class component_guicontrol extends component
 		if(isset($controlData))
 		{
 			$validate = true;
+			
+			echo_r($controlData);
 
 			component_guicontrol::loadChildControls($controlData);
 

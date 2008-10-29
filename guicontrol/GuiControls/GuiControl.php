@@ -140,12 +140,28 @@ class GuiControl
 	 */
 	function getName()
 	{
-		$type = get_class($this);
-
+		$type = $this->getType();
 		if (!isset($this->parent))
 			return "controls[$type][{$this->name}]";
 		else
 			return "{$this->parent}[controls][$type][{$this->name}]";
+	}
+	
+	/**
+	 * Get the type for this GuiControl.
+	 *
+	 * @access public
+	 * @return string GuiControl type ('text', 'hidden', etc)
+	 */
+	function getType() {
+		if (!isset($this->type)) {
+			$type = get_class($this);
+			if (substr($type, -7) == 'Control') {
+				$type = substr($type, 0, -7);
+			}
+			$this->type = $type;
+		}
+		return $this->type;
 	}
 	
 	/**
@@ -532,4 +548,3 @@ class GuiControl
 		return $viewState;
 	}
 }
-?>

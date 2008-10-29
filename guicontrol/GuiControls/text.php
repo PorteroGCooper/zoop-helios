@@ -77,7 +77,9 @@ class textControl extends GuiControl
 				}
 			}
 
-		$thistype = get_class($this);
+		$thistype = $this->getType();
+		
+		
 		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
 		$attrs = implode(' ', $attrs);
 
