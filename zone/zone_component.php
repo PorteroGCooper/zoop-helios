@@ -34,6 +34,7 @@ class component_zone extends component
 		}
 //		if (Config::get('zoop.zone.crud_driver') == 'doctrine')
 			$this->requireComponent('doctrine');
+			$this->requireComponent('formz');
 	}
 		
 	function getIncludes()
