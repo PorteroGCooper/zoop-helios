@@ -232,7 +232,7 @@ class zoop
 		} else {
 			$file = "$dir/$name.php";
 		}
-		$this->addInclude("model_$name", $file);
+		$this->addInclude("$name", $file);
 		$this->addModel($name, $file);
 	}
 
@@ -259,7 +259,7 @@ class zoop
 		} else {
 			$file = "$dir/$name.php";
 		}
-		$this->addInclude("model_$name", $file);
+		$this->addInclude("$name", $file);
 	}
 
 	/**
@@ -279,7 +279,7 @@ class zoop
 		} else {
 			$file = "$dir/$name.php";
 		}
-		$this->addInclude("class_$name", $file);
+		$this->addInclude("$name", $file);
 	}	
 	
 	/**
@@ -299,7 +299,7 @@ class zoop
 		} else {
 			$file = "$dir/$name.php";
 		}
-		$this->addInclude("lib_$name", $file);
+		$this->addInclude("$name", $file);
 	}	
 	
 	/**

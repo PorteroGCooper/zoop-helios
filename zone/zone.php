@@ -1281,7 +1281,7 @@ class zone
 			return substr ( $tplName, 1 );
 
 		if ( !isset ( $this->templateBase ) )
-			$this->templateBase = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			$this->templateBase = "zones/" . substr ( strstr ( get_class ( $this ), '_' ), 1 );
 		return $this->templateBase . '/' . $tplName;
 	}
 
