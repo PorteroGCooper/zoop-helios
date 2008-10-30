@@ -67,7 +67,15 @@ function smarty_function_formz_form($params, &$smarty) {
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
 		
-		$type = isset($field['display']['type']) ? $field['display']['type'] : 'text';
+		if (isset($field['display']['type']))
+			$type = $field['display']['type'];
+		else if (isset($field['length']) && $field['length'] > 1024) {
+			// 'long' strings need to be textareas, not text fields.
+			$type = 'textarea';
+		} else {			
+			$type = 'text';
+		}
+		
 		$value = isset($data[$key]) ? $data[$key] : '';
 
 		// prob'ly a bit ghetto...
@@ -95,7 +103,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		}
 		$field['display']['class'] = implode(' ', $form_item_classes);
 
-		
+		if ($form->editable) $value = htmlspecialchars($value);
 		$control->setParam('value', $value);
 		if (isset($field['display'])) $control->setParams($field['display']);
 		
@@ -126,11 +134,30 @@ function smarty_function_formz_form($params, &$smarty) {
 
 	// now add the form actions	
 	if ($form->editable) {
+		$id_field = $form->getIdField();
 		$actions = $form->getActions();
 		foreach ($actions as $key => $action) {
-			$control = &getGuiControl('text', $key);
-			$control->setParams($action);			
-			$form_items[] = $control->render();
+			if ($action['type'] == 'link') {
+				
+				$link = $action['link'];
+				$matches = array();
+				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
+				if (count($matches)) {
+					// replace with this table's id field, if applicable.
+					if ($matches[1] == 'id') $matches[1] = $id_field;
+					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
+				} else {
+					// automatically tack on the id if there's no wildcard to replace
+					if (substr($link, -1) != '/') $link .= '/';
+					$action['link'] .= $data[$id_field];
+				}
+				$value = '<a href="' . $link . '">' . $action['label'] . '</a>';
+
+			} else {
+				$control = &getGuiControl('button', $key);
+				$control->setParams($action);			
+				$form_items[] = $control->render();
+			}
 		}
 	}
 	
