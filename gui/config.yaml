@@ -8,4 +8,4 @@ directories:
         - %APP_DIR%/view/guiplugins
         - %ZOOP_DIR%/gui/plugins
 strip_html: false
-caching: 1
+caching: 0
