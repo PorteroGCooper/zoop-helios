@@ -530,7 +530,26 @@ class formz_doctrineDB implements formz_driver_interface {
 		$this->record->save();
 		return array_shift($this->record->identifier());
 	}
+
+	/**
+	 * Delete a record.
+	 *
+	 * @param int $id Record ID.
+	 * @access public
+	 * @return int The db id of the saved record.
+	 */
+	function destroyRecord($id = null) {
 	
+		// get the record we want to save...
+		if ($id !== null) {
+			if (!$this->getRecord($id)) {
+				trigger_error("Unable to initialize record: " . $id);
+				return false;
+			}
+		}
+			
+		return $this->record->delete();
+	}	
 	
 	/**
 	 * Return the record ID field name

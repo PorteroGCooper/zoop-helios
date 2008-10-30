@@ -173,6 +173,28 @@ class Formz {
 	}
 	
 	/**
+	 * Delete a record.
+	 *
+	 * @param int $id Record ID (optional)
+	 * @access public
+	 * @return int Saved record id.
+	 */
+	function destroyRecord($id = null) {
+		if ($id === null) {
+			if (isset($this->id)) {
+				$id = $this->id;
+			}
+			
+			// fail if we still don't have an id...
+			if ($id === null) {
+				trigger_error("Formz element does not have a current record to destroy.");
+				return null;
+			}
+		}
+		return $this->driver->destroyRecord($id);
+	}
+	
+	/**
 	 * Set form field sort order.
 	 *
 	 * @param mixed $sort Field sort order as an array or comma separated string.
@@ -423,8 +445,8 @@ class Formz {
 	function addAction($name, $args = array()) {
 		$defaults = array(
 			'label' => $name,
-			'type' => 'button'
 		);
+		if (isset($args['link'])) $args['type'] = 'link';
 		
 		// capitalize default label...
 		$defaults['label'] = Formz::format_label($defaults['label']);
@@ -434,19 +456,30 @@ class Formz {
 			case 'submit':
 			case 'save':
 			case 'update':
-				$defaults['type'] = 'submit';
+				$name = 'update';
+				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
 				break;
 			case 'delete':
-			case 'preview':
+			case 'destroy':
+				$name = 'destroy';
+				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
+				break;
 			case 'cancel':
+				if (!isset($defaults['link'])) $defaults['link'] = '%id%/read';
+				if (!isset($defaults['type'])) $defaults['type'] = 'link';
+				break;
+			case 'preview':
 			default:
-				$defaults['type'] = '';
+				$defaults['type'] = 'button';
 				break;
 		}
 		
+		switch (strtolower($name)) {
+		}
+		
 		$args = array_merge_recursive($defaults, $args);
-	
 		$this->actions[$name] = $args;
+
 	}
 	
 	function getActions() {
