@@ -18,12 +18,12 @@
  * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  **/
-class crudZone extends zone {
+class CrudZone extends zone {
 
 	// this should be in an init function or something :-/
 	var $zoneParamNames = array('record_id');
 
-	function crudZone() {
+	function CrudZone() {
 		die('foo');
 /* 		$this->setZoneParams(array('record_id')); */
 		$this->addAlias('create', 'new/update');
