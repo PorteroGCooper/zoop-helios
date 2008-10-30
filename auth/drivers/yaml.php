@@ -69,6 +69,7 @@ class auth_driver_yaml extends auth_driver_base {
 		$_SESSION['auth'][$this->getConfig('session_user')] = array('user' => $user, 'groups' => $groups, 'roles' => $roles);
 	}
 
+
 	/**
 	 * Pulls the group id from the db for a given group name.
 	 * Here for compatibility reasons as in the yaml backend there aren't ids.

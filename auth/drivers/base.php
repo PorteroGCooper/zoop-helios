@@ -22,6 +22,40 @@ class auth_driver_base {
 	}
 
 	/**
+	 * Return the groups for the given user, if none is given active user is used.
+	 *
+	 * @param mixed $user
+	 * @access public
+	 * @return mixed
+	 */
+	function getGroups($user = false) {
+		if (!$user) { $user = $this->auth->getActiveUser(); }
+
+			if ( isset($user['groups']) && !empty($user['groups']) ) {
+				return $user['groups'];
+			} else {
+				return array();
+			}
+	}
+
+	/**
+	 * Return the roles for the given user, if none is given active user is used.
+	 *
+	 * @param mixed $user
+	 * @access public
+	 * @return mixed
+	 */
+	function getRoles($user = false) {
+		if (!$user) { $user = $this->auth->getActiveUser(); }
+
+			if ( isset($user['roles']) && !empty($user['roles']) ) {
+				return $user['roles'];
+			} else {
+				return array();
+			}
+	}
+
+	/**
 	 * Prepare password for comparison by encrypting if enabled 
 	 * 
 	 * @param mixed $password 

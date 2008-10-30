@@ -227,14 +227,8 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getGroups($user = false) {
-		if (!$user) { $user = $this->getActiveUser(); }
-
-			if ( isset($user['groups']) && !empty($user['groups']) ) {
-				return $user['groups'];
-			} else {
-				return array();
-			}
+	function getGroups($user) {
+		return $this->getDriver()->getGroups($user);
 	}
 
 	/**
@@ -303,7 +297,6 @@ class auth {
 		return $this->getDriver()->_groupNametoId($name);
 	}
 
-
 	/**
 	 * Return the roles for the given user, if none is given active user is used.
 	 *
@@ -311,14 +304,8 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getRoles($user = false) {
-		if (!$user) { $user = $this->getActiveUser(); }
-
-			if ( isset($user['roles']) && !empty($user['roles']) ) {
-				return $user['roles'];
-			} else {
-				return array();
-			}
+	function getRoles($user) {
+		return $this->getDriver()->getRoles($user);
 	}
 
 	/**

@@ -1,0 +1,31 @@
+backend: doctrine
+models:
+   user: User
+   group: Association
+   role: Role
+fields:
+   user:
+       id: id
+       username: username
+       password: password
+       active: active 
+   group:
+       id: id
+       name: name
+       active: active
+   role:
+       id: id
+       name: name
+       active: active
+use_groups: 1
+use_roles: 1
+use_active: 1
+active_value: 1
+password_encryption: true
+encryption: md5
+session_user: activeUser
+locations:
+   denied: /denied
+   login: /login
+   logout: /logout
+   post_logout: /
