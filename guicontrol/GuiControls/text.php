@@ -48,23 +48,25 @@ class textControl extends GuiControl
 		$attrs = array();
 		$Sattrs = array();
 
-		$html = "";
+		$html = array();
+		
+		$html[] = 'input';
 
-		if (isset($this->params) && !empty($this->params))
-			foreach ($this->params as $parameter => $value)
-			{
+
+		if (isset($this->params) && !empty($this->params)) {
+			foreach ($this->params as $parameter => $value) {
 				switch ($parameter) {   // Here we setup specific parameters that will go into the html
 					case 'title':
 					case 'maxlength':
 					case 'size':
 					case 'type':
 						if ($value != '')
-							$attrs[] = "$parameter=\"$value\"";
+							$html[] = "$parameter=\"$value\"";
 						break;
 					case 'readonly':
 					case 'disabled':
 						if ($value)
-							$attrs[] = "readonly=\"true\"";
+							$html[] = "readonly=\"true\"";
 						break;
 // 					case 'validate':
 // 						$attrs[] = $this->getValidationAttr($this->params['validate']);
@@ -76,22 +78,38 @@ class textControl extends GuiControl
 						break;
 				}
 			}
+		}
+			
+		if (isset($this->params['type'])) {
+			$thistype = $this->params['type'];
+		} else {
+			$thistype = $this->getType();
+		}
+		
+/* 		die_r($this->params); */
 
-		$thistype = $this->getType();
-		
-		
-		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
-		$attrs = implode(' ', $attrs);
+		if (count($Sattrs)) {
+			$html[] = "style=\"" . implode(' ', $Sattrs) . "\"";
+		}
 
 		$vc = $this->getValidationClasses();
 		if (isset($this->params['class']))
 			$vc .= " " . $this->params['class'];
-		$ni = $this->getNameIdString();
 		$v = $this->getValue();
-
-		$html = "<input class=\"$vc\" $ni $attrs value=\"$v\" type=\"$thistype\" />";
+		
+		$html[] = $this->getNameIdString();
+		
+		if ($v) {
+			$html[] = 'value="' . $v . '"';
+		}
+		if ($vc != '') {
+			$html[] = 'class="' . $vc . '"';
+		}
+		$html[] = 'type="' . $thistype . '"';
+	
+		$html[] = '/';
+		$html = "<" . implode(' ', $html) . ">"; // "<input $class $ni $attrs value=\"$v\" $type/>";
 
 		return $html;
 	}
 }
-?>
