@@ -274,7 +274,7 @@ class zone
 	 * Set $this->Alias["alias"] = "Aliastarget"
 	 * @endcode
 	 *
-	 * @see addAlias()
+	 * @see zone::addAlias
 	 * @deprecated since 2.0
 	 * @var array
 	 * @access public
@@ -284,8 +284,8 @@ class zone
 	/**
 	 * Private array of path aliases, used by addAlias() and getAlias()
 	 *
-	 * @see addAlias()
-	 * @see getAlias()
+	 * @see zone::addAlias
+	 * @see zone::getAlias
 	 * @var array
 	 * @access private
 	 */
@@ -294,8 +294,8 @@ class zone
 	/**
 	 * Private array of reverse path aliases, used by Global Redirect.
 	 *
-	 * @see addAlias()
-	 * @see getAlias()
+	 * @see zone::addAlias
+	 * @see zone::getAlias
 	 * @var array
 	 * @access private
 	 */
@@ -311,6 +311,10 @@ class zone
 	function __construct()	{
 		if (defined("zone_cache") && zone_cache)
 			$this->initZoneCache();
+		if (isset($this->Aliases) && count($this->Aliases)) {
+			$this->addAliases($this->Aliases);
+			$this->Aliases = array();
+		}
 	}
 
 	/**

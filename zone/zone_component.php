@@ -32,6 +32,8 @@ class component_zone extends component
 		if(!defined('zone_saveinsession')  || zone_saveinsession) {
 			$this->requireComponent('session');
 		}
+//		if (Config::get('zoop.zone.crud_driver') == 'doctrine')
+			$this->requireComponent('doctrine');
 	}
 		
 	function getIncludes()
