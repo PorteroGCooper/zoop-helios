@@ -34,5 +34,6 @@ class component_simpletest extends component
 		$thisFilePath = dirname(__file__);
 		require_once($thisFilePath . '/simpletest/unit_tester.php');
 		require_once($thisFilePath . '/simpletest/reporter.php');
+		require_once($thisFilePath . '/simpletest/web_tester.php');
 	}
 }
