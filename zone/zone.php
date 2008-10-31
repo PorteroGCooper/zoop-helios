@@ -417,6 +417,7 @@ class zone
 	function checkPathForSequences () {
 		global $gPathParts;//an array of all the parts of the path so far
 		global $gZoneUrls;
+		global $gui;
 
 		// CHECK FOR SEQUENCES
 
@@ -437,6 +438,7 @@ class zone
 		$this->url = implode('/', $tmp);
 
 		array_unshift($gZoneUrls, $this->url);
+		$gui->assign('ZONE_PATH', $this->getZonePath());
 	}
 
 

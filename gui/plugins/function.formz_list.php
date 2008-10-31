@@ -34,7 +34,8 @@ function smarty_function_formz_list($params, &$smarty) {
 
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$tablename = strtolower($form->tablename);
-	
+	$base_href = $smarty->get_template_vars('BASE_HREF');
+	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	
 	$html = "\n\n";
 
@@ -118,7 +119,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-				$value = '<a href="' . $link . '">' . $value . '</a>';
+				$value = '<a href="' . $base_href . $zone_path . '/' . $link . '/">' . $value . '</a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
 				$value = '<a href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
