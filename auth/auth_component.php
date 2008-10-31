@@ -29,6 +29,7 @@ class component_auth extends component
 	function component_auth()
 	{
 		$this->requireComponent('db');
+		$this->requireComponent('session');
 		$this->requireComponent('app');
 		$this->requireComponent('spyc');
 	}

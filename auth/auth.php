@@ -128,23 +128,29 @@ class auth {
 	 * @return void
 	 */
 	function populateActiveUser($user_id) {
-		$this->getDriver()->populateActiveUser($user_id);
+		return $this->getDriver()->populateActiveUser($user_id);
 	}
 
 	/**
-	 * Return active user if use is logged in (false otherwise).
+	 * Return active user if user is logged in (NULL otherwise).
 	 *
 	 * @access public
 	 * @return mixed
 	 */
 	function getActiveUser() {
-		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
-			return $_SESSION['auth'][$this->getConfig('session_user')];
-		} else {
-			return false;
-		}
+		return $this->getDriver()->getActiveUser();
 	}
 
+	/**
+	 * Return active user as an array if user is logged in (NULL otherwise).
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function getActiveUserArray() {
+		return $this->getDriver()->getActiveUserArray();
+	}
+	
 	/**
 	 * Require if session user is 'logged in'.
 	 *
@@ -192,7 +198,7 @@ class auth {
 	 * @return boolean, $field
 	 */
 	function _checkActiveUser($array, $field) {
-		$au = $this->getActiveUser();
+		$au = $this->getActiveUserArray();
 		return (isset($au[$field]) && !empty($au[$field]) && in_array($au[$field], $array));
 	}
 

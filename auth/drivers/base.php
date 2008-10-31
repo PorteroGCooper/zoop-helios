@@ -56,6 +56,35 @@ class auth_driver_base {
 	}
 
 	/**
+	 * Return active user if use is logged in (NULL otherwise).
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function getActiveUser() {
+		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
+			return $_SESSION['auth'][$this->getConfig('session_user')];
+		} else {
+			return NULL;
+		}
+	}
+
+	/**
+	 * Return active user as array if user is logged in (NULL otherwise).
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function getActiveUserArray() {
+		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
+			return $_SESSION['auth'][$this->getConfig('session_user')];
+		} else {
+			return array();
+		}
+
+	}
+
+	/**
 	 * Prepare password for comparison by encrypting if enabled 
 	 * 
 	 * @param mixed $password 

@@ -2,6 +2,7 @@
 include_once(dirname(__file__) . "/base.php");
 
 class auth_driver_doctrine extends auth_driver_base {
+	var $userObj;
 
 	function populateActiveUser($user_id) {
 		$userTable = Doctrine::getTable($this->getConfig('models.user'));
@@ -26,7 +27,7 @@ class auth_driver_doctrine extends auth_driver_base {
 			}
 		}
 
-		$_SESSION['auth'][$this->getConfig('session_user')] = $user;
+		$_SESSION['auth'][$this->getConfig('session_user')] = $user->toArray();
 	}
 
 	/**
@@ -55,6 +56,25 @@ class auth_driver_doctrine extends auth_driver_base {
 
 		$relName = $this->getConfig('models.role');
 		return $user->$relName;
+	}
+
+	/**
+	 * Return active user if user is logged in (NULL otherwise).
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	function getActiveUser() {
+		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
+			if (!isset($this->userObj)) {
+				$userTable = Doctrine::getTable($this->getConfig('models.user'));
+				$user_id = $_SESSION['auth'][$this->getConfig('session_user')][$this->getConfig('fields.user.id')];
+				$this->userObj = &$userTable->find($user_id);
+			}
+			return $this->userObj;
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
