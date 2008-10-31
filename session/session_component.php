@@ -41,10 +41,11 @@ class component_session extends component
 		if (isset($HTTP_GET_VARS["cache_limiter"])) {
 			session_cache_limiter($HTTP_GET_VARS["cache_limiter"]);
 		}
-		if ($sessionConfig['path'] == "server")
+		if ($sessionConfig['path'] == "server") {
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), "/");
-		else
+		} else {
 			session_set_cookie_params(ini_get('session.cookie_lifetime'), $_SERVER['SCRIPT_NAME']);
+		}
 	}
 	
 	/**
@@ -57,16 +58,14 @@ class component_session extends component
 		session_start();
 
 		/* if the get var "session" == "destroy", reset the sessions. (debug purposes) */
-		if (isset($_GET["session"]) && $_GET["session"] == "destroy")
-		{
+		if (isset($_GET["session"]) && $_GET["session"] == "destroy") {
 			session_destroy();
 			foreach($_SESSION as $key => $value)
 				unset($_SESSION[$key]);
 		}
 
 		// creating "$sGlobals" in session if not already there and assigning to global var.
-		if(!isset($_SESSION["sGlobals"]))
-		{
+		if(!isset($_SESSION["sGlobals"])) {
 			session_register("sGlobals");
 			$_SESSION["sGlobals"]->set = 1;
 		}
@@ -75,15 +74,14 @@ class component_session extends component
 		/*
 		For tracking users navigation through the site....
 		*/
-		if(!isset($_SESSION['sUrls']))
-		{
+		if(!isset($_SESSION['sUrls'])) {
 			session_register('sUrls');
 			$_SESSION['sUrls'] = array();
 		}
-		if(!isset($PATH_ARRAY[1]) || $PATH_ARRAY[1] != 'keepOpen')
+		if(!isset($PATH_ARRAY[1]) || $PATH_ARRAY[1] != 'keepOpen') {
 			array_push($_SESSION['sUrls'], $_SERVER['REQUEST_METHOD'] . ' ' . VIRTUAL_URL);
-		if(count($_SESSION['sUrls']) > 20)
-		{
+		}
+		if(count($_SESSION['sUrls']) > 20) {
 			array_shift($_SESSION['sUrls']);
 		}
 		$GLOBALS['sUrls'] = &$_SESSION['sUrls'];
