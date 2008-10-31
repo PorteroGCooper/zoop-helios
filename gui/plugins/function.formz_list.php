@@ -119,7 +119,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-				$value = '<a href="' . $base_href . $zone_path . '/' . $link . '/">' . $value . '</a>';
+				$value = '<a href="' . $base_href . $zone_path . $link . '/">' . $value . '</a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
 				$value = '<a href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
