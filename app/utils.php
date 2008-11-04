@@ -1709,8 +1709,17 @@ function join_dirs($dirs)
 	return implode(DIRECTORY_SEPARATOR, $dirs).DIRECTORY_SEPARATOR;
 }
 
-function makePath($zone, $z, $page, $p)
-{
+/**
+ * Take zone path, zone params, page name and page params and construct a full path
+ *
+ * @param string $zone the zone path
+ * @param array $z the array of zone parameters (optional)
+ * @param string $page the page name (optional)
+ * @param array $p the array of page parameters (optional)
+ * @access public
+ * @return string the full path
+ */
+function makePath( $zone, $z = array() , $page = '', $p = array() ) {
 	$answer = "/$zone";
 	foreach($z as $key => $value)
 	{
@@ -1723,7 +1732,6 @@ function makePath($zone, $z, $page, $p)
 	}
 	return $answer;
 }
-
 
 if (!function_exists('json_encode'))
 {

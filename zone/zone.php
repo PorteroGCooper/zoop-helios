@@ -1288,6 +1288,17 @@ class zone
 	}
 
 	/**
+	 * Return the base path of the current zone
+	 * 
+	 * @access public
+	 * @return string path
+	 */
+	function makeBasePath() {
+		$zone = $this->_getRawZonePath();
+		return makePath($zone);
+	}
+
+	/**
 	 * Given zone, page and $page params return a path
 	 * 
 	 * @param mixed $z zone params
@@ -1296,10 +1307,22 @@ class zone
 	 * @access public
 	 * @return string path
 	 */
-	function makePath($z, $page, $p) {
-		$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+	function makePath($z = '', $page = '', $p = '' ) {
+		$zone = $this->_getRawZonePath();
 		$this->_verifyRequiredParams($z);
 		return makePath($zone, $z, $page, $p);
+	}
+
+	/**
+	 * A convenience method for returning the current base zone path
+	 * 
+	 * @access private
+	 * @return string path
+	 */
+	function _getRawZonePath() {
+		$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+		$zone = str_replace( '_', '/', $zone );
+		return $zone;
 	}
 
 	/**
