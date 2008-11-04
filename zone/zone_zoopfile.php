@@ -44,8 +44,7 @@ class zone_zoopfile extends zone
 	 * @access public
 	 * @return void
 	 */
-	function pageDefault($inPath)
-	{
+	function pageDefault($inPath) {
 		array_shift($inPath);
 		$module = array_shift($inPath);
 
@@ -54,7 +53,7 @@ class zone_zoopfile extends zone
 		if(file_exists($jsfile))
 			$mtime = filemtime($jsfile);
 		else
-			return $this->page404($inPath);
+			return $this->responsePage404($inPath);
 
 		$headers = $this->getheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
@@ -109,8 +108,7 @@ class zone_zoopfile extends zone
 // 		die();
 	}
 
-	function pageImage($inPath)
-	{
+	function pageImage($inPath) {
 		array_shift($inPath);
 
 		$file = ZOOP_DIR . '/gui/public/images/' . implode('/', $inPath);
@@ -137,18 +135,12 @@ class zone_zoopfile extends zone
 		$this->outputFile($file);
 	}
 
-	function page404($inPath)
-	{
-		die();
-	}
-
-	function outputFile($file)
-	{
+	function outputFile($file) {
 		$hfile = fopen($file, 'rb');
 		while(!feof($hfile)){
 			print fread($hfile, 1024 * 8);
 		} // while
 		die();
 	}
+	
 }
-?>
