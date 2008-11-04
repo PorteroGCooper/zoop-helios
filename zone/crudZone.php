@@ -170,7 +170,7 @@ class CrudZone extends zone {
 			$this->form->destroyRecord($id);
 		}
 	
-		zoneRedirect('/');
+		BaseRedirect( $this->makeBasePath(), HEADER_REDIRECT );
 	}
 	
 	/**
@@ -228,7 +228,7 @@ class CrudZone extends zone {
 		
 		$this->form->guiAssign();
 		$gui->assign('message', $message);
-		$gui->display('forms/messageandformz.tpl');
+		$gui->display('forms/formz.tpl');
 	}
 
 	/**
