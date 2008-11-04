@@ -23,7 +23,8 @@
  */
 class component_doctrine extends component {
 	function init() {
-		require_once('Doctrine.php');
+		$doctrinePath = Config::get('zoop.doctrine.include_path');
+		require_once(($doctrinePath ? "$doctrinePath/" : '') . 'Doctrine.php'); 
 		spl_autoload_register(array('Doctrine', 'autoload'));
 	}
 	
