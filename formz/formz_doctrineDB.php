@@ -627,7 +627,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				$label_field = $foreign_field;
 			}
 			
-			$rel_type = ($relation->getType() == Doctrine_Relation::MANY_AGGREGATE) ? 'many' : 'one';
+			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? 'many' : 'one';
 						
 			$ret[$local_field] = array(
 				'alias' => $name,
