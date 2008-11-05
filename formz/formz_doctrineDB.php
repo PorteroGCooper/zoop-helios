@@ -57,7 +57,20 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return array Field data
 	 */
 	function getFields() {
-		return $this->table->getColumns();
+		$columns       = $this->table->getColumns();
+		$table_options = $this->table->getOptions();
+
+		// Remove columns for nested sets. Theses fields may be different for different types
+		// of tree implementations.
+		if (isset($table_options['treeImpl']) && 'NestedSet' == $table_options['treeImpl']) {
+			unset(
+				$columns[$table_options['treeOptions']['rootColumnName']],
+				$columns['lft'],
+				$columns['rgt'],
+				$columns['level']
+			);
+		}
+		return $columns;
 	}
 	
 	function getData() {
