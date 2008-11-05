@@ -4,14 +4,14 @@
 		<title>{$title}</title>
 		<base href="{$BASE_HREF}/" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		{* css files=$css *}
-		{* js files=$js *}
+		{resources}
 	</head>
 	<body>
-		{* foreach from=$regions key=$name item=$region_tpl}
-		<div id="{$name}">
-			{include file=$region_tpl}
-		</div>
-		{/foreach *}
+{*
+		{regions name='header'}
+		{regions name='content'}
+		{regions name='sidebar'}
+*}
+		{regions}
 	</body>
-</html>==== ORIGINAL VERSION gui/templates/base/html.tpl 122584841537679
+</html>

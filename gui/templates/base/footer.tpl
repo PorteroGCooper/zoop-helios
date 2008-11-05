@@ -1,1 +1,1 @@
-{$footer}
+{if isset($footer)}{$footer}{/if}
