@@ -170,10 +170,16 @@ class Formz {
 		
 		// only save things that should be saved (no fake fields).
 		$save = array();
-		$field_names = array_keys($this->getFields());
-		foreach ($field_names as $name) {
+
+		$field_names = $this->getFields();
+		
+		foreach ($field_names as $name => $field_info) { 
 			if (isset($values[$name])) {
-				$save[$name] = $values[$name];
+				if (isset($field_info['relation_alias'])) {
+					$save['relations'][$field_info['relation_alias']] = $values[$name];
+				} else {
+					$save[$name] = $values[$name];
+				} 
 			}
 		}
 			
@@ -267,6 +273,8 @@ class Formz {
 		// mix in info from foreign fields
 		foreach ($this->getRelations() as $key => $relation) {
 			
+			$fields[$key]['relation_alias'] = $relation['alias'];
+		
 			if (!isset($fields[$key]['display']['label'])) {
 				$fields[$key]['display']['label'] = $relation['alias'];
 			}

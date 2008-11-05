@@ -523,11 +523,22 @@ class formz_doctrineDB implements formz_driver_interface {
 				return false;
 			}
 		}
+		
+		if (isset($values['relations'])) {
+			$relations = $values['relations'];
+			unset($values['relations']);
+		}
+		
 		foreach ($values as $key => $val) {
 			$this->record->$key = $val;
 		}
 			
 		$this->record->save();
+		
+		foreach ($relations as $relation_class => $ids) {
+			$this->record->link($relation_class, $ids);
+		}
+		
 		return array_shift($this->record->identifier());
 	}
 
