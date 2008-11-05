@@ -47,7 +47,7 @@ class gui extends Smarty
 		if(!defined("gui_base") )
 			define("gui_base", $dirs['base']);
 
-		$this->template_dir = $dirs['template'];
+		$this->template_dir = array($dirs['template'], $dirs['base_template']);
 		$this->setCompileDir($dirs['compile']);
 		$this->setCacheDir($dirs['cache']);
 		$this->caching = $guiConfig['caching'];
@@ -171,8 +171,7 @@ class gui extends Smarty
 	 * @access public
 	 * @return string
 	 */
-	function fetch($tpl_file, $cache_id = null, $compile_id = null)
-	{
+	function fetch($tpl_file, $cache_id = null, $compile_id = null) {
 
 		if($look = Config::get('app.gui.look')) {
 			$tpl_file = $look . "/" . $tpl_file;

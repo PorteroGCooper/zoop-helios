@@ -2,6 +2,7 @@ directories:
     temp: %APP_TEMP_DIR%/gui
     base: %APP_DIR%/view/templates
     template: %APP_DIR%/view/templates
+    base_template: %ZOOP_DIR%/gui/templates
     compile: %APP_TEMP_DIR%/gui/compiled
     cache: %APP_TEMP_DIR%/gui/cache
     plugins:
