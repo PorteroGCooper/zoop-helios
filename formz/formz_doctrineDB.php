@@ -597,12 +597,19 @@ class formz_doctrineDB implements formz_driver_interface {
 		$ret = array();
 				
 		foreach ($this->table->getRelations() as $name => $relation) {
-			$local_field = $relation->getLocalFieldName();
-			$foreign_field = $relation->getForeignFieldName();
+			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? 'many' : 'one';
 
 			// get the current relation values to put in the array
 			$foreign_class = Doctrine::getTable($relation->getClass());
 			$foreign_values = $foreign_class->findAll()->toArray();
+			
+			// grab the id field names for each half of this relation
+			$local_field = $relation->getLocalFieldName();
+			if ($rel_type == 'one') {
+				$foreign_field = $relation->getForeignFieldName();
+			} else {
+				$foreign_field = $foreign_class->getIdentifier();
+			}
 			
 			// guess which column to display in the select
 			$foreign_fields = $foreign_class->getColumnNames();
@@ -627,7 +634,6 @@ class formz_doctrineDB implements formz_driver_interface {
 				$label_field = $foreign_field;
 			}
 			
-			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? 'many' : 'one';
 						
 			$ret[$local_field] = array(
 				'alias' => $name,

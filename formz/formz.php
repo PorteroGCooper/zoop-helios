@@ -255,7 +255,7 @@ class Formz {
 				}
 			}
 		}
-
+		
 		// mix in info from foreign fields
 		foreach ($this->getRelations() as $key => $relation) {
 			
@@ -271,6 +271,7 @@ class Formz {
 			}
 			
 			$values = array();
+			
 			
 			foreach($relation['values'] as $item) {
 				$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
