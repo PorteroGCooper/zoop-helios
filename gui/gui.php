@@ -416,14 +416,16 @@ class gui extends Smarty {
 	/**
 	 * Remove a region (don't display on this page/zone/etc)
 	 *
-	 * @param string $name region name
+	 * @param mixed $name Region name or array of names.
 	 * @access public
 	 */
 	function removeRegion($name) {
-		if (isset($this->_regions[$name])) {
-			unset($this->_regions[$name]);
-		} else {
-			trigger_error("Unable to remove region, region $name not defined.");
+		foreach ((array)$name as $region) {
+			if (isset($this->_regions[$region])) {
+				unset($this->_regions[$region]);
+			} else {
+				trigger_error("Unable to remove region, region $name not defined.");
+			}
 		}
 	}
 	
