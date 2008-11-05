@@ -1,0 +1,30 @@
+/* Zoop Gui component default styles */
+
+/* Basic HTML elements */
+img {
+	border: none;
+}
+form {
+	margin: 0;
+	padding: 0;
+}
+fieldset {
+	margin-bottom: 1em;
+	padding: .5em;
+}
+table {
+	border-collapse: collapse;
+}
+
+/* Markup free clearing */
+.clear-block:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.clear-block {
+  display: inline-block;
+}
