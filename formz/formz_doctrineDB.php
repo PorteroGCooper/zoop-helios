@@ -521,6 +521,8 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * Save a record.
 	 *
 	 * Save an array of values to the specified record.
+	 * 
+	 * This function assumes that related records should always be unique.
 	 *
 	 * @param array $values Array of col/value pairs to be saved.
 	 * @param int $id Record ID.
@@ -538,7 +540,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 		
 		if (isset($values['relations'])) {
-			$relations = $values['relations'];
+			$submitted_relations = $values['relations'];
 			unset($values['relations']);
 		}
 		
@@ -547,9 +549,56 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 			
 		$this->record->save();
-		
-		foreach ($relations as $relation_class => $ids) {
-			$this->record->link($relation_class, $ids);
+
+		// Get relation classes for the current table.
+		$relationships = $this->getRelations();
+
+		// Loop through relation classes and get the actual related records.
+		foreach ($relationships as $rel => $foo) {
+			
+			// Unlinking related records can happen on each loop. $unlink_rel needs to be *unset*
+			// in order to keep records from being unlinked when we don't want them to be.
+			// Do *NOT* set $unlink_rel to '' or array()
+			if (isset($unlink_rel)) unset($unlink_rel);
+
+			// Obtain and loop through all the related records for the current class ($rel).
+			$related_records = $this->record->$rel->toArray();
+
+			if (isset($submitted_relations)) {
+				foreach ($related_records as $record) {
+					if (in_array($record['id'], $submitted_relations[$rel])) {
+						// Assume duplicate related records are a bad thing and don't try adding one.
+						$dup_key = array_search($record['id'], $submitted_relations[$rel]);
+						unset($submitted_relations[$rel][$dup_key]);
+					} else {
+						// Related record in database was not submitted, add to array for removal.
+						$unlink_rel[] = $record['id'];
+					}
+				}
+			}
+			else {
+				// No related records submitted. Giving doctrine an empty array/value removes all relations.
+				$unlink_rel = array();
+			}
+			
+			// Passing Doctrine an empty array or value unlinks all related records for the class.
+			// Therefore, this checks isset() instead of is_array() or !empty()
+			if (isset($unlink_rel)) {
+				$this->record->unlink($rel, $unlink_rel);
+			}
+
+		}
+
+		// Link the now filtered submitted relations to their classes.
+		// This is not done in foreach($relationships) because that doesn't work when
+		// there's nothing currently in the database.
+		if (isset($submitted_relations)) {
+			foreach ($submitted_relations as $relation_class => $ids) {
+				// Doctrine 1.0.3 assumes the array starts with an index of 0.
+				// This fixes our array keys so Doctrine doesn't barf on $ids.
+				sort($ids);
+				$this->record->link($relation_class, $ids);
+			}
 		}
 		
 		return array_shift($this->record->identifier());
@@ -628,14 +677,14 @@ class formz_doctrineDB implements formz_driver_interface {
 			$foreign_values = $foreign_class->findAll()->toArray();
 			
 			// grab the id field names for each half of this relation
-			$local_field = $relation->getLocalFieldName();
 			if ($rel_type == Formz::ONE) {
+				$local_field   = $relation->getLocalFieldName();
 				$foreign_field = $relation->getForeignFieldName();
 			} else {
+				$local_field   = $relation->getClass();
 				$foreign_field = $foreign_class->getIdentifier();
+				if (is_array($foreign_field)) continue;
 			}
-			
-			if (is_array($foreign_field)) continue;
 			
 			// guess which column to display in the select
 			$foreign_fields = $foreign_class->getColumnNames();
