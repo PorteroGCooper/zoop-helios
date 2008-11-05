@@ -273,7 +273,7 @@ class Formz {
 			$values = array();
 			
 			
-			foreach($relation['values'] as $item) {
+			foreach ($relation['values'] as $item) {
 				$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
 			}
 			

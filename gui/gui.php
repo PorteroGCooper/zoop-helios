@@ -480,18 +480,13 @@ class gui extends Smarty {
 		}
 		
 		switch ($scope) {
-			case 'app':
-				$this->_appCss[$path] = $path;
-				break;
 			case 'zoop':
 				$this->_zoopCss[$path] = $path;
 				break;
-		}
-		
-/*
-		$this->assign('zoop_css', $this->_zoopCss);
-		$this->assign('app_css', $this->_appCss);
-*/
+			case 'app':
+				$this->_appCss[$path] = $path;
+				break;
+			}
 	}
 	
 	/**
@@ -505,18 +500,13 @@ class gui extends Smarty {
 	 */
 	function add_js($path, $scope = 'app') {
 		switch ($scope) {
-			case 'app':
-				$this->_appJs[$path] = $path;
-				break;
 			case 'zoop':
 				$this->_zoopJs[$path] = $path;
 				break;
+			case 'app':
+				$this->_appJs[$path] = $path;
+				break;
 		}
-		
-/*
-		$this->assign('zoop_js', $this->_zoopJs);
-		$this->assign('app_js', $this->_appJs);
-*/
 	}
 	
 	

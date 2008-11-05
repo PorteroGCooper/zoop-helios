@@ -611,6 +611,8 @@ class formz_doctrineDB implements formz_driver_interface {
 				$foreign_field = $foreign_class->getIdentifier();
 			}
 			
+			if (is_array($foreign_field)) continue;
+			
 			// guess which column to display in the select
 			$foreign_fields = $foreign_class->getColumnNames();
 			
