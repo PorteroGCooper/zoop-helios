@@ -15,6 +15,14 @@
  *
  */
 class Formz {
+
+	/**
+	 * Constants for defining relationships.
+	 *
+	 */
+	const ONE = 0;
+	const MANY = 1;
+
 	/**
 	 * Formz database driver object.
 	 *
@@ -278,7 +286,7 @@ class Formz {
 			}
 			
 			// decide whether this should be single or multiple select
-			if ($relation['rel_type'] == 'many') {
+			if ($relation['rel_type'] == Formz::MANY) {
 				$fields[$key]['display']['type'] = 'multiple';
 			} else {
 				$fields[$key]['display']['type'] = 'select';

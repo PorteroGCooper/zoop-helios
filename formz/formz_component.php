@@ -1,7 +1,7 @@
 <?php
 /**
- * @group forms
- * @group components
+ * @ingroup forms
+ * @ingroup components
  */
  
 // Copyright (c) 2008 Supernerd LLC and Contributors.
