@@ -1,7 +1,4 @@
 <?php
-/**
-* @package gui
-*/
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -15,34 +12,79 @@
 require_once(dirname(__file__) . "/Smarty.class.php");
 
 /**
- * gui
+ * Gui is the Zoop framework View object.
+ *
+ * Gui wraps extends a Smarty object with Zoop Framework specific functionality and convenience
+ * methods.
  *
  * @uses Smarty
- * @package
+ * @ingroup gui
+ * @ingroup view
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @author Rick Gigger
  * @author John Lesueur
  * @author Richard Bateman
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class gui extends Smarty {
 
+	/**
+	 * Framework-level css includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_css
+	 */
 	var $_zoopCss = array();
+	
+	/**
+	 * Framework-level JavaScript includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_js
+	 */
 	var $_zoopJs = array();
+	
+	/**
+	 * Application-level css includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_css
+	 */
 	var $_appCss = array();
+	
+	/**
+	 * Application-level JavaScript includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_js
+	 */
 	var $_appJs = array();
+	
+	/**
+	 * Gui regions definitions.
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::addRegion
+	 * @see gui::removeRegion
+	 * @see gui::sortRegions
+	 */
 	var $_regions = array();
 
 	/**
-	 * gui
+	 * gui constructor
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function gui()
-	{
+	function gui() {
 		global $sGlobals;
 
 		$this->Smarty();
@@ -92,6 +134,7 @@ class gui extends Smarty {
 		$this->assign("APP_DIR", APP_DIR);
 		$this->assign("app_dir", APP_DIR);
 		
+		// Initialize the gui object's default regions and template files.
 		$this->init_regions();
 
 		if ($title = Config::get('app.title')) {
@@ -102,7 +145,7 @@ class gui extends Smarty {
 			$this->assign("public_web_path", $public_web_path);
 		}
 
-		// Add YUI reset and base styles:
+		// Add YUI reset and base styles
 		if (Config::get('zoop.gui.use_css_reset', false)) {
 			$this->add_css('zoopfile/gui/css/yui-reset-min.css', 'zoop');
 		}
@@ -285,15 +328,30 @@ class gui extends Smarty {
 	}
  
 	/**
-	 * generate
-	 * A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
+	 * Render a page based on default or preconfigured templates.
+	 *
+	 * If a template file is passed, assign that template file to the primary region of the page
+	 * before rendering the page.
+	 *
+	 * This file should be preferred over gui::display(), as this function displays the page content template
+	 * in context (all other regions are rendered as well). The following two snippets will display the same
+	 * message template, but the gui::generate() call will render any site specified header, sidebar, footer,
+	 * css and JavaScript files, etc.
+	 *
+	 * @code
+	 *   $gui->assign('message', 'Hello World.');
+	 *   $gui->generate('message.tpl');
+	 * @endcode
+	 *
+	 * @code
+	 *   $gui->assign('message', 'Hello World.');
+	 *   $gui->display('message.tpl');
+	 * @endcode
+	 * 
 	 *
 	 * @param string $primary_template (optional)
 	 *   If no template file is specified, will default to default file for default region.
-	 * @param array $params (optional)
-	 * @param mixed $inMenutpl
-	 * @param mixed $title
-	 * @param string $inCss
+	 * @param array $params (optional) (does nothing for now.
 	 * @access public
 	 * @return void
 	 */
@@ -305,39 +363,13 @@ class gui extends Smarty {
 	}
 
 	/**
-	 * generate
-	 * A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
-	 *
-	 * @param mixed $inBodytpl
-	 * @param mixed $inSidebartpl
-	 * @param mixed $inMenutpl
-	 * @param mixed $title
-	 * @param string $inCss
-	 * @access public
-	 * @return void
-	 */
-	 function old_generate($inBodytpl, $inSidebartpl, $inMenutpl, $title = app_default_title, $inCss = false) {
-		if ($inCss) {
-			$this->add_css($inCss);
-		}
-
-		$this->assign("title", $title);
-		$this->assign("bodytpl", $inBodytpl);
-		$this->assign("sidetpl", $inSidebartpl);
-		$this->assign("menutpl", $inMenutpl);
-/* 		$this->assign("css", $inCss); */
-
-		$this->display("main.tpl");
-	}
-
-	/**
 	 * assignbrowser
 	 *
 	 * @access public
 	 * @return void
+	 * @deprecated 2.0
 	 */
-	function assignbrowser()
-    	{
+	function assignbrowser() {
 		$browser = $_SERVER['HTTP_USER_AGENT'];
 		$ie6 = 'MSIE 6.0';
 		$ie55 = 'MSIE 5.5';
@@ -379,7 +411,13 @@ class gui extends Smarty {
 		return $content;
 	}
 	
-	
+	/**
+	 * Initialize regions. Called when the gui object is first created, sets up zoop or app
+	 * Defaults and template files.
+	 *
+	 * @access public-ish
+	 * @return void
+	 */
 	function init_regions() {
 		$sort = Config::get('zoop.gui.regions');
 		$templates = Config::get('zoop.gui.templates');
@@ -393,10 +431,17 @@ class gui extends Smarty {
 	}
 	
 	/**
-	 * Add a new region
+	 * Add a new region.
+	 *
+	 * Will use a default template file for the region if no template is speficied.
+	 *
+	 * Note: This new region will be appended to the list of regions, so it will display
+	 * below the footer if you don't do something about it. {@see gui::sortRegions}
 	 *
 	 * @param string $name Name of this region.
-	 * @param string $template_var for this region.
+	 * @param string $template_var for this region. (optional)
+	 * @return void
+	 * @todo Verify that templates actually exist instead of blindly accepting the names?
 	 */
 	function addRegion($name, $template_var = null) {
 		if (isset($this->_regions[$name])) {
@@ -414,7 +459,7 @@ class gui extends Smarty {
 	}
 	
 	/**
-	 * Remove a region (don't display on this page/zone/etc)
+	 * Remove a region (don't display on this page/zone/etc).
 	 *
 	 * @param mixed $name Region name or array of names.
 	 * @access public
@@ -456,15 +501,22 @@ class gui extends Smarty {
 		}
 	}
 	
-	function assignRegion($name, $template_var) {
+	/**
+	 * Assign a template file to a region.
+	 *
+	 * @param string $name Region name.
+	 * @param string $template_file
+	 * @access public
+	 * @return void
+	 */
+	function assignRegion($name, $template_file) {
 		if (!isset($this->_regions[$name])) {
 			trigger_error("Unknown region: $name");
 			return;
 		}
 		
-		$this->_regions[$name] = $template_var;
+		$this->_regions[$name] = $template_file;
 	}
-	
 	
 	/**
 	 * Add (require) a CSS file to be linked by the gui object.
@@ -511,14 +563,10 @@ class gui extends Smarty {
 		}
 	}
 	
-	
 	/**
 	 * __call magic method.
 	 *
-	 * This method simply passes off all calls to the current forms db driver (forms or doctrine).
-	 *
-	 * If the method doesn't exist on the forms db driver, it will try a magic setter as well.
-	 * i.e. ->setSortable(true) would call ->setParam('sortable',true)
+	 * This method assigns template files and content to regions.
 	 *
 	 * @access private
 	 */
@@ -543,5 +591,6 @@ class gui extends Smarty {
 			trigger_error($method . " method undefined on Gui object.");
 		}
 	}
+
 
 }
