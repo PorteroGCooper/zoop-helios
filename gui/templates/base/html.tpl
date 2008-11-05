@@ -14,4 +14,4 @@
 		</div>
 		{/foreach *}
 	</body>
-</html>
+</html>==== ORIGINAL VERSION gui/templates/base/html.tpl 122584841537679

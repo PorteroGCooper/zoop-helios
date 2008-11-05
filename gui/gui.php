@@ -27,8 +27,14 @@ require_once(dirname(__file__) . "/Smarty.class.php");
  * @author Richard Bateman
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class gui extends Smarty
-{
+class gui extends Smarty {
+
+	var $_zoopCss = array();
+	var $_zoopJs = array();
+	var $_appCss = array();
+	var $_appJs = array();
+	var $_regions = array();
+
 	/**
 	 * gui
 	 *
@@ -85,6 +91,8 @@ class gui extends Smarty
 
 		$this->assign("APP_DIR", APP_DIR);
 		$this->assign("app_dir", APP_DIR);
+		
+		$this->init_regions();
 
 		if ($title = Config::get('app.title')) {
 			$this->assign("title", $title);
@@ -269,6 +277,26 @@ class gui extends Smarty
 	 * generate
 	 * A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
 	 *
+	 * @param string $primary_template (optional)
+	 *   If no template file is specified, will default to default file for default region.
+	 * @param array $params (optional)
+	 * @param mixed $inMenutpl
+	 * @param mixed $title
+	 * @param string $inCss
+	 * @access public
+	 * @return void
+	 */
+	function generate($template_file = null, $params = array()) {
+		if ($template_file != null) {
+			$this->assignRegion(Config::get('zoop.gui.primary_region'), $template_file);
+		}
+		$this->display(Config::get('zoop.gui.templates.html'));
+	}
+
+	/**
+	 * generate
+	 * A WRAPPER TO MAKE USING THIS STYLE OF TEMPLATES SIMPLER
+	 *
 	 * @param mixed $inBodytpl
 	 * @param mixed $inSidebartpl
 	 * @param mixed $inMenutpl
@@ -277,14 +305,16 @@ class gui extends Smarty
 	 * @access public
 	 * @return void
 	 */
-	function generate($inBodytpl, $inSidebartpl, $inMenutpl, $title = app_default_title, $inCss = "styles.css")
-	{
+	 function old_generate($inBodytpl, $inSidebartpl, $inMenutpl, $title = app_default_title, $inCss = false) {
+		if ($inCss) {
+			$this->add_css($inCss);
+		}
 
 		$this->assign("title", $title);
 		$this->assign("bodytpl", $inBodytpl);
 		$this->assign("sidetpl", $inSidebartpl);
 		$this->assign("menutpl", $inMenutpl);
-		$this->assign("css", $inCss);
+/* 		$this->assign("css", $inCss); */
 
 		$this->display("main.tpl");
 	}
@@ -337,6 +367,178 @@ class gui extends Smarty
 	{
 		return $content;
 	}
+	
+	
+	function init_regions() {
+		$sort = Config::get('zoop.gui.regions');
+		$templates = Config::get('zoop.gui.templates');
+		foreach ($sort as $name) {
+			if (isset($templates[$name])) {
+				$this->addRegion($name, $templates[$name]);
+			} else {
+				trigger_error("No template file specified for region $name");
+			}
+		}
+	}
+	
+	/**
+	 * Add a new region
+	 *
+	 * @param string $name Name of this region.
+	 * @param string $template_var for this region.
+	 */
+	function addRegion($name, $template_var = null) {
+		if (isset($this->_regions[$name])) {
+			trigger_error("Region already defined: $name");
+			return;
+		}
+		if ($template_var == null) {
+			if (!$template_var = Config::get('zoop.gui.templates.' . $name)) {
+				trigger_error("No template file defined for $name region");
+				return;
+			}
+		}
+		
+		$this->_regions[$name] = $template_var;
+	}
+	
+	/**
+	 * Remove a region (don't display on this page/zone/etc)
+	 *
+	 * @param string $name region name
+	 * @access public
+	 */
+	function removeRegion($name) {
+		if (isset($this->_regions[$name])) {
+			unset($this->_regions[$name]);
+		} else {
+			trigger_error("Unable to remove region, region $name not defined.");
+		}
+	}
+	
+	/**
+	 * Set region order.
+	 *
+	 * @param mixed $sort A string (comma separated) or array to reorder regions.
+	 */
+	function sortRegions($sort) {
+		if (!is_array($sort)) {
+			$sort = explode(',', $sort);
+		}
+		
+		$old_regions = $this->_regions;
+		$this->_regions = array();
+		
+		foreach ($sort as $name) {
+			if (isset($old_regions[$name])) {
+				$this->_regions[$name] = $old_regions[$name];
+				unset($old_regions[$name]);
+			}
+			
+			// trigger error? they passed a name that doesn't exist.
+		}
+		
+		if (count($old_regions)) {
+			trigger_error('Some regions unsorted (too few region names passed).');
+		}
+	}
+	
+	function assignRegion($name, $template_var) {
+		if (!isset($this->_regions[$name])) {
+			trigger_error("Unknown region: $name");
+			return;
+		}
+		
+		$this->_regions[$name] = $template_var;
+	}
+	
+	
+	/**
+	 * Add (require) a CSS file to be linked by the gui object.
+	 *
+	 * @param string $path Path to CSS file
+	 * @param string $scope Scope of CSS file include.
+	 *   Determines include priority of this file (all zoop scope files will be included before app)
+	 * @access public
+	 * @return void
+	 */
+	function add_css($path, $scope = 'app') {
+		// for backwards compatability... add the public dir if it's just a file name.
+		if (strpos($path, '/') === false) {
+			$path = Config::get('zoop.gui.directories.public') . '/' . $path;
+		}
+		
+		switch ($scope) {
+			case 'app':
+				$this->_appCss[$path] = $path;
+				break;
+			case 'zoop':
+				$this->_zoopCss[$path] = $path;
+				break;
+		}
+		
+/*
+		$this->assign('zoop_css', $this->_zoopCss);
+		$this->assign('app_css', $this->_appCss);
+*/
+	}
+	
+	/**
+	 * Add (require) a JS file to be linked by the gui object.
+	 *
+	 * @param string $path Path to JS file
+	 * @param string $scope Scope of JS file include.
+	 *   Determines include priority of this file (all zoop scope files will be included before app)
+	 * @access public
+	 * @return void
+	 */
+	function add_js($path, $scope = 'app') {
+		switch ($scope) {
+			case 'app':
+				$this->_appJs[$path] = $path;
+				break;
+			case 'zoop':
+				$this->_zoopJs[$path] = $path;
+				break;
+		}
+		
+/*
+		$this->assign('zoop_js', $this->_zoopJs);
+		$this->assign('app_js', $this->_appJs);
+*/
+	}
+	
+	
+	/**
+	 * __call magic method.
+	 *
+	 * This method simply passes off all calls to the current forms db driver (forms or doctrine).
+	 *
+	 * If the method doesn't exist on the forms db driver, it will try a magic setter as well.
+	 * i.e. ->setSortable(true) would call ->setParam('sortable',true)
+	 *
+	 * @access private
+	 */
+	function __call($method, $args) {
+		if (substr($method, 0, 6) == 'assign') {
+			$param_name = substr($method, 6);
+
+			//lowercasify the first letter...
+			$param_name[0] = strtolower($param_name[0]);
+			
+			if (substr($param_name, -8) == 'Template') {
+				$param_name = substr($param_name, 0, -8);
+				$call_function = 'assignRegion';
+			} else {
+				$call_function = 'assign';
+			}
+			
+			array_unshift($args, $param_name);
+			return call_user_func_array(array($this, $call_function), $args);
+		}
+		else {
+			trigger_error($method . " method undefined on Gui object.");
+		}
+	}
 
 }
-?>

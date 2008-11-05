@@ -77,7 +77,7 @@ class CrudZone extends zone {
 		$this->form->setEditable(false);
 		
 		$this->form->guiAssign();
-		$gui->display('forms/formz.tpl');
+		$gui->generate('forms/formz.tpl');
 	}
 	
 	/**
@@ -151,7 +151,7 @@ class CrudZone extends zone {
 /* 		$this->form->addAction('cancel'); */
 		
 		$this->form->guiAssign();
-		$gui->display('forms/formz.tpl');
+		$gui->generate('forms/formz.tpl');
 	}
 
 	/**

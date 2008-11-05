@@ -1,4 +1,5 @@
 directories: 
+    public: public
     temp: %APP_TEMP_DIR%/gui
     base: %APP_DIR%/view/templates
     template: %APP_DIR%/view/templates
@@ -10,3 +11,21 @@ directories:
         - %ZOOP_DIR%/gui/plugins
 strip_html: false
 caching: 0
+
+# define page regions and default templates
+regions:
+    - header
+    - sidebar
+    - content
+    - footer
+primary_region: content
+
+# default template files for various uses...
+templates:
+    html: base/html.tpl
+    header: base/header.tpl
+    sidebar: base/sidebar.tpl
+    content: base/content.tpl
+    footer: base/footer.tpl
+    formz: forms/formz.tpl
+    message: base/message.tpl
