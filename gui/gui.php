@@ -102,6 +102,17 @@ class gui extends Smarty {
 			$this->assign("public_web_path", $public_web_path);
 		}
 
+		// Add YUI reset and base styles:
+		if (Config::get('zoop.gui.use_css_reset', false)) {
+			$this->add_css('zoopfile/gui/css/yui-reset-min.css', 'zoop');
+		}
+		if (Config::get('zoop.gui.use_css_base', false)) {
+			$this->add_css('zoopfile/gui/css/yui-base-min.css', 'zoop');
+		}
+
+		// Add some default (simple) stylesheet rules.
+		$this->add_css('zoopfile/gui/css/defaults.css', 'zoop');
+
 		$this->register_zcache();
 		$this->init_registrations();
 	}

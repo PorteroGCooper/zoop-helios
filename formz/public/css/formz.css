@@ -1,0 +1,18 @@
+/* Generic stylesheet for Zoop Formz component */
+
+.form-item {
+	margin-bottom: 1em;
+	clear: both;
+}
+.form-item label {
+	display: block;
+	font-weight: bold;
+}
+.form-item .required {
+	color: red;
+}
+.form-item .caption {
+	display: block;
+	font-size: .85em;
+	color: #888;
+}

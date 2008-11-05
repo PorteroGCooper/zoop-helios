@@ -2,7 +2,7 @@
 <html{* $xmlns *}{* $xml_lang *}>
 	<head>
 		<title>{$title}</title>
-		<base href="{$BASE_HREF}" />
+		<base href="{$BASE_HREF}/" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		{* css files=$css *}
 		{* js files=$js *}

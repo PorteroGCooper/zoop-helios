@@ -46,12 +46,12 @@ function smarty_function_resources($params, &$smarty) {
 		$appJs = (isset($smarty->_appJs)) ? $smarty->_appJs : array();
 		$js = array_merge($zoopJs, $appJs);
 	}
-	
+
 	// spit 'em out.
 	foreach($css as $file) {
-		echo '<link rel="stylesheet" type="text/css" src="/' . $file . "\" />\n";
+		echo '<link rel="stylesheet" type="text/css" href="' . $file . "\" />\n";
 	}
 	foreach($js as $file) {
-		echo '<script type="text/javascript" src="/' .$file . "\"></script>\n";
+		echo '<script type="text/javascript" src="' .$file . "\"></script>\n";
 	}
 }

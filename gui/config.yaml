@@ -12,6 +12,10 @@ directories:
 strip_html: false
 caching: 0
 
+# optionally, do a css reset and set base styles (thanks yui!)
+use_css_reset: 0
+use_css_base: 0
+
 # define page regions and default templates
 regions:
     - header

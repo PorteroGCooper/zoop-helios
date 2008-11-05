@@ -228,7 +228,7 @@ class CrudZone extends zone {
 		
 		$this->form->guiAssign();
 		$gui->assign('message', $message);
-		$gui->display('forms/formz.tpl');
+		$gui->generate('forms/formz.tpl');
 	}
 
 	/**

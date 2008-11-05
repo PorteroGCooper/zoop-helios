@@ -361,6 +361,7 @@ class Formz {
 	 */
 	function guiAssign($name = 'form') {
 		global $gui;
+		$gui->add_css('zoopfile/formz/css/formz.css', 'zoop');
 		$gui->assign($name, $this);
 	}
 	
