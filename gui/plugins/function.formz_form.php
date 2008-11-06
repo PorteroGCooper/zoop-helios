@@ -57,8 +57,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_action = (isset($form->callback) && $form->callback != '') ? ' action="' . $form->callback .'"' : '';
 		$form_classes[] = 'formz-editable';
 		$form_items[] = '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
-	}
-	else {
+	} else {
 		$form_items[] = '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
 	}
 	$i = -1;

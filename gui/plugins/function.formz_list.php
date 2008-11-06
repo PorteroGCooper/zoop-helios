@@ -86,6 +86,7 @@ function smarty_function_formz_list($params, &$smarty) {
 	$rows = array();
 	$data = $form->getRecords();
 	
+	$rowIndex = 0;	
 	foreach ($data as $record) {
 		$row = array();
 
@@ -136,9 +137,48 @@ function smarty_function_formz_list($params, &$smarty) {
 			
 			
 		}
-		$rows[] = "<tr>\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
+
+		$rowIndex % 2 == 0 ? $rowClass = 'even-row' : $rowClass = 'odd-row';
+		$rows[] = "<tr class=\"" . $rowClass . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
+		$rowIndex++;
 	}
 	
+	
+	// now add the form actions	
+//	if ($form->editable) {
+		$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">";
+		
+		$id_field = $form->getIdField();
+		$actions = $form->getActions();
+		foreach ($actions as $key => $action) {
+			if ($action['type'] == 'link') {
+				
+				$link = $action['link'];
+				$matches = array();
+				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
+				if (count($matches)) {
+					// replace with this table's id field, if applicable.
+					if ($matches[1] == 'id') $matches[1] = $id_field;
+					if (!isset($data[$matches[1]])) $data[$matches[1]] = '0';
+					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
+				} else {
+					// automatically tack on the id if there's no wildcard to replace
+					if (substr($link, -1) != '/') $link .= '/';
+					$action['link'] .= $data[$id_field];
+				}
+				$value = '<a href="' . $base_href . $zone_path . $link . '">' . $action['label'] . '</a>';
+		
+			} else {
+				$control = &getGuiControl('button', $key);
+				$control->setParams($action);			
+				$form_items[] = $control->render();
+			}
+		}
+
+		$actionRow .= $value . "</td>\n\t\t</tr>\n";
+		array_unshift($rows, $actionRow);
+		$rows[] = $actionRow;
+//	}
 
 	$html .= implode("\n\t\t", $rows);
 	$html .= "\t</tbody>\n</table>\n";
