@@ -564,6 +564,9 @@ class formz_doctrineDB implements formz_driver_interface {
 
 		// Loop through relation classes and get the actual related records.
 		foreach ($relationships as $rel => $foo) {
+
+			// skip this one if no relation records are returned.
+			if (!is_object($this->record->$rel)) continue;
 			
 			// Unlinking related records can happen on each loop. $unlink_rel needs to be *unset*
 			// in order to keep records from being unlinked when we don't want them to be.
