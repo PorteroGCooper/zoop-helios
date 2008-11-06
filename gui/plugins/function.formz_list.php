@@ -144,12 +144,12 @@ function smarty_function_formz_list($params, &$smarty) {
 	}
 	
 	
-	// now add the form actions	
-//	if ($form->editable) {
+	// now add the form list actions
+	$actions = $form->getListActions();
+	if (count($actions)) {
 		$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">";
 		
 		$id_field = $form->getIdField();
-		$actions = $form->getActions();
 		foreach ($actions as $key => $action) {
 			if ($action['type'] == 'link') {
 				
@@ -174,11 +174,22 @@ function smarty_function_formz_list($params, &$smarty) {
 				$form_items[] = $control->render();
 			}
 		}
-
 		$actionRow .= $value . "</td>\n\t\t</tr>\n";
-		array_unshift($rows, $actionRow);
-		$rows[] = $actionRow;
-//	}
+		
+		switch(Config::get('zoop.formz.list_action_position', 'both')) {
+			case 'top':
+				array_unshift($rows, $actionRow);
+				break;
+			case 'bottom':
+				$rows[] = $actionRow;				
+				break;
+			case 'both':
+			default:
+				array_unshift($rows, $actionRow);
+				$rows[] = $actionRow;				
+				break;
+		}
+	}
 
 	$html .= implode("\n\t\t", $rows);
 	$html .= "\t</tbody>\n</table>\n";

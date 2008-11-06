@@ -40,7 +40,24 @@ class Formz {
 	
 	var $fields = array();
 	var $order = array();
-	var $actions = array();
+
+	/**
+	 * Actions for this form (Actions are things like 'save' and 'cancel')
+	 *
+	 * @access private
+	 * @see Formz::addAction
+	 * @see Formz::getActions
+	 */
+	var $_formActions = array();
+
+	/**
+	 * Actions for the list view for this form (List actions might be 'add' or 'sort')
+	 *
+	 * @access private
+	 * @see Formz::addListAction
+	 * @see Formz::getListActions
+	 */
+	var $_formListActions = array();
 
 	var $errors = array();
 	var $editable = true;
@@ -476,6 +493,17 @@ class Formz {
 		}
 	}
 	
+	/**
+	 * Add an action to this form.
+	 *
+	 * Common form actions include 'save', 'add', 'delete' and 'cancel'.
+	 * Optionally, define a lot more things about the action. For example,
+	 * 'delete', 'save', and 'cancel' have predefined defaults. Other actions don't
+	 * know what to do magically, so you'll have to define them further.
+	 *
+	 * @param string $name Action name.
+	 * @param array $args Optional set of arguments for this action.
+	 */
 	function addAction($name, $args = array()) {
 		$defaults = array(
 			'label' => $name,
@@ -512,13 +540,22 @@ class Formz {
 		}
 		
 		$args = array_merge_recursive($defaults, $args);
-		$this->actions[$name] = $args;
+		$this->_formActions[$name] = $args;
 
 	}
 	
+	/**
+	 * Return this form's actions.
+	 *
+	 * If no actions have been defined, this will return a default set of actions
+	 * (namely 'save' and 'cancel')...
+	 *
+	 * @access public
+	 * @see Formz::addAction
+	 */
 	function getActions() {
-		if (count($this->actions)) {
-			return $this->actions;
+		if (count($this->_formActions)) {
+			return $this->_formActions;
 		}
 		else {
 			// set some default actions for this form.
@@ -526,14 +563,63 @@ class Formz {
 			$this->addAction('cancel');
 			
 			// now remove them from the form... odd, but allows code reuse.
-			$actions = $this->actions;
-			$this->actions = array();
+			$actions = $this->_formActions;
+			$this->_formActions = array();
 			
 			// return the actions we added.
 			return $actions;
 		}
 	}
 	
+	
+	/**
+	 * Add an action to the list view for this form.
+	 *
+	 * Common form actions include 'add' or 'filter'. In fact, 'add' might be the only
+	 * common list action. Who knows. We'll flesh this out further later...
+	 *
+	 * @param string $name Action name.
+	 * @param array $args Optional set of arguments for this action.
+	 */
+	function addListAction($name, $args = array()) {
+		$defaults = array(
+			'label' => $name,
+		);
+		if (isset($args['link'])) $args['type'] = 'link';
+		
+		// capitalize default label...
+		$defaults['label'] = Formz::format_label($defaults['label']);
+		$defaults['value'] = $defaults['label'];
+		
+		switch (strtolower($name)) {
+			case 'add':
+				if (!isset($defaults['link'])) $defaults['link'] = 'create';
+				if (!isset($defaults['type'])) $defaults['type'] = 'link';
+				break;
+			default:
+				$defaults['type'] = 'button';
+				break;
+		}
+		
+		switch (strtolower($name)) {
+		}
+		
+		$args = array_merge_recursive($defaults, $args);
+		$this->_formListActions[$name] = $args;
+	}
+	
+	/**
+	 * Return this form's list view actions.
+	 *
+	 * Unlike Formz::getActions, if no actions have been defined, this function will
+	 * return an empty set of actions.
+	 *
+	 * @access public
+	 * @see Formz::addListAction
+	 */
+	function getListActions() {
+		return $this->_formListActions;
+	}
 	
 	/**
 	 * Returns true if this Formz does timestamp magick.
