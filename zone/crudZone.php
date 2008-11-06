@@ -22,18 +22,44 @@ class CrudZone extends zone {
 
 	var $tableName;
 	var $form;
+	
+	// TODO: make this more flexible: allow fieldname to do "find by..."
+	var $indexFieldname = '';
 
 	// this should be in an init function or something :-/
 	var $zoneParamNames = array('record_id');
 	var $wildcards = '';
 
+	/**
+	 * Default URL aliases for CRUD actions. This lets you use 'zonename/foo/edit' instead of
+	 * 'zonename/foo/update', for example.
+	 *
+	 * Override this in an extending zone if you want anything other than the default set:
+	 *
+	 * @code
+	 *   zone/
+	 *   zone/create
+	 *   zone/1/edit
+	 *   zone/1/delete
+	 * @endcode
+	 *
+	 * @see zone::addAlias
+	 */
 	var $Aliases = array(
 		'create' => 'new/update',
 		'%id%/edit' => '%id%/update',
 		'%id%/delete' => '%id%/destroy',
 	);
 
-
+	/**
+	 * Crud zone constructor.
+	 *
+	 * Add all aliases, initialize Formz object for the zone's table/model.
+	 *
+	 * Be sure to call parent::__construct() if you provide a constructor in any zone extending
+	 * CrudZone.
+	 *
+	 */
 	function __construct() {
 		if (isset($this->Aliases) && count($this->Aliases)) {
 			$this->addAliases($this->Aliases);
@@ -42,7 +68,18 @@ class CrudZone extends zone {
 		$this->form = new Formz($this->tableName);
 	}
 
-
+	/**
+	 * CrudZone index page.
+	 *
+	 * Provides 'Read' functionality of CRUD. This zone has two functions: If an identifier is
+	 * passed to the zone (first and only ZoneParam), display that record. This is the equivalent
+	 * of CRUD/record_id/read.
+	 *
+	 * The second function of the index page is to provide a list view if a record id isn't provided.
+	 * This is the equivalent of CRUD/(all)/read.
+	 *
+	 * @todo: remove the " if $record_id = 'new'" chunk...
+	 */
 	function pageIndex() {
 		global $gui;
 		
@@ -81,36 +118,6 @@ class CrudZone extends zone {
 	}
 	
 	/**
-	 * Page handler for CRUD Create action.
-	 *
-	 * Displays an empty edit form.
-	 *
-	 * @see postCreate()
-	 * @access public
-	 * @return void
-	 **/		
-/*
-	function pageCreate() {
-		echo "Record: " . $this->getZoneParam('record_id') . "<br />";
-		die('GET create');
-	}
-*/
-
-	/**
-	 * POST handler for CRUD Create action.
-	 *
-	 * @see pageCreate()
-	 * @access public
-	 * @return void
-	 **/
-/*
-	function postCreate() {
-		echo "Record: " . $this->getZoneParam('record_id') . "<br />";
-		die('POST create');
-	}
-*/
-	
-	/**
 	 * Page handler for CRUD Read action.
 	 *
 	 * Displays the requested record.
@@ -131,7 +138,7 @@ class CrudZone extends zone {
 	 * @see postUpdate()
 	 * @access public
 	 * @return void
-	 **/		
+	 **/
 	function pageUpdate() {
 		global $gui;
 		
@@ -172,34 +179,6 @@ class CrudZone extends zone {
 	
 		BaseRedirect( $this->makeBasePath(), HEADER_REDIRECT );
 	}
-	
-	/**
-	 * Page handler for CRUD Delete action.
-	 *
-	 * Displays a 'delete' confirmation page.
-	 *
-	 * @see postDelete()
-	 * @access public
-	 * @return void
-	 **/		
-/*
-	function pageDelete() {
-
-	}
-*/
-
-	/**
-	 * POST handler for CRUD Delete action.
-	 *
-	 * @see pageDelete()
-	 * @access public
-	 * @return void
-	 **/
-/*
-	function postDelete() {
-
-	}
-*/
 	
 	/**
 	 * Page handler for CRUD Destroy action.
