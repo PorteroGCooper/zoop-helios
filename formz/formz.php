@@ -270,6 +270,22 @@ class Formz {
 			}
 		}
 		
+		// Don't show the "deleted" field...
+		if ($this->isSoftDeletable()) {
+			if (isset($fields['deleted'])) {
+
+				// TODO not sure whether this should hide by default?
+				// unset($fields['deleted']);
+				
+				if (!isset($fields['deleted']['formshow'])) {
+					$fields['deleted']['formshow'] = false;
+				}
+				if (!isset($fields['deleted']['listshow'])) {
+					$fields['deleted']['listshow'] = false;
+				}
+			}
+		}
+		
 		// mix in info from foreign fields
 		foreach ($this->getRelations() as $key => $relation) {
 			
@@ -519,9 +535,26 @@ class Formz {
 	}
 	
 	
+	/**
+	 * Returns true if this Formz does timestamp magick.
+	 *
+	 * @access public
+	 * @return bool True if this is timestampable.
+	 */
 	function isTimestampable() {
 		$this->timestampable = $this->driver->isTimestampable();
 		return $this->timestampable;
+	}
+	
+	/**
+	 * Returns true if this Formz uses soft delete.
+	 *
+	 * @access public
+	 * @return bool True if this is soft deletable.
+	 */
+	function isSoftDeletable() {
+		$this->softdeletable = $this->driver->isSoftDeletable();
+		return $this->softdeletable;
 	}
 	
 	/**

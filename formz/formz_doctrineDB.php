@@ -28,6 +28,15 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	var $table;
 	var $tablename;
+	
+	/**
+	 * True if current form is soft deletable
+	 *
+	 * @var bool
+	 * @access private
+	 */
+	var $softdeletable = false;
+
 
 	/**
 	 * doctrineDB constructor.
@@ -724,10 +733,26 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $ret;
 	}
 	
-	
+	/**
+	 * Returns true if this Formz does timestamp magick.
+	 *
+	 * @access public
+	 * @return bool True if this is timestampable.
+	 */
 	function isTimestampable() {
 		return $this->table->hasTemplate('Doctrine_Template_Timestampable');
 	}
+	
+	/**
+	 * Returns true if this table uses soft delete.
+	 *
+	 * @access public
+	 * @return bool True if this is soft deletable.
+	 */
+	function isSoftDeletable() {
+		return $this->table->hasTemplate('Doctrine_Template_SoftDelete');
+	}
+	
 	
 
 	/**

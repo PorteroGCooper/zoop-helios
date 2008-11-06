@@ -93,6 +93,16 @@ class Formz_FormDB implements formz_driver_interface {
 	 */
 	var $timestampable = false;
 	
+	/**
+	 * True if current form is soft deletable
+	 *
+	 * @var bool
+	 * @access private
+	 */
+	var $softdeletable = false;
+	
+	
+	
 	
 	/**
 	 * FormDB constructor.
@@ -195,6 +205,17 @@ class Formz_FormDB implements formz_driver_interface {
 	 */
 	function isTimestampable() {
 /* 		trigger_error('isTimestampable() not implemented in formDB formz driver'); */
+		return false;
+	}
+	
+	/**
+	 * Is this table/form/relation soft deletable?
+	 *
+	 * @todo implement this function
+	 * @access public
+	 * @return bool
+	 */
+	function isSoftDeletable() {
 		return false;
 	}
 	

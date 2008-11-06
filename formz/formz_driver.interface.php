@@ -114,8 +114,13 @@ interface formz_driver_interface {
 	 */
 	function isTimestampable();
 
-
-
+	/**
+	 * Is this table/form/relation timestampable?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isSoftDeletable();
 
 
 
