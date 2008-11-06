@@ -32,6 +32,7 @@ function smarty_function_formz_list($params, &$smarty) {
 	if (!isset($params['form'])) return;
 	$form = $params['form'];
 
+	$use_softdelete = $form->isSoftDeletable();
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$tablename = strtolower($form->tablename);
 	$base_href = $smarty->get_template_vars('BASE_HREF');
@@ -86,14 +87,15 @@ function smarty_function_formz_list($params, &$smarty) {
 	$rows = array();
 	$data = $form->getRecords();
 	
-	$rowIndex = 0;	
+	$rowIndex = 0;
 	foreach ($data as $record) {
 		$row = array();
-
-	
+		$row_classes = array();
 		$id = $record[$id_field];
 		
-		foreach ($field_names as $field) {
+		if ($use_softdelete && isset($record['deleted']) && $record['deleted']) $row_classes[] = 'deleted';
+		
+		foreach ($field_names as $field) {		
 			if (isset($record[$field])) {
 				$value = $record[$field];
 			} else if (isset($fields[$field]['display']['default'])) {
@@ -132,14 +134,13 @@ function smarty_function_formz_list($params, &$smarty) {
 			}
 */
 
-			
 			$row[] = '<td>' . $value . '</td>';
-			
-			
 		}
 
-		$rowIndex % 2 == 0 ? $rowClass = 'even-row' : $rowClass = 'odd-row';
-		$rows[] = "<tr class=\"" . $rowClass . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
+		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even-row' : 'odd-row';
+		$class = (count($row_classes)) ? ' class="' . implode(' ', $row_classes) . '"' : '';
+		
+		$rows[] = "<tr" . $class . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
 		$rowIndex++;
 	}
 	
