@@ -28,6 +28,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	var $table;
 	var $tablename;
+	var $query = null;
 	
 	/**
 	 * True if current form is soft deletable
@@ -500,7 +501,11 @@ class formz_doctrineDB implements formz_driver_interface {
 		if ($limit !== false)
 			$this->setParam("limit", $limit);
 */
-		return $this->table->findAll()->toArray();
+		if ($this->query) {
+			return $this->query->execute();
+		} else {
+			return $this->table->findAll()->toArray();
+		}
 	}
 
 	/**
@@ -756,10 +761,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->table->hasTemplate('Doctrine_Template_SoftDelete');
 	}
 	
-	
-
 	/**
-	 * sort
 	 * tells the getRecords function a sorting to get the records in from the database.
 	 *
 	 * @param string $fieldname fieldname to sort on
@@ -767,10 +769,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function sort($fieldname, $direction = "ASC")
-	{
-		$this->table->sort = $fieldname;
-		$this->table->direction = $direction;
+	function sort($fieldname, $direction = "ASC") {
+		$this->query = $this->table->createQuery();
+		//$this->query->orderBy("$fieldname $direction");
+		$this->query->orderBy($fieldname);
 	}
 
 	/**
@@ -794,8 +796,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	{
 		return $this->tablename;
 	}
-	
-	
 	
 	
 }

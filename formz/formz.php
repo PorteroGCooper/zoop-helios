@@ -706,6 +706,18 @@ class Formz {
 	}
 	
 	/**
+	 * tells the driver to sort the results by fieldname
+	 *
+	 * @param string $fieldname fieldname to sort on
+	 * @param string $direction either ASC or DESC
+	 * @access public
+	 * @return void
+	 */
+	function sort($fieldname, $direction = "ASC") {
+		$this->driver->sort($fieldname, $direction);
+	}
+
+	/**
 	 * Convert a DB column key into a decent label.
 	 *
 	 * @param string $str Label to convert
