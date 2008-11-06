@@ -25,5 +25,3 @@
  }
 
  /* vim: set expandtab: */
-
-?>
