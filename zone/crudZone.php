@@ -88,33 +88,73 @@ class CrudZone extends zone {
 			$this->responsePage404();
 			return;
 		}
+
+		if ($record_id) {
+			$this->detailRecord($record_id);
+		} else {
+			$this->listRecords();
+		}
+
+	}
+
+	/**
+	 * Set the editable flag of the form. 
+	 * Assign the form to the gui under a given name, default 'form'
+	 * Generate the gui using given template default to standard formz template 
+	 * 
+	 * @param mixed $name 
+	 * @param string $template 
+	 * @param mixed $editable 
+	 * @access public
+	 * @return void
+	 */
+	function loadAndGenerateForm($name = 'form', $template = 'forms/formz.tpl', $editable = false) {
+		global $gui;
+		$this->form->setEditable($editable);
+		$this->form->guiAssign($name);
+		$gui->generate($template);
+	}
+
+
+	/**
+	 * Creates a form object for a given record_id 
+	 * 
+	 * @param mixed $record_id 
+	 * @access public
+	 * @return void
+	 */
+	function detailRecord($record_id) {
 		if ($record_id == 'new') {
 			$this->form->getRecord();
 		} else if ($record_id) {
 			$this->form->getRecord($record_id);
 		}
-		else {
-			$this->form->getRecords();
-			$this->form->setFieldListlink('id', '%id%/read');
-			
-			// add a fake column called "edit", give it an edit link...
-			$this->form->setFieldFromArray('edit', array(
-				// the %id% will automatically be replaced by the contents of the record id field
-				'listlink' => '%id%/update',
-				'display' => array('label' => '', 'override' => 'edit')
-			));
-			// add a fake column called "delete", give it a destroy link...
-			$this->form->setFieldFromArray('delete', array(
-				// the %id% will automatically be replaced by the contents of the record id field
-				'listlink' => '%id%/destroy',
-				'display' => array('label' => '', 'override' => 'delete')
-			));
-		}
+		$this->loadAndGenerateForm();
+	}
+
+	/**
+	 * Creates a form object for a list and sets some sane defaults 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function listRecords() {
+		$this->form->getRecords();
+		$this->form->setFieldListlink('id', '%id%/read');
 		
-		$this->form->setEditable(false);
-		
-		$this->form->guiAssign();
-		$gui->generate('forms/formz.tpl');
+		// add a fake column called "edit", give it an edit link...
+		$this->form->setFieldFromArray('edit', array(
+			// the %id% will automatically be replaced by the contents of the record id field
+			'listlink' => '%id%/update',
+			'display' => array('label' => '', 'override' => 'edit')
+		));
+		// add a fake column called "delete", give it a destroy link...
+		$this->form->setFieldFromArray('delete', array(
+			// the %id% will automatically be replaced by the contents of the record id field
+			'listlink' => '%id%/destroy',
+			'display' => array('label' => '', 'override' => 'delete')
+		));
+		$this->loadAndGenerateForm();
 	}
 	
 	/**

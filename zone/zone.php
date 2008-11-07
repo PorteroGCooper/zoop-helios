@@ -1270,8 +1270,7 @@ class zone
 	}
 
 	/**
-	 * canonicalizeTemplate 
-	 * Based on zoneName provide a canonical template name
+	 * Provide a path to a template based on a zoneName (and location) 
 	 * 
 	 * @param mixed $tplName 
 	 * @access public
@@ -1282,8 +1281,11 @@ class zone
 		if ( substr ( $tplName, 0, 1 ) == "/" )
 			return substr ( $tplName, 1 );
 
-		if ( !isset ( $this->templateBase ) )
-			$this->templateBase = "zones/" . substr ( strstr ( get_class ( $this ), '_' ), 1 );
+		if ( !isset ( $this->templateBase ) ) {
+			$class = strstr ( get_class ( $this ), '_' ) ; // Class with zone_ stripped off.
+			$dir = str_replace('_', '/', $class);
+			$this->templateBase = "zones/" . substr ($dir, 1 );
+		}
 		return $this->templateBase . '/' . $tplName;
 	}
 
