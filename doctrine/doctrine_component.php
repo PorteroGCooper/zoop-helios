@@ -22,18 +22,60 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}/
  */
 class component_doctrine extends component {
+
 	function init() {
-		$doctrinePath = Config::get('zoop.doctrine.include_path');
-		require_once(($doctrinePath ? "$doctrinePath/" : '') . 'Doctrine.php'); 
+		$include_path = Config::get('zoop.doctrine.include_path');
+
+		require_once(($include_path ? $include_path . '/' : '') . 'Doctrine.php'); 
 		spl_autoload_register(array('Doctrine', 'autoload'));
 	}
-	
-	function run() {
-		$dsn = Config::get('zoop.doctrine.dsn');
-		$model_dir = Config::get('zoop.doctrine.model_dir');
-		Doctrine_Manager::connection($dsn);
 
-		Doctrine_Manager::getInstance()->setAttribute('model_loading', 'conservative');
-		Doctrine::loadModels($model_dir); // This call will not require the found .php files
+	/**
+	 * Loads all database connections, sets attributes on the connections, and loads models.
+	 * 
+	 * Doctrine lazy-connects to databases so loading all databases in Doctrine is not a
+	 * significant overhead.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function run() {
+		$connections = Config::get('zoop.doctrine.connections', array());
+		
+		$connection_name = Config::get('zoop.doctrine.active_connection');
+
+		if (Config::get('zoop.doctrine.dsn')) {
+			// The default active_connection is set to '_dsn_connection' in zoop/doctrine/config.yaml
+			// Unless overridden in APP_DIR/config.yaml this connection will be the active connection.
+			$connections['_dsn_connection']['dsn'] = Config::get('zoop.doctrine.dsn');
+			
+			/*
+			 * From the Doctrine Documentation:
+			 * It is worth noting that for certain databases (Firebird, MySql and PostgreSQL) setting the
+			 * charset option [in model definitions] might not be enough for Doctrine to return data
+			 * properly. For those databases, users are advised to also use the setCharset function of
+			 * the database connection.
+			 */
+			$connections['_dsn_connection']['charset'] = Config::get('zoop.doctrine.charset');
+		}
+		
+		$manager = Doctrine_Manager::getInstance();
+		
+		foreach ($connections as $conn_name => $connection) {
+			if ( ! isset($connection['dsn'])) continue;
+			
+			if (empty($connection['charset'])) {
+				$manager->connection($connection['dsn'], $conn_name);
+			} else {
+				$manager->connection($connection['dsn'], $conn_name)->setCharset($connection['charset']);
+			}
+		}
+		
+		$manager->setCurrentConnection($connection_name);
+		$manager->setAttribute('model_loading', Config::get('zoop.doctrine.model_loading'));
+		// DQL Callbacks automatically adds SoftDelete checking to queries.
+		$manager->setAttribute('use_dql_callbacks', true);
+		
+		Doctrine::loadModels(Config::get('zoop.doctrine.model_dir')); // This call will not require the found .php files
 	}
 }

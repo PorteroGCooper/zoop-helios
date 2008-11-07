@@ -1,2 +1,9 @@
-dsn:
+#include_path:
 model_dir: %APP_DIR%/model/doctrineModels
+model_loading: conservative
+dsn:
+active_connection: _dsn_connection
+#connections:
+#    default_connection:
+#        dsn:
+#        charset:

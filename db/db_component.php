@@ -31,16 +31,16 @@ class component_db extends component
 	 * @return void
 	 */
 	function init() {
-		$config = Config::get('zoop.db');
-		$rdbms = substr($config['dsn'], 0, strpos($config['dsn'], ":"));
-		include($this->getBasePath() . "/" . $rdbms . ".php");
-		include($this->getBasePath() . "/db_utils.php");
+		$dsn = Config::get('zoop.db.connections.' . Config::get('zoop.db.active_connection') . '.dsn', Config::get('zoop.db.dsn'));
+		
+		$rdbms = parse_url($dsn, PHP_URL_SCHEME);
+		include($this->getBasePath() . '/' . $rdbms . '.php');
+		include($this->getBasePath() . '/db_utils.php');
 	}
 	
 	function getIncludes() {
 		$includes = array();
-		$config = Config::get('zoop.db');
-		if(class_exists('PDO') && $config['use_pdo'] ) {
+		if(class_exists('PDO') && Config::get('zoop.db.use_pdo')) {
 			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
 		} else	{
 			$includes['db'] = 'DB.php';
