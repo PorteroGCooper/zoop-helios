@@ -112,7 +112,17 @@ class CrudZone extends zone {
 		global $gui;
 
 		if (!$template) {
+			// grab the default formz template
 			$template = Config::get('zoop.gui.templates.formz');
+/*
+			// check if there's a template for rendering this specific object.
+			$template = Config::get('zoop.gui.crud_read_templates.objects.' . strtolower($this->tableName), $template);
+			
+			// check if there's a template for rendering formz in this zone.
+			$parents = array_reverse(array_merge(array($this->getName()), $this->getAncestors()));
+			array_shift($parents);
+			$template = Config::get('zoop.gui.crud_read_templates.zones.' . implode('.', $parents), $template);
+*/
 		}
 		$this->form->setEditable($editable);
 		$this->form->guiAssign($name);

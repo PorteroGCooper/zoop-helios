@@ -142,6 +142,10 @@ class Formz {
 		return $this->record_id;
 	}
 	
+	function getDoctrineRecord($id = false) {
+		return $this->driver->getDoctrineRecord($id);
+	}
+	
 	function getRecords($search = false) {
 /* 		die_r($this->driver->getRecords($search)); */
 		return $this->driver->getRecords($search);

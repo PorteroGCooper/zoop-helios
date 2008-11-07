@@ -530,6 +530,15 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 		return $id;
 	}
+	
+	function getDoctrineRecord($id = false) {
+		if ($id && isset($this->record)) {
+			return $this->record;
+		} else {
+			$this->getRecord($id);
+			return $this->record;
+		}
+	}
 
 	/**
 	 * Save a record.
