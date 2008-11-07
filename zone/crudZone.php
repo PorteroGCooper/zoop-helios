@@ -90,9 +90,9 @@ class CrudZone extends zone {
 		}
 
 		if ($record_id) {
-			$this->detailRecord($record_id);
+			$this->_detailRecord($record_id);
 		} else {
-			$this->listRecords();
+			$this->_listRecords();
 		}
 
 	}
@@ -108,13 +108,16 @@ class CrudZone extends zone {
 	 * @access public
 	 * @return void
 	 */
-	function loadAndGenerateForm($name = 'form', $template = 'forms/formz.tpl', $editable = false) {
+	function _loadAndGenerateForm($name = 'form', $template = null, $editable = false) {
 		global $gui;
+
+		if (!$template) {
+			$template = Config::get('zoop.gui.templates.formz');
+		}
 		$this->form->setEditable($editable);
 		$this->form->guiAssign($name);
 		$gui->generate($template);
 	}
-
 
 	/**
 	 * Creates a form object for a given record_id 
@@ -123,13 +126,13 @@ class CrudZone extends zone {
 	 * @access public
 	 * @return void
 	 */
-	function detailRecord($record_id) {
+	function _detailRecord($record_id) {
 		if ($record_id == 'new') {
 			$this->form->getRecord();
 		} else if ($record_id) {
 			$this->form->getRecord($record_id);
 		}
-		$this->loadAndGenerateForm();
+		$this->_loadAndGenerateForm();
 	}
 
 	/**
@@ -138,7 +141,7 @@ class CrudZone extends zone {
 	 * @access public
 	 * @return void
 	 */
-	function listRecords() {
+	function _listRecords() {
 		$this->form->getRecords();
 		$this->form->setFieldListlink('id', '%id%/read');
 		
@@ -154,7 +157,7 @@ class CrudZone extends zone {
 			'listlink' => '%id%/destroy',
 			'display' => array('label' => '', 'override' => 'delete')
 		));
-		$this->loadAndGenerateForm();
+		$this->_loadAndGenerateForm();
 	}
 	
 	/**

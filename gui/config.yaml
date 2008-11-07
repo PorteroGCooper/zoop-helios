@@ -17,11 +17,7 @@ use_css_reset: 0
 use_css_base: 0
 
 # define page regions and default templates
-regions:
-    - header
-    - sidebar
-    - content
-    - footer
+regions: [ header, sidebar, content, footer ]
 primary_region: content
 
 # default template files for various uses...

@@ -441,7 +441,6 @@ class zone
 		$gui->assign('ZONE_PATH', $this->getZonePath());
 	}
 
-
 	/**
 	 * This function will either run the page/post function, or will execute the child zone,
 	 * depending on what is found in the token of the url passed
@@ -783,8 +782,6 @@ class zone
 		}
 		return false;
 	}
-
-
 
 	/**
 	 * _xmlrpcDispatch
@@ -1150,11 +1147,13 @@ class zone
 	/**
 	 * Returns an app path to this zone
 	 *
+	 * use this function from now on, until we fix the function above 
+	 *
 	 * @param int $depth
 	 * @access public
 	 * @return string
 	 */
-	function getZonePath($depth = 0) { //use this function from now on, until we fix the function above {
+	function getZonePath($depth = 0) { 
 		global $gZoneUrls;
 		return $gZoneUrls[$depth];
 	}
@@ -1352,8 +1351,7 @@ class zone
 	private function _verifyRequiredParams($z) {
 		$zone = substr ( strstr ( get_class ( $this ), '_' ), 1 );
 		$params = $this->getZoneParamNames();
-		foreach($params as $name)
-		{
+		foreach($params as $name) {
 			if(!isset($z[$name]))
 				trigger_error("missing param $name for makepath of zone $zone");
 		}
@@ -1519,8 +1517,6 @@ class zone
 			return $path_alias;
 		}
 	}
-	
-	
 	
 	
 }
