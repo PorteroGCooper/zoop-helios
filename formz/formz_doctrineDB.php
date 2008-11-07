@@ -715,7 +715,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 			// then grab the first non-id field
 			if (!isset($label_field)) {
-				foreach($foreign_columns as $col_name) {
+				foreach($foreign_fields as $col_name) {
 					if ($col_name != $foreign_field) {
 						$label_field = $col_name;
 						break;
