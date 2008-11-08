@@ -230,7 +230,8 @@ class CrudZone extends zone {
 			$this->form->destroyRecord($id);
 		}
 	
-		BaseRedirect( $this->makeBasePath(), HEADER_REDIRECT );
+		BaseRedirect( substr($this->getZonePath(), 0, strrpos($this->getZonePath(), '/') ), HEADER_REDIRECT );
+		//BaseRedirect( $this->makeBasePath(), HEADER_REDIRECT );
 	}
 	
 	/**

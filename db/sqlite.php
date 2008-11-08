@@ -17,22 +17,20 @@
 * @package db
 * @subpackage mysql
 */
-class component_db extends component
-{
-	function init() {
-		if( Config::get('zoop.db.dsn') ) {
-			$GLOBALS['defaultdb'] = &new database( Config::get('zoop.db.dsn') );
-			sqlite_create_function($defaultdb->db->connection, 'age', 'sqlite_age', 1);
-			sqlite_create_function($defaultdb->db->connection, 'date_part', 'sqlite_date_part', 2);
-			sqlite_create_function($defaultdb->db->connection, 'substr', 'sqlite_substr', 2);
-			sqlite_create_function($defaultdb->db->connection, 'rand', 'sqlite_rand', 0);
-			if(sqlite_last_error($defaultdb->db->connection)) {
-				echo(sqlite_error_string(sqlite_error()));
-			}
+function sql_connect() {
+	if ((!isset($GLOBALS['defaultdb']) || $GLOBALS['defaultdb'] == NULL) && Config::get('zoop.db.dsn') ) {
+		$GLOBALS['defaultdb'] = &new database( Config::get('zoop.db.dsn') );
+
+		$defaultdb =& $GLOBALS['defaultdb'];
+		sqlite_create_function($defaultdb->db->connection, 'age', 'sqlite_age', 1);
+		sqlite_create_function($defaultdb->db->connection, 'date_part', 'sqlite_date_part', 2);
+		sqlite_create_function($defaultdb->db->connection, 'substr', 'sqlite_substr', 2);
+		sqlite_create_function($defaultdb->db->connection, 'rand', 'sqlite_rand', 0);
+		if(sqlite_last_error($defaultdb->db->connection)) {
+			echo(sqlite_error_string(sqlite_error()));
 		}
 	}
 }
-
 
 function sqlite_age($date)
 {
@@ -188,6 +186,7 @@ function sqlite_rand()
 
 	function sql_fetch_map($inQuery, $inKeyField)
 	{
+		sql_connect();
 		global $defaultdb;
 		return $defaultdb->fetch_map($inQuery,$inKeyField);
 	}

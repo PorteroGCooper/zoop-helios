@@ -31,6 +31,14 @@ class formz_doctrineDB implements formz_driver_interface {
 	var $query = null;
 	
 	/**
+	 * Values that are fixed for both querying and Create and Update 
+	 * 
+	 * @var array
+	 * @access public
+	 */
+	var $fixedValues = array();
+
+	/**
 	 * True if current form is soft deletable
 	 *
 	 * @var bool
@@ -464,8 +472,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function required($fieldname, $value = true)
-	{
+	function required($fieldname, $value = true) {
 		$this->setValidationOption($fieldname, 'required',  $value);
 	}
 
@@ -501,8 +508,8 @@ class formz_doctrineDB implements formz_driver_interface {
 		if ($limit !== false)
 			$this->setParam("limit", $limit);
 */
-		if ($this->query) {
-			return $this->query->execute();
+		if ($this->query || $this->getFixedValues()) {
+			return $this->applyFixedValuesToQuery()->execute();
 		} else {
 			return $this->table->findAll()->toArray();
 		}
@@ -522,7 +529,14 @@ class formz_doctrineDB implements formz_driver_interface {
 			$classname  = $this->tablename;
 			$classname[0] = strtoupper($classname[0]);
 			$this->record = new $classname();
-		} else if ($record = Doctrine::getTable($this->tablename)->find($id)) {
+			if ($this->getFixedValues()) {
+				$this->record->fromArray($this->getFixedValues());
+			}
+		} elseif ($this->getFixedValues() ){
+			$record = $this->applyFixedValuesToQuery()->fetchOne();
+			$this->type = 'record';
+			$this->record = $record;
+		} elseif ($record = Doctrine::getTable($this->tablename)->find($id)) {
 			$this->type = 'record';
 			$this->record = $record;
 		} else {
@@ -565,6 +579,10 @@ class formz_doctrineDB implements formz_driver_interface {
 		if (isset($values['relations'])) {
 			$submitted_relations = $values['relations'];
 			unset($values['relations']);
+		}
+
+		if ($this->getFixedValues()) {
+			$values = array_merge($values, $this->getFixedValues());
 		}
 		
 		foreach ($values as $key => $val) {
@@ -618,14 +636,14 @@ class formz_doctrineDB implements formz_driver_interface {
 		// Link the now filtered submitted relations to their classes.
 		// This is not done in foreach($relationships) because that doesn't work when
 		// there's nothing currently in the database.
-		if (isset($submitted_relations)) {
-			foreach ($submitted_relations as $relation_class => $ids) {
-				// Doctrine 1.0.3 assumes the array starts with an index of 0.
-				// This fixes our array keys so Doctrine doesn't barf on $ids.
-				sort($ids);
-				$this->record->link($relation_class, $ids);
-			}
-		}
+		//if (isset($submitted_relations)) {
+			//foreach ($submitted_relations as $relation_class => $ids) {
+				//// Doctrine 1.0.3 assumes the array starts with an index of 0.
+				//// This fixes our array keys so Doctrine doesn't barf on $ids.
+				//sort($ids);
+				//$this->record->link($relation_class, $ids);
+			//}
+		//}
 		
 		return array_shift($this->record->identifier());
 	}
@@ -779,9 +797,63 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 */
 	function sort($fieldname, $direction = "ASC") {
-		$this->query = $this->table->createQuery();
 		//$this->query->orderBy("$fieldname $direction");
-		$this->query->orderBy($fieldname);
+		$this->getQuery()->orderBy($fieldname);
+	}
+
+	/**
+	 * Return's this query. If it doesn't exist, create and apply fixed values to it.  
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getQuery() {
+		if (!$this->query) {
+			$this->query = $this->table->createQuery();
+		}
+
+		return $this->query;
+	}
+
+	function &applyFixedValuesToQuery() {
+		$fixed = $this->getFixedValues();
+		if ($fixed) {
+			foreach ($fixed as $key => $value) {
+				$this->getQuery()->addWhere("$key = ?", $value);
+			}
+		}
+
+		return $this->query;
+	}
+
+	/**
+	 * Set a fixed value to be used when seleting as well as updating 
+	 * 
+	 * @param mixed $array 
+	 * @access public
+	 * @return void
+	 */
+	function setFixedValues($array) {
+		$this->fixedValues = $array;
+	}
+
+	/**
+	 * Returns an array of fixed values to use when selecting as well as creating/updating 
+	 * 
+	 * @param mixed $key 
+	 * @access public
+	 * @return void
+	 */
+	function getFixedValues($key = false) {
+		if ($key) {
+			if (isset($this->fixedValues[$key])) {
+				return $this->fixedValues[$key];
+			} else {
+				return null;
+			}
+		} else {
+			return $this->fixedValues;
+		}
 	}
 
 	/**

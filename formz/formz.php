@@ -42,6 +42,14 @@ class Formz {
 	var $order = array();
 
 	/**
+	 * Values that are fixed for both querying and Create and Update 
+	 * 
+	 * @var array
+	 * @access public
+	 */
+	var $fixedValues = array();
+
+	/**
 	 * Actions for this form (Actions are things like 'save' and 'cancel')
 	 *
 	 * @access private
@@ -110,6 +118,7 @@ class Formz {
 			default:
 				trigger_error($driver_type . " is not a valid Formz type.");
 				break;
+
 		}
 		
 		// grab the default field definitions, we'll mess with 'em later :)
@@ -258,6 +267,50 @@ class Formz {
 	function getIdField() {
 		return $this->driver->getIdField();
 	}
+
+	/**
+	 * Returns an array of fixed values to use when selecting as well as creating/updating 
+	 * 
+	 * @param mixed $key 
+	 * @access public
+	 * @return void
+	 */
+	function getFixedValues($key = false) {
+		if ($key) {
+			if (isset($this->fixedValues[$key])) {
+				return $this->fixedValues[$key];
+			} else {
+				return null;
+			}
+		} else {
+			return $this->fixedValues;
+		}
+	}
+
+	/**
+	 * Set a fixed value to be used when seleting as well as updating 
+	 * 
+	 * @param mixed $array 
+	 * @access public
+	 * @return void
+	 */
+	function setFixedValues($array) {
+		$this->fixedValues = $array;
+		$this->driver->setFixedValues($this->getFixedValues());
+	}
+
+	/**
+	 * Append a fixed value to the fixed values 
+	 * 
+	 * @see self::setFixedValues
+	 * @param mixed $array 
+	 * @access public
+	 * @return void
+	 */
+	function addFixedValue($array) {
+		$this->fixedValues += $array;
+		$this->driver->setFixedValues($this->getFixedValues());
+	}
 	
 	/**
 	 * Get an array of all relevant field information.
@@ -304,6 +357,13 @@ class Formz {
 				if (!isset($fields['deleted']['listshow'])) {
 					$fields['deleted']['listshow'] = false;
 				}
+			}
+		}
+
+		// Something like this needs to happen here.. This isn't it.. placeholder
+		foreach ($this->getFixedValues() as $key ) {
+			if (isset($fields[$key])) {
+				$fields[$key]['formshow'] = false;
 			}
 		}
 		
