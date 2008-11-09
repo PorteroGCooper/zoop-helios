@@ -303,6 +303,17 @@ class zone
 	
 
 	/**
+	 * Return the Zone Name 
+	 * In a nested zone, it only returns the final part.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getZoneName() {
+		return $this->zonename;
+	}
+
+	/**
 	 * Zone Constructor
 	 * 
 	 * @access public
@@ -1145,8 +1156,10 @@ class zone
 	}
 
 	/**
-	 * Returns an app path to this zone
-	 *
+	 * Returns an app path to the rendered zone (depth = 0)
+	 * Pass in the $depth paramenter to get all previous (parent) zones
+	 * Returns app path for each of the parent zones (depth 1 .. x)
+	 * This method is globally executed, so will have the same result if run in $this-> or $this->parent
 	 * use this function from now on, until we fix the function above 
 	 *
 	 * @param int $depth
@@ -1256,17 +1269,17 @@ class zone
 	 */
 	function missingParameter() { }
 
-	/**
-	 * Sets up an instance of zcache in $this->zcache.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function initZoneCache() {
-		$dirName = substr ( strstr ( get_class ( $this ), '_' ), 1 );
-		$this->cacheBase = "zones/$dirName/";
-		$this->zcache = new zcache(array('base'=> $this->cacheBase));
-	}
+		/**
+		 * Sets up an instance of zcache in $this->zcache.
+		 *
+		 * @access public
+		 * @return void
+		 */
+		function initZoneCache() {
+			$dirName = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+			$this->cacheBase = "zones/$dirName/";
+			$this->zcache = new zcache(array('base'=> $this->cacheBase));
+		}
 
 	/**
 	 * Provide a path to a template based on a zoneName (and location) 
@@ -1308,14 +1321,26 @@ class zone
 	 * @access public
 	 * @return string path
 	 */
-	function makePath($z = '', $page = '', $p = '' ) {
+	function makePath($z = array(), $page = '', $p = array() ) {
 		$zone = $this->_getRawZonePath();
 		$this->_verifyRequiredParams($z);
 		return makePath($zone, $z, $page, $p);
 	}
 
 	/**
+	 * Special convience function to return the path to the Index Page for this zone 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function makeIndexPath() {
+		$zone = $this->_getRawZonePath();
+		return makePath($zone);
+	}
+
+	/**
 	 * A convenience method for returning the current base zone path
+	 * Doesn't include zone Parameters
 	 * 
 	 * @access private
 	 * @return string path
@@ -1356,7 +1381,7 @@ class zone
 				trigger_error("missing param $name for makepath of zone $zone");
 		}
 	}
-	
+
 	/**
 	 * Set Zone level path aliases. These aliases have way more magic than the old aliases.
 	 *
@@ -1400,13 +1425,13 @@ class zone
 			foreach($matches[0] as $match) {
 				if (strpos($to_re, $match) !== false) {
 					$callback++;
-										
+
 					// aliases
 					$from_re = str_replace($match, '([^/]+)', $from_re);
 					$to_re = str_replace($match, "\\" . $callback, $to_re);
 				}
 			}
-			
+
 			if (Config::get('zoop.zone.aliases.global_redirect')) {
 				foreach($matches[0] as $match) {
 					if (strpos($redirect_to, $match) !== false) {
@@ -1418,22 +1443,22 @@ class zone
 				}
 			}	
 		}
-		
+
 		$from_re = '#^' . $from_re . '#';
 		if (isset($this->_pathAliases[$from_re])) {
 			trigger_error("An alias for `$from_alias` is already set, unable to add another alias.");
 			return false;
 		}
 		$this->_pathAliases[$from_re] = $to_re;
-		
+
 		if (Config::get('zoop.zone.aliases.global_redirect')) {
 			$redirect_from = '#^' . $redirect_from . '#';
 			$this->_redirectAliases[$redirect_from] = $redirect_to;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Add a bunch of aliases at once.
 	 *
@@ -1454,7 +1479,7 @@ class zone
 			$this->addAlias($from, $to);
 		}
 	}
-	
+
 	/**
 	 * Check the current path against zone alias rules, converting if necessary.
 	 *
@@ -1485,13 +1510,13 @@ class zone
 	 **/
 	function checkAlias($path = null) {
 		$path_alias = $path;
-	
+
 		if ($path_alias === null) {
 			$path_alias = $this->_inPath;
 		}
-		
+
 		if (is_array($path_alias)) $path_alias = implode('/', $path_alias);
-		
+
 		// External redirect to the canonical alias, if applicable.
 		if (Config::get('zoop.zone.aliases.global_redirect')) {
 			foreach($this->_redirectAliases as $redirect_from => $redirect_to) {
@@ -1500,13 +1525,13 @@ class zone
 				}
 			}
 		}
-		
+
 		$success = false;
 		foreach($this->_pathAliases as $from_re => $to_re) {
 			$path_alias = preg_replace($from_re, $to_re, $path_alias, -1, $success);
 			if ($success) continue;
 		}
-		
+
 		// return the resulting path in whatever form it came to us.
 		if ($path === null) {
 			$this->_inPath = explode('/', $path_alias);
@@ -1517,6 +1542,6 @@ class zone
 			return $path_alias;
 		}
 	}
-	
-	
+
+
 }
