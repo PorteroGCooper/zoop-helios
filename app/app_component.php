@@ -53,7 +53,7 @@ class component_app extends component
 		
 		$globalTime = &$GLOBALS['globalTime'];
 		logprofile($globalTime);
-		include($this->getBasePath() . "/post_utils.php");
+		include($this->getBasePath() . "/request_utils.php");
 		// set up error reporting right quick.
 		//if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());
