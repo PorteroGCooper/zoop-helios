@@ -373,7 +373,7 @@ class Formz {
 				$fields[$key]['relation_alias'] = $relation['alias'];
 			
 				if (!isset($fields[$key]['display']['label'])) {
-					$fields[$key]['display']['label'] = $relation['alias'];
+					$fields[$key]['display']['label'] = Formz::format_label($relation['alias']);
 				}
 				
 				// figure out what field to display for this relation
@@ -791,6 +791,7 @@ class Formz {
 	 */
 	static function format_label ($str) {
 		$str = str_replace(array('_', '-'), array(' ', ' '), $str);
+		$str = preg_replace('#(?<=[a-z])([A-Z])#', ' $1', $str);
 		return nv_title_case($str);
 	}
 	
