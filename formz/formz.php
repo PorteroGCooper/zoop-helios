@@ -315,7 +315,7 @@ class Formz {
 	/**
 	 * Get an array of all relevant field information.
 	 */
-	function getFields() {
+	function getFields($return_relations = true) {
 		$fields = $this->fields;
 		
 		// hide the record id by default.		
@@ -369,36 +369,38 @@ class Formz {
 		
 		// mix in info from foreign fields
 		foreach ($this->getRelations() as $key => $relation) {
+			if ($return_relations) {
+				$fields[$key]['relation_alias'] = $relation['alias'];
 			
-			$fields[$key]['relation_alias'] = $relation['alias'];
-		
-			if (!isset($fields[$key]['display']['label'])) {
-				$fields[$key]['display']['label'] = $relation['alias'];
-			}
-			
-			// figure out what field to display for this relation
-			if (isset($fields[$key]['relation_label_field'])) {
-				$relation_label_field = $fields[$key]['relation_label_field'];
+				if (!isset($fields[$key]['display']['label'])) {
+					$fields[$key]['display']['label'] = $relation['alias'];
+				}
+				
+				// figure out what field to display for this relation
+				if (isset($fields[$key]['relation_label_field'])) {
+					$relation_label_field = $fields[$key]['relation_label_field'];
+				} else {
+					$relation_label_field = $relation['label_field'];
+				}
+				
+				$values = array();
+				
+				
+				foreach ($relation['values'] as $item) {
+					$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
+				}
+				
+				// decide whether this should be single or multiple select
+				if ($relation['rel_type'] == Formz::MANY) {
+					$fields[$key]['display']['type'] = 'multiple';
+				} else {
+					$fields[$key]['display']['type'] = 'select';
+				}
+				$fields[$key]['values'] = $values;
+				$fields[$key]['display']['index'] = $values;
 			} else {
-				$relation_label_field = $relation['label_field'];
+				$fields[$key]['listshow'] = false;
 			}
-			
-			$values = array();
-			
-			
-			foreach ($relation['values'] as $item) {
-				$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
-			}
-			
-			// decide whether this should be single or multiple select
-			if ($relation['rel_type'] == Formz::MANY) {
-				$fields[$key]['display']['type'] = 'multiple';
-			} else {
-				$fields[$key]['display']['type'] = 'select';
-			}
-			$fields[$key]['values'] = $values;
-			$fields[$key]['display']['index'] = $values;
-			
 		}
 
 		return $fields;

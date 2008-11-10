@@ -61,7 +61,7 @@ function smarty_function_formz_list($params, &$smarty) {
 	
 	$html .= "\n<table>";
 	
-	$fields = $form->getFields();
+	$fields = $form->getFields(false);
 	
 	// build the table header
 	$row = array();
