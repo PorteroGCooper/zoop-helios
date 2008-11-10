@@ -1,7 +1,9 @@
 #include_path:
 model_dir: %APP_DIR%/model/doctrineModels
 model_loading: conservative
+use_dql_callbacks: true
 dsn:
+charset:
 active_connection: _dsn_connection
 #connections:
 #    default_connection:

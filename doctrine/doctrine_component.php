@@ -64,17 +64,20 @@ class component_doctrine extends component {
 		foreach ($connections as $conn_name => $connection) {
 			if ( ! isset($connection['dsn'])) continue;
 			
-			if (empty($connection['charset'])) {
+			// Use zoop.doctrine.charset for any connections without their own charset.
+			$charset = isset($connection['charset']) ? $connection['charset'] : Config::get('zoop.doctrine.charset');
+
+			if (empty($charset)) {
 				$manager->connection($connection['dsn'], $conn_name);
 			} else {
-				$manager->connection($connection['dsn'], $conn_name)->setCharset($connection['charset']);
+				$manager->connection($connection['dsn'], $conn_name)->setCharset($charset);
 			}
 		}
 		
 		$manager->setCurrentConnection($connection_name);
 		$manager->setAttribute('model_loading', Config::get('zoop.doctrine.model_loading'));
 		// DQL Callbacks automatically adds SoftDelete checking to queries.
-		$manager->setAttribute('use_dql_callbacks', true);
+		$manager->setAttribute('use_dql_callbacks', Config::get('zoop.doctrine.use_dql_callbacks'));
 		
 		Doctrine::loadModels(Config::get('zoop.doctrine.model_dir')); // This call will not require the found .php files
 	}
