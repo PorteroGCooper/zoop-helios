@@ -56,7 +56,7 @@ function smarty_function_formz_list($params, &$smarty) {
 		$html .= '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
 	}
 	else {
-		$html .= '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
+		$html .= '<div class="formz formz-list '. implode(' ', $form_classes) .' sortable" id="formz_'. $tablename . '_list">';
 	}
 	
 	$html .= "\n<table>";
