@@ -1,7 +1,18 @@
-#include_path:
-model_dir: %APP_DIR%/model/doctrineModels
+## Path to Doctrine.php
+include_path:
+
+## Doctrine paths
+models_dir: %APP_DIR%/model/doctrine/models
+migrations_dir: %APP_DIR%/model/doctrine/migrations
+data_fixtures_dir: %APP_DIR%/model/doctrine/data/fixtures
+sql_dir: %APP_DIR%/model/doctrine/data/sql
+yaml_schema_dir: %APP_DIR%/model/doctrine/schema
+
+## Doctrine attributes
 model_loading: conservative
 use_dql_callbacks: true
+
+## Connections
 dsn:
 charset:
 active_connection: _dsn_connection

@@ -6,7 +6,7 @@ class FormzTestSuite extends ZoopTestSuite {
 	
 	function init() {
 		// set up test config
-		$this->model_dir = ZOOP_DIR . "/formz/tests/Doctrine_Records/";
+		$this->models_dir = ZOOP_DIR . "/formz/tests/Doctrine_Records/";
 		$this->db_file = ZOOP_DIR . "/formz/tests/formz.sqlite";
 		$this->dsn = 'sqlite:' . $this->db_file;
 
@@ -16,7 +16,7 @@ class FormzTestSuite extends ZoopTestSuite {
 		
 		// set up doctrine
 		Doctrine_Manager::connection($this->dsn);
- 		Doctrine::loadModels($this->model_dir);
+ 		Doctrine::loadModels($this->models_dir);
 		Doctrine::createTablesFromModels();
 	}
 	

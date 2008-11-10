@@ -79,6 +79,6 @@ class component_doctrine extends component {
 		// DQL Callbacks automatically adds SoftDelete checking to queries.
 		$manager->setAttribute('use_dql_callbacks', Config::get('zoop.doctrine.use_dql_callbacks'));
 		
-		Doctrine::loadModels(Config::get('zoop.doctrine.model_dir')); // This call will not require the found .php files
+		Doctrine::loadModels(Config::get('zoop.doctrine.models_dir')); // This call will not require the found .php files
 	}
 }

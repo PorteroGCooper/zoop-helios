@@ -11,7 +11,7 @@ class AuthTestSuite extends ZoopTestSuite {
 		Config::set('zoop.db.dsn', 'sqlite:'. dirname(__FILE__) . "/test.db");
 		Config::set('zoop.db.use_pdo', 1 );
 		Config::set('zoop.doctrine.dsn', 'sqlite:'. dirname(__FILE__) . "/test.db");
-		Config::set('zoop.doctrine.model_dir', dirname(__FILE__) . "/doctrineModels");
+		Config::set('zoop.doctrine.models_dir', dirname(__FILE__) . "/doctrineModels");
 	}
 
 	function testDriver() {
