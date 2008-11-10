@@ -18,4 +18,5 @@ security:
     verify_queries: 1
     filter_input: 1
     hide_post: 1
+    hide_get: 1
     show_warnings: 1
