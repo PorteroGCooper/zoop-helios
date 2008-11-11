@@ -365,6 +365,18 @@ class Formz {
 				}
 			}
 		}
+		
+		// Don't show the 'slug' field...
+		if ($this->isSluggable()) {
+			if (isset($fields['slug'])) {
+				if (!isset($fields['slug']['formshow'])) {
+					$fields['slug']['formshow'] = false;
+				}
+				if (!isset($fields['slug']['listshow'])) {
+					$fields['slug']['listshow'] = false;
+				}
+			}
+		}
 
 		// Something like this needs to happen here.. This isn't it.. placeholder
 		foreach ($this->getFixedValues() as $key ) {
@@ -716,6 +728,17 @@ class Formz {
 	function isSoftDeletable() {
 		$this->softdeletable = $this->driver->isSoftDeletable();
 		return $this->softdeletable;
+	}
+	
+	/**
+	 * Returns true if this Formz uses slugs.
+	 *
+	 * @access public
+	 * @return bool True if this is sluggable.
+	 */
+	function isSluggable() {
+		$this->sluggable = $this->driver->isSluggable();
+		return $this->sluggable;
 	}
 	
 	/**

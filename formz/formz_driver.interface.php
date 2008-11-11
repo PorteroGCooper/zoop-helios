@@ -115,15 +115,30 @@ interface formz_driver_interface {
 	function isTimestampable();
 
 	/**
-	 * Is this table/form/relation timestampable?
+	 * Does this table use soft delete?
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	function isSoftDeletable();
 
+	/**
+	 * Does this table use slugs?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isSluggable();
 
-
+	/**
+	 * Order results by given column and direction.
+	 *
+	 * @param string $fieldname Table column on which to sort
+	 * @param string $direction Either ASC or DESC
+	 * @access public
+	 * @return void
+	 */
+	function sort($fieldname, $direction = "ASC");
 
 
 

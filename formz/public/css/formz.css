@@ -36,15 +36,18 @@
 	background-color: #EEE;
 	background-repeat: no-repeat;
 	background-position: center right;
+	background-image: url('data:image/gif;base64,R0lGODlhFQAJAIABALu7u%2B7u7iH5BAEAAAEALAAAAAAVAAkAAAIXjA2nywHfInpQLoqt3hMn7mRgNyofVwAAOw%3D%3D');
 }
 .formz-list.sortable table thead th a {
 	text-decoration: none;
 	color: #222;
 	cursor: default;
 }
+/* asc */
 .formz-list.sortable table thead tr th.headerSortUp {
-	background-image: url('data:image/gif;base64,R0lGODlhFQAEAIABAGZmZu7u7iH5BAEAAAEALAAAAAAVAAQAAAINjB%2BgC%2BjP2ptn0WskLQA7');
+	background-image: url('data:image/gif;base64,R0lGODlhFQAJAIAAAGZmZu7u7iH5BAEAAAEALAAAAAAVAAkAAAISjI%2Bpy%2B0PozSgWjAvnsHys0UFADs%3D');
 }
+/* desc */
 .formz-list.sortable table thead tr th.headerSortDown {
-	background-image: url('data:image/gif;base64,R0lGODlhFQAEAIABAGZmZu7u7iH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7');
+	background-image: url('data:image/gif;base64,R0lGODlhFQAJAIAAAGZmZu7u7iH5BAEAAAEALAAAAAAVAAkAAAISjA2nywHfInpQLoqt3rz7D0oFADs%3D');
 }

@@ -787,12 +787,22 @@ class formz_doctrineDB implements formz_driver_interface {
 	function isSoftDeletable() {
 		return $this->table->hasTemplate('Doctrine_Template_SoftDelete');
 	}
+
+	/**
+	 * Returns true if this table uses slugs.
+	 *
+	 * @access public
+	 * @return bool True if this is sluggable.
+	 */	
+	function isSluggable() {
+		return $this->table->hasTemplate('Doctrine_Template_Sluggable');
+	}
 	
 	/**
-	 * tells the getRecords function a sorting to get the records in from the database.
+	 * Order results by given column and direction.
 	 *
-	 * @param string $fieldname fieldname to sort on
-	 * @param string $direction either ASC or DESC
+	 * @param string $fieldname Table column on which to sort
+	 * @param string $direction Either ASC or DESC
 	 * @access public
 	 * @return void
 	 */

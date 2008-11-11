@@ -218,6 +218,16 @@ class Formz_FormDB implements formz_driver_interface {
 	function isSoftDeletable() {
 		return false;
 	}
+
+	/**
+	 * Does this table use slugs?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isSluggable() {
+		return false;
+	}
 	
 
 	/**
@@ -711,8 +721,7 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function sort($fieldname, $direction = "ASC")
-	{
+	function sort($fieldname, $direction = "ASC") {
 		$this->table->sort = $fieldname;
 		$this->table->direction = $direction;
 	}
