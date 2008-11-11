@@ -233,7 +233,7 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getGroups($user) {
+	function getGroups($user = false) {
 		return $this->getDriver()->getGroups($user);
 	}
 
@@ -310,7 +310,7 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getRoles($user) {
+	function getRoles($user = false) {
 		return $this->getDriver()->getRoles($user);
 	}
 

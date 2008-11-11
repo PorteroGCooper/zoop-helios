@@ -157,7 +157,16 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @return void
 	 */
 	function _foundInSet($needles, $hay) {
-		return $hay->contains($needles);
+		$newhay = $hay->getPrimaryKeys();
+		$needles = $this->auth->_arrayize($needles);
+		foreach ($needles as $needle) {
+			if ( in_array($needle, $newhay) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
+
 }
 
