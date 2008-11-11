@@ -39,6 +39,7 @@ class Formz {
 	var $callback;
 	
 	var $fields = array();
+	var $relation_fields = array();
 	var $order = array();
 
 	/**
@@ -81,6 +82,7 @@ class Formz {
 	var $record_id;
 	
 	var $timestampable = false;
+	var $sortable = true;
 
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
@@ -331,6 +333,7 @@ class Formz {
 	 */
 	function getFields($return_relations = true) {
 		$fields = $this->fields;
+		$relation_fields = $this->relation_fields;
 		
 		// hide the record id by default.		
 		$id = $this->driver->getIdField();
@@ -400,7 +403,11 @@ class Formz {
 				$fields[$key]['rel_type'] = $relation['rel_type'];
 			
 				if (!isset($fields[$key]['display']['label'])) {
-					$fields[$key]['display']['label'] = Formz::format_label($relation['alias']);
+					if (isset($relation_fields[$key]['display']['label'])) {
+						$fields[$key]['display']['label'] = $relation_fields[$key]['display']['label'];
+					} else {
+						$fields[$key]['display']['label'] = Formz::format_label($relation['alias']);
+					}
 				}
 				
 				// figure out what field to display for this relation
@@ -417,14 +424,27 @@ class Formz {
 					$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
 				}
 				
-				// decide whether this should be single or multiple select
-				if ($relation['rel_type'] == Formz::MANY) {
-					$fields[$key]['display']['type'] = 'multiple';
+				if (isset($relation_fields[$key]['display']['type'])) {
+					$fields[$key]['display']['type'] = $relation_fields[$key]['display']['type'];
 				} else {
-					$fields[$key]['display']['type'] = 'select';
+					// decide whether this should be single or multiple select
+					if ($relation['rel_type'] == Formz::MANY) {
+						$fields[$key]['display']['type'] = 'multiple';
+					} else {
+						$fields[$key]['display']['type'] = 'select';
+					}
 				}
+
 				$fields[$key]['values'] = $values;
-				$fields[$key]['display']['index'] = $values;
+				
+	    		if (isset($relation_fields[$key]['display'])) {
+	    			$fields[$key]['display'] = $relation_fields[$key]['display'];
+	    		}
+	    		
+	    		if (!isset($fields[$key]['display']['index'])) {
+	    			$fields[$key]['display']['index'] = $values;
+	    		}
+
 			} else {
 				$fields[$key]['listshow'] = false;
 			}
@@ -491,6 +511,16 @@ class Formz {
 		return $ret;
 	}
 	
+	function getRelationForms() {
+		$relations = $this->getRelations();
+		$relation_forms = array();
+		 
+		foreach ($relations as $relation) {
+			$relation_forms[] = new Formz($relation['alias']);
+		}
+		return $relation_forms;
+	}
+	
 	/**
 	 * Assign the form object into the gui.
 	 *
@@ -537,16 +567,23 @@ class Formz {
 	function setFieldParam($property, $field, $value = true) {
 		if ($field == '*') {
 			$this->setFieldParam($property, array_keys($this->getFields()), $value);
-		}
-		else if (is_array($field)) {
+		} else if (is_array($field)) {
 			foreach($field as $f) {
 				$this->setFieldParam($property, $f, $value);
 			}
-		}
-		else {
+		} else {
 			if (!isset($this->fields[$field])) {
-				trigger_error("Field not defined: " . $field);
-				return;
+				$relations = $this->getRelations();
+
+				if (in_array($field, array_keys($relations))) {
+					if (!isset($this->relation_fields[$field])) {
+						$this->relation_fields[$field] = array();
+					}
+					$this->relation_fields[$field][$property] = $value;
+				} else {
+					trigger_error("Field not defined: " . $field);
+					return;
+				}
 			}
 			$this->fields[$field][$property] = $value;
 		}
@@ -555,16 +592,23 @@ class Formz {
 	function setFieldDisplay($property, $field, $value) {
 		if ($field == '*') {
 			$this->setFieldDisplay($property, array_keys($this->getFields()), $value);
-		}
-		else if (is_array($field)) {
+		} else if (is_array($field)) {
 			foreach($field as $f) {
 				$this->setFieldDisplay($property, $f, $value);
 			}
-		}
-		else {
+		} else {
 			if (!isset($this->fields[$field])) {
-				trigger_error("Field not defined: " . $field);
-				return;
+				$relations = $this->getRelations();
+
+				if (in_array($field, array_keys($relations))) {
+					if (!isset($this->relation_fields[$field])) {
+						$this->relation_fields[$field] = array();
+					}
+					$this->relation_fields[$field]['display'][$property] = $value;
+				} else {
+					trigger_error("Field not defined: " . $field);
+					return;
+				}
 			}
 			$this->fields[$field]['display'][$property] = $value;
 		}
@@ -758,8 +802,7 @@ class Formz {
 	 * @return bool True if this is sortable.
 	 */
 	function isSortable() {
-		// all formz are sortable for now :)
-		return true;
+		return $this->sortable;
 	}
 
 	/**

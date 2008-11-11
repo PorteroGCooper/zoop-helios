@@ -131,6 +131,8 @@ class CrudZone extends zone {
 
 	/**
 	 * Creates a form object for a given record_id 
+	 *
+	 * NOTE: CrudZone subclasses that override _detailRecord MUST handle 404 themselves.
 	 * 
 	 * @param mixed $record_id 
 	 * @access public
@@ -140,7 +142,10 @@ class CrudZone extends zone {
 		if ($record_id == 'new') {
 			$this->form->getRecord();
 		} else if ($record_id) {
-			$this->form->getRecord($record_id);
+			if (!$this->form->getRecord($record_id)) {
+				$this->responsePage404();
+				return;
+			}
 		}
 		$this->_loadAndGenerateForm();
 	}
@@ -260,11 +265,10 @@ class CrudZone extends zone {
 		$message = 'Are you sure you want to delete record: ' . $record_id . '?';
 		
 		$id_field = $this->form->getIdField();
-		foreach ($this->form->getFields() as $fieldname => $field) {
-			if ($fieldname != $id_field) {
-				$this->form->setFieldFormshow($fieldname, false);
-			}
-		}
+
+		$this->form->setFieldFormshow('*', false);
+		$this->form->setFieldFormshow($id_field);
+
 		$this->form->addAction('delete');
 		
 		$this->form->guiAssign();
@@ -286,7 +290,7 @@ class CrudZone extends zone {
 			$id = $post['id'];
 			$this->form->destroyRecord($id);
 		}
-		$this->zoneRedirect('');
+		BaseRedirect($this->makeIndexPath());
 	}
 	
 }

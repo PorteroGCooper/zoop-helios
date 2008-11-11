@@ -76,6 +76,23 @@ function smarty_function_formz_form($params, &$smarty) {
 		}
 		
 		$value = isset($data[$key]) ? $data[$key] : '';
+		
+		$field_type = null;
+		if (isset($field['type'])) {
+			$field_type = $field['type'];
+		}
+		
+		switch($field_type) {
+			case 'boolean' :
+			case 'bool' :
+				if ($form->editable) {
+					$value = $value ? 'true' : 'false';
+					$type = 'checkbox';
+				} else {
+					$value = $value ? 'true' : 'false';
+					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
+				}
+		}
 
 		// prob'ly a bit ghetto...
 		if ($key == 'id' && $form->record_id == 'new') $value = 'new';
@@ -102,7 +119,9 @@ function smarty_function_formz_form($params, &$smarty) {
 		}
 		$field['display']['class'] = implode(' ', $form_item_classes);
 
-		if ($form->editable) $value = htmlspecialchars($value);
+		// TODO Fix this. we need to htmlspecialchars based on guicontrol type.
+		/* if ($form->editable) $value = htmlspecialchars($value); */
+		
 		$control->setParam('value', $value);
 		if (isset($field['display'])) $control->setParams($field['display']);
 		

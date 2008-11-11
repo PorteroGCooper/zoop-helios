@@ -133,6 +133,18 @@ function smarty_function_formz_list($params, &$smarty) {
 				$value = '';
 			}
 			
+			$field_type = null;
+			if (isset($fields[$field]['type'])) {
+				$field_type = $fields[$field]['type'];
+			}
+			
+			switch ($field_type) {				
+				case 'boolean' :
+					$value = $value ? 'true' : 'false';
+					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
+					break;
+			}
+			
 			$value = (isset($fields[$field]['display']['override'])) ? $fields[$field]['display']['override'] : $value;
 
 			// @todo take care of relations...

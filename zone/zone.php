@@ -1328,7 +1328,7 @@ class zone
 	}
 
 	/**
-	 * Special convience function to return the path to the Index Page for this zone 
+	 * Special convenience function to return the path to the Index Page for this zone 
 	 * 
 	 * @access public
 	 * @return void

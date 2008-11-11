@@ -755,8 +755,12 @@ class Formz_FormDB implements formz_driver_interface {
 	}
 	
 	function getField($field_name) {
-	die_r($this->table);
+		/* die_r($this->table); */
 		return (isset($this->table->fields[$field_name])) ? $this->table->fields[$field_name] : null;
+	}
+	
+	function getFieldnameFromModelName($modelName) {
+		trigger_error("This method hasn't been implemented yet.");
 	}
 
 
