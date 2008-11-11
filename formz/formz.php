@@ -123,6 +123,12 @@ class Formz {
 		
 		// grab the default field definitions, we'll mess with 'em later :)
 		$this->fields = $this->driver->getFields();
+		
+		// set the sort field and order
+		$sort = $this->getSortField();
+		if ($sort) {
+			$this->sort($sort, $this->getSortOrder());
+		}
 	}
 	
 	/**
@@ -672,10 +678,7 @@ class Formz {
 				$defaults['type'] = 'button';
 				break;
 		}
-		
-		switch (strtolower($name)) {
-		}
-		
+				
 		$args = array_merge_recursive($defaults, $args);
 		$this->_formListActions[$name] = $args;
 	}
@@ -713,6 +716,57 @@ class Formz {
 	function isSoftDeletable() {
 		$this->softdeletable = $this->driver->isSoftDeletable();
 		return $this->softdeletable;
+	}
+
+	/**
+	 * Sort the results by a given field (column).
+	 *
+	 * @param string $fieldname Field name to sort by
+	 * @param string $direction Optionally specifiy sort direction: ASC or DESC (case insensitive)
+	 * @access public
+	 * @return void
+	 */
+	function sort($fieldname, $direction = "ASC") {
+		$direction = strtoupper($direction);
+		
+		// If the fieldname isn't valid, don't even give them the courtesy of a response.
+		if (!in_array($fieldname, array_keys($this->fields))) {
+			return;
+		}
+		
+		// If the direction isn't desc, it's gotta be asc. Make sure that's how it really works out.
+		if ($direction !== 'DESC') {
+			$direction == 'ASC';
+		}
+		$this->driver->sort($fieldname, $direction);
+	}
+	
+	/**
+	 * Get the current sort field (from url parameters, for now).
+	 *
+	 * @access public
+	 * @return mixed String value for sort field, or 'false' if sort is unspecified.
+	 */
+	function getSortField() {
+		if ($sort = getGetText('sort')) {
+			return $sort;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Get the current sort direction (from url parameters, for now).
+	 *
+	 * @access public
+	 * @return string 'ASC' or 'DESC'.
+	 */
+	function getSortOrder() {		
+		$order = strtoupper(getGetText('order'));
+		if ($order != 'DESC') {
+			$order = 'ASC';
+		}
+		return $order;
 	}
 	
 	/**
@@ -775,18 +829,6 @@ class Formz {
 		else {
 			trigger_error($method . " method undefined on Formz object.");
 		}
-	}
-	
-	/**
-	 * tells the driver to sort the results by fieldname
-	 *
-	 * @param string $fieldname fieldname to sort on
-	 * @param string $direction either ASC or DESC
-	 * @access public
-	 * @return void
-	 */
-	function sort($fieldname, $direction = "ASC") {
-		$this->driver->sort($fieldname, $direction);
 	}
 
 	/**

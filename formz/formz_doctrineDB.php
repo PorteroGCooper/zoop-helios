@@ -798,7 +798,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function sort($fieldname, $direction = "ASC") {
 		//$this->query->orderBy("$fieldname $direction");
-		$this->getQuery()->orderBy($fieldname);
+		$this->getQuery()->orderBy("$fieldname $direction");
 	}
 
 	/**
