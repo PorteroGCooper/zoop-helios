@@ -1,5 +1,7 @@
 /* Generic stylesheet for Zoop Formz component */
 
+
+/* styles for the whole table shindig */
 .formz-list table {
 	width: 100%;
 }
@@ -8,6 +10,9 @@
 	padding-right: 1em;
 /* 	border-bottom: 1px solid #ccc; */
 }
+
+
+/* default styles for formz form items */
 .form-item {
 	margin-bottom: 1em;
 }
@@ -22,4 +27,24 @@
 	display: block;
 	font-size: .85em;
 	color: #888;
+}
+
+
+/* style sortable formz */
+.formz-list.sortable table thead th {
+	color: #222;
+	background-color: #EEE;
+	background-repeat: no-repeat;
+	background-position: center right;
+}
+.formz-list.sortable table thead th a {
+	text-decoration: none;
+	color: #222;
+	cursor: default;
+}
+.formz-list.sortable table thead tr th.headerSortUp {
+	background-image: url('data:image/gif;base64,R0lGODlhFQAEAIABAGZmZu7u7iH5BAEAAAEALAAAAAAVAAQAAAINjB%2BgC%2BjP2ptn0WskLQA7');
+}
+.formz-list.sortable table thead tr th.headerSortDown {
+	background-image: url('data:image/gif;base64,R0lGODlhFQAEAIABAGZmZu7u7iH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7');
 }

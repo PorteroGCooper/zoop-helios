@@ -717,6 +717,17 @@ class Formz {
 		$this->softdeletable = $this->driver->isSoftDeletable();
 		return $this->softdeletable;
 	}
+	
+	/**
+	 * Returns true if this Formz is sortable.
+	 *
+	 * @access public
+	 * @return bool True if this is sortable.
+	 */
+	function isSortable() {
+		// all formz are sortable for now :)
+		return true;
+	}
 
 	/**
 	 * Sort the results by a given field (column).

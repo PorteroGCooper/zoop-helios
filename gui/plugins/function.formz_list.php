@@ -37,6 +37,7 @@ function smarty_function_formz_list($params, &$smarty) {
 	$tablename = strtolower($form->tablename);
 	$base_href = $smarty->get_template_vars('BASE_HREF');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
+	$sortable = $form->isSortable();
 	
 	$html = "\n\n";
 
@@ -45,6 +46,7 @@ function smarty_function_formz_list($params, &$smarty) {
 	if (!is_array($form_classes)) $form_classes = explode(' ', $form_classes);
 	$form_classes[] = 'formz';
 	$form_classes[] = 'formz-list';
+	if ($sortable) $form_classes[] = 'sortable';
 	
 	if ($lotsa_classes) {
 		$form_classes[] = 'formz-' . strtolower($form->tablename);
@@ -56,12 +58,14 @@ function smarty_function_formz_list($params, &$smarty) {
 		$html .= '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
 	}
 	else {
-		$html .= '<div class="formz formz-list '. implode(' ', $form_classes) .' sortable" id="formz_'. $tablename . '_list">';
+		$html .= '<div class="formz formz-list '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
 	}
-	
 	$html .= "\n<table>";
 	
 	$fields = $form->getFields(false);
+
+	$current_sort = $form->getSortField();
+	$current_order = $form->getSortOrder();
 	
 	// build the table header
 	$row = array();
@@ -70,7 +74,26 @@ function smarty_function_formz_list($params, &$smarty) {
 			unset($fields[$key]);
 		} else {
 			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : Formz::format_label($key);
-			$row[] = '<th>' . Formz::format_label($label) . '</th>';
+			
+			// handle all the sorting magick.
+			if ($sortable) {
+				$href = $base_href . $zone_path . '?sort=' . $key;
+				
+				// If this is the current sort field, add a sort direction and class for styling.
+				if ($key == $current_sort) {
+					if ($current_order == 'ASC') {
+						$href .= '&order=desc';
+						$th_class = ' class="headerSortDown"';
+					} else {
+						$th_class = ' class="headerSortUp"';
+					}
+				} else {
+					$th_class = '';
+				}
+				$row[] = '<th'. $th_class .'><a href="'. $href .'">' . Formz::format_label($label) . '</a></th>';
+			} else {
+				$row[] = '<th>' . Formz::format_label($label) . '</th>';
+			}
 		}
 	}
 	$html .= "\n\t<thead>\n\t\t<tr>\n\t\t\t";
@@ -137,7 +160,7 @@ function smarty_function_formz_list($params, &$smarty) {
 			$row[] = '<td>' . $value . '</td>';
 		}
 
-		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even-row' : 'odd-row';
+		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even' : 'odd';
 		$class = (count($row_classes)) ? ' class="' . implode(' ', $row_classes) . '"' : '';
 		
 		$rows[] = "<tr" . $class . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
