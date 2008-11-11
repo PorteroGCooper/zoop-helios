@@ -39,6 +39,14 @@ class formz_doctrineDB implements formz_driver_interface {
 	var $fixedValues = array();
 
 	/**
+	 * Set only when using nested sets (trees) 
+	 * 
+	 * @var mixed
+	 * @access protected
+	 */
+	var $_parentRecord = false;
+
+	/**
 	 * True if current form is soft deletable
 	 *
 	 * @var bool
@@ -498,6 +506,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	/**
 	 * getRecords
 	 * Requests the necessary records from the database (as would be used in a listing).
+	 * If a query is set, it will execute that query.
+	 * If the table is a tree, it will either list the root nodes, or the children nodes
+	 * 	depending on if a parent node is set
 	 *
 	 * @param mixed $limit
 	 * @access public
@@ -510,8 +521,50 @@ class formz_doctrineDB implements formz_driver_interface {
 */
 		if ($this->query || $this->getFixedValues()) {
 			return $this->applyFixedValuesToQuery()->execute();
+		} elseif ($this->table->isTree()) {
+			if ($this->hasParentRecord()) {
+				if ($children = $this->getParentRecord()->getNode()->getChildren()) {
+					return $children;
+				} else {
+					return array();
+				}
+			} else {
+				return $this->getRootNodes();
+			}
 		} else {
 			return $this->table->findAll()->toArray();
+		}
+	}
+
+	/**
+	 * When Working with Trees, get the root nodes in the tree 
+	 * 
+	 * @access public
+	 * @return array
+	 */
+	function getRootNodes() {
+		if ($this->table->isTree()) {
+			return $this->table->findByLevel(0)->toArray();
+			//echo_r($this->table->getTree()->getBaseQuery()->execute()->toArray());
+			//return $this->table->getTree()->getBaseQuery()->execute()->toArray();
+			//echo_r($this->table->getTree()->fetchRoots()->toArray());
+			// return $this->table->getTree()->fetchRoots()->toArray();
+		} else {
+			return array();
+		}
+	}
+
+	/**
+	 * When working with trees, fetch the entire tree 
+	 * 
+	 * @access public
+	 * @return array
+	 */
+	function getTree() {
+		if ($this->table->isTree()) {
+			return $this->table->getTree()->toArray();
+		} else {
+			return array();
 		}
 	}
 
@@ -588,8 +641,18 @@ class formz_doctrineDB implements formz_driver_interface {
 		foreach ($values as $key => $val) {
 			$this->record->$key = $val;
 		}
-			
-		$this->record->save();
+
+		if ($this->table->isTree()) {
+			if ($this->hasParentRecord()) {
+				$parent = $this->getParentRecord();
+				$this->record->getNode()->insertAsLastChildOf($parent);
+			} else {
+				$this->record->root_id = 1;
+				$this->table->getTree()->createRoot($this->record);
+			}
+		} else {
+			$this->record->save();
+		}
 
 		// Get relation classes for the current table.
 		$relationships = $this->getRelations();
@@ -869,13 +932,50 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
+	 * if the form has a parent node set, return true 
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function hasParentRecord() {
+		if ($this->_parentRecord) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//function getParentRecord() {
+		//$record = $this->table->find($this->_parentRecord);
+
+	//}
+
+	/**
+	 * Get the parent node for this form 
+	 * Used when using nested sets
+	 * 
+	 * @access public
+	 * @return objects
+	 */
+	function getParentRecord() {
+		if ($this->hasParentRecord() ) {
+			if (is_object($this->_parentRecord)) {
+				return $this->_parentRecord;
+			} else {
+				return $this->table->find($this->_parentRecord);
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * returns the current Record
 	 *
 	 * @access public
 	 * @return mixed
 	 */
-	function &returnRecord()
-	{
+	function &returnRecord() {
 		return $this->record;
 	}
 
@@ -885,8 +985,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return mixed
 	 */
-	function &returnTableName()
-	{
+	function &returnTableName() {
 		return $this->tablename;
 	}
 	

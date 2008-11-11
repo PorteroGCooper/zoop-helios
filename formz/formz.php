@@ -42,6 +42,14 @@ class Formz {
 	var $order = array();
 
 	/**
+	 * Set only when using nested sets (trees) 
+	 * 
+	 * @var mixed
+	 * @access protected
+	 */
+	var $_parentRecord = false;
+
+	/**
 	 * Values that are fixed for both querying and Create and Update 
 	 * 
 	 * @var array
@@ -864,6 +872,22 @@ class Formz {
 		else {
 			trigger_error($method . " method undefined on Formz object.");
 		}
+	}
+
+	/**
+	 * When using a nestedSet, used to define the parent. 
+	 * 
+	 * @param mixed $node 
+	 * @access public
+	 * @return void
+	 */
+	function setParentRecord($node = false) {
+		if ($node === false) {
+			trigger_error('node required when using "setParentRecord"');
+		}
+
+		$this->_parentRecord = $node;
+		$this->driver->_parentRecord = $this->_parentRecord;
 	}
 
 	/**
