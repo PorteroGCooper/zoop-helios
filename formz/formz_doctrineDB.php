@@ -703,7 +703,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			foreach ($submitted_relations as $relation_class => $ids) {
 				// Doctrine 1.0.3 assumes the array starts with an index of 0.
 				// This fixes our array keys so Doctrine doesn't barf on $ids.
-				sort($ids);
+				if (is_array($ids)) sort($ids);
 				$this->record->link($relation_class, $ids);
 			}
 		}
