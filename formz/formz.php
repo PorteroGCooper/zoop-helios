@@ -219,7 +219,7 @@ class Formz {
 		
 		foreach ($field_names as $name => $field_info) { 
 			if (isset($values[$name])) {
-				if (isset($field_info['relation_alias'])) {
+				if (isset($field_info['relation_alias']) && (isset($field_info['rel_type']) && $field_info['rel_type'] == Formz::MANY)) {
 					$save['relations'][$field_info['relation_alias']] = $values[$name];
 				} else {
 					$save[$name] = $values[$name];
@@ -397,6 +397,7 @@ class Formz {
 		foreach ($this->getRelations() as $key => $relation) {
 			if ($return_relations) {
 				$fields[$key]['relation_alias'] = $relation['alias'];
+				$fields[$key]['rel_type'] = $relation['rel_type'];
 			
 				if (!isset($fields[$key]['display']['label'])) {
 					$fields[$key]['display']['label'] = Formz::format_label($relation['alias']);
