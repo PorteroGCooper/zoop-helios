@@ -159,14 +159,22 @@ class CrudZone extends zone {
 		$this->form->setFieldFromArray('edit', array(
 			// the %id% will automatically be replaced by the contents of the record id field
 			'listlink' => '%id%/update',
-			'display' => array('label' => '', 'override' => 'edit')
+			'sortable' => 0,
+			'display' => array('label' => '', 'override' => 'edit', 'title' => 'Edit this record.')
 		));
 		// add a fake column called "delete", give it a destroy link...
 		$this->form->setFieldFromArray('delete', array(
 			// the %id% will automatically be replaced by the contents of the record id field
 			'listlink' => '%id%/destroy',
-			'display' => array('label' => '', 'override' => 'delete')
+			'sortable' => 0,
+			'display' => array('label' => '', 'override' => 'delete', 'title' => 'Delete this record.')
 		));
+		
+/*
+		$this->form->addRowAction('edit');
+		$this->form->addRowAction('delete');
+*/
+		
 		$this->_loadAndGenerateForm();
 	}
 	

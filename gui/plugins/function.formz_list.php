@@ -77,20 +77,26 @@ function smarty_function_formz_list($params, &$smarty) {
 			
 			// handle all the sorting magick.
 			if ($sortable) {
-				$href = $base_href . $zone_path . '?sort=' . $key;
-				
-				// If this is the current sort field, add a sort direction and class for styling.
-				if ($key == $current_sort) {
-					if ($current_order == 'ASC') {
-						$href .= '&order=desc';
-						$th_class = ' class="headerSortDown"';
-					} else {
-						$th_class = ' class="headerSortUp"';
-					}
+
+				// if this column is not sortable, skip it (and apply js metadata to tell sorter to skip it)
+				if (isset($fields[$key]['sortable']) && !$fields[$key]['sortable']) {
+					$row[] = '<th class="{sorter: false}">' . Formz::format_label($label) . '</th>';
 				} else {
-					$th_class = '';
+					$href = $base_href . $zone_path . '?sort=' . $key;
+				
+					// If this is the current sort field, add a sort direction and class for styling.
+					if ($key == $current_sort) {
+						if ($current_order == 'ASC') {
+							$href .= '&order=desc';
+							$th_class = 'headerSortDown';
+						} else {
+							$th_class = 'headerSortUp';
+						}
+					} else {
+						$th_class = 'header';
+					}
+					$row[] = '<th class="'. $th_class .'"><a href="'. $href .'">' . Formz::format_label($label) . '</a></th>';
 				}
-				$row[] = '<th'. $th_class .'><a href="'. $href .'">' . Formz::format_label($label) . '</a></th>';
 			} else {
 				$row[] = '<th>' . Formz::format_label($label) . '</th>';
 			}
@@ -145,7 +151,8 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-				$value = '<a href="' . $base_href . $zone_path . $link . '/">' . $value . '</a>';
+/* 				if (isset($fields[$field]['display']['title'])) */
+				$value = '<a class="listlink ' . $field . '-link" href="' . $base_href . $zone_path . $link . '/"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
 				$value = '<a href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
