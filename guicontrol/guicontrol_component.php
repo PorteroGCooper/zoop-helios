@@ -89,12 +89,12 @@ class component_guicontrol extends component
 				{
 					if($_SERVER["REQUEST_METHOD"] == 'POST')
 					{
-						global $POSTCOPY;
+						global $_POST_UNFILTERED;
 
 						$valid = $GLOBALS['controls'][$type][$name]->validate();
 						if($valid === true)
 						{
-							$POSTCOPY[$name] = $GLOBALS['controls'][$type][$name]->getValue();
+							$_POST_UNFILTERED[$name] = $GLOBALS['controls'][$type][$name]->getValue();
 						}
 						else
 						{
