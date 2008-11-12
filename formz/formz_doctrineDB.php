@@ -673,9 +673,9 @@ class formz_doctrineDB implements formz_driver_interface {
 			// Obtain and loop through all the related records for the current class ($rel).
 			$related_records = $this->record->$rel->toArray();
 
-			if (isset($submitted_relations)) {
+			if (isset($submitted_relations) && !empty($submitted_relations[$rel])) {
 				foreach ($related_records as $record) {
-					if (isset($submitted_relations[$rel]) && in_array($record['id'], $submitted_relations[$rel])) {
+					if (in_array($record['id'], $submitted_relations[$rel])) {
 						// Assume duplicate related records are a bad thing and don't try adding one.
 						$dup_key = array_search($record['id'], $submitted_relations[$rel]);
 						unset($submitted_relations[$rel][$dup_key]);
@@ -703,7 +703,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		// there's nothing currently in the database.
 		if (isset($submitted_relations)) {
 			foreach ($submitted_relations as $relation_class => $ids) {
-				// Doctrine 1.0.3 assumes the array starts with an index of 0.
+				// Doctrine 1.0.* assumes the array starts with an index of 0.
 				// This fixes our array keys so Doctrine doesn't barf on $ids.
 				if (is_array($ids)) sort($ids);
 				$this->record->link($relation_class, $ids);
