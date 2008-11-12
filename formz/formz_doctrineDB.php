@@ -783,14 +783,13 @@ class formz_doctrineDB implements formz_driver_interface {
 		$foreign_values = array();
 		foreach ((array) $fields as $fieldName) {
 			$relation = $this->getTableRelation($fieldName);
-			// $fieldName may be an Alias instead of an actual table, which would make the next line not work
-			$foreign_class = Doctrine::getTable($fieldName);
-			$set = $foreign_class->createQuery()->select($relation['foreign_field']. ", " . $relation['label_field'])->execute()->toArray();
-			$temp_array = array();
-			foreach ($set as $row) {
-				$temp_array[$row[$relation['foreign_field']]] = $row[$relation['label_field']];
-			}
-			$foreign_values[$fieldName] = $temp_array;
+			$foreign_class = Doctrine::getTable($relation['alias']);
+		 	$set = $foreign_class->createQuery()->select($relation['foreign_field']. ", " . $relation['label_field'])->execute()->toArray();
+		 	$temp_array = array();
+		 	foreach ($set as $row) {
+		 		$temp_array[$row[$relation['foreign_field']]] = $row[$relation['label_field']];
+		 	}
+		 	$foreign_values[$fieldName] = $temp_array;
 		} 
 
 		if (count($foreign_values) == 1) {
@@ -886,9 +885,13 @@ class formz_doctrineDB implements formz_driver_interface {
 	function getRecordRelationsValues() {
 		$data = array();
 		foreach ($this->getTableRelations() as $name => $relation) {
-			$array = $this->record->$name->toArray();
-			foreach ($array as $value) {
-				$data[$name][] = $value[$relation['foreign_field']]; // = $value[$relation['label_field']];
+			if ($relation['rel_type'] == Formz::MANY) {
+				$array = $this->record->$name->toArray();
+				foreach ($array as $value) {
+					$data[$name][] = $value[$relation['foreign_field']]; // = $value[$relation['label_field']];
+				}
+			} else {
+				$data[$name] = $this->record->$name;
 			}
 		}
 
