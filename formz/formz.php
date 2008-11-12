@@ -41,6 +41,24 @@ class Formz {
 	var $fields = array();
 	var $relation_fields = array();
 	var $order = array();
+	
+	/**
+	 * Default sort field for this Formz object
+	 *
+	 * @see formz::setDefaultSort
+	 * @var string
+	 * @access private
+	 */
+	var $_defaultSortField = null;
+
+	/**
+	 * Default sort direction for this Formz object
+	 *
+	 * @see formz::setDefaultSort
+	 * @var string
+	 * @access private
+	 */
+	var $_defaultSortDirection = 'ASC';
 
 	/**
 	 * Set only when using nested sets (trees) 
@@ -173,6 +191,11 @@ class Formz {
 	}
 	
 	function getRecords($search = false) {
+	
+		// if we're doing a sort, do it!
+		if ($this->_defaultSortField != null) {
+			$this->sort($this->_defaultSortField, $this->_defaultSortDirection);
+		}
 		return $this->driver->getRecords($search);
 	}
 	
@@ -872,7 +895,11 @@ class Formz {
 		if (!in_array($fieldname, array_keys($this->fields))) {
 			return;
 		}
-		
+
+		// unset default sort info (since we've given it an explicit one)
+		$this->_defaultSortField = null;
+		$this->_defaultSortDirection = null;
+				
 		// If the direction isn't desc, it's gotta be asc. Make sure that's how it really works out.
 		if ($direction !== 'DESC') {
 			$direction == 'ASC';
@@ -906,6 +933,18 @@ class Formz {
 			$order = 'ASC';
 		}
 		return $order;
+	}
+	
+		
+	/**
+	 * Sets the default sort field (and optionally direction) on a Formz object.
+	 *
+	 * @param string $fieldname
+	 * @param string $direction 'ASC' or 'DESC' (optional).
+	 */
+	function setDefaultSort($fieldname, $direction = 'ASC') {
+		$this->_defaultSortField = $fieldname;
+		$this->_defaultSortDirection = strtoupper($direction);
 	}
 	
 	/**
