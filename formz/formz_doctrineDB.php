@@ -817,7 +817,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			// get the current relation values to put in the array
 			$foreign_class = Doctrine::getTable($relation->getClass());
 			if ($getValues) {
-				$foreign_values = $this->getTableRealtionValues($name);
+				$foreign_values = $this->getTableRelationValues($name);
 			} else { 
 				$foreign_values = array();
 			}
