@@ -243,16 +243,46 @@ class CrudZone extends zone {
 	 * @return void
 	 **/
 	function postUpdate() {
-		$post = getPost();
-		if (isset($post['update'])) {
-			$id = $this->form->saveRecord(getPost());
-		} else if (isset($post['destroy'])) {
-			$id = $post['id'];
-			$this->form->destroyRecord($id);
+		if (getPostText('update')) {	
+			$values = array();
+			
+			foreach ($this->form->getFields() as $name => $field) {
+				if ((!isset($field['editable']) || $field['editable'])
+					&& (!isset($field['formshow']) || $field['formshow'])) {
+					switch($field['type']) {
+						case 'boolean':
+						case 'bool':
+							$values[$name] = getPostCheckbox($name);
+							break;
+						case 'relation':
+							switch ($field['rel_type']) {
+								case Formz::MANY:
+									$values[$name] = getPost($name);
+									if (!is_array($values[$name])) $values[$name] = array();
+									break;
+								case Formz::ONE:
+									$posted_int = getPostInt($name);
+									if (is_integer($posted_int)) {
+										$values[$name] = $posted_int;
+									}
+									break;
+							}
+							break;
+						default:
+							$values[$name] = getPost($name);
+							break;
+					}
+				}
+			}
+			
+			$id = $this->form->saveRecord($values);
+		} else if (getPostText('destroy')) {
+			// redirect to the destroy page if they're trying to delete this item...
+			$this->zoneRedirect('destroy');
+			return;
 		}
-	
-		BaseRedirect( substr($this->getZonePath(), 0, strrpos($this->getZonePath(), '/') ), HEADER_REDIRECT );
-		//BaseRedirect( $this->makeBasePath(), HEADER_REDIRECT );
+
+		BaseRedirect($this->makeIndexPath(), HEADER_REDIRECT);
 	}
 	
 	/**
@@ -287,15 +317,15 @@ class CrudZone extends zone {
 	/**
 	 * POST handler for CRUD Destroy action.
 	 *
+	 * @todo add handling for non-integer id types.
+	 *
 	 * @see pageDestroy()
 	 * @access public
 	 * @return void
 	 **/
 	function postDestroy() {
-		$post = getPost();
-		
-		if (isset($post['destroy'])) {
-			$id = $post['id'];
+		if (getPostText('destroy')) {
+			$id = getPostInt($this->form->getIdField());
 			$this->form->destroyRecord($id);
 		}
 		BaseRedirect($this->makeIndexPath());

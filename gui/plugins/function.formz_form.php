@@ -97,7 +97,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			case 'boolean':
 			case 'bool':
 				if ($form->editable) {
-					$value = $value ? 'true' : 'false';
+					$value = $value ? true : false;
 					$type = 'checkbox';
 				} else {
 					$value = $value ? 'true' : 'false';

@@ -173,7 +173,6 @@ class Formz {
 	}
 	
 	function getRecords($search = false) {
-/* 		die_r($this->driver->getRecords($search)); */
 		return $this->driver->getRecords($search);
 	}
 	
@@ -191,7 +190,6 @@ class Formz {
 	 * @return int Saved record id.
 	 */
 	function saveRecord($values = false, $id = null) {
-	
 		if ($values === false) {
 			$values = getPost();
 		}
@@ -229,7 +227,7 @@ class Formz {
 				} 
 			}
 		}
-			
+		
 		return $this->driver->saveRecord($save, $id);
 	}
 	
@@ -351,6 +349,9 @@ class Formz {
 				if (!isset($fields['created_at']['listshow'])) {
 					$fields['created_at']['listshow'] = false;
 				}
+				if (!isset($fields['created_at']['editable'])) {
+					$fields['created_at']['editable'] = false;
+				}				
 			}
 			if (isset($fields['updated_at'])) {
 				if (!isset($fields['updated_at']['formshow'])) {
@@ -358,6 +359,9 @@ class Formz {
 				}
 				if (!isset($fields['updated_at']['listshow'])) {
 					$fields['updated_at']['listshow'] = false;
+				}
+				if (!isset($fields['updated_at']['editable'])) {
+					$fields['updated_at']['editable'] = false;
 				}
 			}
 		}
@@ -375,6 +379,10 @@ class Formz {
 				if (!isset($fields['deleted']['listshow'])) {
 					$fields['deleted']['listshow'] = false;
 				}
+				if (!isset($fields['deleted']['editable'])) {
+					$fields['deleted']['editable'] = false;
+				}
+				
 			}
 		}
 		
@@ -387,6 +395,9 @@ class Formz {
 				if (!isset($fields['slug']['listshow'])) {
 					$fields['slug']['listshow'] = false;
 				}
+				if (!isset($fields['slug']['editable'])) {
+					$fields['slug']['editable'] = false;
+				}
 			}
 		}
 		
@@ -398,6 +409,9 @@ class Formz {
 				}
 				if (!isset($fields['version']['listshow'])) {
 					$fields['version']['listshow'] = false;
+				}
+				if (!isset($fields['version']['editable'])) {
+					$fields['version']['editable'] = false;
 				}
 			}
 		}

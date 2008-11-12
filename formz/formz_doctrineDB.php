@@ -623,7 +623,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return int The db id of the saved record.
 	 */
 	function saveRecord($values, $id = null) {
-	
 		// get the record we want to save...
 		if ($id !== null) {
 			if (!$this->getRecord($id)) {
@@ -636,7 +635,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			$submitted_relations = $values['relations'];
 			unset($values['relations']);
 		}
-
+		
 		if ($this->getFixedValues()) {
 			$values = array_merge($values, $this->getFixedValues());
 		}

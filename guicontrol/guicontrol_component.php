@@ -83,6 +83,9 @@ class component_guicontrol extends component
 
 			$GLOBALS['controls'] = &component_guicontrol::parseControlData($controlData);
 
+			// TODO: fix posted checkboxes. they currently dont' show up unless they're checked...
+			// echo_r($GLOBALS['controls']);
+
 			foreach($GLOBALS['controls'] as $type => $controlSet)
 			{
 				foreach($controlSet as $name => $control)
