@@ -83,6 +83,7 @@ class Formz {
 	
 	var $timestampable = false;
 	var $sortable = true;
+	var $versionable = false;
 
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
@@ -385,6 +386,18 @@ class Formz {
 				}
 				if (!isset($fields['slug']['listshow'])) {
 					$fields['slug']['listshow'] = false;
+				}
+			}
+		}
+		
+		// Don't show the 'version' field...
+		if ($this->isVersionable()) {
+			if (isset($fields['version'])) {
+				if (!isset($fields['version']['formshow'])) {
+					$fields['version']['formshow'] = false;
+				}
+				if (!isset($fields['version']['listshow'])) {
+					$fields['version']['listshow'] = false;
 				}
 			}
 		}
@@ -808,7 +821,18 @@ class Formz {
 		$this->sluggable = $this->driver->isSluggable();
 		return $this->sluggable;
 	}
-	
+
+	/**
+	 * Returns true if this Formz uses versions.
+	 *
+	 * @access public
+	 * @return bool True if this is versionable.
+	 */
+	function isVersionable() {
+		$this->versionable = $this->driver->isVersionable();
+		return $this->versionable;
+	}
+		
 	/**
 	 * Returns true if this Formz is sortable.
 	 *

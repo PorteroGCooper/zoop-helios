@@ -228,7 +228,16 @@ class Formz_FormDB implements formz_driver_interface {
 	function isSluggable() {
 		return false;
 	}
-	
+
+	/**
+	 * Does this table use versions?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isVersionable() {
+		return false;
+	}	
 
 	/**
 	 * setParam

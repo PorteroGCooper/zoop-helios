@@ -142,6 +142,14 @@ interface formz_driver_interface {
 	function isSluggable();
 
 	/**
+	 * Does this table use versioning?
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function isVersionable();
+
+	/**
 	 * Order results by given column and direction.
 	 *
 	 * @param string $fieldname Table column on which to sort

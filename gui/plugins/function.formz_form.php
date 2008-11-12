@@ -67,13 +67,22 @@ function smarty_function_formz_form($params, &$smarty) {
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
 
-		if (isset($field['display']['type']))
+		// guess what type of guicontrol to use on this bad boy
+		if (isset($field['display']['type'])) {
 			$type = $field['display']['type'];
-		else if (isset($field['length']) && $field['length'] > 1024) {
-			// 'long' strings need to be textareas, not text fields.
-			$type = 'textarea';
-		} else {			
-			$type = 'text';
+		} else {
+			// Autodetect password fields, make 'em display as password guiControls.
+			if ($key == 'password' || $key == 'pass') {
+				$type = 'password';
+			} else {
+				// these ones are text type
+				if (isset($field['length']) && $field['length'] > 1024) {
+					// 'long' strings need to be textareas, not text fields.
+					$type = 'textarea';
+				} else {			
+					$type = 'text';
+				}
+			}
 		}
 		
 		$value = isset($data[$key]) ? $data[$key] : '';
@@ -82,10 +91,11 @@ function smarty_function_formz_form($params, &$smarty) {
 		if (isset($field['type'])) {
 			$field_type = $field['type'];
 		}
-
+		
+		// do any 'field type' specific changes
 		switch($field_type) {
-			case 'boolean' :
-			case 'bool' :
+			case 'boolean':
+			case 'bool':
 				if ($form->editable) {
 					$value = $value ? 'true' : 'false';
 					$type = 'checkbox';
@@ -94,7 +104,7 @@ function smarty_function_formz_form($params, &$smarty) {
 					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
 				}
 				break;
-			case 'relation' :
+			case 'relation':
 				$field['display']['index'] = $form->getTableRelationValues($key);
 				break;
 		}

@@ -927,6 +927,18 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->table->hasTemplate('Doctrine_Template_Sluggable');
 	}
 	
+	
+	/**
+	 * Returns true if this Doctrine table uses versions.
+	 *
+	 * @access public
+	 * @return bool True if this is versionable.
+	 */
+	function isVersionable() {
+		return $this->table->hasTemplate('Doctrine_Template_Versionable');
+	}
+
+	
 	/**
 	 * Order results by given column and direction.
 	 *
