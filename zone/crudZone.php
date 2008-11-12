@@ -216,6 +216,7 @@ class CrudZone extends zone {
 		}
 		
 		$this->form->setEditable(true);
+
 		
 		// add a fake column called "delete", give it a destroy link...
 		$this->form->addAction('save');
@@ -223,9 +224,16 @@ class CrudZone extends zone {
 		$this->form->addAction('delete');
 /* 		$this->form->addAction('cancel'); */
 		
+		$this->initUpdateForm();
 		$this->form->guiAssign();
 		$gui->generate('forms/formz.tpl');
 	}
+
+	/**
+	 * Hook for editing the edit form before it is assigned  
+	 * Form found at $this->form
+	 */
+	function initUpdateForm() { }
 
 	/**
 	 * POST handler for CRUD Update action.
