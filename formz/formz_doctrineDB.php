@@ -673,7 +673,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			// Obtain and loop through all the related records for the current class ($rel).
 			$related_records = $this->record->$rel->toArray();
 
-			if (isset($submitted_relations) && !empty($submitted_relations[$rel])) {
+			if (isset($submitted_relations[$rel]) && !empty($submitted_relations[$rel])) {
 				foreach ($related_records as $record) {
 					if (in_array($record['id'], $submitted_relations[$rel])) {
 						// Assume duplicate related records are a bad thing and don't try adding one.
@@ -782,7 +782,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		$foreign_values = array();
 		foreach ((array) $fields as $fieldName) {
 			$relation = $this->getTableRelation($fieldName);
-			$foreign_class = Doctrine::getTable($relation['alias']);
+			$foreign_class = Doctrine::getTable($relation['class']);
 		 	$set = $foreign_class->createQuery()->select($relation['foreign_field']. ", " . $relation['label_field'])->execute()->toArray();
 		 	$temp_array = array();
 		 	foreach ($set as $row) {
@@ -860,6 +860,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			
 			$ret[$local_field] = array(
 				'alias' => $name,
+				'class' => $relation['class'],
 				'rel_type' => $rel_type,
 				'local_field' => $local_field,
 				'foreign_field' => $foreign_field,
