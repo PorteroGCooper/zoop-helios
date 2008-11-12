@@ -397,8 +397,9 @@ class Formz {
 		}
 		
 		// mix in info from foreign fields
-		foreach ($this->getRelations() as $key => $relation) {
+		foreach ($this->getTableRelations() as $key => $relation) {
 			if ($return_relations) {
+				$fields[$key]['type'] = 'relation';
 				$fields[$key]['relation_alias'] = $relation['alias'];
 				$fields[$key]['rel_type'] = $relation['rel_type'];
 			
@@ -416,7 +417,7 @@ class Formz {
 				} else {
 					$relation_label_field = $relation['label_field'];
 				}
-				
+
 				$values = array();
 				
 				
@@ -454,7 +455,7 @@ class Formz {
 	}
 	
 	function getFieldValues($name) {
-		if ($relation = $this->getRelation($name)) {
+		if ($relation = $this->getTableRelation($name, true)) {
 			// figure out what field to display for this relation
 			if (isset($this->fields[$name]['relationLabelField'])) {
 				$relation_label_field = $this->fields[$name]['relationLabelField'];
@@ -482,37 +483,37 @@ class Formz {
 		return $this->driver->getData();
 	}
 	
-	function getRelation($name) {
-		return $this->driver->getRelation($name);
+	function getTableRelation($name, $getValues = false) {
+		return $this->driver->getTableRelation($name, $getValues);
 	}
 	
 	/**
 	 * Get an array of relation fields for this form.
 	 */
-	function getRelations() {
-		return $this->driver->getRelations();
+	function getTableRelations($getValues = false) {
+		return $this->driver->getTableRelations($getValues);
 	}
 	
-	function getRelationLocalFields() {
+	function getTableRelationLocalFields() {
 		$ret = array();
 		
-		foreach ($this->driver->getRelations() as $key => $rel) {
+		foreach ($this->driver->getTableRelations() as $key => $rel) {
 			$ret[$rel['local_field']] = $key;
 		}
 		return $ret;
 	}
 	
-	function getRelationForeignFields() {
+	function getTableRelationForeignFields() {
 		$ret = array();
 		
-		foreach ($this->driver->getRelations() as $key => $rel) {
+		foreach ($this->driver->getTableRelations() as $key => $rel) {
 			$ret[$rel['foreign_field']] = $key;
 		}
 		return $ret;
 	}
 	
-	function getRelationForms() {
-		$relations = $this->getRelations();
+	function getTableRelationForms() {
+		$relations = $this->getTableRelations();
 		$relation_forms = array();
 		 
 		foreach ($relations as $relation) {
@@ -520,7 +521,20 @@ class Formz {
 		}
 		return $relation_forms;
 	}
-	
+
+
+	/**
+	 * Fetches the entire table for a relation 
+	 * Use this for populating selects and drop downs
+	 * 
+	 * @param string $fieldName 
+	 * @access public
+	 * @return $array values
+	 */
+	function getTableRelationValues($fields) {
+		return $this->driver->getTableRelationValues($fields);
+	}
+
 	/**
 	 * Assign the form object into the gui.
 	 *
@@ -573,7 +587,7 @@ class Formz {
 			}
 		} else {
 			if (!isset($this->fields[$field])) {
-				$relations = $this->getRelations();
+				$relations = $this->getTableRelations();
 
 				if (in_array($field, array_keys($relations))) {
 					if (!isset($this->relation_fields[$field])) {
@@ -598,7 +612,7 @@ class Formz {
 			}
 		} else {
 			if (!isset($this->fields[$field])) {
-				$relations = $this->getRelations();
+				$relations = $this->getTableRelations();
 
 				if (in_array($field, array_keys($relations))) {
 					if (!isset($this->relation_fields[$field])) {

@@ -61,11 +61,12 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_items[] = '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
 	}
 	$i = -1;
+
 	foreach ($fields as $key => $field) {
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
-		
+
 		if (isset($field['display']['type']))
 			$type = $field['display']['type'];
 		else if (isset($field['length']) && $field['length'] > 1024) {
@@ -81,7 +82,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		if (isset($field['type'])) {
 			$field_type = $field['type'];
 		}
-		
+
 		switch($field_type) {
 			case 'boolean' :
 			case 'bool' :
@@ -92,6 +93,10 @@ function smarty_function_formz_form($params, &$smarty) {
 					$value = $value ? 'true' : 'false';
 					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
 				}
+				break;
+			case 'relation' :
+				$field['display']['index'] = $form->getTableRelationValues($key);
+				break;
 		}
 
 		// prob'ly a bit ghetto...
@@ -101,11 +106,9 @@ function smarty_function_formz_form($params, &$smarty) {
 		$control = &getGuiControl($type, $key);
 		if ($form->editable) {
 			// grab the default value, if one isn't set.
-			if (strlen($value) == 0 && isset($field['default'])) {
+			if (!empty($value) && isset($field['default'])) {
 				$value = $field['default'];
 			}
-		} else {
-			
 		}
 		
 		$value = (isset($field['display']['override'])) ? $field['display']['override'] : $value;

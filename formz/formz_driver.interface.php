@@ -95,7 +95,7 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array Array of relations associated with this class.
 	 */
-	function getRelations();
+	function getTableRelations();
 
 	/**
 	 * Get the named relation data.
@@ -104,7 +104,18 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array relation data as an array.
 	 */
-	function getRelation($name);
+	function getTableRelation($name);
+
+
+	/**
+	 * Fetches the entire table for a relation 
+	 * Use this for populating selects and drop downs
+	 * 
+	 * @param string $fieldName 
+	 * @access public
+	 * @return $array values
+	 */
+	function getTableRelationValues($fields);
 
 	/**
 	 * Is this table/form/relation timestampable?

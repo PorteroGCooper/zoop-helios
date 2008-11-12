@@ -100,7 +100,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	function getData() {
-		return $this->record->toArray();
+		$data = $this->record->toArray();
+		$data = $data + $this->getRecordRelationsValues();
+		return $data;
+		
 	}
 	
 	
@@ -655,7 +658,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 
 		// Get relation classes for the current table.
-		$relationships = $this->getRelations();
+		$relationships = $this->getTableRelations();
 
 		// Loop through relation classes and get the actual related records.
 		foreach ($relationships as $rel => $foo) {
@@ -756,24 +759,55 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	/**
-	 * Get the named relation data.
+	 * Get all rows from the named related table
 	 *
 	 * @param string $name Relation name
+	 * @param bool $getValues Whether to fetch the values or not
 	 * @access public
 	 * @return array relation data as an array.
 	 */
-	function getRelation($name) {
-		$rel = $this->getRelations();
-		return (isset($rel[$name])) ? $rel[$name] : false;
+	function getTableRelation($fieldName, $getValues = false) {
+		$rel = $this->getTableRelations($getValues);
+		return (isset($rel[$fieldName])) ? $rel[$fieldName] : false;
+	}
+
+	/**
+	 * Fetches the entire table for a relation 
+	 * Use this for populating selects and drop downs
+	 * 
+	 * @param string $fieldName 
+	 * @access public
+	 * @return $array values
+	 */
+	function getTableRelationValues($fields) {
+		$foreign_values = array();
+		foreach ((array) $fields as $fieldName) {
+			$relation = $this->getTableRelation($fieldName);
+			// $fieldName may be an Alias instead of an actual table, which would make the next line not work
+			$foreign_class = Doctrine::getTable($fieldName);
+			$set = $foreign_class->createQuery()->select($relation['foreign_field']. ", " . $relation['label_field'])->execute()->toArray();
+			$temp_array = array();
+			foreach ($set as $row) {
+				$temp_array[$row[$relation['foreign_field']]] = $row[$relation['label_field']];
+			}
+			$foreign_values[$fieldName] = $temp_array;
+		} 
+
+		if (count($foreign_values) == 1) {
+			return array_shift($foreign_values);
+		} else {
+			return $foreign_values;
+		}
 	}
 	
 	/**
-	 * Get all db relations.
+	 * Get all rows from all tables related to the current table
 	 *
+	 * @param bool $getValues Whether to fetch the values or not
 	 * @access public
 	 * @return array Array of relations associated with this class.
 	 */
-	function getRelations() {
+	function getTableRelations($getValues = false) {
 		$ret = array();
 				
 		foreach ($this->table->getRelations() as $name => $relation) {
@@ -783,7 +817,11 @@ class formz_doctrineDB implements formz_driver_interface {
 
 			// get the current relation values to put in the array
 			$foreign_class = Doctrine::getTable($relation->getClass());
-			$foreign_values = $foreign_class->findAll()->toArray();
+			if ($getValues) {
+				$foreign_values = $this->getTableRealtionValues($name);
+			} else { 
+				$foreign_values = array();
+			}
 			
 			// grab the id field names for each half of this relation
 			if ($rel_type == Formz::ONE) {
@@ -817,11 +855,11 @@ class formz_doctrineDB implements formz_driver_interface {
 					}
 				}
 			}
+
 			if (!$label_field){
 				$label_field = $foreign_field;
 			}
 			
-						
 			$ret[$local_field] = array(
 				'alias' => $name,
 				'rel_type' => $rel_type,
@@ -836,6 +874,26 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $ret;
 	}
 	
+	function getRecordRelations() {
+		$data = array();
+		foreach ($this->table->getRelations() as $name => $relation) {
+			$data[$name] = $this->record->$name->toArray();
+		}
+
+		return $data;
+	}
+
+	function getRecordRelationsValues() {
+		$data = array();
+		foreach ($this->getTableRelations() as $name => $relation) {
+			$array = $this->record->$name->toArray();
+			foreach ($array as $value) {
+				$data[$name][] = $value[$relation['foreign_field']]; // = $value[$relation['label_field']];
+			}
+		}
+
+		return $data;
+	}
 	/**
 	 * Returns true if this Formz does timestamp magick.
 	 *
