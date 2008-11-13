@@ -25,7 +25,7 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class betterpasswordControl extends GuiControl
+class betterpasswordControl extends GuiContainer
 {
 	/**
 	 * validate
@@ -34,10 +34,10 @@ class betterpasswordControl extends GuiControl
 	 * @return void
 	 */
 	function validate() {
-		if ($this->params['password'] == $this->params['confirmpassword']) {
-			return true;
-		} else {
+		if ($this->params['password'] != $this->params['confirmpassword']) {
 			return array('text' => 'passwords do not match', 'value' => '');
+		} else {
+			return parent::validate();
 		}
 	}
 
@@ -78,19 +78,25 @@ class betterpasswordControl extends GuiControl
 	 */
 	function render() {
 		$attrs = array();
-		//$value = $this->getValue();
+		// this seems like a bad idea, probably best to put the logic on the recieving end, rather than here.. Don't update if both are '' .
+		//$this->param['origPw'] = $this->params['value'];
 		$name = $this->getName();
+		$this->setValue('', true);
 
 		$pwcontrol = &getGuiControl('password', 'password');
 		$pwcontrol->setParams($this->params);
+		$pwcontrol->setValue('', true);
 		$pwcontrol->setParam('type', 'password');
+		$pwcontrol->setParam('errorState', null);
 		$pwcontrol->setParent($name);
 		$html = $pwcontrol->renderControl();
 
 		$pwccontrol = &getGuiControl('password', 'confirmpassword');
 		$pwccontrol->setParams($this->params);
 		$pwccontrol->setParam('type', 'password');
+		$pwccontrol->setParam('errorState', null);
 		$pwccontrol->setParent($name);
+		$pwccontrol->setValue('', true);
 		$html .= $pwccontrol->renderControl();
 
 		$this->controls = array(&$pwcontrol, &$pwccontrol);
