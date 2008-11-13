@@ -239,12 +239,15 @@ class CrudZone extends zone {
 		
 		$this->form->setEditable(true);
 
-		
 		// add a fake column called "delete", give it a destroy link...
 		$this->form->addAction('save');
 /* 		$this->form->addAction('preview'); */
-		$this->form->addAction('delete');
-/* 		$this->form->addAction('cancel'); */
+		if ($record_id == 'new') {
+			$this->form->addAction('saveandnew');
+		} else {
+			$this->form->addAction('delete');
+		}
+		$this->form->addAction('cancel');
 		
 		$this->initUpdateForm();
 		$this->form->guiAssign();
@@ -267,7 +270,7 @@ class CrudZone extends zone {
 	function postUpdate() {
 
 
-		if (getPostText('update')) {	
+		if (getPostText('update') || getPostText('update_and_create')) {
 			$values = array();
 			
 			foreach ($this->form->getFields() as $name => $field) {
@@ -305,7 +308,11 @@ class CrudZone extends zone {
 			return;
 		}
 
-		BaseRedirect($this->makeIndexPath(), HEADER_REDIRECT);
+		if (getPostText('update_and_create')) {
+			BaseRedirect($this->makeIndexPath() . 'create', HEADER_REDIRECT);
+		} else {
+			BaseRedirect($this->makeIndexPath(), HEADER_REDIRECT);
+		}
 	}
 	
 	/**
@@ -331,7 +338,8 @@ class CrudZone extends zone {
 		$this->form->setFieldFormshow($id_field);
 
 		$this->form->addAction('delete');
-		
+		$this->form->addAction('cancel');
+				
 		$this->form->guiAssign();
 		$gui->assign('message', $message);
 		$gui->generate('forms/formz.tpl');

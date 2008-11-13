@@ -439,9 +439,9 @@ class Formz {
 		}
 
 		// Something like this needs to happen here.. This isn't it.. placeholder
-		foreach ($this->getFixedValues() as $key ) {
+		foreach ($this->getFixedValues() as $key => $val) {
 			if (isset($fields[$key])) {
-				$fields[$key]['formshow'] = false;
+				$fields[$key]['editable'] = false;
 			}
 		}
 		
@@ -468,8 +468,6 @@ class Formz {
 				}
 
 				$values = array();
-				
-				
 				foreach ($relation['values'] as $item) {
 					$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
 				}
@@ -532,6 +530,15 @@ class Formz {
 		return $this->driver->getData();
 	}
 	
+	
+	/**
+	 * Return the relation field data (foreign/local fields, etc) for a given relation name.
+	 * 
+	 * @access public
+	 * @param mixed $name A given relation name.
+	 * @param bool $getValues Hydrate the array with values? (default: false)
+	 * @return array An array of information about the requested relation.
+	 */
 	function getTableRelation($name, $getValues = false) {
 		return $this->driver->getTableRelation($name, $getValues);
 	}
@@ -543,6 +550,12 @@ class Formz {
 		return $this->driver->getTableRelations($getValues);
 	}
 	
+	/**
+	 * getTableRelationLocalFields function.
+	 * 
+	 * @access public
+	 * @return array of local fields
+	 */
 	function getTableRelationLocalFields() {
 		$ret = array();
 		
@@ -574,7 +587,7 @@ class Formz {
 
 	/**
 	 * Fetches the entire table for a relation 
-	 * Use this for populating selects and drop downs
+	 * Use this for populating selects and dropdowns
 	 * 
 	 * @param string $fieldName 
 	 * @access public
@@ -607,7 +620,7 @@ class Formz {
 		}
 		$gui->assign($name, $this);
 	}
-	
+
 	/**
 	 * Set form parameters. Will throw an error if you try to set something that's not a form
 	 * property. You've been warned :)
@@ -652,6 +665,23 @@ class Formz {
 		}
 	}
 	
+	/**
+	 * Set Display properties of a field.
+	 *
+	 * These display options are almost identical to the ones used by GuiControls. In fact, most things
+	 * set here will be passed directly to a guiControl.
+	 *
+	 * Usually this function will be called through magic methods
+	 * like setFieldDisplayClass('fieldname'). Will accept an array of fields on which to set said
+	 * parameter and value. A wildcard param ('*') may also be passed as the $field, which will set the
+	 * display option on all fields in this table.
+	 * 
+	 * @access public
+	 * @param string $property Display property to set: Class, etc.
+	 * @param mixed $field Fieldname(s) to set property on. String or array of strings.
+	 * @param mixed $value Display property value: class name, etc.
+	 * @return void
+	 */
 	function setFieldDisplay($property, $field, $value) {
 		if ($field == '*') {
 			$this->setFieldDisplay($property, array_keys($this->getFields()), $value);
@@ -677,12 +707,32 @@ class Formz {
 		}
 	}
 	
+	/**
+	 * Pass a whole lot of display parameters at once, formatted as an associative array.
+	 *
+	 * @see formz::setFieldDisplay
+	 * @access public
+	 * @param string $field
+	 * @param array $args
+	 * @return void
+	 */
 	function setFieldDisplayFromArray($field, $args) {
 		foreach ($args as $key => $val) {
 			$this->setFieldDisplay($key, $field, $val);
 		}
 	}
 	
+	/**
+	 * Add a fake field to this table.
+	 *
+	 * Useful for adding 'edit' links, etc. Will throw an error if the fieldname already
+	 * exists on this form.
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @param array $defaults. (default: array()
+	 * @return void
+	 */
 	function addField($name, $defaults = array()) {
 		if (isset($this->fields[$name])) {
 			trigger_error("Field " . $name . " already exists.");
@@ -722,6 +772,18 @@ class Formz {
 		$defaults['value'] = $defaults['label'];
 		
 		switch (strtolower($name)) {
+			case 'saveandnew':
+			case 'save_and_new':
+			case 'saveandadd':
+			case 'save_and_add':
+			case 'saveandaddnew':
+			case 'updateandcreate':
+			case 'update_and_create':
+				$name = 'update_and_create';
+				$defaults['value'] = 'Save and Add New';
+				$defaults['label'] = 'Save and Add New';
+				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
+				break;
 			case 'submit':
 			case 'save':
 			case 'update':
@@ -734,6 +796,7 @@ class Formz {
 				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
 				break;
 			case 'cancel':
+/* 				if (!isset($defaults['type'])) $defaults['type'] = 'submit'; */
 				if (!isset($defaults['link'])) $defaults['link'] = '%id%/read';
 				if (!isset($defaults['type'])) $defaults['type'] = 'link';
 				break;
@@ -741,9 +804,6 @@ class Formz {
 			default:
 				$defaults['type'] = 'button';
 				break;
-		}
-		
-		switch (strtolower($name)) {
 		}
 		
 		$args = array_merge_recursive($defaults, $args);
@@ -823,6 +883,18 @@ class Formz {
 	 */
 	function getListActions() {
 		return $this->_formListActions;
+	}
+	
+	/**
+	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
+	 * 
+	 * @access public
+	 * @param string $name Action name
+	 * @param mixed $args Action arguments. (default: array())
+	 * @return void
+	 */
+	function addRowAction($name, $args = array()) {
+		trigger_error("addRowAction not yet implemented");
 	}
 	
 	/**
@@ -1011,7 +1083,7 @@ class Formz {
 			$param_name[0] = strtolower($param_name[0]);
 
 			if (isset($this->$param_name)) return $this->$param_name;
-			else return null;
+			else trigger_error($method . " method undefined on Formz object.");
 		}
 		else {
 			trigger_error($method . " method undefined on Formz object.");
