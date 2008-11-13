@@ -10,7 +10,7 @@ yaml_schema_dir: %APP_DIR%/model/doctrine/schema
 
 ## Doctrine attributes
 model_loading: conservative
-use_dql_callbacks: true
+use_dql_callbacks: 1
 
 ## Connections
 dsn:

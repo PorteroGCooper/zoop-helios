@@ -980,7 +980,11 @@ class formz_doctrineDB implements formz_driver_interface {
 		$fixed = $this->getFixedValues();
 		if ($fixed) {
 			foreach ($fixed as $key => $value) {
-				$this->getQuery()->addWhere("$key = ?", $value);
+				if(is_null($value)) {
+					$this->getQuery()->addWhere($key . ' IS NULL');
+				} else {
+					$this->getQuery()->addWhere("$key = ?", $value);
+				}
 			}
 		}
 
