@@ -30,7 +30,7 @@ class Formz {
 	 * 
 	 * @access private
 	 */
-	var $driver;
+	protected $_driver;
 
 	var $tablename;
 	var $type;	
@@ -38,9 +38,28 @@ class Formz {
 	var $zone;
 	var $callback;
 	
-	var $fields = array();
-	var $relation_fields = array();
-	var $order = array();
+	/**
+	 * Private fields variable. Used by formz::getFields()
+	 * @var array
+	 * @access private
+	 */
+	protected $_fields = array();
+	
+	/**
+	 * Private relation fields variable. Used by formz::getFields()
+	 * @var array
+	 * @access private
+	 */
+	protected $_relation_fields = array();
+	
+	/**
+	 * Default sort direction for this Formz object
+	 *
+	 * @see formz::setDefaultSort
+	 * @var string
+	 * @access private
+	 */
+	protected $_order = array();
 	
 	/**
 	 * Default sort field for this Formz object
@@ -49,7 +68,7 @@ class Formz {
 	 * @var string
 	 * @access private
 	 */
-	var $_defaultSortField = null;
+	protected $_defaultSortField = null;
 
 	/**
 	 * Default sort direction for this Formz object
@@ -58,7 +77,7 @@ class Formz {
 	 * @var string
 	 * @access private
 	 */
-	var $_defaultSortDirection = 'ASC';
+	protected $_defaultSortDirection = 'ASC';
 
 	/**
 	 * Values that are fixed for both querying and Create and Update 
@@ -75,7 +94,7 @@ class Formz {
 	 * @see Formz::addAction
 	 * @see Formz::getActions
 	 */
-	var $_formActions = array();
+	protected $_formActions = array();
 
 	/**
 	 * Actions for the list view for this form (List actions might be 'add' or 'sort')
@@ -84,16 +103,16 @@ class Formz {
 	 * @see Formz::addListAction
 	 * @see Formz::getListActions
 	 */
-	var $_formListActions = array();
+	protected $_formListActions = array();
 
 	var $errors = array();
 	var $editable = true;
 
 	var $record_id;
 	
-	var $timestampable = false;
-	var $sortable = true;
-	var $versionable = false;
+	protected $_timestampable = false;
+	protected $_sortable = true;
+	protected $_versionable = false;
 
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
@@ -131,10 +150,10 @@ class Formz {
 		
 		switch ($driver_type) {
 			case 'doctrine':
-				$this->driver = new Formz_DoctrineDB($tablename);
+				$this->_driver = new Formz_DoctrineDB($tablename);
 				break;
 			case 'forms':
-				$this->driver = new Formz_FormDB($tablename);
+				$this->_driver = new Formz_FormDB($tablename);
 				break;
 			default:
 				trigger_error($driver_type . " is not a valid Formz type.");
@@ -143,7 +162,7 @@ class Formz {
 		}
 		
 		// grab the default field definitions, we'll mess with 'em later :)
-		$this->fields = $this->driver->getFields();
+		$this->_fields = $this->_driver->getFields();
 		
 		// set the sort field and order
 		$sort = $this->getSortField();
@@ -171,7 +190,7 @@ class Formz {
 	 * @return int Record ID
 	 */
 	function getRecord($id = 'new') {
-		$this->record_id = $this->driver->getRecord($id);
+		$this->record_id = $this->_driver->getRecord($id);
 		if ($this->record_id) {
 			$this->type = 'record';
 		}
@@ -179,7 +198,7 @@ class Formz {
 	}
 	
 	function getDoctrineRecord($id = false) {
-		return $this->driver->getDoctrineRecord($id);
+		return $this->_driver->getDoctrineRecord($id);
 	}
 	
 	function getRecords($search = false) {
@@ -188,7 +207,7 @@ class Formz {
 		if ($this->_defaultSortField != null) {
 			$this->sort($this->_defaultSortField, $this->_defaultSortDirection);
 		}
-		return $this->driver->getRecords($search);
+		return $this->_driver->getRecords($search);
 	}
 	
 	/**
@@ -250,7 +269,7 @@ class Formz {
 			}
 		}
 
-		return $this->driver->saveRecord($save, $id);
+		return $this->_driver->saveRecord($save, $id);
 	}
 	
 	/**
@@ -272,7 +291,7 @@ class Formz {
 				return null;
 			}
 		}
-		return $this->driver->destroyRecord($id);
+		return $this->_driver->destroyRecord($id);
 	}
 	
 	/**
@@ -282,27 +301,27 @@ class Formz {
 	 */
 	function setOrder($sort) {
 		if (!is_array($sort)) $sort = explode(',', $sort);
-		$this->order = $sort;
+		$this->_order = $sort;
 		
 		$newfields = array();
 		
 		// rearrange fields
-		foreach ($this->order as $key) {
+		foreach ($this->_order as $key) {
 			$key = trim($key);
 			
-			if (isset($this->fields[$key])) {
-				$newfields[$key] = $this->fields[$key];
-				unset($this->fields[$key]);
+			if (isset($this->_fields[$key])) {
+				$newfields[$key] = $this->_fields[$key];
+				unset($this->_fields[$key]);
 			}
 		}
 		if (count($newfields)) {
-			$oldfields = $this->fields;
-			$this->fields = $newfields + $oldfields;
+			$oldfields = $this->_fields;
+			$this->_fields = $newfields + $oldfields;
 		}
 	}
 	
 	function getIdField() {
-		return $this->driver->getIdField();
+		return $this->_driver->getIdField();
 	}
 
 	/**
@@ -333,7 +352,7 @@ class Formz {
 	 */
 	function setFixedValues($array) {
 		$this->fixedValues = $array;
-		$this->driver->setFixedValues($this->getFixedValues());
+		$this->_driver->setFixedValues($this->getFixedValues());
 	}
 
 	/**
@@ -346,18 +365,18 @@ class Formz {
 	 */
 	function addFixedValue($array) {
 		$this->fixedValues += $array;
-		$this->driver->setFixedValues($this->getFixedValues());
+		$this->_driver->setFixedValues($this->getFixedValues());
 	}
 	
 	/**
 	 * Get an array of all relevant field information.
 	 */
 	function getFields($return_relations = true) {
-		$fields = $this->fields;
-		$relation_fields = $this->relation_fields;
+		$fields = $this->_fields;
+		$relation_fields = $this->_relation_fields;
 		
 		// hide the record id by default.		
-		$id = $this->driver->getIdField();
+		$id = $this->_driver->getIdField();
 		if (!isset($fields[$id]['display']['type'])) {
 			$fields[$id]['display']['type'] = 'hidden';
 		}
@@ -504,8 +523,8 @@ class Formz {
 	function getFieldValues($name) {
 		if ($relation = $this->getTableRelation($name, true)) {
 			// figure out what field to display for this relation
-			if (isset($this->fields[$name]['relationLabelField'])) {
-				$relation_label_field = $this->fields[$name]['relationLabelField'];
+			if (isset($this->_fields[$name]['relationLabelField'])) {
+				$relation_label_field = $this->_fields[$name]['relationLabelField'];
 			} else {
 				$relation_label_field = $relation['label_field'];
 			}
@@ -527,7 +546,7 @@ class Formz {
 	 * Get an array of all field data for this form.
 	 */
 	function getData() {
-		return $this->driver->getData();
+		return $this->_driver->getData();
 	}
 	
 	
@@ -540,14 +559,14 @@ class Formz {
 	 * @return array An array of information about the requested relation.
 	 */
 	function getTableRelation($name, $getValues = false) {
-		return $this->driver->getTableRelation($name, $getValues);
+		return $this->_driver->getTableRelation($name, $getValues);
 	}
 	
 	/**
 	 * Get an array of relation fields for this form.
 	 */
 	function getTableRelations($getValues = false) {
-		return $this->driver->getTableRelations($getValues);
+		return $this->_driver->getTableRelations($getValues);
 	}
 	
 	/**
@@ -559,7 +578,7 @@ class Formz {
 	function getTableRelationLocalFields() {
 		$ret = array();
 		
-		foreach ($this->driver->getTableRelations() as $key => $rel) {
+		foreach ($this->_driver->getTableRelations() as $key => $rel) {
 			$ret[$rel['local_field']] = $key;
 		}
 		return $ret;
@@ -568,12 +587,18 @@ class Formz {
 	function getTableRelationForeignFields() {
 		$ret = array();
 		
-		foreach ($this->driver->getTableRelations() as $key => $rel) {
+		foreach ($this->_driver->getTableRelations() as $key => $rel) {
 			$ret[$rel['foreign_field']] = $key;
 		}
 		return $ret;
 	}
 	
+	/**
+	 * Return a set of Formz objects for each of this table's relations.
+	 * 
+	 * @access public
+	 * @return array Related Formz
+	 */
 	function getTableRelationForms() {
 		$relations = $this->getTableRelations();
 		$relation_forms = array();
@@ -584,7 +609,6 @@ class Formz {
 		return $relation_forms;
 	}
 
-
 	/**
 	 * Fetches the entire table for a relation 
 	 * Use this for populating selects and dropdowns
@@ -594,7 +618,7 @@ class Formz {
 	 * @return $array values
 	 */
 	function getTableRelationValues($fields) {
-		return $this->driver->getTableRelationValues($fields);
+		return $this->_driver->getTableRelationValues($fields);
 	}
 
 	/**
@@ -636,10 +660,27 @@ class Formz {
 		$this->$param = $value;
 	}
 	
+	/**
+	 * setDisplay function.
+	 * 
+	 * @access public
+	 * @param mixed $param
+	 * @param mixed $value
+	 * @return void
+	 */
 	function setDisplay($param, $value) {
 		$this->display[$param] = $value;
 	}
 	
+	/**
+	 * A magic utility function, used by all of the setFieldRequired('id'), etc.
+	 *
+	 * @access public
+	 * @param string $property Property name (called 'Required' above)
+	 * @param mixed $field A field, array of fields, or wildcard (*)
+	 * @param mixed $value Any value to set for this param. (default: true)
+	 * @return void
+	 */
 	function setFieldParam($property, $field, $value = true) {
 		if ($field == '*') {
 			$this->setFieldParam($property, array_keys($this->getFields()), $value);
@@ -648,20 +689,20 @@ class Formz {
 				$this->setFieldParam($property, $f, $value);
 			}
 		} else {
-			if (!isset($this->fields[$field])) {
+			if (!isset($this->_fields[$field])) {
 				$relations = $this->getTableRelations();
 
 				if (in_array($field, array_keys($relations))) {
-					if (!isset($this->relation_fields[$field])) {
-						$this->relation_fields[$field] = array();
+					if (!isset($this->_relation_fields[$field])) {
+						$this->_relation_fields[$field] = array();
 					}
-					$this->relation_fields[$field][$property] = $value;
+					$this->_relation_fields[$field][$property] = $value;
 				} else {
 					trigger_error("Field not defined: " . $field);
 					return;
 				}
 			}
-			$this->fields[$field][$property] = $value;
+			$this->_fields[$field][$property] = $value;
 		}
 	}
 	
@@ -690,20 +731,20 @@ class Formz {
 				$this->setFieldDisplay($property, $f, $value);
 			}
 		} else {
-			if (!isset($this->fields[$field])) {
+			if (!isset($this->_fields[$field])) {
 				$relations = $this->getTableRelations();
 
 				if (in_array($field, array_keys($relations))) {
-					if (!isset($this->relation_fields[$field])) {
-						$this->relation_fields[$field] = array();
+					if (!isset($this->_relation_fields[$field])) {
+						$this->_relation_fields[$field] = array();
 					}
-					$this->relation_fields[$field]['display'][$property] = $value;
+					$this->_relation_fields[$field]['display'][$property] = $value;
 				} else {
 					trigger_error("Field not defined: " . $field);
 					return;
 				}
 			}
-			$this->fields[$field]['display'][$property] = $value;
+			$this->_fields[$field]['display'][$property] = $value;
 		}
 	}
 	
@@ -734,16 +775,25 @@ class Formz {
 	 * @return void
 	 */
 	function addField($name, $defaults = array()) {
-		if (isset($this->fields[$name])) {
+		if (isset($this->_fields[$name])) {
 			trigger_error("Field " . $name . " already exists.");
 			return false;
 		}
-		$this->fields[$name] = $defaults;
+		$this->_fields[$name] = $defaults;
 	}
 	
+	/**
+	 * Utility function to set all sorts of field things all at once by passing an array.
+	 * I'd avoid it.
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @param array $args
+	 * @return void
+	 */
 	function setFieldFromArray($name, $args) {
-		if (isset($this->fields[$name])) {
-			$this->fields[$name] = array_merge_recursive($this->fields[$name], $args);
+		if (isset($this->_fields[$name])) {
+			$this->_fields[$name] = array_merge_recursive($this->_fields[$name], $args);
 		}
 		else {
 			return $this->addField($name, $args);
@@ -772,6 +822,7 @@ class Formz {
 		$defaults['value'] = $defaults['label'];
 		
 		switch (strtolower($name)) {
+			// these are all synonyms... prob'ly don't need quite this many.
 			case 'saveandnew':
 			case 'save_and_new':
 			case 'saveandadd':
@@ -784,22 +835,26 @@ class Formz {
 				$defaults['label'] = 'Save and Add New';
 				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
 				break;
+			// all save actions need a submit button.
 			case 'submit':
 			case 'save':
 			case 'update':
 				$name = 'update';
 				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
 				break;
+			// more synonyms. this time for the D in CRUD.
 			case 'delete':
 			case 'destroy':
 				$name = 'destroy';
 				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
 				break;
+			// cancel should be a link, not a button, by default.
 			case 'cancel':
 /* 				if (!isset($defaults['type'])) $defaults['type'] = 'submit'; */
 				if (!isset($defaults['link'])) $defaults['link'] = '%id%/read';
 				if (!isset($defaults['type'])) $defaults['type'] = 'link';
 				break;
+			// nothing going yet for preview.
 			case 'preview':
 			default:
 				$defaults['type'] = 'button';
@@ -808,7 +863,6 @@ class Formz {
 		
 		$args = array_merge_recursive($defaults, $args);
 		$this->_formActions[$name] = $args;
-
 	}
 	
 	/**
@@ -904,8 +958,8 @@ class Formz {
 	 * @return bool True if this is timestampable.
 	 */
 	function isTimestampable() {
-		$this->timestampable = $this->driver->isTimestampable();
-		return $this->timestampable;
+		$this->_timestampable = $this->_driver->isTimestampable();
+		return $this->_timestampable;
 	}
 	
 	/**
@@ -915,7 +969,7 @@ class Formz {
 	 * @return bool True if this is soft deletable.
 	 */
 	function isSoftDeletable() {
-		$this->softdeletable = $this->driver->isSoftDeletable();
+		$this->softdeletable = $this->_driver->isSoftDeletable();
 		return $this->softdeletable;
 	}
 	
@@ -926,7 +980,7 @@ class Formz {
 	 * @return bool True if this is sluggable.
 	 */
 	function isSluggable() {
-		$this->sluggable = $this->driver->isSluggable();
+		$this->sluggable = $this->_driver->isSluggable();
 		return $this->sluggable;
 	}
 
@@ -937,8 +991,8 @@ class Formz {
 	 * @return bool True if this is versionable.
 	 */
 	function isVersionable() {
-		$this->versionable = $this->driver->isVersionable();
-		return $this->versionable;
+		$this->_versionable = $this->_driver->isVersionable();
+		return $this->_versionable;
 	}
 		
 	/**
@@ -948,7 +1002,7 @@ class Formz {
 	 * @return bool True if this is sortable.
 	 */
 	function isSortable() {
-		return $this->sortable;
+		return $this->_sortable;
 	}
 	
    	/**
@@ -958,7 +1012,7 @@ class Formz {
 	 * @return void
 	 */
 	function isTree() {
-		return $this->driver->isTree();
+		return $this->_driver->isTree();
 	}
 
 	/**
@@ -973,7 +1027,7 @@ class Formz {
 		$direction = strtoupper($direction);
 		
 		// If the fieldname isn't valid, don't even give them the courtesy of a response.
-		if (!in_array($fieldname, array_keys($this->fields))) {
+		if (!in_array($fieldname, array_keys($this->_fields))) {
 			return;
 		}
 
@@ -985,7 +1039,7 @@ class Formz {
 		if ($direction !== 'DESC') {
 			$direction == 'ASC';
 		}
-		$this->driver->sort($fieldname, $direction);
+		$this->_driver->sort($fieldname, $direction);
 	}
 	
 	/**
@@ -1102,7 +1156,7 @@ class Formz {
 			trigger_error('node required when using "setParentRecord"');
 		}
 
-		$this->driver->_parentRecord = $node;
+		$this->_driver->_parentRecord = $node;
 	}
 
 	/**

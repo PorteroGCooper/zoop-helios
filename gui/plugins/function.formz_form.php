@@ -161,7 +161,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			$form_item .= '<span class="caption">' . $field['display']['caption'] . '</span>';
 
 		if ($form->editable) {
-			$control_html = $control->render();
+			$control_html = $control->renderControl();
 		} else {
 			$control_html = '<div class="' . implode(' ', $form_item_classes) . '">' . $control->view() . '</div>';
 		}
@@ -196,7 +196,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			} else {
 				$control = &getGuiControl('button', $key);
 				$control->setParams($action);			
-				$form_items[] = $control->render();
+				$form_items[] = $control->renderControl();
 			}
 		}
 	}
