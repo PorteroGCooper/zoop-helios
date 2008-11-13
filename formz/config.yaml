@@ -2,7 +2,7 @@ driver: forms
 type: list
 lotsa_classes: true
 relations:
-# Priority for autoselecting table title fields within relations
+    # Priority for autoselecting table title fields within relations
     display_field_priority:
         - name
         - label
@@ -18,3 +18,7 @@ label_field_priority:
     - alias
     - username
     - first_name
+
+# Label for 'nothing selected' in a dropdown.
+# Will autoreplace %field% with the actual field name.
+select_null_value: - Select %field% -

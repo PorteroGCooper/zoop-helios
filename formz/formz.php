@@ -209,15 +209,17 @@ class Formz {
 			$values = getPost();
 		}
 
+		$id_field = $this->getIdField();
+
 		if ($id === null) {
-			if (isset($this->id)) {
-				$id = $this->id;
-			} else if (isset($values['id'])) {
-				$id = $values['id'];
+			if (isset($this->$id_field)) {
+				$id = $this->$id_field;
+			} else if (isset($values[$id_field])) {
+				$id = $values[$id_field];
 				
-				// strip out $values['id'] = 'new' to keep it from saving to db...
+				// strip out $values[$id_field] = 'new' to keep it from saving to db...
 				if ($id == 'new') {
-					unset($values['id']);
+					unset($values[$id_field]);
 				}
 			}
 			
@@ -235,14 +237,19 @@ class Formz {
 		
 		foreach ($field_names as $name => $field_info) { 
 			if (isset($values[$name])) {
-				if (isset($field_info['relation_alias']) && (isset($field_info['rel_type']) && $field_info['rel_type'] == Formz::MANY)) {
-					$save['relations'][$field_info['relation_alias']] = $values[$name];
+			
+				if ($field_info['type'] == 'relation') {
+					if ($field_info['rel_type'] == Formz::MANY) {
+						$save['relations'][$field_info['relation_alias']] = $values[$name];
+					} else {
+						$save[$name] = $values[$name];
+					}
 				} else {
 					$save[$name] = $values[$name];
 				} 
 			}
 		}
-		
+
 		return $this->driver->saveRecord($save, $id);
 	}
 	
@@ -871,8 +878,8 @@ class Formz {
 	function isSortable() {
 		return $this->sortable;
 	}
-
-	/**
+	
+   	/**
 	 * Returns true if table is a tree 
 	 * 
 	 * @access public

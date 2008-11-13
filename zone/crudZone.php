@@ -265,6 +265,8 @@ class CrudZone extends zone {
 	 * @return void
 	 **/
 	function postUpdate() {
+
+
 		if (getPostText('update')) {	
 			$values = array();
 			
@@ -296,7 +298,6 @@ class CrudZone extends zone {
 					}
 				}
 			}
-			
 			$id = $this->form->saveRecord($values);
 		} else if (getPostText('destroy')) {
 			// redirect to the destroy page if they're trying to delete this item...

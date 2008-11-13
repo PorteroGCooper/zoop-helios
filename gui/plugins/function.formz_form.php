@@ -85,6 +85,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 		}
 		
+		$label = (isset($field['display']['label'])) ? $field['display']['label'] : Formz::format_label($key);
 		$value = isset($data[$key]) ? $data[$key] : '';
 		
 		$field_type = null;
@@ -106,6 +107,15 @@ function smarty_function_formz_form($params, &$smarty) {
 				break;
 			case 'relation':
 				$field['display']['index'] = $form->getTableRelationValues($key);
+
+				if ($field['rel_type'] == Formz::ONE) {
+					if (!isset($field['required']) || !$field['required']) {
+						// TODO remove this field if something's already selected in this dropdown.
+						$null_val = Config::get('zoop.formz.select_null_value');
+						$null_val = str_replace('%field%', $label, $null_val);
+						$field['display']['index'] = array('' => $null_val) + $field['display']['index'];
+					}
+				}
 				break;
 		}
 
@@ -141,8 +151,6 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_item = '';
 		
 		if (!isset($field['display']['type']) || $field['display']['type'] != 'hidden') {
-			$label = (isset($field['display']['label'])) ? $field['display']['label'] : Formz::format_label($key);
-
 			$required = (isset($field['required']) && $field['required']) ? '<span class="required" title="Required">*</span>' : '';
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';
