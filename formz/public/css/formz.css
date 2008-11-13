@@ -79,3 +79,25 @@
 .formz-list .delete-link {
 	background-image: url(../images/silk/delete.png);
 }
+
+
+/* style boolean values as checkboxes */
+.formz-list .bool-true, .formz .bool-true {
+	display: block;
+	height: 16px;
+	width: 16px;
+	background-repeat: no-repeat;
+	font-size: 0px;
+	color: transparent;
+	background-image: url(../images/bool-true.gif);
+}
+
+.formz-list .bool-false, .formz .bool-false {
+	display: block;
+	height: 16px;
+	width: 16px;
+	background-repeat: no-repeat;
+	font-size: 0px;
+	color: transparent;
+	background-image: url(../images/bool-false.gif);
+}
