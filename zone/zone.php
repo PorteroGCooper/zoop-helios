@@ -113,22 +113,22 @@ class zone
 	var $_inPath;
 
 	/**
-	 * allowed_children
+	 * allowedChildren
 	 * These are the zone names valid in this zone   -- DON'T INCLUDE THE 'zone_' PART
 	 *
 	 * @var array
 	 * @access public
 	 */
-	var $allowed_children = array();
+	var $allowedChildren = array();
 
 	/**
-	 * allowed_parents
+	 * allowedParents
 	 * These are the zones this zone can be a child of -- DON'T INCLUDE THE 'zone_' PART
 	 *
 	 * @var array
 	 * @access public
 	 */
-	var $allowed_parents = array();	
+	var $allowedParents = array();	
 
 	/**
 	 * zoneParamNames
@@ -694,8 +694,8 @@ class zone
 			//		parents
 		$childZoneName = "zone_" . $zoneName;
 		if ( class_exists($childZoneName) && (
-			count($this->allowed_children) < 1
-			|| in_array($zoneName, $this->allowed_children) )) {
+			count($this->allowedChildren) < 1
+			|| in_array($zoneName, $this->allowedChildren) )) {
 				//	create the new zone object if it does not exist
 				$this->_executeChildZone($zoneName, $inPath);
 		} else {
@@ -754,11 +754,11 @@ class zone
 		}
 		
 		// check to see if this is an allowed parent for the class we just created
-		if ( count($this->_zone[$zoneName]->allowed_parents) > 0
-			&& !in_array($this->zonetype, $this->_zone[$zoneName]->allowed_parents)) {
+		if ( count($this->_zone[$zoneName]->allowedParents) > 0
+			&& !in_array($this->zonetype, $this->_zone[$zoneName]->allowedParents)) {
 				return false;
 		} elseif ($this->getName() != "@ROOT") {
-			$this->_zone[$zoneName]->allowed_parents = array($this->_getClassNamePath());
+			$this->_zone[$zoneName]->allowedParents = array($this->_getClassNamePath());
 		}
 
 		$retval = $this->_zone[$zoneName]->handleRequest($inPath);
@@ -1075,11 +1075,11 @@ class zone
 			$parent_zones = array();
 		}
 
-		if (!$this->allowed_parents) {
+		if (!$this->allowedParents) {
 			return array();
 		}
 
-		foreach ($this->allowed_parents as $zone) {
+		foreach ($this->allowedParents as $zone) {
 			$parent_zone = 'zone_' . $zone;
 			$x = new $parent_zone;
 			$parent_zones = array_merge($parent_zones, $x->getMyParents());

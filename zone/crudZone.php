@@ -66,7 +66,29 @@ class CrudZone extends zone {
 			$this->Aliases = array();
 		}
 		$this->form = new Formz($this->tableName);
+		$this->construct();
 	}
+
+	/**
+	 * Hook so overloading can place things into the constructor without calling parent::__construct each time
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function construct() { } 
+
+	function initZone() {
+		$this->initCrudZone();
+	}
+
+	/**
+	 * Hook run inside initZone so Crud Zone can use it and extending classes can run code without calling parent::initZone each time 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function initCrudZone() { }
+
 
 	/**
 	 * CrudZone index page.

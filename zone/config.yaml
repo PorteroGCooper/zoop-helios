@@ -1,4 +1,5 @@
 save_in_session: false
 directory: %APP_DIR%/zones
+decorators_directory: %APP_DIR%/zones/decoratorZones
 aliases:
     global_redirect: 0

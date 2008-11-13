@@ -214,6 +214,24 @@ class zoop
 	}
 
 	/**
+	 * Add a decorator zone to the application.
+	 * Decorator zones can attach themselves to many zones, controlled by $zone->allowedParents, $zone->allowedChildren
+	 * 
+	 * A zone is a section of the controller. Zones are analagous to a directory.
+	 * addZone use autoload if available.
+	 *
+	 * @param string $name The name of the zone to add.
+	 * @access public
+	 * @return void
+	 */
+	function addDecoratorZone($name) {
+		$this->addComponent('zone');
+		$zone_dir = Config::get('zoop.zone.decorators_directory');
+		$zone_name = "zone_" . str_replace( DIRECTORY_SEPARATOR, "_", $name);
+		$this->addInclude($zone_name,  "$zone_dir" . DIRECTORY_SEPARATOR . "{$name}.php");
+	}
+
+	/**
 	 * Loads a Model object
 	 * A model is a model object representative of a database table, view, etc. 
 	 * You may roll your own, use doctrine or other. 
