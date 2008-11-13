@@ -25,8 +25,8 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class emailControl extends GuiControl
-{
+class emailControl extends GuiControl {
+
 	/**
 	 * validate
 	 *
@@ -78,12 +78,6 @@ class emailControl extends GuiControl
 		return array('validate');
 	}
 
-	/**
-	 * render
-	 *
-	 * @access public
-	 * @return void
-	 */
 	function render()
 	{
 		$attrs = array();
@@ -121,5 +115,5 @@ class emailControl extends GuiControl
 
 		return $html;
 	}
+
 }
-?>

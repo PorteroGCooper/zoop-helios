@@ -730,7 +730,11 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 		}
 			
-		return $this->record->delete();
+		if ($this->table->isTree()) {
+			return $this->record->getNode()->delete();
+		} else {
+			return $this->record->delete();
+		}
 	}	
 	
 	/**
