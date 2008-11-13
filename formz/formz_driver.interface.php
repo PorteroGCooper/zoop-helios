@@ -150,6 +150,14 @@ interface formz_driver_interface {
 	function isVersionable();
 
 	/**
+	 * Returns true if table is a tree 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function isTree();
+
+	/**
 	 * Order results by given column and direction.
 	 *
 	 * @param string $fieldname Table column on which to sort

@@ -938,6 +938,16 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->table->hasTemplate('Doctrine_Template_Versionable');
 	}
 
+	/**
+	 * Returns true if table is a tree 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function isTree() {
+		return $this->table->isTree();
+	}
+
 	
 	/**
 	 * Order results by given column and direction.

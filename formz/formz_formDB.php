@@ -239,6 +239,17 @@ class Formz_FormDB implements formz_driver_interface {
 		return false;
 	}	
 
+
+	/**
+	 * Returns true if table is a tree 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function isTree() {
+		return false;
+	}
+
 	/**
 	 * setParam
 	 *
