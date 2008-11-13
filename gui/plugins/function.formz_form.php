@@ -109,7 +109,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				$field['display']['index'] = $form->getTableRelationValues($key);
 
 				if ($field['rel_type'] == Formz::ONE) {
-					if (!isset($field['required']) || !$field['required']) {
+					if ($form->editable && (!isset($field['required']) || !$field['required'])) {
 						// TODO remove this field if something's already selected in this dropdown.
 						$null_val = Config::get('zoop.formz.select_null_value');
 						$null_val = str_replace('%field%', $label, $null_val);
