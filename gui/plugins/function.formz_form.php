@@ -32,6 +32,8 @@ function smarty_function_formz_form($params, &$smarty) {
 	if (!isset($params['form'])) return;
 	
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
+	$base_href = $smarty->get_template_vars('BASE_HREF');
+	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	
 	$form = $params['form'];
 	$form_items = array();
@@ -191,7 +193,7 @@ function smarty_function_formz_form($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}
-				$value = '<a href="' . $link . '">' . $action['label'] . '</a>';
+				$form_items[] = '<a href="' . $base_href . $zone_path . $link . '">' . $action['label'] . '</a>';
 
 			} else {
 				$control = &getGuiControl('button', $key);

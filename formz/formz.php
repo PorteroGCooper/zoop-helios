@@ -851,7 +851,7 @@ class Formz {
 			// cancel should be a link, not a button, by default.
 			case 'cancel':
 /* 				if (!isset($defaults['type'])) $defaults['type'] = 'submit'; */
-				if (!isset($defaults['link'])) $defaults['link'] = '%id%/read';
+				if (!isset($defaults['link'])) $defaults['link'] = '/read';
 				if (!isset($defaults['type'])) $defaults['type'] = 'link';
 				break;
 			// nothing going yet for preview.
@@ -1014,6 +1014,21 @@ class Formz {
 	function isTree() {
 		return $this->_driver->isTree();
 	}
+	
+	/**
+	 * When using a nestedSet, used to define the parent. 
+	 * 
+	 * @param mixed $node 
+	 * @access public
+	 * @return void
+	 */
+	function setParentRecord($node = false) {
+		if ($node === false) {
+			trigger_error('node required when using "setParentRecord"');
+		}
+
+		$this->_driver->_parentRecord = $node;
+	}
 
 	/**
 	 * Sort the results by a given field (column).
@@ -1070,7 +1085,6 @@ class Formz {
 		return $order;
 	}
 	
-		
 	/**
 	 * Sets the default sort field (and optionally direction) on a Formz object.
 	 *
@@ -1081,6 +1095,8 @@ class Formz {
 		$this->_defaultSortField = $fieldname;
 		$this->_defaultSortDirection = strtoupper($direction);
 	}
+	
+	
 	
 	/**
 	 * __call magic method.
@@ -1142,21 +1158,6 @@ class Formz {
 		else {
 			trigger_error($method . " method undefined on Formz object.");
 		}
-	}
-
-	/**
-	 * When using a nestedSet, used to define the parent. 
-	 * 
-	 * @param mixed $node 
-	 * @access public
-	 * @return void
-	 */
-	function setParentRecord($node = false) {
-		if ($node === false) {
-			trigger_error('node required when using "setParentRecord"');
-		}
-
-		$this->_driver->_parentRecord = $node;
 	}
 
 	/**
