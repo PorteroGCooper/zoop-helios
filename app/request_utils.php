@@ -417,18 +417,18 @@ function _getRequestText($get_or_post, $var_name = false) {
  * Return the specified GET request variable as an integer.
  *
  * This method will cast the variable as an integer if it isn't already. This is preferred
- * over getGet, as it guarantees that your variable is either an integer or 'false'.
+ * over getGet, as it guarantees that your variable is either an integer or 'null'.
  *
  * If you need to distinguish between 0 and unspecified value, be sure to use '==='.
  *
  * @code
- *   if (getGetInt('foo') === false) {
+ *   if (getGetInt('foo') === null) {
  *      echo 'GET variable not set';
  *   }
  * @endcode
  *
  * @param string $var_name HTTP GET request variable name.
- * @return mixed HTTP GET request value cast as an integer, or false.
+ * @return mixed HTTP GET request value cast as an integer, or null.
  */
 function getGetInt($var_name) {
 	return _getRequestInt('get', $var_name);
@@ -438,18 +438,18 @@ function getGetInt($var_name) {
  * Return the specified GET request variable as an integer.
  *
  * This method will cast the variable as an integer if it isn't already. This is preferred
- * over getGet, as it guarantees that your variable is either an integer or 'false'.
+ * over getGet, as it guarantees that your variable is either an integer or 'null'.
  *
  * If you need to distinguish between 0 and unspecified value, be sure to use '==='.
  *
  * @code
- *   if (getPostInt('foo') === false) {
+ *   if (getPostInt('foo') === null) {
  *      echo 'POST variable not set';
  *   }
  * @endcode
  *
  * @param string $var_name HTTP GET request variable name.
- * @return mixed HTTP GET request value cast as an integer, or false.
+ * @return mixed HTTP GET request value cast as an integer, or null.
  */
 function getPostInt($var_name) {
 	return _getRequestInt('post', $var_name);
@@ -459,7 +459,7 @@ function getPostInt($var_name) {
  * Return the specified HTTP request variable as an integer.
  *
  * This method will cast the variable as an integer if it isn't already. This is preferred
- * as it guarantees that your variable is either an integer or 'false'.
+ * as it guarantees that your variable is either an integer or 'null'.
  *
  * @access private
  * @see getGetInt
@@ -467,14 +467,17 @@ function getPostInt($var_name) {
  *
  * @param string $get_or_post Request variable type ('get' or 'post').
  * @param string $var_name HTTP GET request variable name.
- * @return mixed HTTP request value cast as an integer, or false.
+ * @return mixed HTTP request value cast as an integer, or null.
  */
 function _getRequestInt($get_or_post, $var_name) {
 	$item = _findRequestItem($get_or_post, $var_name);
-	if($item) {
-		return verifyInt($item);
+	
+	// only return null/false/empty string if the item is STRICTLY EQUAL to those.
+	// otherwise '0' will never come through.
+	if ($item === null || $item === false || $item === '') {
+		return null;
 	} else {
-		return false;
+		return verifyInt($item);
 	}
 }
 
