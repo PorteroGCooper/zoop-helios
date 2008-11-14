@@ -812,14 +812,11 @@ class Formz {
 	 * @param array $args Optional set of arguments for this action.
 	 */
 	function addAction($name, $args = array()) {
-		$defaults = array(
-			'label' => $name,
-		);
-		if (isset($args['link'])) $args['type'] = 'link';
-		
-		// capitalize default label...
-		$defaults['label'] = Formz::format_label($defaults['label']);
-		$defaults['value'] = $defaults['label'];
+
+		// Default label, also capitalized...
+		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['value'])) $args['value'] = $args['label'];
+		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
 		
 		switch (strtolower($name)) {
 			// these are all synonyms... prob'ly don't need quite this many.
@@ -831,37 +828,37 @@ class Formz {
 			case 'updateandcreate':
 			case 'update_and_create':
 				$name = 'update_and_create';
-				$defaults['value'] = 'Save and Add New';
-				$defaults['label'] = 'Save and Add New';
-				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
+				if (!isset($args['value'])) $args['value'] = 'Save and Add New';
+				if (!isset($args['label'])) $args['label'] = 'Save and Add New';
+				if (!isset($args['type'])) $args['type'] = 'submit';
 				break;
 			// all save actions need a submit button.
 			case 'submit':
 			case 'save':
 			case 'update':
 				$name = 'update';
-				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
+				if (!isset($args['type'])) $args['type'] = 'submit';
 				break;
 			// more synonyms. this time for the D in CRUD.
 			case 'delete':
 			case 'destroy':
 				$name = 'destroy';
-				if (!isset($defaults['type'])) $defaults['type'] = 'submit';
+				
+				if (!isset($args['type'])) $args['type'] = 'submit';
 				break;
 			// cancel should be a link, not a button, by default.
 			case 'cancel':
-/* 				if (!isset($defaults['type'])) $defaults['type'] = 'submit'; */
-				if (!isset($defaults['link'])) $defaults['link'] = '/read';
-				if (!isset($defaults['type'])) $defaults['type'] = 'link';
+/* 				if (!isset($args['type'])) $args['type'] = 'submit'; */
+				if (!isset($args['link'])) $args['link'] = '/read';
+				if (!isset($args['type'])) $args['type'] = 'link';
 				break;
 			// nothing going yet for preview.
 			case 'preview':
 			default:
-				$defaults['type'] = 'button';
+				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
 		}
 		
-		$args = array_merge_recursive($defaults, $args);
 		$this->_formActions[$name] = $args;
 	}
 	
@@ -903,26 +900,20 @@ class Formz {
 	 * @param array $args Optional set of arguments for this action.
 	 */
 	function addListAction($name, $args = array()) {
-		$defaults = array(
-			'label' => $name,
-		);
-		if (isset($args['link'])) $args['type'] = 'link';
-		
-		// capitalize default label...
-		$defaults['label'] = Formz::format_label($defaults['label']);
-		$defaults['value'] = $defaults['label'];
+		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
+		if (!isset($args['value'])) $args['value'] = $args['label'];
 		
 		switch (strtolower($name)) {
 			case 'add':
-				if (!isset($defaults['link'])) $defaults['link'] = 'create';
-				if (!isset($defaults['type'])) $defaults['type'] = 'link';
+				if (!isset($args['link'])) $args['link'] = 'create';
+				if (!isset($args['type'])) $args['type'] = 'link';
 				break;
 			default:
-				$defaults['type'] = 'button';
+				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
 		}
-				
-		$args = array_merge_recursive($defaults, $args);
+		
 		$this->_formListActions[$name] = $args;
 	}
 	

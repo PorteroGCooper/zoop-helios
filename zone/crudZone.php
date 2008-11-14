@@ -99,10 +99,9 @@ class CrudZone extends zone {
 	 *
 	 * The second function of the index page is to provide a list view if a record id isn't provided.
 	 * This is the equivalent of CRUD/(all)/read.
-	 *
-	 * @todo: remove the " if $record_id = 'new'" chunk...
 	 */
 	function pageIndex() {
+		if (!$this->checkAuth('read')) return;
 		global $gui;
 		
 		$record_id = $this->getZoneParam('record_id');
@@ -161,9 +160,7 @@ class CrudZone extends zone {
 	 * @return void
 	 */
 	function _detailRecord($record_id) {
-		if ($record_id == 'new') {
-			$this->form->getRecord();
-		} else if ($record_id) {
+		if ($record_id) {
 			if (!$this->form->getRecord($record_id)) {
 				$this->responsePage404();
 				return;
@@ -228,6 +225,8 @@ class CrudZone extends zone {
 	 * @return void
 	 **/
 	function pageUpdate() {
+		if (!$this->checkAuth('update')) return;
+		
 		global $gui;
 		
 		$record_id = $this->getZoneParam('record_id');
@@ -245,7 +244,8 @@ class CrudZone extends zone {
 		if ($record_id == 'new') {
 			$this->form->addAction('saveandnew');
 		} else {
-			$this->form->addAction('delete');
+/* 			$this->form->addAction('delete', array('type' => 'link', 'link' => '%id%/destroy')); */
+			$this->form->addAction('delete', array('link' => '/destroy'));
 		}
 		$this->form->addAction('cancel');
 		
@@ -259,6 +259,23 @@ class CrudZone extends zone {
 	 * Form found at $this->form
 	 */
 	function initUpdateForm() { }
+	
+	/**
+	 * Hook for adding authentication to CRUD.
+	 *
+	 * By default this method will *always* return true. This is on purpose. Otherwise, CrudZone would
+	 * deny access to everything by default, and would be useless...
+	 * 
+	 * Override this method in an extending class so you can implement authentication. Implementing
+	 * subclasses should either redirect to a 'denied' page, or return false if authentication is denied.
+	 *
+	 * @param string $action
+	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', or 'destroy'.
+	 * @return bool Return 'false' from overriding methods to stop the requested action from happening.
+	 */
+	function checkAuth($action) {
+		return true;
+	}
 
 	/**
 	 * POST handler for CRUD Update action.
@@ -268,7 +285,7 @@ class CrudZone extends zone {
 	 * @return void
 	 **/
 	function postUpdate() {
-
+		if (!$this->checkAuth('update')) return;
 
 		if (getPostText('update') || getPostText('update_and_create')) {
 			$values = array();
@@ -325,6 +342,8 @@ class CrudZone extends zone {
 	 * @return void
 	 **/		
 	function pageDestroy() {
+		if (!$this->checkAuth('destroy')) return;
+		
 		global $gui;
 		
 		$record_id = $this->getZoneParam('record_id');
@@ -360,6 +379,8 @@ class CrudZone extends zone {
 	 * @return void
 	 **/
 	function postDestroy() {
+		if (!$this->checkAuth('destroy')) return;
+		
 		if (getPostText('destroy')) {
 			$id = getPostInt($this->form->getIdField());
 			$this->form->destroyRecord($id);
