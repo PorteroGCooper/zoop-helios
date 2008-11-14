@@ -842,7 +842,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			$foreign_fields = $foreign_class->getColumnNames();
 			
 			// try the defaults
-			foreach(Config::get('zoop.formz.relations.display_field_priority') as $field_name){
+			foreach(Config::get('zoop.formz.title_field_priority') as $field_name){
 				if (in_array($field_name, $foreign_fields)) {
 					$label_field = $field_name;
 					break;

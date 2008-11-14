@@ -1097,6 +1097,19 @@ class Formz {
 	}
 	
 	
+	function getTitleField() {
+		$label_field = $this->getIdField();
+
+		foreach(Config::get('zoop.formz.title_field_priority') as $field_name){
+			$fields = $this->getFields();
+			if (isset($fields[$field_name])) {
+				$label_field = $field_name;
+				break;
+			}
+		}
+
+		return $label_field;
+	}
 	
 	/**
 	 * __call magic method.

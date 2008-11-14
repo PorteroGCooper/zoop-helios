@@ -180,8 +180,8 @@ class CrudZone extends zone {
 	 */
 	function _listRecords() {
 		$this->form->getRecords();
-		$this->form->setFieldListlink('id', '%id%/read');
-		
+		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), '%id%/read');
+
 		// add a fake column called "edit", give it an edit link...
 		$this->form->setFieldFromArray('edit', array(
 			// the %id% will automatically be replaced by the contents of the record id field
@@ -330,17 +330,10 @@ class CrudZone extends zone {
 		$record_id = $this->getZoneParam('record_id');
 		$this->form->getRecord($record_id);
 		
-		$id_field = $this->form->getIdField();
 		
 		// Come up with a title for this bad boy.
 		$record_data = $this->form->getData();
-		$label_field = $id_field;
-		foreach(Config::get('zoop.formz.relations.display_field_priority') as $field_name){
-			if (isset($record_data[$field_name])) {
-				$label_field = $field_name;
-				break;
-			}
-		}
+		$label_field = $this->form->getTitleField();
 		$title_field = $record_data[$label_field];
 		
 		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
