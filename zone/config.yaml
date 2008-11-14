@@ -3,3 +3,7 @@ directory: %APP_DIR%/zones
 decorators_directory: %APP_DIR%/zones/decoratorZones
 aliases:
     global_redirect: 0
+crud_zone:
+    messages:
+        # Delete confirmation message. Can include %id% and %title% fields.
+        confirm_delete: "Are you sure you want to delete: <strong>%title%</strong>?"

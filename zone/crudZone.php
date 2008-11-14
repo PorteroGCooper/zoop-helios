@@ -330,16 +330,28 @@ class CrudZone extends zone {
 		$record_id = $this->getZoneParam('record_id');
 		$this->form->getRecord($record_id);
 		
-		$message = 'Are you sure you want to delete record: ' . $record_id . '?';
-		
 		$id_field = $this->form->getIdField();
-
+		
+		// Come up with a title for this bad boy.
+		$record_data = $this->form->getData();
+		$label_field = $id_field;
+		foreach(Config::get('zoop.formz.relations.display_field_priority') as $field_name){
+			if (isset($record_data[$field_name])) {
+				$label_field = $field_name;
+				break;
+			}
+		}
+		$title_field = $record_data[$label_field];
+		
+		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
+		$message = str_replace(array('%id%', '%title%'), array($record_id, $title_field), $message);
+		
 		$this->form->setFieldFormshow('*', false);
 		$this->form->setFieldFormshow($id_field);
 
 		$this->form->addAction('delete');
 		$this->form->addAction('cancel');
-				
+
 		$this->form->guiAssign();
 		$gui->assign('message', $message);
 		$gui->generate('forms/formz.tpl');
