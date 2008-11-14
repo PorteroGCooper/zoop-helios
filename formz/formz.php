@@ -110,9 +110,9 @@ class Formz {
 
 	var $record_id;
 	
-	protected $_timestampable = false;
-	protected $_sortable = true;
-	protected $_versionable = false;
+	protected $timestampable = false;
+	protected $sortable = true;
+	protected $versionable = false;
 
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
@@ -958,8 +958,8 @@ class Formz {
 	 * @return bool True if this is timestampable.
 	 */
 	function isTimestampable() {
-		$this->_timestampable = $this->_driver->isTimestampable();
-		return $this->_timestampable;
+		$this->timestampable = $this->_driver->isTimestampable();
+		return $this->timestampable;
 	}
 	
 	/**
@@ -991,8 +991,8 @@ class Formz {
 	 * @return bool True if this is versionable.
 	 */
 	function isVersionable() {
-		$this->_versionable = $this->_driver->isVersionable();
-		return $this->_versionable;
+		$this->versionable = $this->_driver->isVersionable();
+		return $this->versionable;
 	}
 		
 	/**
@@ -1002,7 +1002,7 @@ class Formz {
 	 * @return bool True if this is sortable.
 	 */
 	function isSortable() {
-		return $this->_sortable;
+		return $this->sortable;
 	}
 	
    	/**
@@ -1138,6 +1138,7 @@ class Formz {
 			return call_user_func_array(array($this, 'setDisplay'), $args);
 		}
 		else if (substr($method, 0, 3) == 'set') {
+			// @TODO we need to get rid of this setter. no me gusta.
 			$param_name = substr($method, 3);
 			
 			// lowercasify the first letter...
