@@ -149,6 +149,8 @@ function smarty_function_formz_list($params, &$smarty) {
 
 			// @todo take care of relations...
 
+			$link_title = (isset($fields[$field]['display']['title'])) ? 'title="' . $fields[$field]['display']['title'] . '" ' : '';
+
 			// create a listlink
 			if (isset($fields[$field]['listlink'])) {
 				$link = $fields[$field]['listlink'];
@@ -163,11 +165,10 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-/* 				if (isset($fields[$field]['display']['title'])) */
-				$value = '<a class="listlink ' . $field . '-link" href="' . $base_href . $zone_path . $link . '/"><span>' . $value . '</span></a>';
+				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . $base_href . $zone_path . $link . '/"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
-				$value = '<a href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
+				$value = '<a ' . $link_title . 'href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
 			}
 /*
 			// make this bad boy editable...
