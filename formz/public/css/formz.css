@@ -20,9 +20,10 @@
 	display: block;
 	font-weight: bold;
 }
-.form-item .required {
+.form-item label .required {
 	color: red;
 }
+
 .form-item .caption {
 	display: block;
 	font-size: .85em;

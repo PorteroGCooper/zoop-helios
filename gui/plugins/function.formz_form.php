@@ -68,6 +68,24 @@ function smarty_function_formz_form($params, &$smarty) {
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
+		
+		/**
+		 * figure out the 'required' logic
+		 *
+		 * if the field was set required (or not) using formz::setFieldRequired(), this will trump everything.
+		 * otherwise, defer to the validation set for this field.
+		 *
+		 */
+		if (!isset($field['required'])) {
+			if (isset($field['display']['validate']) && isset($field['display']['validate']['required'])) {
+				$field['required'] = $field['display']['validate']['required'];
+			} else {
+				$field['required'] = false;
+			}
+		}
+		
+		// now force the validation on the guicontrol.
+		$field['display']['validate']['required'] = $field['required'];
 
 		// guess what type of guicontrol to use on this bad boy
 		if (isset($field['display']['type'])) {
@@ -111,7 +129,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				$field['display']['index'] = $form->getTableRelationValues($key);
 
 				if ($field['rel_type'] == Formz::ONE) {
-					if ($form->editable && (!isset($field['required']) || !$field['required'])) {
+					if ($form->editable && !$field['required']) {
 						// TODO remove this field if something's already selected in this dropdown.
 						$null_val = Config::get('zoop.formz.select_null_value');
 						$null_val = str_replace('%field%', $label, $null_val);
@@ -153,7 +171,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_item = '';
 		
 		if (!isset($field['display']['type']) || $field['display']['type'] != 'hidden') {
-			$required = (isset($field['required']) && $field['required']) ? '<span class="required" title="Required">*</span>' : '';
+			$required = ($field['required']) ? '<span class="required" title="Required">*</span>' : '';
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';
 			$form_item .= '<label for="' . $control->getLabelName() .'"' .$titlestr. '>' . $label . $required . '</label>';
