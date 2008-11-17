@@ -68,6 +68,15 @@ class gui extends Smarty {
 	var $_appJs = array();
 	
 	/**
+	 * Inline JavaScript includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_js
+	 */
+	var $_inlineJs = array();
+	
+	/**
 	 * Gui regions definitions.
 	 *
 	 * @var array
@@ -546,6 +555,10 @@ class gui extends Smarty {
 	/**
 	 * Add (require) a JS file to be linked by the gui object.
 	 *
+	 * Inline JavaScript can be included by passing 'inline' as the scope argument. Inline js is put in
+	 * the HEAD, just after the rest of the JS includes. Inline js will be checked for uniqueness just like
+	 * includes.
+	 *
 	 * @param string $path Path to JS file
 	 * @param string $scope Scope of JS file include.
 	 *   Determines include priority of this file (all zoop scope files will be included before app)
@@ -559,6 +572,10 @@ class gui extends Smarty {
 				break;
 			case 'app':
 				$this->_appJs[$path] = $path;
+				break;
+			case 'inline':
+				$md5 = hash('md5', $path);
+				$this->_inlineJs[$md5] = $path;
 				break;
 		}
 	}

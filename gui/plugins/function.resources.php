@@ -45,13 +45,22 @@ function smarty_function_resources($params, &$smarty) {
 		$zoopJs = (isset($smarty->_zoopJs)) ? $smarty->_zoopJs : array();
 		$appJs = (isset($smarty->_appJs)) ? $smarty->_appJs : array();
 		$js = array_merge($zoopJs, $appJs);
+		
+		// add inline js stuff here...
+		$inline_js = isset($smarty->_inlineJs) ? $smarty->_inlineJs : array();
 	}
 
 	// spit 'em out.
-	foreach($css as $file) {
+	foreach ($css as $file) {
 		echo '<link rel="stylesheet" type="text/css" href="' . $file . "\" />\n";
 	}
-	foreach($js as $file) {
+	foreach ($js as $file) {
 		echo '<script type="text/javascript" src="' .$file . "\"></script>\n";
+	}
+	if (count($inline_js)) {
+		echo '<script type="text/javascript">';
+		echo "\n//<![CDATA[\n\t";
+		echo implode("\n\t", $inline_js);
+		echo "\n//]]>\n</script>\n";
 	}
 }
