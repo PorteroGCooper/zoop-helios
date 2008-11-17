@@ -56,7 +56,7 @@ class Config
 	}
 	
 	/**
-	 * Loads the config file specified by the $file member variable (or APP_DIR/config.yaml) 
+	 * Loads the config file specified by the $file member variable (or CONFIG_FILE) 
 	 *
 	 * @static
 	 * @access public
@@ -64,7 +64,7 @@ class Config
 	 */
 	public static function load() {
 		if(!self::$file) {
-			self::setConfigFile(APP_DIR . '/config.yaml');
+			self::setConfigFile(CONFIG_FILE);
 		}
 		
 		self::insist(self::$file);
