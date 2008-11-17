@@ -640,7 +640,8 @@ class Formz {
 			$gui->add_js('zoopfile/gui/js/jquery.min.js', 'zoop');
 			$gui->add_js('zoopfile/gui/js/jquery.metadata.min.js', 'zoop');
 			$gui->add_js('zoopfile/gui/js/jquery.tablesorter.min.js', 'zoop');
-			$gui->add_js('zoopfile/formz/js/sortable.js', 'zoop');			
+/* 			$gui->add_js('zoopfile/formz/js/sortable.js', 'zoop');			 */
+			$gui->add_js('jQuery(function($){$(".formz-list.sortable table").tablesorter();});', 'inline');
 		}
 		$gui->assign($name, $this);
 	}
