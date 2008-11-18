@@ -1,6 +1,8 @@
 status: %APP_STATUS%
 log_profile: 0
 mod_rewrite: 1
+canonicalize_urls: 0
+use_absolute_urls: 0
 directories:
     zoop: %ZOOP_DIR%
     app: %APP_DIR%

@@ -542,6 +542,11 @@ class gui extends Smarty {
 			$path = Config::get('zoop.gui.directories.public') . '/' . $path;
 		}
 		
+		// if this doesn't start with a slash, it should.
+		if ($path[0] !== '/') {
+			$path = '/' . $path;
+		}
+		
 		switch ($scope) {
 			case 'zoop':
 				$this->_zoopCss[$path] = $path;
@@ -566,16 +571,25 @@ class gui extends Smarty {
 	 * @return void
 	 */
 	function add_js($path, $scope = 'app') {
+	
+		// handle inline stuff separately.
+		if ($scope == 'inline') {
+				$md5 = hash('md5', $path);
+				$this->_inlineJs[$md5] = $path;
+				return;
+		}
+		
+		// if this doesn't start with a slash, it should.
+		if ($path[0] !== '/') {
+			$path = '/' . $path;
+		}
+		
 		switch ($scope) {
 			case 'zoop':
 				$this->_zoopJs[$path] = $path;
 				break;
 			case 'app':
 				$this->_appJs[$path] = $path;
-				break;
-			case 'inline':
-				$md5 = hash('md5', $path);
-				$this->_inlineJs[$md5] = $path;
 				break;
 		}
 	}

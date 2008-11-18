@@ -1780,6 +1780,84 @@ if (!function_exists('json_encode'))
 }
 
 
+/**
+ * URL canonicalization function.
+ *
+ * Every url should be passed through this or the Smarty {$my_path|url} display filter.
+ * 
+ * @author Justin Hileman {@link http://justinhileman.com}
+ * @access public
+ * @param string $url
+ * @return string Canonicalized url.
+ */
+function url($url) {
+	// If we're not rewriting urls, or if it's already an absolute url, just return it.
+	if (!Config::get('zoop.app.canonicalize_urls') || strpos($url, '://') !== false) return $url;
+	
+	$base = base_href();
+	if (strpos($url, $base) === 0) {
+		// make sure each url is only canonicalized once...
+		$url = substr($url, strlen($base));
+	} else if ($url[0] !== '/') {
+		// tack on a zone path if this isn't absolute from base.
+		$url = zone_path() . $url;
+	}
+	
+	if (Config::get('zoop.app.use_absolute_urls')) {
+		return base_href(true) . $url;
+	} else {
+		return $base . $url;
+	}
+}
+
+/**
+ * Base href helper function for URL canonicalization.
+ *
+ * This is an ugly hack. It steals template variables from the global $gui object since they're
+ * not easily available elsewhere. Will be modifying Zoop to remedy this soon, but the hack works
+ * for now :)
+ *
+ * @todo Stop cannibalizing global $gui object to get the base href.
+ *
+ * @author Justin Hileman {@link http://justinhileman.com}
+ * @param bool $absolute Do you want a fully qualified base href (http://domain and all)?
+ * @return string Base href. Use it wisely.
+ */
+function base_href($absolute = false) {
+	// cache the base href if it hasn't been used yet.
+	static $base_href;
+	if (!$base_href) {
+		global $gui;
+		$base_href = $gui->_tpl_vars['BASE_HREF'];
+	}
+	
+	// return the whole thing for an absolute url.
+	if ($absolute) {
+		return $base_href;
+	} else {
+		$parts = parse_url($base_href);
+		return $parts['path'];
+	}
+}
+
+/**
+ * Zone path helper function for URL canonicalization.
+ *
+ * This is an ugly hack. It steals template variables from the global $gui object since they're
+ * not easily available elsewhere. Will be modifying Zoop to remedy this soon, but the hack works
+ * for now :)
+ *
+ * @todo Stop cannibalizing global $gui object to get the zone href.
+ *
+ * @author Justin Hileman {@link http://justinhileman.com}
+ * @return string Zone path. Begins with a slash, is relative to app root.
+ */
+function zone_path() {
+	global $gui;
+	return $gui->_tpl_vars['ZONE_PATH'];
+}
+
+
 
 
 /**

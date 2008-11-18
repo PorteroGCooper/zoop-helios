@@ -52,10 +52,10 @@ function smarty_function_resources($params, &$smarty) {
 
 	// spit 'em out.
 	foreach ($css as $file) {
-		echo '<link rel="stylesheet" type="text/css" href="' . $file . "\" />\n";
+		echo '<link rel="stylesheet" type="text/css" href="' . url($file) . "\" />\n";
 	}
 	foreach ($js as $file) {
-		echo '<script type="text/javascript" src="' .$file . "\"></script>\n";
+		echo '<script type="text/javascript" src="' . url($file) . "\"></script>\n";
 	}
 	if (count($inline_js)) {
 		echo '<script type="text/javascript">';

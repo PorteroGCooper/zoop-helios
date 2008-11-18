@@ -35,7 +35,6 @@ function smarty_function_formz_list($params, &$smarty) {
 	$use_softdelete = $form->isSoftDeletable();
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$tablename = strtolower($form->tablename);
-	$base_href = $smarty->get_template_vars('BASE_HREF');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	$sortable = $form->isSortable();
 	
@@ -82,7 +81,7 @@ function smarty_function_formz_list($params, &$smarty) {
 				if (isset($fields[$key]['sortable']) && !$fields[$key]['sortable']) {
 					$row[] = '<th class="{sorter: false}">' . Formz::format_label($label) . '</th>';
 				} else {
-					$href = $base_href . $zone_path . '?sort=' . $key;
+					$href = $zone_path . '?sort=' . $key;
 				
 					// If this is the current sort field, add a sort direction and class for styling.
 					if ($key == $current_sort) {
@@ -95,7 +94,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					} else {
 						$th_class = 'header';
 					}
-					$row[] = '<th class="'. $th_class .'"><a href="'. $href .'">' . Formz::format_label($label) . '</a></th>';
+					$row[] = '<th class="'. $th_class .'"><a href="'. url($href) .'">' . Formz::format_label($label) . '</a></th>';
 				}
 			} else {
 				$row[] = '<th>' . Formz::format_label($label) . '</th>';
@@ -165,10 +164,10 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . $base_href . $zone_path . $link . '/"><span>' . $value . '</span></a>';
+				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . url(url($zone_path . $link)) . '"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
-				$value = '<a ' . $link_title . 'href="' . call_user_func($fields[$field]['listlinkCallback'], $id) . '">' . $value . '</a>';
+				$value = '<a ' . $link_title . 'href="' . url(call_user_func($fields[$field]['listlinkCallback'], $id)) . '">' . $value . '</a>';
 			}
 /*
 			// make this bad boy editable...
@@ -210,7 +209,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}
-				$value = '<a href="' . $base_href . $zone_path . $link . '">' . $action['label'] . '</a>';
+				$value = '<a href="' . url($zone_path . $link) . '">' . $action['label'] . '</a>';
 		
 			} else {
 				$control = &getGuiControl('button', $key);
