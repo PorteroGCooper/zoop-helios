@@ -569,14 +569,14 @@ class auth {
 
 	/**
 	 * Called whenever a require fails.
-	 * By default it will logout the user and redirect them to the configured denied location.
+	 * By default it will redirect the user to the configured denied location.
 	 *
-	 * @see auth::_logout
+	 * @todo: should show the denied message in place (much like zone::responsePage404 does for 404s)
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function failed() {
-		$this->_logout();
 		BaseRedirect( $this->getConfig('locations.denied') );
 		return false;
 	}
