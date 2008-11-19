@@ -29,6 +29,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	var $table;
 	var $tablename;
 	var $query = null;
+	var $record = null;
 	
 	/**
 	 * Values that are fixed for both querying and Create and Update 
@@ -100,6 +101,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	function getData() {
+		if(!$this->record) return null;
 		$data = $this->record->toArray();
 		$data = $data + $this->getRecordRelationsValues();
 		return $data;

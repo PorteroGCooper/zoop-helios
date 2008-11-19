@@ -89,7 +89,6 @@ class CrudZone extends zone {
 	 */
 	function initCrudZone() { }
 
-
 	/**
 	 * CrudZone index page.
 	 *
@@ -356,13 +355,16 @@ class CrudZone extends zone {
 		global $gui;
 		
 		$record_id = $this->getZoneParam('record_id');
-		$this->form->getRecord($record_id);
-		
+		if ($this->form->getRecord($record_id) == null) {
+			$this->responsePage404();
+			return;
+		}
 		
 		// Come up with a title for this bad boy.
 		$record_data = $this->form->getData();
 		$label_field = $this->form->getTitleField();
 		$title_field = $record_data[$label_field];
+		$id_field = $this->form->getIdField();
 		
 		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
 		$message = str_replace(array('%id%', '%title%'), array($record_id, $title_field), $message);
