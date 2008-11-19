@@ -109,6 +109,7 @@ class Formz {
 	var $editable = true;
 
 	var $record_id;
+	var $slug_field;
 	
 	protected $timestampable = false;
 	protected $sortable = true;
@@ -191,18 +192,46 @@ class Formz {
 	 */
 	function getRecord($id = 'new') {
 		$this->record_id = $this->_driver->getRecord($id);
-		if ($this->record_id) {
+		if ($this->record_id !== null) {
 			$this->type = 'record';
 		}
 		return $this->record_id;
 	}
 	
+	/**
+	 * getRecordBySlug
+	 * Requests the requested record from the database (as would be used in a record).
+	 *
+	 * @param mixed $id
+	 * @access public
+	 * @return int Record ID
+	 */
+	function getRecordBySlug($slug) {
+		$this->record_id = $this->_driver->getRecordBySlug($slug);
+		if ($this->record_id !== null) {
+			$this->type = 'record';
+		}
+		return $this->record_id;
+	}
+	
+	/**
+	 * Return a record id for a given slug
+	 *
+	 * @access public
+	 * @param string $slug
+	 * @return int Record id.
+	 */
+	function getRecordIdBySlug($slug) {
+		return $this->_driver->getRecordIdBySlug($slug);
+	}
+	
+/*
 	function getDoctrineRecord($id = false) {
 		return $this->_driver->getDoctrineRecord($id);
 	}
+*/
 	
 	function getRecords($search = false) {
-	
 		// if we're doing a sort, do it!
 		if ($this->_defaultSortField != null) {
 			$this->sort($this->_defaultSortField, $this->_defaultSortDirection);
@@ -1076,7 +1105,18 @@ class Formz {
 		}
 		return $order;
 	}
-	
+		
+	/**
+	 * Returns true if this Formz uses slugs.
+	 *
+	 * @access public
+	 * @return bool True if this is sluggable.
+	 */
+	function getSlugField() {
+		$this->slug_field = $this->_driver->getSlugField();
+		return $this->slug_field;
+	}
+
 	/**
 	 * Sets the default sort field (and optionally direction) on a Formz object.
 	 *

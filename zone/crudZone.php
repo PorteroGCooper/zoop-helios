@@ -103,19 +103,27 @@ class CrudZone extends zone {
 	function pageIndex() {
 		if (!$this->checkAuth('read')) return;
 		global $gui;
-		
+
 		$record_id = $this->getZoneParam('record_id');
-		if ($record_id != '' && !is_numeric($record_id)) {
-			$this->responsePage404();
-			return;
-		}
-
-		if ($record_id) {
-			$this->_detailRecord($record_id);
-		} else {
+		
+		if ($record_id === '') {
+			// show all the records.
 			$this->_listRecords();
+		} else {
+			
+			if ($this->form->isSluggable()) {
+				$record_id = $this->getRecordIdBySlug($record_id);
+				if ($record_id === null) {
+					$this->responsePage404();
+					return;
+				}
+			} else if (!is_numeric($record_id)) {
+				$this->responsePage404();
+				return;
+			}
+			
+			$this->_detailRecord($record_id);
 		}
-
 	}
 
 	/**
@@ -160,8 +168,8 @@ class CrudZone extends zone {
 	 * @return void
 	 */
 	function _detailRecord($record_id) {
-		if ($record_id) {
-			if (!$this->form->getRecord($record_id)) {
+		if ($record_id !== null) {
+			if ($this->form->getRecord($record_id) === null) {
 				$this->responsePage404();
 				return;
 			}
@@ -177,7 +185,8 @@ class CrudZone extends zone {
 	 */
 	function _listRecords() {
 		$this->form->getRecords();
-		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), '%id%/read');
+		$link = ($this->form->isSluggable()) ? '%slug%/read' : '%id%/read';
+		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
 
 		// add a fake column called "edit", give it an edit link...
 		$this->form->setFieldFromArray('edit', array(
@@ -388,4 +397,14 @@ class CrudZone extends zone {
 		BaseRedirect($this->makeIndexPath());
 	}
 	
+	/**
+	 * Return a record id for a given slug
+	 *
+	 * @access public
+	 * @param string $slug
+	 * @return int Record id.
+	 */
+	function getRecordIdBySlug($slug) {
+		return $this->form->getRecordIdBySlug($slug);
+	}
 }

@@ -108,6 +108,10 @@ function smarty_function_formz_list($params, &$smarty) {
 	// grab the field names we care about
 	$field_names = array_keys($fields);
 	$id_field = $form->getIdField();
+	// and the slug field, just for fun.
+	if ($sluggable = $form->isSluggable()) {
+		$slug_field = $form->getSlugField();
+	}
 	
 	// build the table...
 	$html .= "\t<tbody>\n\t\t";
@@ -158,6 +162,7 @@ function smarty_function_formz_list($params, &$smarty) {
 				if (count($matches)) {
 					// replace with this table's id field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
+					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
 					$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
 				} else {
 					// automatically tack on the id if there's no wildcard to replace
@@ -200,12 +205,14 @@ function smarty_function_formz_list($params, &$smarty) {
 				$matches = array();
 				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
 				if (count($matches)) {
-					// replace with this table's id field, if applicable.
+					// replace with this table's id field or slug field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
+					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
 					if (!isset($data[$matches[1]])) $data[$matches[1]] = '0';
 					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
 				} else {
-					// automatically tack on the id if there's no wildcard to replace
+					// automatically tack on the id if there's no wildcard to replace.
+					// i don't like this one.
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}

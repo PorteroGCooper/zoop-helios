@@ -137,6 +137,15 @@ class Formz_FormDB implements formz_driver_interface {
 	function getIdField() {
 		return $this->table->idfield;
 	}
+
+	/**
+	 * Return the slug field for this table
+	 * 
+	 * @return $string slug field
+	 */
+	function getSlugField() {
+		trigger_error('Slugs are not implemented in driver formDB');
+	}	
 	
 	/**
 	 * Return an array of fields in this class/table/form.
@@ -685,17 +694,24 @@ class Formz_FormDB implements formz_driver_interface {
 	 *
 	 * @param mixed $id
 	 * @access public
-	 * @return int Record ID
+	 * @return mixed Record ID or null if the record is not found.
 	 */
-	function getRecord($id = false) {
-		if ($id === false)
-			$id = $this->id;
+	function getRecord($id = null) {
+		if ($id === null) $id = $this->id;
 		else $this->id = $id;
 
 		$this->record = &$this->passRecord($this->tablename, $id);
 		$this->DescIntoFields($this->tablename, $id);
 
 		return $this->id;
+	}
+	
+	function getRecordBySlug($slug) {
+		trigger_error("FormDB driver doesn't implement sluggable");
+	}
+
+	function getRecordIdBySlug($slug) {
+		trigger_error("FormDB driver doesn't implement sluggable");
 	}
 
 	/**
@@ -913,8 +929,7 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function _deleteRecord ($table, $id, $type = false)
-	{
+	function _deleteRecord ($table, $id, $type = false) {
 		$dbconnname = $this->dbconnname;
 		global $$dbconnname;
 

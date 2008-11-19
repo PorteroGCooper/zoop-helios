@@ -106,21 +106,16 @@ class formz_doctrineDB implements formz_driver_interface {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * Return the slug field for this table
+	 * 
+	 * @return $string slug field
+	 */
+	function getSlugField() {
+		$options = $this->table->getTemplate('Doctrine_Template_Sluggable')->getOptions();
+		return $options['name'];
+	}
 	
 	/**
 	 * setParam
@@ -579,7 +574,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function getRecord($id = false) {
+	function getRecord($id = null) {
 		if ($id == 'new') {
 			$this->type = 'record';
 			$classname  = $this->tablename;
@@ -588,18 +583,52 @@ class formz_doctrineDB implements formz_driver_interface {
 			if ($this->getFixedValues()) {
 				$this->record->fromArray($this->getFixedValues());
 			}
-		} elseif ($this->getFixedValues() ){
+		} elseif ($this->getFixedValues()){
 			$record = $this->applyFixedValuesToQuery()->fetchOne();
+
+			// if you didn't find one, return.
+			if (!$record && $record !== 0) return null;
+
 			$this->type = 'record';
 			$this->record = $record;
 		} elseif ($record = Doctrine::getTable($this->tablename)->find($id)) {
 			$this->type = 'record';
 			$this->record = $record;
 		} else {
-			$id = false;
+			$id = null;
 		}
 		return $id;
 	}
+	
+	/**
+	 * Requests the requested record from the database by slug value.
+	 *
+	 * @param string $id slug
+	 * @access public
+	 * @return mixed Returns record id (if found) or null.
+	 */
+	function getRecordBySlug($slug) {
+		if (empty($slug)) return null;
+		return $this->getRecord($this->getRecordIdBySlug($slug));
+	}
+	
+	/**
+	 * Return a record id for a given slug
+	 *
+	 * @access public
+	 * @param string $slug
+	 * @return int Record id.
+	 */
+	function getRecordIdBySlug($slug) {
+		$id_field = $this->getIdField();
+		$records = $this->table->createQuery()->select($id_field)->addWhere('slug = ?', $slug)->execute()->toArray();
+		if (count($records)) {
+			return $records[0][$id_field];
+		} else {
+			return null;
+		}
+	}
+
 	
 	function getDoctrineRecord($id = false) {
 		if ($id && isset($this->record)) {
@@ -1004,6 +1033,17 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function setFixedValues($array) {
 		$this->fixedValues = $array;
+	}
+	
+	/**
+	 * Adds new fixed value(s) to the existing ones.
+	 *
+	 * @param array Fixed value to add, in the form array('key' => 'val')
+	 * @access public
+	 * @return void
+	 */
+	function addFixedValue($array) {
+		$this->fixedValues = $this->fixedValues + $array;
 	}
 
 	/**

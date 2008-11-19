@@ -66,9 +66,27 @@ interface formz_driver_interface {
 	 *
 	 * @param mixed $id (optional) record id
 	 * @access public
-	 * @return ??
+	 * @return mixed Returns record id (if found) or null.
 	 */
-	function getRecord($id = false);
+	function getRecord($id = null);
+
+	/**
+	 * Requests the requested record from the database by slug value.
+	 *
+	 * @param string $id slug
+	 * @access public
+	 * @return mixed Returns record id (if found) or null.
+	 */
+	function getRecordBySlug($slug);
+	
+	/**
+	 * Requests the requested record id from the database by slug value.
+	 *
+	 * @param string $id slug
+	 * @access public
+	 * @return mixed Returns record id (if found) or null.
+	 */
+	function getRecordIdBySlug($slug);
 
 	/**
 	 * Save an array of POST formatted data to a record.
@@ -116,6 +134,14 @@ interface formz_driver_interface {
 	 * @return $array values
 	 */
 	function getTableRelationValues($fields);
+
+	/**
+	 * Fetches the slug field for this table
+	 * 
+	 * @access public
+	 * @return $string slug field
+	 */
+	function getSlugField();
 
 	/**
 	 * Is this table/form/relation timestampable?
