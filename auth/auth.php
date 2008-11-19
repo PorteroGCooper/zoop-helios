@@ -23,7 +23,9 @@ class auth {
 	 * @access private
 	 * @return void
 	 */
-	private function __construct() { }
+	private function __construct() {
+		$this->_loadACL();
+	}
 
 	/**
 	 * Prevents external instantiation of copies of the Singleton class,
@@ -301,6 +303,110 @@ class auth {
 		//$name = $this->_arrayize($name);
 
 		return $this->getDriver()->_groupNametoId($name);
+	}
+
+	/**
+	 * Loads permissions from permissions_file, if exists
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _loadACL() {
+		if ($this->getConfig('permissions_file')) {
+			$this->permissions = Yaml::read($this->getConfig('permissions_file'));
+			$this->_hydrateACL($this->permissions);
+		} else {
+			$this->permissions = array();
+		}
+	}
+
+	/**
+	 * Takes an array of permissions, fills array children with the values of ALL.
+	 * foo.ALL.example appends 'example' to the end of everything else in foo.
+	 *
+	 * @param array $permissions
+	 * @param array $all
+	 * @access protected
+	 * @return void
+	 */
+	protected function _hydrateACL(&$permissions, $all = array()) {
+		if (isset($permissions['ALL'])) {
+			$all = array_merge($permissions['ALL'], $all);
+			unset($permissions['ALL']);
+		}
+
+		foreach ($permissions as $key => $value) {
+			if (is_array($value) && ! empty($value)) {
+				$this->_hydrateACL($permissions[$key], $all);
+			} elseif ((is_array($value) && empty($value)) || '[]' == $value) {
+				$permissions[$key] = $all;
+			} else {
+				// Assume that each $permissions item is the same and only do this once.
+				// Doing this on each $permissions item ends up looping and killing php.
+				// This is because $permissions is a referenced array.
+				foreach ($all as $v) {
+					if (!in_array($v, $permissions)) {
+						$permissions[] = $v;
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Returns ACL permissions based on a permission string (eg. crud.create.users)
+	 *
+	 * @param string $permission_str String from which to fetch ACL permissions
+	 * @access public
+	 * @return array of configuration values
+	 */
+	public function getACL($permission_str) {
+		$parts = explode('.', $permission_str);
+		$cur = $this->permissions;
+
+		foreach($parts as $thisPart) {
+			if(isset($cur[$thisPart])) {
+				$cur = $cur[$thisPart];
+			} else {
+				return array();
+			}
+		}
+		return $cur;
+	}
+
+	/**
+	 * ACL. Checks that the user has a required role for the current action.
+	 * Takes a yaml path string (eg. crud.read.administrators)
+	 *
+	 * @see auth::getACL
+	 * @see auth::checkRole
+	 * @param string $permission_str String for which to fetch ACL permissions
+	 * @access public
+	 * @return boolean
+	 */
+	public function checkPermission($permission_str) {
+		$roles = $this->getACL($permission_str);
+		
+		foreach ($roles as $role) {
+			if ($this->checkRole($role)) return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * ACL. Requires that the user has a required role for the current action.
+	 * Takes a yaml path string (eg. crud.read.administrators)
+	 *
+	 * @see auth::requireCondition
+	 * @see auth::checkPermission
+	 * @param string $permission_str String for which to fetch ACL permissions
+	 * @access public
+	 * @return boolean
+	 */
+	public function requirePermission($permission_str) {
+		return $this->requireCondition($this->checkPermission($permission_str));
 	}
 
 	/**
