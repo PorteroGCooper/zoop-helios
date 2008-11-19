@@ -504,7 +504,7 @@ class zone
 	 * @access public
 	 * @return void
 	 */
-	function setPageVars() {
+	function initPageVars() {
 		$inPath = $this->_inPath;
 		$pageName = array_shift($inPath);
 
@@ -597,7 +597,7 @@ class zone
 	 * @return void
 	 */
 	function _checkFuncs($curPath, $inPath) {
-		$this->setPageVars();
+		$this->initPageVars();
 
 		if (REQUEST_TYPE == "XMLRPC") {
 			return $this->_xmlrpcDispatch($curPath, $this->_inPath);
