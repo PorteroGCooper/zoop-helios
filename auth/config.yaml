@@ -37,4 +37,6 @@ locations:
    login: /login
    logout: /logout
    post_logout: /
-
+denied:
+    handling: inplace
+    template: base/access_denied.tpl

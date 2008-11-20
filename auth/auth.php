@@ -569,15 +569,22 @@ class auth {
 
 	/**
 	 * Called whenever a require fails.
-	 * By default it will redirect the user to the configured denied location.
-	 *
-	 * @todo: should show the denied message in place (much like zone::responsePage404 does for 404s)
+	 * By default, a 401 (access denied) message will be displayed. Optionally, auth can be
+	 * configured to redirect to another location (defined as zoop.auth.locations.denied).
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function failed() {
-		BaseRedirect( $this->getConfig('locations.denied') );
+		if ($this->getConfig('denied.handling') == 'redirect') { 
+			BaseRedirect( $this->getConfig('locations.denied') );
+		} else {
+			header('Status: 401 Access Denied', true, 401);
+			global $gui;
+			$gui->assign("title", "401 Access Denied");
+			$gui->generate($this->getConfig('denied.template'));
+		}
+		die();
 		return false;
 	}
 
