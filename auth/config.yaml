@@ -32,11 +32,18 @@ active_value: 1
 password_encryption: true
 encryption: md5
 session_user: activeUser
+
+# specify a param in which to pass the current url for a login redirect
+# grab the redirect url in your login post handler using getGet('redirect')
+login_redirect_param: redirect
+
 locations:
    denied: /denied
    login: /login
    logout: /logout
    post_logout: /
+
 denied:
+    show_login_if_logged_out: 1
     handling: inplace
     template: response/access_denied.tpl

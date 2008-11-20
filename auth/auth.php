@@ -568,24 +568,77 @@ class auth {
 	}
 
 	/**
-	 * Called whenever a require fails.
-	 * By default, a 401 (access denied) message will be displayed. Optionally, auth can be
-	 * configured to redirect to another location (defined as zoop.auth.locations.denied).
+	 * Called whenever a 'require' fails.
 	 *
+	 * This checks whether there's a user logged in (and if the app wants to show a login form
+	 * if there's no current user). If no user, the visitor will be redirected to a login form.
+	 * If the user is logged in, they will be shown an Access Denied message.
+	 *
+	 * @see auth::_showLogin
+	 * @see auth::_accessDenied
 	 * @access public
 	 * @return void
 	 */
 	function failed() {
+		// if there is no user logged in, give them a chance to log in.
+		if ($this->getConfig('denied.show_login_if_logged_out') && $this->getActiveUser() === null) {
+			return $this->_showLogin();
+		} else {
+			return $this->_accessDenied();
+		}
+	}
+
+	/**
+	 * Show a login form.
+	 *
+	 * Redirect user to the login page. If a redirect parameter has been set
+	 * ('zoop.auth.login_redirect_param') pass the current url in that param.
+	 * This will be handled by the post handler for the login form using something like:
+	 *
+	 * @code
+	 * if ($redirect_to = getGet('redirect')) {
+	 *     BaseRedirect($redirect_to);
+	 * }
+	 * @endcode
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _showLogin() {
+		$redirect = $this->getConfig('locations.login');
+		if ($redirect_param = $this->getConfig('login_redirect_param', false)) {
+			$redirect .= '?' . $redirect_param . '=' . urlencode($GLOBALS['PATH_INFO']);
+		}
+		BaseRedirect($redirect);
+	}
+	
+	/**
+	 * Handle 'access denied' error.
+	 *
+	 * If preferred method for handling access denied errors is with a redirect, redirect
+	 * to that location. Otherwise, display a 401 message or template.
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _accessDenied() {
 		if ($this->getConfig('denied.handling') == 'redirect') { 
 			BaseRedirect( $this->getConfig('locations.denied') );
 		} else {
-			header('Status: 401 Access Denied', true, 401);
+			$response = '401 Access Denied';
+			header('Status: ' . $response, true, 401);
+			
 			global $gui;
-			$gui->assign("title", "401 Access Denied");
-			$gui->generate($this->getConfig('denied.template'));
+			$gui->assign("title", $response);
+			
+			if($template = $this->getConfig('denied.template')) {
+				$gui->generate($template);
+			} else {
+				$gui->assignContent('<h2>'.$response.'</h2>');
+				$gui->generate();
+			}
 		}
 		die();
-		return false;
 	}
 
 	/**
@@ -596,6 +649,16 @@ class auth {
 	 */
 	function _logout() {
 		unset( $_SESSION['auth'][$this->getConfig('session_user')] );
+	}
+	
+	/**
+	 * Redirect user to a login form (will optionally include a redirect back to here).
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _loginRedirect($include_redirect = true) {
+		
 	}
 
 	/**
