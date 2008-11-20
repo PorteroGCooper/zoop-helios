@@ -29,4 +29,7 @@ templates:
     footer: base/footer.tpl
     formz: forms/formz.tpl
     message: base/message.tpl
-    not_found: base/not_found.tpl
+    
+    # define a set of templates to display when sending http responses.
+    response:
+        404: response/not_found.tpl

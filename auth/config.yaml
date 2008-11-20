@@ -39,4 +39,4 @@ locations:
    post_logout: /
 denied:
     handling: inplace
-    template: base/access_denied.tpl
+    template: response/access_denied.tpl

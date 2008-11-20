@@ -520,8 +520,12 @@ class gui extends Smarty {
 	 */
 	function assignRegion($name, $template_file) {
 		if (!isset($this->_regions[$name])) {
-			trigger_error("Unknown region: $name");
-			return;
+			if ($name == 'content') {
+				$name = Config::get('zoop.gui.primary_region');
+			} else {
+				trigger_error("Unknown region: $name");
+				return;
+			}
 		}
 		
 		$this->_regions[$name] = $template_file;
@@ -607,6 +611,17 @@ class gui extends Smarty {
 
 			//lowercasify the first letter...
 			$param_name[0] = strtolower($param_name[0]);
+			
+			// check if this is really a region.
+			$regions = Config::get('zoop.gui.regions');
+			if (!in_array($param_name, $regions)) {
+				// if there's no region called 'content', rename this to the primary region.
+				if ($param_name == 'content') {
+					$param_name = Config::get('zoop.gui.primary_region');
+				} else {
+					trigger_error($method . " method undefined on Gui object.");
+				}
+			}
 			
 			if (substr($param_name, -8) == 'Template') {
 				$param_name = substr($param_name, 0, -8);

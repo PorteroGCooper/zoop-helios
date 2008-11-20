@@ -595,27 +595,24 @@ function BUG($desc = "")
 }
 
 /**
- * deprecated
+ * Alert developers about a deprecated call.
+ *
+ * An application with APP_STATUS set to live, or show warnings config set to false
+ * will suppress deprecated() messages.
  *
  * @param string $desc
  * @access public
  * @return void
  */
-function deprecated($desc = "")
-{
-	if(show_warnings == false)
-		return;
-	if(app_status == 'dev')
-	{
+function deprecated($desc = null) {
+	if(Config::get('zoop.app.security.show_warnings', true) == false) return;
+	
+	if(APP_STATUS == 'dev') {
 		$functioninfo = debug_backtrace();
-		$string = 	"deprecated functionality in <b>" .
-					$functioninfo[0]["file"] .
-					"</b> on line <b>" .
-					$functioninfo[0]["line"] .
-					"</b> in function <b>" .
-					$functioninfo[1]["function"] .
-					"</b><br>Description:<b>$desc</b><br>";
-		echo($string);
+		print "<p>Deprecated functionality in <strong>" . $functioninfo[0]["file"] . "</strong>";
+		print " on line <strong>" . $functioninfo[0]["line"] . "</strong>";
+		print " in function <strong>" . $functioninfo[1]["function"] . "</strong></p>";
+		if ($desc) print "<p>Description: <strong>$desc</strong></p>";
 	}
 }
 
@@ -1075,7 +1072,7 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
 	if($goodEnd == NULL)
 		$goodEnd = $oldStatus['goodEnd'];
 
-	file_set_contents(APP_STATUS_dir . "/" . $statusItemName, "$start $end $goodEnd");
+	file_set_contents(app_status_dir . "/" . $statusItemName, "$start $end $goodEnd");
 }
 
 /**
@@ -1087,7 +1084,7 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
  */
 function &GetCompletionStatus($statusItemName)
 {
-	$data = file_get_contents(APP_STATUS_dir . "/" . $statusItemName);
+	$data = file_get_contents(app_status_dir . "/" . $statusItemName);
 
 	$parts = explode(" ", $data);
 
@@ -1854,7 +1851,11 @@ function base_href($absolute = false) {
  */
 function zone_path() {
 	global $gui;
-	return $gui->_tpl_vars['ZONE_PATH'];
+	if (isset($gui) && !empty($gui)) {
+		return $gui->_tpl_vars['ZONE_PATH'];
+	} else {
+		trigger_error('Global gui object not initialized/available/etc.');
+	}
 }
 
 
@@ -1907,11 +1908,11 @@ function nv_title_case($str) {
 	$words = join($words);
 	
 	// Oddities
-	$words = preg_replace("/ V(s?)\. /i", " v$1. ", $words);                    // v, vs, v., and vs.
-	$words = preg_replace("/(['ê]|&#8217;)S\b/i", "$1s", $words);               // 's
-	$words = preg_replace("/\b(AT&T|Q&A)\b/ie", "strtoupper(\"$1\")", $words);  // AT&T and Q&A
-	$words = preg_replace("/-ing\b/i", "-ing", $words);                         // -ing
-	$words = preg_replace("/(&[[:alpha:]]+;)/Ue", "strtolower(\"$1\")", $words);          // html entities
+	$words = preg_replace("/ V(s?)\. /i", " v$1. ", $words);						// v, vs, v., and vs.
+	$words = preg_replace("/(['ê]|&#8217;)S\b/i", "$1s", $words);					// 's
+	$words = preg_replace("/\b(AT&T|Q&A)\b/ie", "strtoupper(\"$1\")", $words);		// AT&T and Q&A
+	$words = preg_replace("/-ing\b/i", "-ing", $words);								// -ing
+	$words = preg_replace("/(&[[:alpha:]]+;)/Ue", "strtolower(\"$1\")", $words);	// html entities
 	
 	// Put HTML space entities back
 	$offset = 0;
