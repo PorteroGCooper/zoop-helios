@@ -29,3 +29,4 @@ templates:
     footer: base/footer.tpl
     formz: forms/formz.tpl
     message: base/message.tpl
+    not_found: base/not_found.tpl
