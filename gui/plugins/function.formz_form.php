@@ -30,6 +30,11 @@ include_once(dirname(__file__) . "/function.guicontrol.php");
  */
 function smarty_function_formz_form($params, &$smarty) {
 	if (!isset($params['form'])) return;
+	if (isset($params['buffer_output'])) {
+		$buffer_output = true;
+	} else {
+		$buffer_output = false;
+	}
 	
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
@@ -67,6 +72,14 @@ function smarty_function_formz_form($params, &$smarty) {
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
+		
+		if (isset($field['embedFormz'])) {
+			$formz_object = $form->getEmbeddedFormz($field['relation_alias']);
+			$formz_object->setEditable(false);
+			$formz_object->setFixedValues(array($field['foreign_id_field'] => $record_id));
+			$form_items[] = smarty_function_formz(array('form' => $formz_object, 'buffer_output' => true), $smarty);
+			continue;
+		}
 		
 		/**
 		 * figure out the 'required' logic
@@ -223,5 +236,10 @@ function smarty_function_formz_form($params, &$smarty) {
 	$content .= implode("\n\t", $form_items);
 	$content .= ($form->editable) ? "\n</form>\n\n" : "\n</div>\n\n";
 
-	echo $content;
+	if ($buffer_output) {
+		return $content;
+	} else {
+		echo $content;
+	}
+	
 }

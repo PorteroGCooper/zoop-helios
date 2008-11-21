@@ -105,6 +105,13 @@ class Formz {
 	 */
 	protected $_formListActions = array();
 
+	/**
+	 * Embedded formz objects
+	 *
+	 * @access protected
+	 */
+	protected $_embeddedFormz = array();
+
 	var $errors = array();
 	var $editable = true;
 
@@ -499,7 +506,11 @@ class Formz {
 				$fields[$key]['type'] = 'relation';
 				$fields[$key]['relation_alias'] = $relation['alias'];
 				$fields[$key]['rel_type'] = $relation['rel_type'];
-			
+				if (isset($relation['foreign_id_field'])) {
+					// TODO find a much better way of doing this...
+					$fields[$key]['foreign_id_field'] = $relation['label_field'];
+				}
+
 				if (!isset($fields[$key]['display']['label'])) {
 					if (isset($relation_fields[$key]['display']['label'])) {
 						$fields[$key]['display']['label'] = $relation_fields[$key]['display']['label'];
@@ -959,7 +970,7 @@ class Formz {
 	function getListActions() {
 		return $this->_formListActions;
 	}
-	
+
 	/**
 	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
 	 * 
@@ -969,8 +980,86 @@ class Formz {
 	 * @return void
 	 */
 	function addRowAction($name, $args = array()) {
-		trigger_error("addRowAction not yet implemented");
+		// Default label, also capitalized...
+		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['value'])) $args['value'] = $args['label'];
+		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
+
+		switch (strtolower($name)) {
+			// these are all synonyms... prob'ly don't need quite this many.
+			case 'saveandnew':
+			case 'save_and_new':
+			case 'saveandadd':
+			case 'save_and_add':
+			case 'saveandaddnew':
+			case 'updateandcreate':
+			case 'update_and_create':
+				$name = 'update_and_create';
+				if (!isset($args['value'])) $args['value'] = 'Save and Add New';
+				if (!isset($args['label'])) $args['label'] = 'Save and Add New';
+				if (!isset($args['type'])) $args['type'] = 'submit';
+				break;
+			// all save actions need a submit button.
+			case 'submit':
+			case 'save':
+			case 'update':
+				$name = 'update';
+				if (!isset($args['type'])) $args['type'] = 'submit';
+				break;
+			// more synonyms. this time for the D in CRUD.
+			case 'delete':
+			case 'destroy':
+				$name = 'destroy';
+
+				if (!isset($args['type'])) $args['type'] = 'submit';
+				break;
+			// cancel should be a link, not a button, by default.
+			case 'cancel':
+	/* 				if (!isset($args['type'])) $args['type'] = 'submit'; */
+				if (!isset($args['link'])) $args['link'] = '/read';
+				if (!isset($args['type'])) $args['type'] = 'link';
+				break;
+			// nothing going yet for preview.
+			case 'preview':
+			default:
+				if (!isset($args['type'])) $args['type'] = 'button';
+				break;
+		}
+
+		$this->_formActions[$name] = $args;
+	}	
+
+	function addEmbeddedForm($tablename, $form = null) {
+		if ($form !== null) {
+			$this->_embeddedFormz[$tablename] = $form;
+		} else {
+			$this->_embeddedFormz[$tablename] = new Formz($tablename);
+		}
 	}
+	
+	function getEmbeddedFormz($name = null) {
+		if ($name === null) {
+			return $this->_embeddedFormz;
+		} else {
+			if (isset($this->_embeddedFormz[$name])) {
+				return $this->_embeddedFormz[$name];
+			} else {
+				trigger_error('Requested embedded form does not exist');
+			}
+		}
+	}
+	
+	/**
+	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
+	 * 
+	 * @access public
+	 * @param string $name Action name
+	 * @param mixed $args Action arguments. (default: array())
+	 * @return void
+	 */
+	// function addRowAction($name, $args = array()) {
+	// 	trigger_error("addRowAction not yet implemented");
+	// }
 	
 	/**
 	 * Returns true if this Formz does timestamp magick.

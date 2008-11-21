@@ -100,14 +100,20 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $columns;
 	}
 	
-	function getData() {
+	function getData($return_formz = false) {
 		if(!$this->record) return null;
 		$data = $this->record->toArray();
-		$data = $data + $this->getRecordRelationsValues();
-		return $data;
 		
+		if (!$return_formz) {
+			$data = $data + $this->getRecordRelationsValues();
+		} else {
+			foreach ($this->getRecordRelations() as $relation) {
+				$data[] = new Formz($relation);
+			}
+		}
+		
+		return $data;
 	}
-	
 
 	/**
 	 * Return the slug field for this table
@@ -847,7 +853,8 @@ class formz_doctrineDB implements formz_driver_interface {
 			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? Formz::MANY : Formz::ONE;
 			
 			$label_field = null;
-
+			$foreign_id_field = null;
+			
 			// get the current relation values to put in the array
 			$foreign_class = Doctrine::getTable($relation->getClass());
 			if ($getValues) {
@@ -863,6 +870,9 @@ class formz_doctrineDB implements formz_driver_interface {
 			} else {
 				$local_field   = $relation->getClass();
 				$foreign_field = $foreign_class->getIdentifier();
+				
+				// This is the local field from the point of view of the other end of the relation
+				$foreign_id_field = $relation->getLocalFieldName();
 				if (is_array($foreign_field)) continue;
 				
 				// this *will* be used later by GCooper.
@@ -903,6 +913,10 @@ class formz_doctrineDB implements formz_driver_interface {
 /* 				'foreign_class' => $foreign_class, */
 				'values' => $foreign_values,
 			);
+			
+			if ($foreign_id_field !== null) {
+				$ret[$local_field]['foreign_id_field'] = $foreign_id_field;
+			}
 		}
 		
 		return $ret;

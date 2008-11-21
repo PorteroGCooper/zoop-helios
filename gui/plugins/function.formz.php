@@ -36,17 +36,30 @@
  */
 function smarty_function_formz($params, &$smarty) {
 	$form = $params['form'];
+	if (isset($params['buffer_output'])) {
+		$buffer_output = true;
+	} else {
+		$buffer_output = false;
+	}
 
 	if (is_object($form)) {
 	
 		switch ($form->type) {
 			case 'record':
 				include_once(dirname(__file__) . "/function.formz_form.php");
-				echo smarty_function_formz_form($params, $smarty);
+				if ($buffer_output) {
+					return smarty_function_formz_form($params, $smarty);
+				} else {
+					echo smarty_function_formz_form($params, $smarty);
+				}
 				break;
 			default:
 				include_once(dirname(__file__) . "/function.formz_list.php");
-				echo smarty_function_formz_list($params, $smarty);
+				if ($buffer_output) {
+					return smarty_function_formz_list($params, $smarty);
+				} else {
+					echo smarty_function_formz_list($params, $smarty);
+				}
 				break;
 		}
 	}

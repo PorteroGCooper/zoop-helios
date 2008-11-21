@@ -44,10 +44,11 @@ interface formz_driver_interface {
 	/**
 	 * Return all data associated with this form.
 	 *
+	 * @param $bool A flag to indicate if getData should return relations as Formz objects
 	 * @access public
 	 * @return array An array of form field values for the record or records.
 	 */
-	function getData();
+	function getData($return_formz = false);
 
 	/**
 	 * Requests all records from the database.

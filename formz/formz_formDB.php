@@ -164,7 +164,7 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @access public
 	 * @return array An array of form field values for the record or records.
 	 */
-	function getData() {
+	function getData($return_formz = false) {
 		if (isset($this->record) && is_object($this->record)) {
 			$ret = array();
 			foreach ($this->record->values as $key => $field) {
