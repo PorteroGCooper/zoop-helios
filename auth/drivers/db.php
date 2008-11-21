@@ -113,8 +113,7 @@ class auth_driver_db extends auth_driver_base {
 	 * @return void
 	 */
 	function _foundInSet($needles, $hay) {
-		$needles = $this->auth->_arrayize($needles);
-		foreach ($needles as $needle) {
+		foreach ((array)$needles as $needle) {
 			if ( array_key_exists($needle, $hay) ) {
 				return true;
 			}

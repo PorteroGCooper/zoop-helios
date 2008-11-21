@@ -175,7 +175,7 @@ class auth {
 	 * @return bool
 	 */
 	function checkUserId($user_id) {
-		return $this->_checkActiveUser($this->_arrayize($user_id), $this->getConfig('fields.user.id'));
+		return $this->_checkActiveUser((array)$user_id, $this->getConfig('fields.user.id'));
 	}
 
 	/**
@@ -188,7 +188,7 @@ class auth {
 	 * @return bool
 	 */
 	function checkUser($user) {
-		return $this->_checkActiveUser($this->_arrayize($user), $this->getConfig('fields.user.username'));
+		return $this->_checkActiveUser((array)$user, $this->getConfig('fields.user.username'));
 	}
 
 	/**
@@ -300,8 +300,6 @@ class auth {
 	 * @return void
 	 */
 	function _groupNametoId($name) {
-		//$name = $this->_arrayize($name);
-
 		return $this->getDriver()->_groupNametoId($name);
 	}
 
@@ -664,16 +662,14 @@ class auth {
 	/**
 	 * Converting a given parameter to an array if it isn't already
 	 *
+	 * @deprecated
 	 * @param mixed $in
 	 * @access protected
 	 * @return void
 	 */
 	function _arrayize($in) {
-		if (is_array($in)) {
-			return $in;
-		} else {
-			return array($in);
-		}
+		deprecated('Use type casting instead of a call to _arrayize... (array)$foo');
+		return (array)$in;
 	}
 
 	/**

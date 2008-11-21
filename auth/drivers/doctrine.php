@@ -8,18 +8,6 @@ class auth_driver_doctrine extends auth_driver_base {
 		$userTable = Doctrine::getTable($this->getConfig('models.user'));
 		$user = $userTable->find($user_id);
 
-		//$findBy = array(
-				//'active'   => 1,
-				//'username' => 'bob',
-			//);
-
-		//$user = $userTable->customFindByMultiple($findBy);
-		//print_r($user->password);
-		//exit;
-		//
-
-		// var_dump( $user->Association->contains(4));
-
 		if ($this->getConfig('use_active')) {
 			$activeProp = $this->getConfig('fields.user.active');
 			if ( $user->$activeProp != $this->getConfig('active_value')) {
@@ -162,9 +150,8 @@ class auth_driver_doctrine extends auth_driver_base {
 		if (empty($hay)) return false;
 		
 		$newhay = $hay->getPrimaryKeys();
-		$needles = $this->auth->_arrayize($needles);
-		foreach ($needles as $needle) {
-			if ( in_array($needle, $newhay) ) {
+		foreach ((array)$needles as $needle) {
+			if (in_array($needle, $newhay)) {
 				return true;
 			}
 		}

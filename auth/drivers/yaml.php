@@ -134,8 +134,7 @@ class auth_driver_yaml extends auth_driver_base {
 			return false;
 		}
 
-		$needles = $this->auth->_arrayize($needles);
-		foreach ($needles as $needle) {
+		foreach ((array)$needles as $needle) {
 			if ( in_array($needle, $hay) ) {
 				return true;
 			}
