@@ -100,24 +100,25 @@ class CrudZone extends zone {
 	 * This is the equivalent of CRUD/(all)/read.
 	 */
 	function pageIndex() {
-		if (!$this->checkAuth('read')) return;
 		global $gui;
 
 		$record_id = $this->getZoneParam('record_id');
-		
 		if ($record_id === '') {
+			if (!$this->checkAuth('list')) return;
+			
 			// show all the records.
 			$this->_listRecords();
 		} else {
+			if (!$this->checkAuth('read')) return;
 			
 			if ($this->form->isSluggable()) {
 				$record_id = $this->getRecordIdBySlug($record_id);
 				if ($record_id === null) {
-					$this->responsePage404();
+					$this->responsePage(404);
 					return;
 				}
 			} else if (!is_numeric($record_id)) {
-				$this->responsePage404();
+				$this->responsePage(404);
 				return;
 			}
 			
@@ -169,7 +170,7 @@ class CrudZone extends zone {
 	function _detailRecord($record_id) {
 		if ($record_id !== null) {
 			if ($this->form->getRecord($record_id) === null) {
-				$this->responsePage404();
+				$this->responsePage(404);
 				return;
 			}
 		}
@@ -278,7 +279,7 @@ class CrudZone extends zone {
 	 * subclasses should either redirect to a 'denied' page, or return false if authentication is denied.
 	 *
 	 * @param string $action
-	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', or 'destroy'.
+	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', 'destroy' or 'list'.
 	 * @return bool Return 'false' from overriding methods to stop the requested action from happening.
 	 */
 	function checkAuth($action) {
@@ -356,7 +357,7 @@ class CrudZone extends zone {
 		
 		$record_id = $this->getZoneParam('record_id');
 		if ($this->form->getRecord($record_id) == null) {
-			$this->responsePage404();
+			$this->responsePage(404);
 			return;
 		}
 		

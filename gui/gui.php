@@ -638,5 +638,4 @@ class gui extends Smarty {
 		}
 	}
 
-
 }

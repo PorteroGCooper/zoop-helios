@@ -53,6 +53,7 @@ class auth_driver_doctrine extends auth_driver_base {
 	 */
 	function getRoles($user = false) {
 		if (!$user) { $user = $this->auth->getActiveUser(); }
+		if (!$user) return null;
 
 		$relName = $this->getConfig('models.role');
 		return $user->$relName;
@@ -157,6 +158,9 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @return void
 	 */
 	function _foundInSet($needles, $hay) {
+		// quick sanity check.
+		if (empty($hay)) return false;
+		
 		$newhay = $hay->getPrimaryKeys();
 		$needles = $this->auth->_arrayize($needles);
 		foreach ($needles as $needle) {
