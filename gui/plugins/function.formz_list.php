@@ -133,7 +133,7 @@ function smarty_function_formz_list($params, &$smarty) {
 			} else if (isset($fields[$field]['display']['default'])) {
 				$value = $fields[$field]['display']['default'];
 			} else {
-				$value = '';
+				$value = '';	
 			}
 			
 			$field_type = null;
@@ -180,8 +180,8 @@ function smarty_function_formz_list($params, &$smarty) {
 				die($value);
 			}
 */
-
 			$row[] = '<td>' . $value . '</td>';
+			
 		}
 
 		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even' : 'odd';
@@ -195,10 +195,10 @@ function smarty_function_formz_list($params, &$smarty) {
 	// now add the form list actions
 	$actions = $form->getListActions();
 	if (count($actions)) {
-		$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">";
-		
 		$id_field = $form->getIdField();
+		
 		foreach ($actions as $key => $action) {
+			$value = '';
 			if ($action['type'] == 'link') {
 				
 				$link = $action['link'];
@@ -216,28 +216,46 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}
+				
 				$value = '<a href="' . url($zone_path . $link) . '">' . $action['label'] . '</a>';
-		
+			} else if ($action['type']=='paginate') {
+				$page_links = array();
+				$page_count = $form->getPageCount();
+				if ($action['page'] > 1) {
+					$page_links[] = "<a href='" . url($zone_path) . "'>First</a>";
+					if ($action['page'] >= 2) {
+						$page_links[] = "<a href='" . url($zone_path) . "?page=" . ($action['page'] - 1) . "'>Previous</a>";
+					}
+				}
+				if ($page_count > $action['page']) {
+					$page_links[] = "<a href='" . url($zone_path) . "?page=" . ($action['page'] + 1) . "'>Next</a>";
+				}
+				if ($action['page'] < $page_count) {
+					$page_links[] = "<a href='" . url($zone_path) . "?page=" . $page_count . "'>Last</a>";
+				}
+				$value = implode(' | ',$page_links);
 			} else {
 				$control = &getGuiControl('button', $key);
 				$control->setParams($action);			
 				$form_items[] = $control->render();
 			}
 		}
-		$actionRow .= $value . "</td>\n\t\t</tr>\n";
 		
-		switch(Config::get('zoop.formz.list_action_position', 'both')) {
-			case 'top':
-				array_unshift($rows, $actionRow);
-				break;
-			case 'bottom':
-				$rows[] = $actionRow;				
-				break;
-			case 'both':
-			default:
-				array_unshift($rows, $actionRow);
-				$rows[] = $actionRow;				
-				break;
+		if (!empty($value)) {
+			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">" . $value . "</td>\n\t\t</tr>\n";
+			switch(Config::get('zoop.formz.list_action_position', 'both')) {
+				case 'top':
+					array_unshift($rows, $actionRow);
+					break;
+				case 'bottom':
+					$rows[] = $actionRow;
+					break;
+				case 'both':
+				default:
+					array_unshift($rows, $actionRow);
+					$rows[] = $actionRow;
+					break;
+			}
 		}
 	}
 

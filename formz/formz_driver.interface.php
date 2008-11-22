@@ -194,9 +194,54 @@ interface formz_driver_interface {
 	 */
 	function sort($fieldname, $direction = "ASC");
 
+	/**
+	 * Return the total number of pages if the form is paginated according to current page limit.
+	 *
+	 * Optionally, pass a limit and it'll tell you how many pages that would make. NOTE: this doesn't
+	 * actually work.
+	 * 
+	 * @access public
+	 * @param int $limit. (default: null)
+	 * @return int Total page count.
+	 */
+	function getPageCount($limit=null);
+	
+	/**
+	 * Set the current page number. This is used by the Formz object to set pagination based
+	 * on GET parameters.
+	 * 
+	 * @access public
+	 * @param int $pageNumber
+	 * @return void
+	 */
+	function setPage($pageNumber);
+	
+	/**
+	 * Set record per page for pagination on this Formz object. If none is set, will fall back to
+	 * default set in config.yaml.
+	 * 
+	 * @access public
+	 * @param int $limit
+	 * @return void
+	 */
+	function setLimit($limit);
 
-
-
+	/**
+	 * Returns true if this form uses pagination.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function isPaginated();
+	
+	/**
+	 * Enable pagination on this form.
+	 * 
+	 * @access public
+	 * @param boolean $value. (default: true)
+	 * @return void
+	 */
+	function setPaginated($value = true);
 
 	/**
 	 * setValidationOptions

@@ -30,6 +30,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	var $tablename;
 	var $query = null;
 	var $record = null;
+	protected $_pageNumber = 1;
+	protected $_pageLimit = null;
+	protected $_pager = null;
+	protected $_paginated = false;
 	
 	/**
 	 * Values that are fixed for both querying and Create and Update 
@@ -514,19 +518,29 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * Requests the necessary records from the database (as would be used in a listing).
 	 * If a query is set, it will execute that query.
 	 * If the table is a tree, it will either list the root nodes, or the children nodes
-	 * 	depending on if a parent node is set
+	 * depending on if a parent node is set
 	 *
-	 * @param mixed $limit
+	 * @todo Fix pagination for tree data structures. This will currently break if you try to
+	 * paginate a Tree.
+	 *
+	 * @param int $limit
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function getRecords($limit = false) {
+	function getRecords($limit = null) {
 /*
-		if ($limit !== false)
+		if ($limit !== null)
 			$this->setParam("limit", $limit);
 */
-		if ($this->query || $this->getFixedValues()) {
-			return $this->applyFixedValuesToQuery()->execute();
+		if ($this->query || $this->getFixedValues() || $this->isPaginated()) {
+			if ($this->getFixedValues()) {
+				$this->applyFixedValuesToQuery();
+			}
+			if ($this->isPaginated()) {
+				$this->_paginateQuery();
+			}
+			return $this->getQuery()->execute();
+		
 		} elseif ($this->table->isTree()) {
 			if ($this->hasParentRecord()) {
 				if ($children = $this->getParentRecord()->getNode()->getChildren()) {
@@ -539,8 +553,10 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 		} else {
 			return $this->table->findAll()->toArray();
+			//$record = $this->getQuery()->fetchOne();
 		}
 	}
+
 
 	/**
 	 * When Working with Trees, get the root nodes in the tree 
@@ -582,6 +598,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
+	 
 	function getRecord($id = null) {
 		if ($id == 'new') {
 			$this->type = 'record';
@@ -591,12 +608,12 @@ class formz_doctrineDB implements formz_driver_interface {
 			if ($this->getFixedValues()) {
 				$this->record->fromArray($this->getFixedValues());
 			}
-		} elseif ($this->getFixedValues()){
+		} elseif ($this->getFixedValues()) {
 			$record = $this->applyFixedValuesToQuery()->fetchOne();
-
+			
 			// if you didn't find one, return.
 			if (!$record && $record !== 0) return null;
-
+			
 			$this->type = 'record';
 			$this->record = $record;
 		} elseif ($record = Doctrine::getTable($this->tablename)->find($id)) {
@@ -607,7 +624,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 		return $id;
 	}
-	
+		
 	/**
 	 * Requests the requested record from the database by slug value.
 	 *
@@ -1012,6 +1029,50 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
+	 * Returns the page count for this form (aka the index of the last page).
+	 *
+	 * Passing a limit (optional param) does nothing. Yet.
+	 * 
+	 * @access public
+	 * @param int $limit. (default: null)
+	 * @return int
+	 */
+	function getPageCount($limit=null) {
+		/*
+		if ($limit===null) {
+			if ($this->_pageLimit===null) {
+				$limit = $this->_pageLimit;
+			} else {
+				$limit = Config::get("zoop.formz.paginate.limit");
+			}
+		}
+		*/
+		return $this->getPager()->getLastPage();
+	}
+	
+	/**
+	 * Set the current page. Used by Formz object to pass in GET params.
+	 * 
+	 * @access public
+	 * @param int $pageNumber
+	 * @return void
+	 */
+	function setPage($pageNumber) {
+		$this->_pageNumber = $pageNumber;
+	}
+	
+	/**
+	 * Set the records returned per page.
+	 * 
+	 * @access public
+	 * @param int $limit
+	 * @return void
+	 */
+	function setLimit($limit) {
+		$this->_pageLimit=$limit;
+	}
+
+	/**
 	 * Return's this query. If it doesn't exist, create and apply fixed values to it.  
 	 * 
 	 * @access public
@@ -1038,6 +1099,59 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 
 		return $this->query;
+	}
+	
+	/**
+	 * Execute pagination to the query object for this doctrine table.
+	 * 
+	 * @access protected
+	 * @return Doctrine_Query object
+	 */
+	protected function _paginateQuery() {
+		$this->getPager()->execute();
+		$this->query=$this->getPager()->getQuery();
+		return $this->query;
+	}
+	
+	/**
+	 * Get the Doctrine Pager object associated with this table. If this is the first call, create one.
+	 * (singleton style).
+	 * 
+	 * @access protected
+	 * @return Doctrine_Pager object
+	 */
+	protected function &getPager() {
+		if ($this->_pager===null) {
+			$currentPage = $this->_pageNumber;
+			if ($this->_pageLimit===null) {
+				$resultsPerPage = Config::get('zoop.formz.paginate.limit');
+			} else {
+				$resultsPerPage = $this->_pageLimit;
+			}
+			$this->_pager = new Doctrine_Pager($this->getQuery(), $currentPage, $resultsPerPage);
+		}
+		return $this->_pager;
+	}
+	
+	/**
+	 * Returns true if this form uses pagination.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function isPaginated() {
+		return $this->_paginated;
+	}
+	
+	/**
+	 * Enable pagination on this form.
+	 * 
+	 * @access public
+	 * @param boolean $value. (default: true)
+	 * @return void
+	 */
+	function setPaginated($value = true) {
+		$this->_paginated = $value;
 	}
 
 	/**

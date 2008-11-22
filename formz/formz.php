@@ -356,9 +356,29 @@ class Formz {
 		}
 	}
 	
+	/**
+	 * Get the ID field for this formz object.
+	 * 
+	 * @access public
+	 * @return int
+	 */
 	function getIdField() {
 		return $this->_driver->getIdField();
 	}
+	
+	/**
+	 * Get the page count for this formz object.
+	 *
+	 * NOTE: passing a limit doesn't do anything right now.
+	 * 
+	 * @access public
+	 * @param int $limit. (default: null)
+	 * @return int
+	 */
+	function getPageCount($limit = null) {
+		return $this->_driver->getPageCount($limit);
+	}
+
 
 	/**
 	 * Returns an array of fixed values to use when selecting as well as creating/updating 
@@ -950,6 +970,15 @@ class Formz {
 				if (!isset($args['link'])) $args['link'] = 'create';
 				if (!isset($args['type'])) $args['type'] = 'link';
 				break;
+			case 'paginate':
+				if (!$this->isPaginated()) $this->setPaginated();
+				if (!isset($args['page'])) $args['page'] = getGetInt('page');
+				if (!$args['page']) $args['page']=1;
+				if (!isset($args['type'])) $args['type'] = 'paginate';
+				if (!isset($args['limit'])) $args['limit'] = Config::get('zoop.formz.paginate.limit');
+				$this->_driver->setPage($args['page']);
+				$this->_driver->setLimit($args['limit']);
+				break;
 			default:
 				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
@@ -1123,6 +1152,29 @@ class Formz {
 	 */
 	function isTree() {
 		return $this->_driver->isTree();
+	}
+	
+	/**
+	 * Returns true if this form uses pagination.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function isPaginated() {
+		return $this->_driver->isPaginated();
+	}
+	
+	/**
+	 * Enable pagination on this form.
+	 * 
+	 * @access public
+	 * @param boolean $value. (default: true)
+	 * @return void
+	 */
+	function setPaginated($value = true) {
+		$this->_driver->setPaginated($value);
+		if ($value) $this->addListAction('paginate');
+		return $this->_driver->isPaginated();
 	}
 	
 	/**

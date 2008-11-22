@@ -761,7 +761,68 @@ class Formz_FormDB implements formz_driver_interface {
 		$this->table->sort = $fieldname;
 		$this->table->direction = $direction;
 	}
+	
+	/**
+	 * Return the total number of pages if the form is paginated according to current page limit.
+	 *
+	 * Optionally, pass a limit and it'll tell you how many pages that would make. NOTE: this doesn't
+	 * actually work.
+	 * 
+	 * @access public
+	 * @param int $limit. (default: null)
+	 * @return int Total page count.
+	 */
+	function getPageCount($limit=null) {
+		trigger_error('implement getPageCount in form db driver');
+	}
 
+	/**
+	 * Set the current page number. This is used by the Formz object to set pagination based
+	 * on GET parameters.
+	 * 
+	 * @access public
+	 * @param int $pageNumber
+	 * @return void
+	 */
+	function setPage($pageNumber) {
+		trigger_error('implement setPage in form db driver');
+	}
+	
+	/**
+	 * Set record per page for pagination on this Formz object. If none is set, will fall back to
+	 * default set in config.yaml.
+	 * 
+	 * @access public
+	 * @param int $limit
+	 * @return void
+	 */
+	function setLimit($limit) {
+		trigger_error('implement setLimit in form db driver');
+	}
+	
+	/**
+	 * Returns true if this form uses pagination.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function isPaginated() {
+		trigger_error('implement isPaginated in form db driver');
+	}
+	
+	/**
+	 * Enable pagination on this form.
+	 * 
+	 * @access public
+	 * @param boolean $value. (default: true)
+	 * @return void
+	 */
+	function setPaginated($value = true) {
+		trigger_error('implement setPaginated in form db driver');
+	}
+	
+	
+	
 	/**
 	 * returns the current Record
 	 *
