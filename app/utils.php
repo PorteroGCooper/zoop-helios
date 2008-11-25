@@ -25,8 +25,7 @@
  * @param string $content message to be written
  * @param string $filename filename to write to
  */
-function logwrite($content, $filename = '/tmp/phplog')
-{
+function logwrite($content, $filename = '/tmp/phplog') {
 	append_to_file($filename, $content);
 }
 
@@ -59,11 +58,9 @@ define("JS_REDIRECT", 2);
  * @param integer $redirectType possible values are {@link HEADER_REDIRECT} and {@link JS_REDIRECT}
  * @param integer $response_code Optional response HTTP code to return. 
  */
-function Redirect( $URL, $redirectType = HEADER_REDIRECT, $response_code = null)
-{
+function Redirect( $URL, $redirectType = HEADER_REDIRECT, $response_code = null) {
 	global $globalTime;
-	switch($redirectType)
-	{
+	switch ($redirectType) {
 		case HEADER_REDIRECT:
 			if ($response_code) {
 				header("location: $URL", TRUE, $response_code);
@@ -92,8 +89,7 @@ function Redirect( $URL, $redirectType = HEADER_REDIRECT, $response_code = null)
 * @param integer $redirectType
 * @uses Redirect
 */
-function RedirectBoS($redirectType = HEADER_REDIRECT)
-{
+function RedirectBoS($redirectType = HEADER_REDIRECT) {
 	Redirect(SCRIPT_REF, $redirectType);
 }
 
@@ -108,8 +104,7 @@ function RedirectBoS($redirectType = HEADER_REDIRECT)
 * @param integer $redirectType
 * @uses Redirect
 */
-function BaseRedirect( $URL , $redirectType = HEADER_REDIRECT)
-{
+function BaseRedirect( $URL , $redirectType = HEADER_REDIRECT) {
 	Redirect(SCRIPT_URL . $URL, $redirectType);
 }
 
@@ -120,8 +115,7 @@ function BaseRedirect( $URL , $redirectType = HEADER_REDIRECT)
 *
 * @uses Redirect
 */
-function RedirectRef()
-{
+function RedirectRef() {
 	Redirect($_SERVER["HTTP_REFERER"]);
 }
 
@@ -133,8 +127,7 @@ function RedirectRef()
 * @deprecated use zone::zoneRedirect() instead
 * @uses Redirect
 */
-function ZoneRedirect( $url, $depth = 0 )
-{
+function ZoneRedirect( $url, $depth = 0 ) {
 	Redirect( zone::getZoneUrl($depth) . $url);
 }
 
@@ -146,8 +139,7 @@ function ZoneRedirect( $url, $depth = 0 )
  * @access public
  * @return void
  */
-function checkValidDate( $datestring )
-{
+function checkValidDate( $datestring ) {
 	$dt = $datestring;
 	$dt = ereg_replace('([0-9]*)-([0-9]*)-([0-9]*)','\1/\2/\3', $dt);
 	$dt = ereg_replace('([0-9]*)\.([0-9]*)\.([0-9]*)','\2/\1/\3', $dt);
@@ -173,8 +165,7 @@ function checkValidDate( $datestring )
  * @access public
  * @return void
  */
-function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null)
-{
+function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = null) {
 	return sql_format_date($inPostgresDate, $inFormatString, $inTimeZone);
 }
 
@@ -185,12 +176,11 @@ function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = nul
 * @param string $ccn Credit Card Number to Format
 * @return string Formatted Credit Card Number
 */
-	function formatCCN( $ccn )
-	{
-		$output = substr($ccn, 0, 4) . "-" . substr($ccn, 4, 4) . "-" . substr($ccn, 8, 4) . "-" . substr($ccn, 12, 4);
+function formatCCN( $ccn ) {
+	$output = substr($ccn, 0, 4) . "-" . substr($ccn, 4, 4) . "-" . substr($ccn, 8, 4) . "-" . substr($ccn, 12, 4);
 
-		return $output;
-	}
+	return $output;
+}
 
 /**
 * accepts an array and a function, then processes all values recursively with the function.
@@ -198,22 +188,21 @@ function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = nul
 * @param array $arr
 * @param function $function
 */
-	function processArray( $arr, $function )
+function processArray( $arr, $function ) {
+	if (gettype($arr) != "array")
 	{
-		if (gettype($arr) != "array")
-		{
-			return $function($arr);
-		}
-		else
-		{
-			$buff = array();
-			foreach ($arr as $key => $value)
-			{
-				$buff[$key] = processArray( $value, $function );
-			}
-			return $buff;
-		}
+		return $function($arr);
 	}
+	else
+	{
+		$buff = array();
+		foreach ($arr as $key => $value)
+		{
+			$buff[$key] = processArray( $value, $function );
+		}
+		return $buff;
+	}
+}
 
 /**
  * xorEncrypt
@@ -224,8 +213,7 @@ function FormatPostgresDate( $inPostgresDate, $inFormatString, $inTimeZone = nul
  * @access public
  * @return void
  */
-function xorEncrypt($message, $key)
-{
+function xorEncrypt($message, $key) {
     $enc = "";
 
     for($i = 0; $i < strlen($message); $i++)
@@ -245,8 +233,7 @@ function xorEncrypt($message, $key)
  * @access public
  * @return void
  */
-function xorDecrypt($message, $key)
-{
+function xorDecrypt($message, $key) {
     $enc = "";
 
     for($i = 0; $i < strlen($message); $i++)
@@ -261,8 +248,7 @@ function xorDecrypt($message, $key)
 *
 * @param mixed $mixed
 */
-function echo_r($mixed)
-{
+function echo_r($mixed) {
 // 	if(APP_STATUS == "live")
 // 		return;
 
@@ -276,8 +262,7 @@ function echo_r($mixed)
 *
 * @param mixed $mixed
 */
-function die_r($mixed)
-{
+function die_r($mixed) {
 	echo_r($mixed);
 	die();
 }
@@ -286,8 +271,7 @@ function die_r($mixed)
 *
 * @param mixed $mixed
 */
-function dump_r($mixed)
-{
+function dump_r($mixed) {
 	echo("<pre>");
 	var_dump($mixed);
 	echo("</pre>");
@@ -298,8 +282,7 @@ function dump_r($mixed)
 * @param mixed $mixed
 * @param string $color any acceptable color string that works with css
 */
-function show_r($mixed, $color = "blue")
-{
+function show_r($mixed, $color = "blue") {
 	echo "<div align=\"left\" style=\"border: 1px solid $color;\">";
 	echo_r($mixed);
 	echo "</div>";
@@ -309,8 +292,7 @@ function show_r($mixed, $color = "blue")
 * @access public
 * @return void
 **/
-function fetch_r($mixed)
-{
+function fetch_r($mixed) {
 	ob_start();
 	print_r($mixed);
 	$tmp = ob_get_contents();
@@ -327,8 +309,7 @@ function fetch_r($mixed)
  * @access public
  * @return void
  */
-function &MapArray(&$transformee, &$transformer)
-{
+function &MapArray(&$transformee, &$transformer) {
 	$result = array();
 	foreach($transformee as $key => $val)
 	{
@@ -348,8 +329,7 @@ function &MapArray(&$transformee, &$transformer)
  * @access public
  * @return void
  */
-function validEmailAddress ($email)
-{
+function validEmailAddress ($email) {
 	if (eregi("[_\.0-9a-z-]+@[0-9a-z][-0-9a-z\.]+", $email, $check))
 	{
 		return true;
@@ -366,8 +346,7 @@ function validEmailAddress ($email)
  * @access public
  * @return void
  */
-function getmicrotime()
-{
+function getmicrotime() {
 	list($usec, $sec) = explode(" ",microtime());
 	return ((float)$usec + (float)$sec);
 }
@@ -379,8 +358,7 @@ function getmicrotime()
  * @access public
  * @return void
  */
-function markprofile($running_total = 0)
-{
+function markprofile($running_total = 0) {
 	if(APP_STATUS == 'dev')
 	{
 		global $_profile_time;
@@ -416,8 +394,7 @@ function markprofile($running_total = 0)
  * @access public
  * @return void
  */
-function fetch_backtrace($full = false)
-{
+function fetch_backtrace($full = false) {
 	if (function_exists("debug_backtrace"))
 	{
 		$trace = debug_backtrace();
@@ -535,8 +512,7 @@ function fetch_backtrace($full = false)
  * @access public
  * @return void
  */
-function array_sortonkeys($inArray, $forward = 1)
-{
+function array_sortonkeys($inArray, $forward = 1) {
 	if($forward)
 		ksort($inArray);
 	else
@@ -575,8 +551,7 @@ function urlEncodeArray($array, $keyname = '') {
  * @access public
  * @return void
  */
-function BUG($desc = "")
-{
+function BUG($desc = "") {
 	if (show_warnings == false)
 		return;
 
@@ -623,8 +598,7 @@ function deprecated($desc = null) {
  * @access public
  * @return void
  */
-function echo_backtrace($full = false)
-{
+function echo_backtrace($full = false) {
 	echo fetch_backtrace($full);
 }
 
@@ -637,8 +611,7 @@ function echo_backtrace($full = false)
 * @param string $str
 * @return string
 */
-function strip_gpc_slashes ($input)
-{
+function strip_gpc_slashes ($input) {
 	if ( !get_magic_quotes_gpc() || ( !is_string($input) && !is_array($input) ) )
 	{
 		return $input;
@@ -669,8 +642,7 @@ function strip_gpc_slashes ($input)
  * @access protected
  * @return void
  */
-function __VerifyHTMLTree($html)
-{
+function __VerifyHTMLTree($html) {
 	require_once('XML/Tree.php');
 	$tree = &new XML_Tree();
 	//$html = $POSTCOPY[$inName];
@@ -689,8 +661,7 @@ function __VerifyHTMLTree($html)
  * @access protected
  * @return void
  */
-function __VerifyHTMLTree_ex(&$htmltree)
-{
+function __VerifyHTMLTree_ex(&$htmltree) {
 	global $allowed_tags, $allowed_attributes;
 
 	foreach($htmltree->children as $key => $childtree)
@@ -725,8 +696,7 @@ function __VerifyHTMLTree_ex(&$htmltree)
  * @access public
  * @return void
  */
-function VerifyText($inText)
-{
+function VerifyText($inText) {
 	$inText = br2nl($inText);
 	if(!defined('filter_input') || filter_input)
 		return strip_tags($inText);
@@ -754,8 +724,7 @@ function br2nl($text) {
  * @access public
  * @return void
  */
-function VerifyTextOrArray($array)
-{
+function VerifyTextOrArray($array) {
 	if (!is_array($array))
 	{
 		return verifyText($array);
@@ -784,8 +753,7 @@ function VerifyTextOrArray($array)
  * @access public
  * @return void
  */
-function get_shared_key()
-{
+function get_shared_key() {
 	$file = fopen(shared_key_path, "r");
 	$key = fgets($file);
 	fclose($file);
@@ -799,8 +767,7 @@ function get_shared_key()
  * @access public
  * @return void
  */
-function get_key($type)
-{
+function get_key($type) {
 	$string = "{$type}_key_path";
 	if(defined($string))
 	{
@@ -822,8 +789,7 @@ function get_key($type)
   * @access public
   * @return void
   */
-function RequireCondition($bool)
-{
+function RequireCondition($bool) {
 	if(!$bool)
 	{
 		if(defined("app_login_page"))
@@ -854,8 +820,7 @@ function RequireCondition($bool)
  * @access public
  * @return void
  */
-function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
-{
+function remoteObjectCall($url, $object, $constparams, $method, $methodparams) {
 	$key = get_shared_key();
 	$key .= $object;
 	$key .= implode("", $constparams);
@@ -891,18 +856,17 @@ function remoteObjectCall($url, $object, $constparams, $method, $methodparams)
 	return $answer;
 }
 
- /**
-  * Opens / Creates a file ($inFilename) and places $inContents into it
-  * If you are using PHP 5 you could alternatively use file_put_contents instead as it is a native function now.
-  *
-  * @param       string   $inFilename    	The absolute location of the file
-  * @param       string   $inContents    	The contents to put into file
-  * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
-  * @access public
-  * @return void
-  */
-function file_set_contents($inFilename, $inContents, $mode = 'w')
-{
+/**
+ * Opens / Creates a file ($inFilename) and places $inContents into it
+ * If you are using PHP 5 you could alternatively use file_put_contents instead as it is a native function now.
+ *
+ * @param       string   $inFilename    	The absolute location of the file
+ * @param       string   $inContents    	The contents to put into file
+ * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
+ * @access public
+ * @return void
+ */
+function file_set_contents($inFilename, $inContents, $mode = 'w') {
 	if(!$handle = fopen($inFilename, $mode))
 	{
 		trigger_error("Cannot open file ($filename)");
@@ -914,39 +878,36 @@ function file_set_contents($inFilename, $inContents, $mode = 'w')
 	fclose($handle);
 }
 
- /**
-  * Opens / Creates a file ($inFilename) and appends $inContents to the end of it
-  *
-  * @param       string   $inFilename    	The absolute location of the file
-  * @param       string   $inContents    	The contents to append to the file
-  */
-function append_to_file($inFilename, $inContents)
-{
+/**
+ * Opens / Creates a file ($inFilename) and appends $inContents to the end of it
+ *
+ * @param       string   $inFilename    	The absolute location of the file
+ * @param       string   $inContents    	The contents to append to the file
+ */
+function append_to_file($inFilename, $inContents) {
 	file_set_contents($inFilename, $inContents, 'a');
 }
 
 
- /**
-  * Opens / Creates a file ($inFilename) and dumps the value of an array, variable or object into it.
-  * Useful for debugging purposes when doing operations that cannot write to the screen (like handling ajax posts).
-  *
-  * @param       string   $inFilename    	The absolute location of the file
-  * @param       mixed    $inValue    	The variable to dump into to the file
-  * @param       string   $mode    		Append mode, defaults to 'a' (open and append to the bottom)
-  */
-function dump_to_file($inFilename, $inValue, $mode = 'a')
-{
+/**
+ * Opens / Creates a file ($inFilename) and dumps the value of an array, variable or object into it.
+ * Useful for debugging purposes when doing operations that cannot write to the screen (like handling ajax posts).
+ *
+ * @param       string   $inFilename    	The absolute location of the file
+ * @param       mixed    $inValue    	The variable to dump into to the file
+ * @param       string   $mode    		Append mode, defaults to 'a' (open and append to the bottom)
+ */
+function dump_to_file($inFilename, $inValue, $mode = 'a') {
 	$string = var_dump_ret($inValue);
 	file_set_contents($inFilename, $string, $mode);
 }
 
- /**
-  * Returns the output from var_dump to a string instead of to the screen.
-  *
-  * @param       mixed    $inValue    	The variable to dump.
-  */
-function var_dump_ret($mixed)
-{
+/**
+ * Returns the output from var_dump to a string instead of to the screen.
+ *
+ * @param mixed $inValue The variable to dump.
+ */
+function var_dump_ret($mixed) {
 	ob_start();
 	var_dump($mixed);
 	$content = ob_get_contents();
@@ -955,27 +916,25 @@ function var_dump_ret($mixed)
 }
 
 
- /**
-  * Opens / Creates a file ($inFilename) and all necessary directories to it, then places $inContents into it
-  *
-  * @param       string   $inFilename    	The absolute location of the file
-  * @param       string   $inContents    	The contents to put into file
-  * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
-  */
-function file_write($inFilename, $inContents, $mode = 'w')
-{
+/**
+ * Opens / Creates a file ($inFilename) and all necessary directories to it, then places $inContents into it
+ *
+ * @param       string   $inFilename    	The absolute location of the file
+ * @param       string   $inContents    	The contents to put into file
+ * @param       string   $mode    		Write mode, defaults to 'w' (open and write at top)
+ */
+function file_write($inFilename, $inContents, $mode = 'w') {
 	if (mkdir_r($inFilename))
 		file_set_contents($inFilename, $inContents, $mode);
 }
 
- /**
-  * Deletes all files from a directory last modified longer than $seconds ago.
-  *
-  * @param       string   $path	    	The directory
-  * @param       string   $seconds    	number of seconds old
-  */
-function CleanDirectory($path, $seconds)
-{
+/**
+ * Deletes all files from a directory last modified longer than $seconds ago.
+ *
+ * @param string $path The directory
+ * @param string $seconds number of seconds old
+ */
+function CleanDirectory($path, $seconds) {
 	if($handle = opendir($path))
 	{
 		$ts = time();
@@ -993,16 +952,15 @@ function CleanDirectory($path, $seconds)
 		return false;
 }
 
- /**
-  * Apply an Encryption on Input
-  * To be used with Decrypt
-  *
-  * @param       string   $key    The key to encrypt $input with
-  * @param       string   $input    The value to encrypt
-  * @return      string   The encrypted data
-  */
-function Encrypt($key, $input)
-{
+/**
+ * Apply an Encryption on Input
+ * To be used with Decrypt
+ *
+ * @param string $key The key to encrypt $input with
+ * @param string $input The value to encrypt
+ * @return string The encrypted data
+ */
+function Encrypt($key, $input) {
 	$td = mcrypt_module_open (MCRYPT_TripleDES, "", MCRYPT_MODE_ECB, "");
 	$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
 	mcrypt_generic_init($td, $key, $iv);
@@ -1012,16 +970,15 @@ function Encrypt($key, $input)
 	return $encrypted_data;
 }
 
- /**
-  * Decrypt data for usage
-  * To be used with Encrypt
-  *
-  * @param       string   $key     The key to decrypt $input with (the same as the key it was encrypted with)
-  * @param       string   $input   The Encrypted value to decrypt
-  * @return      string   The decrypted data
-  */
-function Decrypt($key, $input)
-{
+/**
+ * Decrypt data for usage
+ * To be used with Encrypt
+ *
+ * @param       string   $key     The key to decrypt $input with (the same as the key it was encrypted with)
+ * @param       string   $input   The Encrypted value to decrypt
+ * @return      string   The decrypted data
+ */
+function Decrypt($key, $input) {
 	$td = mcrypt_module_open(MCRYPT_TripleDES, "", MCRYPT_MODE_ECB, "");
 	$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
 	mcrypt_generic_init($td, $key, $iv);
@@ -1041,8 +998,7 @@ function Decrypt($key, $input)
  * @access public
  * @return void
  */
-function RunCommand($inCommand)
-{
+function RunCommand($inCommand) {
 	$command = $inCommand;
 
 	echo $command;
@@ -1059,8 +1015,7 @@ function RunCommand($inCommand)
  * @access public
  * @return void
  */
-function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodEnd = NULL)
-{
+function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodEnd = NULL) {
 	$oldStatus = GetCompletionStatus($statusItemName);
 
 	if($start == NULL)
@@ -1082,8 +1037,7 @@ function SetCompletionStatus($statusItemName, $start = NULL, $end = NULL, $goodE
  * @access public
  * @return void
  */
-function &GetCompletionStatus($statusItemName)
-{
+function &GetCompletionStatus($statusItemName) {
 	$data = file_get_contents(app_status_dir . "/" . $statusItemName);
 
 	$parts = explode(" ", $data);
@@ -1106,15 +1060,14 @@ function &GetCompletionStatus($statusItemName)
 	return $status;
 }
 
- /**
-  *  Create directories required for $filename recursively
-  *  using mkdirr.
-  *
-  * @param       string   $pathname    The filename you want to create a directory for.
-  * @return      bool     Returns TRUE on success, FALSE on failure
-  */
-function mkdir_r($filename, $mode = 0770)
-{
+/**
+ * Create directories required for $filename recursively
+ * using mkdirr.
+ *
+ * @param       string   $pathname    The filename you want to create a directory for.
+ * @return      bool     Returns TRUE on success, FALSE on failure
+ */
+function mkdir_r($filename, $mode = 0770) {
 	str_replace("\\",'/', $filename);
 	$dir = explode(DIRECTORY_SEPARATOR, $filename);
 	array_pop($dir);
@@ -1123,43 +1076,42 @@ function mkdir_r($filename, $mode = 0770)
 	return mkdirr($path, $mode);
 }
 
- /**
-  * Create a directory structure recursively
-  *
-  * @author      Aidan Lister <aidan@php.net>
-  * @author      Steve Francia --- added support for if is already a symlink
-  * @version     1.1
-  * @link        http://aidanlister.com/repos/v/function.mkdirr.php
-  * @param       string   $pathname    The directory structure to create
-  * @return      bool     Returns TRUE on success, FALSE on failure
-  */
- function mkdirr($pathname, $mode = 0770)
- {
+/**
+ * Create a directory structure recursively
+ *
+ * @author      Aidan Lister <aidan@php.net>
+ * @author      Steve Francia --- added support for if is already a symlink
+ * @version     1.1
+ * @link        http://aidanlister.com/repos/v/function.mkdirr.php
+ * @param       string   $pathname    The directory structure to create
+ * @return      bool     Returns TRUE on success, FALSE on failure
+ */
+function mkdirr($pathname, $mode = 0770) {
 
 	// eliminate the trailing slash
 	if (substr($pathname, -1) == "/")
 		$pathname = substr($pathname, 0, -1);
 
-     // Check if directory or symlink already exists
-     if (is_dir($pathname) || empty($pathname) ) {
-         return true;
-     }
+	// Check if directory or symlink already exists
+	if (is_dir($pathname) || empty($pathname) ) {
+		return true;
+	}
 
-     // Ensure a file does not already exist with the same name
-     if (is_file($pathname)) {
-         trigger_error('mkdirr() File exists', E_USER_WARNING);
-         return false;
-     }
+	// Ensure a file does not already exist with the same name
+	if (is_file($pathname)) {
+		trigger_error('mkdirr() File exists', E_USER_WARNING);
+		return false;
+	}
 
-     // Crawl up the directory tree
-     $next_pathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
-     if (mkdirr($next_pathname, $mode)) {
-         if (!file_exists($pathname)) {
-             return mkdir($pathname, $mode);
-         }
-     }
-     return false;
- }
+	// Crawl up the directory tree
+	$next_pathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
+	if (mkdirr($next_pathname, $mode)) {
+		if (!file_exists($pathname)) {
+			return mkdir($pathname, $mode);
+		}
+	}
+	return false;
+}
 
 
 /**
@@ -1171,8 +1123,7 @@ function mkdir_r($filename, $mode = 0770)
  * @access public
  * @return array rgb array
  */
-function HexToRgb($pHexColor)
-{
+function HexToRgb($pHexColor) {
 
 	$l_returnarray = array ();
 	if (!(strpos ($pHexColor, "#") === FALSE))
@@ -1214,8 +1165,7 @@ function accentTranscribe ($string) {
  * @access public
  * @return void
  */
-function StreamCSV($inData, $inFilename, $inColumns = NULL)
-{
+function StreamCSV($inData, $inFilename, $inColumns = NULL) {
 	$lines = array();
 
 	if($inColumns === NULL)
@@ -1262,8 +1212,7 @@ function StreamCSV($inData, $inFilename, $inColumns = NULL)
 *
 * @param array $inArray to return a random element
 */
-function randElement($inArray)
-{
+function randElement($inArray) {
 	$tmp = mt_rand(0, count($inArray) - 1);
 
 	$keys = array_keys($inArray);
@@ -1277,8 +1226,7 @@ function randElement($inArray)
 * @param array $inArray to return a random element
 * @param int $number of random elements to return
 */
-function randElements($inArray, $num)
-{
+function randElements($inArray, $num) {
 	if (count($inArray) == 0)
 		return $inArray;
 
@@ -1305,7 +1253,7 @@ function randElements($inArray, $num)
 *
 * @usage array mrand ( int min, int max, int count [, int strlen ] )
 */
-function mrand($l,$h,$t,$len=false){
+function mrand($l,$h,$t,$len=false) {
 
 	if($l>$h){$a=$l;$b=$h;$h=$a;$l=$b;}
 	if( (($h-$l)+1)<$t || $t<=0 )return false;
@@ -1343,8 +1291,7 @@ function mrand($l,$h,$t,$len=false){
 *
 * @param string $inString
 */
-function unserializer($inString)
-{
+function unserializer($inString) {
 	if (empty($inString) || is_null($inString))
 		return array();
 	else
@@ -1356,8 +1303,7 @@ function unserializer($inString)
 *
 * @param string $inHTML
 */
-function HTML2Txt($inHTML)
-{
+function HTML2Txt($inHTML) {
 	$txt = br2nl($inHTML);
 
 	return strip_tags($txt);
@@ -1372,8 +1318,7 @@ function HTML2Txt($inHTML)
  * @access public
  * @return void
  */
-function seconds_to_time($seconds, $return = "array")
-{
+function seconds_to_time($seconds, $return = "array") {
 	$months = 0;
 	$days = 0;
 	$hours = 0;
@@ -1448,8 +1393,7 @@ function seconds_to_time($seconds, $return = "array")
  * @access public
  * @return void
  */
-function fuzzy_seconds_to_time($seconds)
-{
+function fuzzy_seconds_to_time($seconds) {
 	$timearray = seconds_to_time($seconds);
 
 	if ($timearray['months'] != 0)
@@ -1475,8 +1419,7 @@ function fuzzy_seconds_to_time($seconds)
  * @access public
  * @return void
  */
-function rmrf($dir)
-{
+function rmrf($dir) {
 	$d = dir($dir);
 	$dir .= "/";
 	while($f = $d->read() ){
@@ -1509,8 +1452,7 @@ function rmrf($dir)
 //		imagearc and imagefilledarc functions as the actual angle it draws is NOT the actual
 //		angle of the lines drawn on the screen
 
-function EllipseCirclePos($cx, $cy, $w, $h, $theta, &$newx, &$newy)
-{
+function EllipseCirclePos($cx, $cy, $w, $h, $theta, &$newx, &$newy) {
 	if($w > $h)
 	{
 		$a = $w / 2;
@@ -1559,13 +1501,11 @@ function EllipseCirclePos($cx, $cy, $w, $h, $theta, &$newx, &$newy)
 	$newy += $cy;
 }
 
-function NormalizeAngle($theta)
-{
+function NormalizeAngle($theta) {
 	return ($theta + (floor((abs($theta) + 360) / 360) * 360)) % 360;
 }
 
-function NormalizeAngle2($theta)
-{
+function NormalizeAngle2($theta) {
 	if($theta >= 0 && $theta <= 360)
 		return $theta;
 	
@@ -1583,8 +1523,7 @@ function NormalizeAngle2($theta)
 	return $theta;
 }
 
-function logprofile(&$timestruct, $sql = false)
-{
+function logprofile(&$timestruct, $sql = false) {
 	if(!defined('logprofile') || logprofile == false)
 		return;
 	if(!is_array($timestruct))
@@ -1697,8 +1636,7 @@ function logprofile(&$timestruct, $sql = false)
  * @access public
  * @return string the full path with trailing slash
  */
-function join_dirs($dirs)
-{
+function join_dirs($dirs) {
 	foreach($dirs as $k=>$dir)
 	{ // strip off the slashes except for the first (root) slash
 		$dirs[$k] = ereg_replace ( ($k==0)?"\/$":"(^\/|\/$)", "" , $dir );
@@ -1718,22 +1656,18 @@ function join_dirs($dirs)
  */
 function makePath( $zone, $z = array() , $page = '', $p = array() ) {
 	$answer = "/$zone";
-	foreach($z as $key => $value)
-	{
+	foreach ($z as $key => $value) {
 		$answer .= "/$key:$value";
 	}
 	$answer .= "/$page";
-	foreach($p as $key => $value)
-	{
+	foreach ($p as $key => $value) {
 		$answer .= "/$key:$value";
 	}
 	return $answer;
 }
 
-if (!function_exists('json_encode'))
-{
-	function json_encode($a=false)
-	{
+if (!function_exists('json_encode')) {
+	function json_encode($a=false) {
 		if (is_null($a)) return 'null';
 		if ($a === false) return 'false';
 		if ($a === true) return 'true';
@@ -1797,7 +1731,8 @@ function url($url) {
 		$url = substr($url, strlen($base));
 	} else if ($url[0] !== '/') {
 		// tack on a zone path if this isn't absolute from base.
-		$url = zone_path() . $url;
+		// (hard coding a depth of 0 doesn't seem too much of a hack in this case)
+		$url = zone::getZonePath(0) . '/' . $url;
 	}
 	
 	if (Config::get('zoop.app.use_absolute_urls')) {
@@ -1810,56 +1745,22 @@ function url($url) {
 /**
  * Base href helper function for URL canonicalization.
  *
- * This is an ugly hack. It steals template variables from the global $gui object since they're
- * not easily available elsewhere. Will be modifying Zoop to remedy this soon, but the hack works
- * for now :)
- *
- * @todo Stop cannibalizing global $gui object to get the base href.
+ * @todo What's the difference between SCRIPT_REF and BASE_HREF ?
  *
  * @author Justin Hileman {@link http://justinhileman.com}
  * @param bool $absolute Do you want a fully qualified base href (http://domain and all)?
  * @return string Base href. Use it wisely.
  */
 function base_href($absolute = false) {
-	// cache the base href if it hasn't been used yet.
-	static $base_href;
-	if (!$base_href) {
-		global $gui;
-		$base_href = $gui->_tpl_vars['BASE_HREF'];
-	}
-	
 	// return the whole thing for an absolute url.
 	if ($absolute) {
-		return $base_href;
+		return BASE_HREF;
 	} else {
-		$parts = parse_url($base_href);
+		// the non-'mod_rewrite' case should be handled here?
+		$parts = parse_url(BASE_HREF);
 		return $parts['path'];
 	}
 }
-
-/**
- * Zone path helper function for URL canonicalization.
- *
- * This is an ugly hack. It steals template variables from the global $gui object since they're
- * not easily available elsewhere. Will be modifying Zoop to remedy this soon, but the hack works
- * for now :)
- *
- * @todo Stop cannibalizing global $gui object to get the zone href.
- *
- * @author Justin Hileman {@link http://justinhileman.com}
- * @return string Zone path. Begins with a slash, is relative to app root.
- */
-function zone_path() {
-	global $gui;
-	if (isset($gui) && !empty($gui)) {
-		return $gui->_tpl_vars['ZONE_PATH'];
-	} else {
-		trigger_error('Global gui object not initialized/available/etc.');
-	}
-}
-
-
-
 
 /**
  * Convert to title case.
@@ -1931,7 +1832,9 @@ function nv_title_skip_dotted($matches) {
 
 
 
-
+/**
+ * @todo If we're removing php 4 support, the following should be removed and utils5 should be combined with this file.
+ */
 if(version_compare(PHP_VERSION, '5.0', '<')) {
 	include_once(dirname(__FILE__) . '/utils4.php');
 } else {
