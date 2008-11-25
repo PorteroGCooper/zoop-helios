@@ -1283,7 +1283,15 @@ class Formz {
 
 		return $label_field;
 	}
-	
+
+	function &getDoctrineQuery() {
+		return $this->_driver->getDoctrineQuery();
+	}
+
+	function &getDoctrineRecord() {
+		return $this->_driver->getDoctrineRecord();
+	}
+
 	/**
 	 * __call magic method.
 	 *

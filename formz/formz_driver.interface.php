@@ -145,6 +145,24 @@ interface formz_driver_interface {
 	function getSlugField();
 
 	/**
+	 * Fetches a reference to this driver's Doctrine query or
+	 * triggers an error if this is not a Doctrine driver
+	 * 
+	 * @access public
+	 * @return &DoctrineQuery
+	 */
+	function &getDoctrineQuery();
+
+	/**
+	 * Fetches a reference to this driver's Doctrine record or
+	 * triggers an error if this is not a Doctrine driver
+	 * 
+	 * @access public
+	 * @return &DoctrineRecord
+	 */	
+	function &getDoctrineRecord();
+	
+	/**
 	 * Is this table/form/relation timestampable?
 	 *
 	 * @access public

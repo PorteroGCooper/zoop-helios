@@ -654,8 +654,11 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 	}
 
-	
-	function getDoctrineRecord($id = false) {
+	function &getDoctrineQuery() {
+		return $this->getQuery();
+	}
+
+	function &getDoctrineRecord($id = false) {
 		if ($id && isset($this->record)) {
 			return $this->record;
 		} else {
@@ -867,6 +870,9 @@ class formz_doctrineDB implements formz_driver_interface {
 		$ret = array();
 				
 		foreach ($this->table->getRelations() as $name => $relation) {
+			// if ($relation->getClass() === 'Orders') {
+			// 	die_r($relation->toArray());
+			// }
 			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? Formz::MANY : Formz::ONE;
 			
 			$label_field = null;
@@ -1075,10 +1081,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	/**
 	 * Return's this query. If it doesn't exist, create and apply fixed values to it.  
 	 * 
-	 * @access public
+	 * @access protected
 	 * @return void
 	 */
-	function getQuery() {
+	protected function &getQuery() {
 		if (!$this->query) {
 			$this->query = $this->table->createQuery();
 		}
@@ -1251,7 +1257,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function &returnTableName() {
 		return $this->tablename;
-	}
-	
+	}	
 	
 }

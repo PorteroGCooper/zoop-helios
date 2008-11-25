@@ -860,6 +860,13 @@ class Formz_FormDB implements formz_driver_interface {
 		trigger_error("This method hasn't been implemented yet.");
 	}
 
+	function &getDoctrineRecord() {
+		trigger_error('FormDB does not support records');
+	}
+
+	function &getDoctrineQuery() {
+		trigger_error('FormDB does not support query objects');
+	}	
 
 
 
