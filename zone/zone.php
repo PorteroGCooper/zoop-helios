@@ -922,7 +922,7 @@ class zone
 	 * @param int $code. (default: 404)
 	 * @return void
 	 */
-	function responsePage($code = 404) {
+	function responsePage($code = 404, $message = null) {
 		$codes = array(
 			'100' => "100 Continue",
 			'101' => "101 Switching Protocols",
@@ -970,15 +970,20 @@ class zone
 			trigger_error('Unknown response code: ' . $code);
 			return;
 		}
+		
+		if ($message === null) {
+			$message = $codes[$code];
+		}
 
 		header('Status: ' . $codes[$code], true, $code);
 		global $gui;
 		
-		$gui->assign('title', $codes[$code]);		
+		$gui->assign('title', $message);
 		if($template = Config::get('zoop.gui.templates.response.' . $code)) {
+			$gui->assign('response_message', $message);
 			$gui->generate($template);
 		} else {
-			$gui->assignContent('<h2>'.$codes[$code].'</h2>');
+			$gui->assignContent('<h2>'.$message.'</h2>');
 			$gui->generate();
 		}
 		die();
