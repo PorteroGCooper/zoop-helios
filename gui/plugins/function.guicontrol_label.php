@@ -37,9 +37,9 @@ function smarty_function_guicontrol_label($params, &$smarty)
 		$control = &getGuiControl($type, $name);
 	}
 
-	$for = $control->getLabelName();
+	$for = $control->getId();
 
-	$lname = ucfirst($name);
+	$lname = format_label($name);
 
 	$html = "<label for=\"$for\"> $lname: </label>";
 

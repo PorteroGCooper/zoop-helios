@@ -63,4 +63,6 @@ function smarty_function_resources($params, &$smarty) {
 		echo implode("\n\t", $inline_js);
 		echo "\n//]]>\n</script>\n";
 	}
+	
+	$smarty->header_written = true;
 }

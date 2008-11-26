@@ -1,0 +1,103 @@
+.menuContainer a, .menuContainer *{outline: 0 !important;}
+.menuContainer a span { cursor:pointer; }
+.menuContainer a span b, .menuContainer button span b { font-weight:normal; display:block; }
+
+
+.menuContainer a.menuBtn:link,
+.menuContainer a.menuBtn:visited {float: left;
+	width: 21.8em; 
+	background: url(../images/bg_date_picker_select_rt.gif) right top no-repeat;
+	text-decoration: none;
+	color: #444 !important;
+	outline: 0 !important;}
+.menuContainer a.menuBtn:hover,
+.menuContainer a.menuBtn:active { }
+
+.menuContainer a.menuBtn:link span,
+.menuContainer a.menuBtn:visited span { display: block;
+	margin-right: 20px;
+	height: 20px;
+	line-height: 2em;
+	padding-left: 10px !important;
+	background: url(../images/bg_date_picker_select.gif) left top no-repeat;}
+	
+
+.positionHelper { position:absolute; cursor:pointer; }
+.menuContainer {border: 1px solid #ddd;}
+.menuContainer p.menuLoading { color:#444; font-size:1.1em; padding:.5em; }
+.hiddenContent { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+.menuContainer .menu, .menuContainer .menu ul { background:#f9f9f9; list-style-type:none; visibility:hidden;  overflow: hidden; position:absolute; top:0; left:0; padding: 0; margin:0; color:#666;}
+.menuContainer .menu li { clear:both; float:left; width:100% !important;  }
+.menuContainer .menu li.hover {background: #eee;}
+
+.menuContainer .menu p,
+.menuContainer .menu a:link,
+.menuContainer .menu a:visited,
+.menuContainer .menu a:hover,
+.menuContainer .menu a:active { float:left; width:17.2em; padding:.3em; padding-left:.5em; margin:0; font-size:1.1em; line-height:1.2em; color:#666; text-decoration:none;}
+
+.menuContainer .menu a.singleLink:link,
+.menuContainer .menu a.singleLink:visited,
+.menuContainer .menu a.singleLink:hover,
+.menuContainer .menu a.singleLink:active { float:none; display:block; width:18.8em; }
+
+.menuContainer .menu a:hover,
+.menuContainer .menu a:active,
+.menuContainer .menu a.singleLink:hover,
+.menuContainer .menu a.singleLink:active {color:#fff; background:#4e92c8;}
+
+.menuContainer .scrollNeeded a:link,
+.menuContainer .scrollNeeded a:visited,
+.menuContainer .scrollNeeded a:hover,
+.menuContainer .scrollNeeded a:active { width:14.9em; }
+
+.menuContainer .menu a.menuIndicator:link,
+.menuContainer .menu a.menuIndicator:visited { background: url(../images/icon_arrow_right.gif) no-repeat 98% center; }
+.menuContainer .menu a.menuIndicator:hover,
+.menuContainer .menu a.menuIndicator:active {color:#fff; background-color:#4e92c8; background-image: url(../images/icon_arrow_right_hover.gif); }
+
+/*next level links*/
+.menuContainer .menu a.nextLevel:link,
+.menuContainer .scrollNeeded a.nextLevel:link,
+.menuContainer .menu a.nextLevel:visited,
+.menuContainer .scrollNeeded a.nextLevel:visited,
+.menuContainer .menu a.nextLevel:hover,
+.menuContainer .scrollNeeded a.nextLevel:hover,
+.menuContainer .menu a.nextLevel:active,
+.menuContainer .scrollNeeded a.nextLevel:active { float:right; width:1em; overflow:hidden; margin: 0; padding-left: .3em; background:url(../images/icon_arrow_right.gif) no-repeat 70% 50%; text-indent:-30em; }
+.menuContainer .menu a.nextLevel:hover,
+.menuContainer .menu a.nextLevel:active { background: #4e92c8 url(../images/icon_arrow_right_hover.gif) no-repeat 70% 50%; }
+
+
+
+
+/*BREADCRUMBS*/
+.ddBreadcrumb {width:21.6em; font-size:1em; background:#f9f9f9; padding: .5em 0; margin: 0; border-bottom: 1px solid #ccc;}
+.ddBreadcrumb li { float: left; list-style: none; margin: 0;padding:.1em 0; padding-left:.5em;}
+.ddBreadcrumb li.currentCrumb {clear: left; float: none; margin: .1em 0 0 0;}
+.ddBreadcrumb a, .ddBreadcrumb span { white-space:nowrap; font-size: 1.1em;}
+.ddBreadcrumb a:link,
+.ddBreadcrumb a:visited { color:#1266a9; background:url(../images/icon_breadcrumb.gif) no-repeat right; padding-right:10px; margin-right:.5em; }
+.ddBreadcrumb a:hover,
+.ddBreadcrumb a:active { color:#4e92c8; }
+.ddBreadcrumb .currentCrumb a:link,
+.ddBreadcrumb .currentCrumb a:visited,
+.ddBreadcrumb .currentCrumb a:hover,
+.ddBreadcrumb .currentCrumb a:active { display:block; color:#333; background-image:none; font-size:1.5em; padding:.1em 0 0; margin-right:0; text-decoration:none; }
+.ddBreadcrumb .currentCrumb a:hover,
+.ddBreadcrumb .currentCrumb a:active { text-decoration:underline; }
+
+
+
+	
+/* ----- clear fix for floats ----- */
+/* these styles instruct non-IE browsers to render container elements so that they fully enclose floats */		
+/* without this class applied, a float might hang over the bottom border of it's container */
+.clearfix:after { content: "."; display:block; height:0; clear:both; visibility:hidden; }
+.clearfix { display:inline-block; }		
+
+/* hides clearfix from IE-mac \*/
+* html .clearfix { height:1%; }
+.clearfix { display:block; }
+/* end hide from IE-mac */

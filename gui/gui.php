@@ -86,6 +86,8 @@ class gui extends Smarty {
 	 * @see gui::sortRegions
 	 */
 	var $_regions = array();
+	
+	var $header_written = false;
 
 	/**
 	 * gui constructor
@@ -551,6 +553,12 @@ class gui extends Smarty {
 			$path = '/' . $path;
 		}
 		
+		// if we've already written the header, let's just dump this now and hope for the best.
+		if ($this->header_written && !isset($this->_zoopCss[$path]) && !isset($this->_appCss[$path])) {
+			echo '<link rel="stylesheet" type="text/css" href="' . url($path) . "\" />\n";
+		}
+		
+		// now add the css file to the zoop and app resources.
 		switch ($scope) {
 			case 'zoop':
 				$this->_zoopCss[$path] = $path;
@@ -558,7 +566,7 @@ class gui extends Smarty {
 			case 'app':
 				$this->_appCss[$path] = $path;
 				break;
-			}
+		}
 	}
 	
 	/**
@@ -579,6 +587,14 @@ class gui extends Smarty {
 		// handle inline stuff separately.
 		if ($scope == 'inline') {
 				$md5 = hash('md5', $path);
+				
+				// if the header's already been written, spit this out and hope for the best.
+				if ($this->header_written && !isset($this->_inlineJs[$md5])) {
+					echo '<script type="text/javascript">';
+					echo "\n//<![CDATA[\n\t";
+					echo $path;
+					echo "\n//]]>\n</script>\n";
+				}
 				$this->_inlineJs[$md5] = $path;
 				return;
 		}
@@ -586,6 +602,11 @@ class gui extends Smarty {
 		// if this doesn't start with a slash, it should.
 		if ($path[0] !== '/') {
 			$path = '/' . $path;
+		}
+		
+		// if we've already written the header, let's just dump this now and hope for the best.
+		if ($this->header_written && !isset($this->_zoopJs[$path]) && !isset($this->_appJs[$path])) {
+			echo '<script type="text/javascript" src="' . url($path) . "\"></script>\n";
 		}
 		
 		switch ($scope) {
