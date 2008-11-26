@@ -47,8 +47,10 @@ class selectControl extends GuiMultiValue
 	function render()
 	{
 		global $gui;
-		if (!isset($this->params['index']))
-			return 'you need to specify an index for this guiControl';
+		if (!isset($this->params['index'])) {
+			$this->params['index'] = array();
+/* 			trigger_error ('you need to specify an index for this guiControl'); */
+		}
 
 		$attrs = array();
 
@@ -75,12 +77,12 @@ class selectControl extends GuiMultiValue
 
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
-		$label = $this->getLabelName();
+		$name_and_id = $this->getNameIdString();
 
 		if (isset($this->params['multiple']) && $this->params['multiple'])
 			$label .= "[]";
 
-		$html =  "<select name=\"{$label}\" id=\"{$label}\" $attrs>\r" ;
+		$html =  "<select $name_and_id $attrs>\r" ;
 		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
 		$html .=  "</select>\r";
 

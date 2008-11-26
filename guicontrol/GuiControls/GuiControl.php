@@ -49,10 +49,13 @@ class GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function GuiControl($name) {
+	function __construct($name) {
 		$this->name = $name;
 		$this->persistent = $this->getPersistentParams();
+		$this->initControl();
 	}
+	
+	function initControl() { }
 
 	/**
 	 * In each guiControl this method must be implemented and return an array of all params then need to persist across requests.
@@ -141,6 +144,10 @@ class GuiControl
 			return "controls[$type][{$this->name}]";
 		else
 			return "{$this->parent}[controls][$type][{$this->name}]";
+	}
+	
+	function getId() {
+		return str_replace(array('[', ']'), array('-', ''), $this->getLabelName());
 	}
 	
 	/**
@@ -309,7 +316,7 @@ class GuiControl
 	 */
 	function getNameIdString() {
 		$name = $this->getLabelName();
-		$id = str_replace(array('[', ']'), array('-', ''), $name);
+		$id = $this->getId();
 		
 		return "name=\"$name\" id=\"$id\"";
 	}

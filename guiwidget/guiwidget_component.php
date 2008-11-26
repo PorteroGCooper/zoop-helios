@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package guiwidget
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,69 +9,66 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+
 /**
- * component_guiwidget
+ * guiWidget Zoop component
  *
  * @uses component
- * @package
+ * @ingroup zoop
+ * @ingroup components
+ * @ingroup guiwidget
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-
-class component_guiwidget extends component
-{
-	function component_guiwidget()
-	{
+class component_guiwidget extends component {
+	function component_guiwidget() {
 		$this->requireComponent('gui');
 	}
 
-	function getIncludes()
-	{
-		return array("GuiWidget" => zoop_guiwidget_dir. 'GuiWidget.php',
+	function getIncludes() {
+		return array("GuiWidget" => Config::get('zoop.guiwidget.directories.zoop') . 'GuiWidget.php',
 // 		"GuiContainer" => zoop_guiwidget_dir. 'GuiContainer.php',
-		"WidgetGui" => ZOOP_DIR . "/guiwidget/widgetgui.php");
+		"WidgetGui" => dirname(__file__) . "/widgetgui.php");
 	}
 
 	/**
-	 * includeguiwidget
+	 * Static function to include a guiWidget file.
 	 *
 	 * @param mixed $type
 	 * @access public
 	 * @return void
 	 */
-	function includeGuiWidget($type)
-	{
+	static function includeGuiWidget($type) {
  		$filename = strtolower($type).".php";
 
-		if(file_exists(app_guiwidget_dir. "$filename"))
-			include_once(app_guiwidget_dir. "$filename");
-		else if(file_exists(zoop_guiwidget_dir. "$filename"))
-			include_once(zoop_guiwidget_dir. "$filename");
-		else
+		if(file_exists(Config::get('zoop.guiwidget.directories.app'). "$filename")) {
+			include_once(Config::get('zoop.guiwidget.directories.app'). "$filename");
+		} else if(file_exists(Config::get('zoop.guiwidget.directories.zoop'). "$filename")) {
+			include_once(Config::get('zoop.guiwidget.directories.zoop'). "$filename");
+		} else {
 			trigger_error("Please Implement a $type widget and place it in " .
-						app_guiwidget_dir. "$filename" . " or " .
-						zoop_guiwidget_dir. "$filename");
+					Config::get('zoop.guiwidget.directories.app'). "$filename" . " or " .
+					Config::get('zoop.guiwidget.directories.zoop'). "$filename");
+		}
 	}
 }
 
 /**
- * &getguiwidget
+ * Get an instance of a guiWidget
  *
- * @param mixed $type
- * @param mixed $name
- * @param mixed $useGlobal
+ * @param string $type
+ * @param string $name
+ * @param bool $useGlobal
  * @access public
  * @return void
  */
-function &getGuiWidget($type, $name, $useGlobal = false)
-{
-	if($useGlobal)
-	{
+function &getGuiWidget($type, $name, $useGlobal = false) {
+	if($useGlobal) {
 		global $guiwidgets;
-		if(isset($guiwidgets[$type][$name]))
-		{
+		if(isset($guiwidgets[$type][$name])) {
 			return $guiwidgets[$type][$name];
 		}
 	}
@@ -83,15 +77,11 @@ function &getGuiWidget($type, $name, $useGlobal = false)
 
 	$className = "guiwidget_{$type}";
 
-	if($useGlobal)
-	{
+	if($useGlobal) {
 		$guiwidgets[$type][$name] = &new $className($name);
 		return $guiwidgets[$type][$name];
-	}
-	else
-	{
+	} else {
 		$control = &new $className($name);
 		return $control;
 	}
 }
-?>

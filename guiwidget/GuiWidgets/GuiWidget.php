@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guiwidget
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -14,11 +11,10 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* @package gui
-* @subpackage guiwidget
-*/
-class GuiWidget
-{
+ * @ingroup gui
+ * @ingroup guiwidget
+ */
+class GuiWidget {
 	var $instanceCount = 1;
 	/**
 	 * params
@@ -49,14 +45,23 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function GuiWidget($name = null)
-	{
-		if (is_null($name))
-		{
+	function GuiWidget($name = null) {
+		if (is_null($name)) {
+			// will this actually work? doesn't it need to be a static class variable?
 			$name = "GuiWidget" . $this->instanceCount++;
 		}
 		$this->name = $name;
+		$this->initWidget();
 	}
+	
+	/**
+	 * Initialize guiWidget stuffs. Can be overridden by an extending class to hook things
+	 * (like js or css includes) into the constructor.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function initWidget() { }
 
 	/**
 	 * getPersistentParams
@@ -64,8 +69,7 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		trigger_error("Please implement a getPersistentParams that returns an array of the names of
 				all parameters that must be persistent across requests.");
 	}
@@ -73,27 +77,24 @@ class GuiWidget
 	/**
 	 * setParam
 	 *
-	 * @param mixed $name
+	 * @param string $name
 	 * @param mixed $value
 	 * @access public
 	 * @return void
 	 */
-	function setParam($name, $value)
-	{
+	function setParam($name, $value) {
 		$this->params[$name] = $value;
 	}
 
 	/**
 	 * setParams
 	 *
-	 * @param mixed $valueArray
+	 * @param array $valueArray
 	 * @access public
 	 * @return void
 	 */
-	function setParams($valueArray)
-	{
-		foreach($valueArray as $name => $value)
-		{
+	function setParams($valueArray) {
+		foreach($valueArray as $name => $value) {
 			$this->params[$name] = $value;
 		}
 	}
@@ -105,34 +106,32 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function setParent($parent)
-	{
+	function setParent($parent) {
 		$this->parent = $parent;
 	}
 
 	/**
 	 * getParam
 	 *
-	 * @param mixed $name
+	 * @param string $name
 	 * @access public
-	 * @return void
+	 * @return mixed
 	 */
-	function getParam($name)
-	{
-		if (isset($this->params[$name]))
+	function getParam($name) {
+		if (isset($this->params[$name])) {
 			return $this->params[$name];
-		else
+		} else {
 			return;
+		}
 	}
 
 	/**
 	 * getParams
 	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function getParams()
-	{
+	function getParams() {
 		return $this->params;
 	}
 
@@ -142,14 +141,12 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function getName()
-	{
-		$type = get_class($this);
-
-		if (!isset($this->parent))
-			return "widgets_{$type}_{$this->name}";
-		else
-			return "{$this->parent}_widgets_{$type}_{$this->name}";
+	function getName() {
+		$name = 'widgets_' . get_class($this) . '_' . $this->name;
+		if (isset($this->parent)) {
+			$name = $this->parent . '_' . $name;
+		}
+		return $name;
 	}
 
 	/**
@@ -158,8 +155,7 @@ class GuiWidget
 	 * @access public
 	 * @return string
 	 */
-	function getIdString()
-	{
+	function getIdString() {
 		$name = $this->getName();
           return "id=\"$name\"";
 	}
@@ -172,8 +168,7 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function setDefaultValue($value)
-	{
+	function setDefaultValue($value) {
 		$this->setParam("default", $value);
 	}
 
@@ -183,26 +178,25 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function getValue()
-	{
-		if (isset($this->params['value']))
+	function getValue() {
+		if (isset($this->params['value'])) {
 			return $this->params['value'];
-		elseif (isset($this->params['default']))
+		} else if (isset($this->params['default'])) {
 			return $this->params['default'];
-		else
+		} else {
 			return;
+		}
 	}
 
 	/**
 	 * setValue
 	 *
 	 * @param mixed $value
-	 * @param mixed $force
+	 * @param bool $force
 	 * @access public
 	 * @return void
 	 */
-	function setValue($value, $force = false)
-	{
+	function setValue($value, $force = false) {
 		if (!$force)
 		{
 			if (!isset($this->params['value']) || !$this->getErrorStatus())
@@ -216,12 +210,10 @@ class GuiWidget
 	 * render
 	 *
 	 * @access public
-	 * @return void
+	 * @return string Rendered html
 	 */
-	function render()
-	{
-		$html = "Please implement a Render function for " . get_class($this);
-		return $html;
+	function render() {
+		trigger_error("Implement a render() function for " . get_class($this));
 	}
 
 	/**
@@ -230,8 +222,7 @@ class GuiWidget
 	 * @access public
 	 * @return void
 	 */
-	function display()
-	{
+	function display() {
 		echo ($this->render(true));
 	}
 
@@ -240,16 +231,16 @@ class GuiWidget
 	 * 
 	 * @param bool $echo 
 	 * @access public
-	 * @return void
+	 * @return mixed
 	 */
-	function renderWidget($echo = false)
-	{
+	function renderWidget($echo = false) {
 		$html = $this->render();
 
-		if ($echo)
+		if ($echo) {
 			echo($html);
-		else
+		}
+		else {
 			return $html;
+		}
 	}
 }
-?>
