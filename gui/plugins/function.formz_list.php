@@ -72,14 +72,14 @@ function smarty_function_formz_list($params, &$smarty) {
 		if (isset($fields[$key]['listshow']) && $fields[$key]['listshow'] == false) {
 			unset($fields[$key]);
 		} else {
-			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : Formz::format_label($key);
+			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : format_label($key);
 			
 			// handle all the sorting magick.
 			if ($sortable) {
 
 				// if this column is not sortable, skip it (and apply js metadata to tell sorter to skip it)
 				if (isset($fields[$key]['sortable']) && !$fields[$key]['sortable']) {
-					$row[] = '<th class="{sorter: false}">' . Formz::format_label($label) . '</th>';
+					$row[] = '<th class="{sorter: false}">' . format_label($label) . '</th>';
 				} else {
 					$href = $zone_path . '?sort=' . $key;
 				
@@ -94,10 +94,10 @@ function smarty_function_formz_list($params, &$smarty) {
 					} else {
 						$th_class = 'header';
 					}
-					$row[] = '<th class="'. $th_class .'"><a href="'. url($href) .'">' . Formz::format_label($label) . '</a></th>';
+					$row[] = '<th class="'. $th_class .'"><a href="'. url($href) .'">' . format_label($label) . '</a></th>';
 				}
 			} else {
-				$row[] = '<th>' . Formz::format_label($label) . '</th>';
+				$row[] = '<th>' . format_label($label) . '</th>';
 			}
 		}
 	}

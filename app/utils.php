@@ -1763,6 +1763,20 @@ function base_href($absolute = false) {
 }
 
 /**
+ * Convert a DB column key (or just about anything else) into a decent label.
+ *
+ * @author Justin Hileman {@link http://justinhileman.com}
+ * @see nv_title_case()
+ * @param string $str Label to convert
+ * @return string Formatted form label
+ */
+function format_label ($str) {
+	$str = str_replace(array('_', '-'), array(' ', ' '), $str);
+	$str = preg_replace('#(?<=[a-z])([A-Z])#', ' $1', $str);
+	return nv_title_case($str);
+}
+
+/**
  * Convert to title case.
  *
  * Attempts to properly capitalize post titles. Based on

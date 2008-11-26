@@ -439,6 +439,8 @@ class Formz {
 		
 		// default not to show timestampable fields
 		if ($this->isTimestampable()) {
+			// TODO grab the actual timestamp fields.
+			// list($created_at, $updated_at) = $this->getTimestampFields();
 			if (isset($fields['created_at'])) {
 				if (!isset($fields['created_at']['formshow'])) {
 					$fields['created_at']['formshow'] = false;
@@ -465,8 +467,10 @@ class Formz {
 		
 		// Don't show the "deleted" field...
 		if ($this->isSoftDeletable()) {
+			// TODO grab the actual soft delete field.
+			// $deleted_field = $this->getDeletedField();
 			if (isset($fields['deleted'])) {
-
+				
 				// TODO not sure whether this should hide by default?
 				// unset($fields['deleted']);
 				
@@ -485,21 +489,24 @@ class Formz {
 		
 		// Don't show the 'slug' field...
 		if ($this->isSluggable()) {
-			if (isset($fields['slug'])) {
-				if (!isset($fields['slug']['formshow'])) {
-					$fields['slug']['formshow'] = false;
+			$slug_field = $this->getSlugField();
+			if (isset($fields[$slug_field])) {
+				if (!isset($fields[$slug_field]['formshow'])) {
+					$fields[$slug_field]['formshow'] = false;
 				}
-				if (!isset($fields['slug']['listshow'])) {
-					$fields['slug']['listshow'] = false;
+				if (!isset($fields[$slug_field]['listshow'])) {
+					$fields[$slug_field]['listshow'] = false;
 				}
-				if (!isset($fields['slug']['editable'])) {
-					$fields['slug']['editable'] = false;
+				if (!isset($fields[$slug_field]['editable'])) {
+					$fields[$slug_field]['editable'] = false;
 				}
 			}
 		}
 		
 		// Don't show the 'version' field...
 		if ($this->isVersionable()) {
+			// TODO grab the actual soft delete field.
+			// $version_field = $this->getVersionField();
 			if (isset($fields['version'])) {
 				if (!isset($fields['version']['formshow'])) {
 					$fields['version']['formshow'] = false;
@@ -535,7 +542,7 @@ class Formz {
 					if (isset($relation_fields[$key]['display']['label'])) {
 						$fields[$key]['display']['label'] = $relation_fields[$key]['display']['label'];
 					} else {
-						$fields[$key]['display']['label'] = Formz::format_label($relation['alias']);
+						$fields[$key]['display']['label'] = format_label($relation['alias']);
 					}
 				}
 				
@@ -875,7 +882,7 @@ class Formz {
 	function addAction($name, $args = array()) {
 
 		// Default label, also capitalized...
-		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['label'])) $args['label'] = format_label($name);
 		if (!isset($args['value'])) $args['value'] = $args['label'];
 		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
 		
@@ -961,7 +968,7 @@ class Formz {
 	 * @param array $args Optional set of arguments for this action.
 	 */
 	function addListAction($name, $args = array()) {
-		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['label'])) $args['label'] = format_label($name);
 		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
 		if (!isset($args['value'])) $args['value'] = $args['label'];
 		
@@ -1010,7 +1017,7 @@ class Formz {
 	 */
 	function addRowAction($name, $args = array()) {
 		// Default label, also capitalized...
-		if (!isset($args['label'])) $args['label'] = Formz::format_label($name);
+		if (!isset($args['label'])) $args['label'] = format_label($name);
 		if (!isset($args['value'])) $args['value'] = $args['label'];
 		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
 
@@ -1360,11 +1367,11 @@ class Formz {
 	 *
 	 * @param string $str Label to convert
 	 * @return string Formatted form label
+	 * @deprecated
 	 */
 	static function format_label ($str) {
-		$str = str_replace(array('_', '-'), array(' ', ' '), $str);
-		$str = preg_replace('#(?<=[a-z])([A-Z])#', ' $1', $str);
-		return nv_title_case($str);
+		deprecated('Use util function format_label() instead of Formz::format_label().');
+		return format_label($str);
 	}
 	
 }

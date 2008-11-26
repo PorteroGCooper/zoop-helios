@@ -117,7 +117,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 		}
 		
-		$label = (isset($field['display']['label'])) ? $field['display']['label'] : Formz::format_label($key);
+		$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
 		$value = isset($data[$key]) ? $data[$key] : '';
 		
 		$field_type = null;
