@@ -9,7 +9,7 @@ directories:
     plugins:
         - %APP_DIR%/view/guiplugins
         - %ZOOP_DIR%/gui/plugins
-strip_html: false
+strip_html: 0
 caching: 0
 
 # optionally, do a css reset and set base styles (thanks yui!)
@@ -19,6 +19,9 @@ use_css_base: 0
 # define page regions and default templates
 regions: [ header, sidebar, content, footer ]
 primary_region: content
+
+# wrap each region in a div with the region name as id?
+add_region_divs: 1
 
 # default template files for various uses...
 templates:

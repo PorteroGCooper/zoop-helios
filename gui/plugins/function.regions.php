@@ -22,9 +22,11 @@ function smarty_function_regions($params, &$smarty) {
 		}
 	}
 	
+	$add_region_divs = Config::get('zoop.gui.add_region_divs');
+	
 	foreach ($regions as $name => $template_file) {
-		echo "\n<div id=\"$name\">\n";
+		if ($add_region_divs) echo "\n<div id=\"$name\">\n";
 		echo $smarty->fetch($template_file);
-		echo "\n</div>\n\n";
+		if ($add_region_divs) echo "\n</div>\n\n";
 	}
 }
