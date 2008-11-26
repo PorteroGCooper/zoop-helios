@@ -217,7 +217,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					$action['link'] .= $data[$id_field];
 				}
 				
-				$value = '<a href="' . url($zone_path . $link) . '">' . $action['label'] . '</a>';
+				$value = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 			} else if ($action['type']=='paginate') {
 				$page_links = array();
 				$page_count = $form->getPageCount();

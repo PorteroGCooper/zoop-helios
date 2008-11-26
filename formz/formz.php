@@ -880,7 +880,6 @@ class Formz {
 	 * @param array $args Optional set of arguments for this action.
 	 */
 	function addAction($name, $args = array()) {
-
 		// Default label, also capitalized...
 		if (!isset($args['label'])) $args['label'] = format_label($name);
 		if (!isset($args['value'])) $args['value'] = $args['label'];
@@ -917,7 +916,9 @@ class Formz {
 			// cancel should be a link, not a button, by default.
 			case 'cancel':
 /* 				if (!isset($args['type'])) $args['type'] = 'submit'; */
-				if (!isset($args['link'])) $args['link'] = '/read';
+				if (!isset($args['link'])) {
+					$args['link'] = ($this->isSluggable()) ? '%slug%' : '%id%';
+				}
 				if (!isset($args['type'])) $args['type'] = 'link';
 				break;
 			// nothing going yet for preview.

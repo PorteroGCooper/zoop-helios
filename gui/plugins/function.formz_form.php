@@ -38,6 +38,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
+	$zone_base_path = $smarty->get_template_vars('ZONE_BASE_PATH');
 	
 	$form = $params['form'];
 	$form_items = array();
@@ -220,23 +221,26 @@ function smarty_function_formz_form($params, &$smarty) {
 	// now add the form actions	
 	if ($form->editable) {
 		$id_field = $form->getIdField();
+		if ($form->isSluggable()) $slug_field = $form->getSlugField();
+		
 		$actions = $form->getActions();
 		foreach ($actions as $key => $action) {
 			if ($action['type'] == 'link') {
-				
 				$link = $action['link'];
 				$matches = array();
 				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
 				if (count($matches)) {
 					// replace with this table's id field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
+					// replace with this table's slug field, if applicable.
+					if ($form->isSluggable() && $matches[1] == 'slug') $matches[1] = $slug_field;
 					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
 				} else {
 					// automatically tack on the id if there's no wildcard to replace
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}
-				$form_items[] = '<a href="' . url($zone_path . $link) . '">' . $action['label'] . '</a>';
+				$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 
 			} else {
 				$control = &getGuiControl('button', $key);

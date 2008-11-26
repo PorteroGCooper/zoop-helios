@@ -16,6 +16,7 @@
 $GLOBALS['gUrlVars'] = array();
 $GLOBALS['gPathParts'] = array();
 $GLOBALS['gZoneUrls'] = array();
+$GLOBALS['gZoneBasePath'] = null;
 
 /**
  * zone
@@ -43,8 +44,7 @@ $GLOBALS['gZoneUrls'] = array();
  * @author Andrew Hayward <andrew@gratuitousPawn.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class zone
-{
+class zone {
 	//////////////////////////////////////////////////////////////
 	//  These are variables each instance uses to track itself  //
 	//////////////////////////////////////////////////////////////
@@ -335,7 +335,6 @@ class zone
 	 * @return void
 	 */
 	function findZoneName() {
-
 		global $gPathParts; //an array of all the parts of the path so far
 
 		$this->zonename = array_shift($this->_inPath); // $this->_inPath[0] IS NULL
@@ -420,18 +419,31 @@ class zone
 	}
 
 	/**
-	 * checkPathForSequences 
+	 * Parse and initialize sequences from the path.
+	 *
+	 * This function should be renamed, as it actually does a lot more than just setting up
+	 * sequences now.
+	 *
+	 * Add the current url to the zone urls array. Set the current zone base path in globals.
+	 * Assign the current zone path and zone base path to the $gui object.
+	 *
+	 * NOTE: there's a huge problem with the zone base path right now. Parent
+	 * zones should have zone params included in the base path, but the current
+	 * zone should not. As it stands, all zone params are stripped out of the
+	 * base path. THIS IS A PROBLEM.
+	 *
+	 * @todo Make sure gZoneBasePath contains parent zone params.
 	 * 
 	 * @access public
 	 * @return void
 	 */
-	function checkPathForSequences () {
+	function checkPathForSequences() {
 		global $gPathParts;//an array of all the parts of the path so far
 		global $gZoneUrls;
+		global $gZoneBasePath;
 		global $gui;
 
 		// CHECK FOR SEQUENCES
-
 		$tmp = $gPathParts;
 
 		global $sequenceStack;
@@ -449,7 +461,9 @@ class zone
 		$this->url = implode('/', $tmp);
 
 		array_unshift($gZoneUrls, $this->url);
+		$gZoneBasePath = '/' . $this->_getRawZonePath();
 		$gui->assign('ZONE_PATH', $this->getZonePath());
+		$gui->assign('ZONE_BASE_PATH', $gZoneBasePath);
 	}
 
 	/**
@@ -529,12 +543,12 @@ class zone
 	 * @access protected
 	 * @return array
 	 */
-	function _urlStringToArray($inString) {
+	protected function _urlStringToArray($inString) {
 		$tmp = explode(":", $inString);
 
 		if (count($tmp) == 1) {
 			$new_array[] = $inString;
-		} elseif (count($tmp)  == 2 ) {
+		} elseif (count($tmp) == 2) {
 			$new_array[$tmp[0]] = $tmp[1];
 		} else {
 			$new_key = array_shift($tmp);
@@ -711,7 +725,7 @@ class zone
 	 * @return mixed
 	 */
 	function getParent() {
-		if (isset ( $this->parent)) {
+		if (isset($this->parent)) {
 			return $this->parent;
 		} else {
 			return false;
@@ -843,17 +857,17 @@ class zone
 	 * @param mixed $value value to store in variable
 	 * @return mixed
 	 */
-	function session($name, $value = NULL) {
+	function session($name, $value = null) {
 		global $sGlobals;
-		if($value === NULL)
-		{
-			if(isset($sGlobals->zones) && isset($sGlobals->zones[$this->zonename]) && isset($sGlobals->zones[$this->zonename][$name]))
+		if($value === null) {
+			if(isset($sGlobals->zones)
+				&& isset($sGlobals->zones[$this->zonename])
+				&& isset($sGlobals->zones[$this->zonename][$name])) {
 				return $sGlobals->zones[$this->zonename][$name];
-			else
-				return NULL;
-		}
-		else
-		{
+			} else {
+				return null;
+			}
+		} else {
 			$sGlobals->zones[$this->zonename][$name] = $value;
 		}
 	}
@@ -986,7 +1000,7 @@ class zone
 			$gui->assignContent('<h2>'.$message.'</h2>');
 			$gui->generate();
 		}
-		die();
+		exit();
 	}
 
 	/**
@@ -1067,13 +1081,13 @@ class zone
 	 * @return bool
 	 */
 	function setZoneParams($inParamNames) {
-		return $this->zoneParamNames = $inParamNames;
+		return $this->setZoneParamsNames($inParamNames);
 	}
 
 	/**
 	 * setZoneParamsNames
 	 *
-	 * @param mixed $inParamNames
+	 * @param array $inParamNames
 	 * @access public
 	 * @return void
 	 */
@@ -1109,8 +1123,9 @@ class zone
 	 * @return void
 	 */
 	function getZoneParam($inName) {
-		if ( isset( $this->_zoneParams[$inName] ) )
+		if (isset($this->_zoneParams[$inName])) {
 			return $this->_zoneParams[$inName];
+		}
 	}
 
 	/**
@@ -1131,8 +1146,9 @@ class zone
 	 * @return void
 	 */
 	function getPageParam($inName) {
-		if ( isset( $this->pageVars[$inName] ) )
+		if (isset($this->pageVars[$inName])) {
 			return $this->pageVars[$inName];
+		}
 	}
 
 	/**
@@ -1180,10 +1196,12 @@ class zone
 	 * @return array the names of the zones that are ancestors of this zone (parent, grandparent,...)
 	 */
 	function getAncestors() {
-		if (isset($this->parent) && !empty($this->parent))
+		if (isset($this->parent) && !empty($this->parent)) {
 			return $this->ancestors = array_merge((array)$this->parent->getName(), $this->parent->getAncestors());
-		else
+		}
+		else {
 			return array();
+		}
 	}
 
 	/**
@@ -1194,11 +1212,13 @@ class zone
 	 * @return bool True if zone passed in is an ancestor of current zone
 	 */
 	function isAncestor($str) {
-		$strs = (array) $str;
+		$strs = (array)$str;
 		$ancestors = $this->getAncestors();
-		foreach ( $strs as $str )
-			if (in_array($str, $ancestors))
+		foreach ($strs as $str) {
+			if (in_array($str, $ancestors)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -1211,10 +1231,12 @@ class zone
 	 * @return bool True if any passed are ancestors
 	 */
 	function areAncestors($strs) {
-		$strs = (array) $strs;
-		foreach ( $strs as $str )
-			if ( !$this->isAncestor($str) )
+		$strs = (array)$strs;
+		foreach ( $strs as $str ) {
+			if (!$this->isAncestor($str)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -1235,8 +1257,7 @@ class zone
 	 * @return string A complete url to this zone, not a path
 	 */
 	function getZoneUrl($depth = 0) {
-		global $gZoneUrls;
-		return SCRIPT_URL . $gZoneUrls[$depth];
+		return SCRIPT_URL . zone::getZonePath($depth);
 	}
 
 	/**
@@ -1253,6 +1274,17 @@ class zone
 	function getZonePath($depth = 0) { 
 		global $gZoneUrls;
 		return $gZoneUrls[$depth];
+	}
+	
+	/**
+	 * Return the current zone base path (without zone params).
+	 * 
+	 * @access public
+	 * @return string
+	 */
+	static function getZoneBasePath() {
+		global $current_zone;
+		return zone::getZonePath(1) . '/' . $current_zone;
 	}
 
 	/**
@@ -1353,17 +1385,17 @@ class zone
 	 */
 	function missingParameter() { }
 
-		/**
-		 * Sets up an instance of zcache in $this->zcache.
-		 *
-		 * @access public
-		 * @return void
-		 */
-		function initZoneCache() {
-			$dirName = substr ( strstr ( get_class ( $this ), '_' ), 1 );
-			$this->cacheBase = "zones/$dirName/";
-			$this->zcache = new zcache(array('base'=> $this->cacheBase));
-		}
+	/**
+	 * Sets up an instance of zcache in $this->zcache.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function initZoneCache() {
+		$dirName = substr ( strstr ( get_class ( $this ), '_' ), 1 );
+		$this->cacheBase = "zones/$dirName/";
+		$this->zcache = new zcache(array('base'=> $this->cacheBase));
+	}
 
 	/**
 	 * Provide a path to a template based on a zoneName (and location) 
@@ -1372,15 +1404,15 @@ class zone
 	 * @access public
 	 * @return string
 	 */
-	function canonicalizeTemplate ( $tplName )
-	{
-		if ( substr ( $tplName, 0, 1 ) == "/" )
-			return substr ( $tplName, 1 );
+	function canonicalizeTemplate ($tplName) {
+		if (substr($tplName, 0, 1) == "/") {
+			return substr($tplName, 1);
+		}
 
-		if ( !isset ( $this->templateBase ) ) {
-			$class = strstr ( get_class ( $this ), '_' ) ; // Class with zone_ stripped off.
+		if (!isset($this->templateBase)) {
+			$class = strstr(get_class($this), '_') ; // Class with zone_ stripped off.
 			$dir = str_replace('_', '/', $class);
-			$this->templateBase = "zones/" . substr ($dir, 1 );
+			$this->templateBase = "zones/" . substr($dir, 1);
 		}
 		return $this->templateBase . '/' . $tplName;
 	}

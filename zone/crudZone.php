@@ -185,7 +185,7 @@ class CrudZone extends zone {
 	 */
 	function _listRecords() {
 		$this->form->getRecords();
-		$link = ($this->form->isSluggable()) ? '%slug%/read' : '%id%/read';
+		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
 		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
 
 		// add a fake column called "edit", give it an edit link...
@@ -247,16 +247,15 @@ class CrudZone extends zone {
 		
 		$this->form->setEditable(true);
 
-		// add a fake column called "delete", give it a destroy link...
 		$this->form->addAction('save');
 /* 		$this->form->addAction('preview'); */
 		if ($record_id == 'new') {
 			$this->form->addAction('saveandnew');
 		} else {
-/* 			$this->form->addAction('delete', array('type' => 'link', 'link' => '%id%/destroy')); */
-			$this->form->addAction('delete', array('link' => '/destroy'));
+			$this->form->addAction('delete', array('link' => '%id%/destroy'));
 		}
-		$this->form->addAction('cancel');
+		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
+		$this->form->addAction('cancel', array('link' => $link));
 		
 		$this->initUpdateForm();
 		$this->form->guiAssign();
@@ -374,7 +373,8 @@ class CrudZone extends zone {
 		$this->form->setFieldFormshow($id_field);
 
 		$this->form->addAction('delete');
-		$this->form->addAction('cancel');
+		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
+		$this->form->addAction('cancel', array('link' => $link));
 
 		$this->form->guiAssign();
 		$gui->assign('message', $message);
