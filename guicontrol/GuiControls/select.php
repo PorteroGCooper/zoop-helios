@@ -78,6 +78,7 @@ class selectControl extends GuiMultiValue
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
 		$name_and_id = $this->getNameIdString();
+		$label = $this->getLabelName();
 
 		if (isset($this->params['multiple']) && $this->params['multiple'])
 			$label .= "[]";
