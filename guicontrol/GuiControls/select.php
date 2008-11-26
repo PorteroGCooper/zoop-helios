@@ -77,15 +77,15 @@ class selectControl extends GuiMultiValue
 
 		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
-		$name_and_id = $this->getNameIdString();
-		$label = $this->getLabelName();
+		$id = $this->getId();
+		$name = $this->getLabelName();
 
 		if (isset($this->params['multiple']) && $this->params['multiple'])
-			$label .= "[]";
+			$name .= "[]";
 
-		$html =  "<select $name_and_id $attrs>\r" ;
+		$html =  '<select name="' . $name . '" id="' . $id . '" ' . $attrs . '>';
 		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
-		$html .=  "</select>\r";
+		$html .=  "</select>";
 
 		return $html;
 	}
