@@ -24,6 +24,13 @@ class Formz {
 	const MANY = 1;
 
 	/**
+	 * Constants for defining driver types.
+	 *
+	 */
+	const DoctrineDB = 0;
+	const FormDB = 1;
+
+	/**
 	 * Formz database driver object.
 	 *
 	 * At this point, this is either a formDB or a doctrineDB connector.
@@ -142,31 +149,18 @@ class Formz {
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
 	 *
+	 * Accepts a param defining which driver type to use. If the param is not passed,
+	 * it will use the app or framework selected default formz driver. Please pass one
+	 * of the Formz driver type constants to override: Formz::DoctrineDB or Formz::FormDB
+	 *
 	 * @param string $tablename  table name in the database
-	 * @param string $type  OPTIONAL, can be 'list', 'search' or 'record'
-	 * @param mixed  $int  OPTIONAL, if $type = 'list' than an int that represents the limit,
-	 * if $type = 'record' then required and is the id of the record
+	 * @param string $driver_type  OPTIONAL, Driver type to use for this Formz object.
 	 * @return object implementing Formz interface
 	 * @access public
 	 */
 	function Formz($tablename, $driver_type = 'default') {
 		$this->valid_properties = get_class_vars(get_class($this));
 
-/*
-		@TODO finish clone logic...
-		
-		// clone the Formz object passed
-		if (is_object($tablename) && get_class($tablename) == 'Formz') {
-			$clone = $tablename;
-			$tablename = $clone->getTablename();
-			
-		}
-		
-		else {
-		
-		}
-*/
-		
 		// get the default Formz ORM driver
 		if ($driver_type == 'default') $driver_type = Config::get('zoop.formz.driver');
 
@@ -174,9 +168,11 @@ class Formz {
 		$this->type = Config::get('zoop.formz.type','list');
 		
 		switch ($driver_type) {
+			case Formz::DoctrineDB:
 			case 'doctrine':
 				$this->_driver = new Formz_DoctrineDB($tablename);
 				break;
+			case Formz::FormDB:
 			case 'forms':
 				$this->_driver = new Formz_FormDB($tablename);
 				break;
@@ -372,6 +368,17 @@ class Formz {
 			$this->_fields = $newfields + $oldfields;
 		}
 	}
+	
+		
+	/**
+	 * Return the driver type for this formz driver.
+	 *
+	 * @access public
+	 * @return int Formz::DoctrineDB or Formz::FormDB const.
+	 */
+//	function getDriverType() {
+//		return $this->_driver->getType();
+//	}
 	
 	/**
 	 * Get the ID field for this formz object.
@@ -1114,7 +1121,7 @@ class Formz {
 		if ($form !== null) {
 			$this->_embeddedFormz[$tablename] = $form;
 		} else {
-			$this->_embeddedFormz[$tablename] = new Formz($tablename, $this->type);
+			$this->_embeddedFormz[$tablename] = new Formz($tablename, $this->_driver->getType());
 			$this->_embeddedFormz[$tablename]->setParentTablename($this->tablename);
 		}
 	}

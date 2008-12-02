@@ -67,9 +67,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * retrival of information from the database.
 	 *
 	 * @param string $tablename table name in the database
-	 * @param string $type OPTIONAL, can be 'list' or 'record'
-	 * @param mixed  $int OPTIONAL, if $type = 'list' than an int that represents the limit,
-	 * if $type = 'record' then required and is the id of the record
 	 * @return void
 	 * @access public
 	 */
@@ -78,7 +75,15 @@ class formz_doctrineDB implements formz_driver_interface {
 		$this->table = Doctrine::getTable($this->tablename);
 	}
 	
-	
+	/**
+	 * Return the driver type for this formz driver.
+	 *
+	 * @access public
+	 * @return int Formz::DoctrineDB or Formz::FormDB const.
+	 */
+	function getType() {
+		return Formz::DoctrineDB;
+	}
 	
 
 	/**

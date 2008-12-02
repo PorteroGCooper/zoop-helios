@@ -125,9 +125,17 @@ class Formz_FormDB implements formz_driver_interface {
 
 */
 	}
+
+	/**
+	 * Return the driver type for this formz driver.
+	 *
+	 * @access public
+	 * @return int Formz::DoctrineDB or Formz::FormDB const.
+	 */
+	function getType() {
+		return Formz::FormDB;
+	}	
 	
-	
-		
 	/**
 	 * Return the name of the id field for this table.
 	 *
