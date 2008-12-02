@@ -107,6 +107,22 @@ class Formz {
 	protected $_formListActions = array();
 
 	/**
+	 * Actions for the rows for this form (Row actions may be 'edit' or 'delete')
+	 *
+	 * @access private
+	 * @see Formz::addRowAction
+	 * @see Formz::getRowActions
+	 */
+	protected $_formRowActions = array();
+
+
+
+
+
+
+
+
+	/**
 	 * Embedded formz objects
 	 *
 	 * @access protected
@@ -1059,36 +1075,40 @@ class Formz {
 				if (!isset($args['value'])) $args['value'] = 'Save and Add New';
 				if (!isset($args['label'])) $args['label'] = 'Save and Add New';
 				if (!isset($args['type'])) $args['type'] = 'submit';
+				if (!isset($args['class'])) $args['class'] = 'save';
 				break;
 			// all save actions need a submit button.
 			case 'submit':
 			case 'save':
-			case 'update':
-				$name = 'update';
-				if (!isset($args['type'])) $args['type'] = 'submit';
-				break;
 			// more synonyms. this time for the D in CRUD.
 			case 'delete':
 			case 'destroy':
-				$name = 'destroy';
-
-				if (!isset($args['type'])) $args['type'] = 'submit';
-				break;
-			// cancel should be a link, not a button, by default.
-			case 'cancel':
-	/* 				if (!isset($args['type'])) $args['type'] = 'submit'; */
-				if (!isset($args['link'])) $args['link'] = '/read';
+				if (!isset($args['link'])) $args['link'] = '/destroy';
 				if (!isset($args['type'])) $args['type'] = 'link';
+				if (!isset($args['class'])) $args['class'] = 'delete-link';
+				if (!isset($args['title'])) $args['title'] = 'Delete this record.';
+				break;
+			case 'edit':
+			case 'update':
+				if (!isset($args['link'])) $args['link'] = '/update';
+				if (!isset($args['type'])) $args['type'] = 'link';
+				if (!isset($args['class'])) $args['class'] = 'edit-link';
+				if (!isset($args['title'])) $args['title'] = 'Edit this record.';
 				break;
 			// nothing going yet for preview.
 			case 'preview':
 			default:
 				if (!isset($args['type'])) $args['type'] = 'button';
+				if (!isset($args['class'])) $args['class'] = 'preview';
 				break;
 		}
 
-		$this->_formActions[$name] = $args;
+		$this->_formRowActions[$name] = $args;
 	}	
+
+	function getRowActions() {
+		return $this->_formRowActions;
+	}
 
 	function addEmbeddedForm($tablename, $form = null) {
 		if ($form !== null) {

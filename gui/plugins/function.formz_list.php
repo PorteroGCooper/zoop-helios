@@ -101,6 +101,18 @@ function smarty_function_formz_list($params, &$smarty) {
 			}
 		}
 	}
+	
+	$rowActionColumnThreshold = Config::get('zoop.formz.rowaction.column_threshold');
+	$rowActions = $form->getRowActions();
+	
+	if (count($rowActions) > $rowActionColumnThreshold) {
+		$row[] = '<th>Actions</th>';
+	} else {
+		foreach ($rowActions as $key => $rowAction) {
+			$row[] = '<th>' . $rowAction['label'] . '</th>';
+		}
+	}
+	
 	$html .= "\n\t<thead>\n\t\t<tr>\n\t\t\t";
 	$html .= implode("\n\t\t\t", $row);
 	$html .= "\n\t\t</tr>\n\t</thead>\n";
@@ -180,13 +192,49 @@ function smarty_function_formz_list($params, &$smarty) {
 				die($value);
 			}
 */
+
 			$row[] = '<td>' . $value . '</td>';
 			
+			$rowActions = $form->getRowActions();
+			if (count($rowActions)) {
+				$id_field = $form->getIdField();
+				$value = '';
+				if (count($rowActions)>$rowActionColumnThreshold) {
+					$value .= '<td>';
+					foreach ($rowActions as $key => $rowAction) {
+						$value .= ' ';
+						if ($rowAction['type'] == 'link') {
+							$link = $id . $rowAction['link'];
+							$value .= '<a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
+						} else {
+							$control = &getGuiControl('button', $key);
+							$control->setParams($rowAction);
+							$value .= '<span>' . $control->render() . '</span>';
+						}
+					}
+					$value .= '</td>';
+				} else {
+					foreach ($rowActions as $key => $rowAction) {
+						$value .= ' ';
+						if ($rowAction['type'] == 'link') {
+							$link = $id . $rowAction['link'];
+							$value .= '<td><a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
+						} else {
+							$control = &getGuiControl('button', $key);
+							$control->setParams($rowAction);
+							$value .= '<td><span>' . $control->render() . '</span></td>';
+						}
+					}
+				}
+			}
 		}
-
+		
+		if (!empty($value) && !empty($rowActions)) {
+			$row[] = $value;
+		}
+		
 		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even' : 'odd';
 		$class = (count($row_classes)) ? ' class="' . implode(' ', $row_classes) . '"' : '';
-		
 		$rows[] = "<tr" . $class . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
 		$rowIndex++;
 	}
@@ -200,8 +248,7 @@ function smarty_function_formz_list($params, &$smarty) {
 		// add all list actions to an array (we'll implode them later and put 'em in a row...)
 		$list_actions = array();
 		foreach ($actions as $key => $action) {
-			if ($action['type'] == 'link') {
-
+			if ($action['type'] == 'link') {		
 				$link = $action['link'];
 				$matches = array();
 				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
@@ -217,7 +264,6 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$action['link'] .= $data[$id_field];
 				}
-				
 				$list_actions[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 			} else if ($action['type']=='paginate') {
 				$page_links = array();
@@ -250,9 +296,9 @@ function smarty_function_formz_list($params, &$smarty) {
 			} else { 
 				$totalRows = count($fields) + count($rowActions);
 			}
-			
+
 			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . $totalRows . "\">" . $action_html . "</td>\n\t\t</tr>\n";
-			switch(Config::get('zoop.formz.list_action_position', 'both')) {
+			switch(Config::get('zoop.formz.list_actions.position')) {
 				case 'top':
 					array_unshift($rows, $actionRow);
 					break;
@@ -267,11 +313,8 @@ function smarty_function_formz_list($params, &$smarty) {
 			}
 		}
 	}
-
 	$html .= implode("\n\t\t", $rows);
 	$html .= "\t</tbody>\n</table>\n";
-
 	$html .= ($form->editable) ? "</form>\n\n" : "</div>\n\n";
-
 	return $html;
 }

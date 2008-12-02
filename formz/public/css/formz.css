@@ -76,9 +76,11 @@
 }
 .formz-list .edit-link {
 	background-image: url(../images/silk/page_white_edit.png);
+	float:left;
 }
 .formz-list .delete-link {
 	background-image: url(../images/silk/delete.png);
+	float:left;
 }
 
 

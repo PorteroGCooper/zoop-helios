@@ -188,6 +188,7 @@ class CrudZone extends zone {
 		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
 		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
 
+/*
 		// add a fake column called "edit", give it an edit link...
 		$this->form->setFieldFromArray('edit', array(
 			// the %id% will automatically be replaced by the contents of the record id field
@@ -202,11 +203,10 @@ class CrudZone extends zone {
 			'sortable' => 0,
 			'display' => array('label' => '', 'override' => 'delete', 'title' => 'Delete this record.')
 		));
-		
-/*
+*/
+
 		$this->form->addRowAction('edit');
 		$this->form->addRowAction('delete');
-*/
 		
 		$this->_loadAndGenerateForm();
 	}

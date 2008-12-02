@@ -7,8 +7,13 @@ paginate:
     autopaginate: 0
     limit: 25
 
+rowaction:
+    # Formz threshold for combining row action columns.
+    column_threshold: 3
+
 list_actions:
     separator: ' '
+    position: both
 
 # Priority for autoselecting table title fields within relations
 title_field_priority:
