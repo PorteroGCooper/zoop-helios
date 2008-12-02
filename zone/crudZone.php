@@ -334,9 +334,9 @@ class CrudZone extends zone {
 		}
 
 		if (getPostText('update_and_create')) {
-			BaseRedirect($this->makeIndexPath() . 'create', HEADER_REDIRECT);
+			BaseRedirect($this->getZoneBasePath() . 'create', HEADER_REDIRECT);
 		} else {
-			BaseRedirect($this->makeIndexPath(), HEADER_REDIRECT);
+			BaseRedirect($this->getZoneBasePath(), HEADER_REDIRECT);
 		}
 	}
 	
@@ -397,7 +397,7 @@ class CrudZone extends zone {
 			$id = getPostInt($this->form->getIdField());
 			$this->form->destroyRecord($id);
 		}
-		BaseRedirect($this->makeIndexPath());
+		BaseRedirect($this->getZoneBasePath());
 	}
 	
 	/**

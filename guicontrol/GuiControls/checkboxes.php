@@ -178,7 +178,7 @@ class checkboxesControl extends GuiMultiValue
 		$smartyParams['selected'] = $value;
 		$smartyParams['name'] = $label;
 
-		$html = smarty_function_html_checkboxes($smartyParams, &$gui);
+		$html = smarty_function_html_checkboxes($smartyParams, $gui);
 
 		return $html;
 	}
