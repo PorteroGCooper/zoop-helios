@@ -179,7 +179,6 @@ class Formz {
 			default:
 				trigger_error($driver_type . " is not a valid Formz type.");
 				break;
-
 		}
 		
 		// grab the default field definitions, we'll mess with 'em later :)

@@ -255,11 +255,12 @@ class CrudZone extends zone {
 /* 		$this->form->addAction('preview'); */
 		if ($record_id == 'new') {
 			$this->form->addAction('saveandnew');
+			$this->form->addAction('cancel', array('link' => ''));
 		} else {
 			$this->form->addAction('delete', array('link' => '%id%/destroy'));
+			$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
+			$this->form->addAction('cancel', array('link' => $link));
 		}
-		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
-		$this->form->addAction('cancel', array('link' => $link));
 		
 		$this->initUpdateForm();
 		$this->form->guiAssign();

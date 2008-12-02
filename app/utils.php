@@ -1722,6 +1722,7 @@ if (!function_exists('json_encode')) {
  * @return string Canonicalized url.
  */
 function url($url) {
+
 	// If we're not rewriting urls, or if it's already an absolute url, just return it.
 	if (!Config::get('zoop.app.canonicalize_urls') || strpos($url, '://') !== false) return $url;
 
@@ -1729,13 +1730,13 @@ function url($url) {
 	if (strpos($url, $base) === 0) {
 		// make sure each url is only canonicalized once...
 		$url = substr($url, strlen($base));
-	} else if ($url[0] !== '/') {
+	} else if (empty($url) || $url[0] !== '/') {
 		// tack on a zone path if this isn't absolute from base.
 		// THIS SHOULD BE a path relative to the zone base path, not the zone path with params.
 		// (hard coding a depth of 0 doesn't seem too much of a hack in this case)
 		$url = zone::getZoneBasePath() . '/' . $url;
 	}
-	
+
 	if (Config::get('zoop.app.use_absolute_urls')) {
 		return base_href(true) . $url;
 	} else {

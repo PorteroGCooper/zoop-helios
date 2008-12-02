@@ -236,10 +236,6 @@ function smarty_function_formz_form($params, &$smarty) {
 					// replace with this table's slug field, if applicable.
 					if ($form->isSluggable() && $matches[1] == 'slug') $matches[1] = $slug_field;
 					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
-				} else {
-					// automatically tack on the id if there's no wildcard to replace
-					if (substr($link, -1) != '/') $link .= '/';
-					$action['link'] .= $data[$id_field];
 				}
 				$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 
