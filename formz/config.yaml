@@ -7,6 +7,9 @@ paginate:
     autopaginate: 0
     limit: 25
 
+list_actions:
+    separator: ' '
+
 # Priority for autoselecting table title fields within relations
 title_field_priority:
     - name

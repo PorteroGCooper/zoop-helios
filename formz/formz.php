@@ -37,6 +37,7 @@ class Formz {
 	var $title;
 	var $zone;
 	var $callback;
+	protected $parentTablename;
 	
 	/**
 	 * Private fields variable. Used by formz::getFields()
@@ -563,7 +564,8 @@ class Formz {
 				} else {
 					// decide whether this should be single or multiple select
 					if ($relation['rel_type'] == Formz::MANY) {
-						$fields[$key]['display']['type'] = 'multiple';
+						// $fields[$key]['display']['type'] = 'multiple';
+						$fields[$key]['display']['type'] = 'checkboxes';
 					} else {
 						$fields[$key]['display']['type'] = 'select';
 					}
@@ -1007,6 +1009,28 @@ class Formz {
 	function getListActions() {
 		return $this->_formListActions;
 	}
+	
+	/**
+	 * Get the table name for this form
+	 *
+	 * @return $string tablename
+	 */
+	function getParentTablename() {
+		return $this->parentTablename;
+	}
+	
+	/**
+	 * Set the parent table name for this form.
+	 *
+	 * This function is protected, since it's only used by formz when embedding other formz objects.
+	 * You shouldn't ever need to call this function.
+	 *
+	 * @param string $parentTablename
+	 * @return void
+	 */
+	protected function setParentTablename($parentTablename) {
+		$this->parentTablename = $parentTablename;
+	}
 
 	/**
 	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
@@ -1070,7 +1094,8 @@ class Formz {
 		if ($form !== null) {
 			$this->_embeddedFormz[$tablename] = $form;
 		} else {
-			$this->_embeddedFormz[$tablename] = new Formz($tablename);
+			$this->_embeddedFormz[$tablename] = new Formz($tablename, $this->type);
+			$this->_embeddedFormz[$tablename]->setParentTablename($this->tablename);
 		}
 	}
 	

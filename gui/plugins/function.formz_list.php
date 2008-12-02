@@ -197,10 +197,11 @@ function smarty_function_formz_list($params, &$smarty) {
 	if (count($actions)) {
 		$id_field = $form->getIdField();
 		
+		// add all list actions to an array (we'll implode them later and put 'em in a row...)
+		$list_actions = array();
 		foreach ($actions as $key => $action) {
-			$value = '';
 			if ($action['type'] == 'link') {
-				
+
 				$link = $action['link'];
 				$matches = array();
 				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
@@ -217,7 +218,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					$action['link'] .= $data[$id_field];
 				}
 				
-				$value = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
+				$list_actions[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 			} else if ($action['type']=='paginate') {
 				$page_links = array();
 				$page_count = $form->getPageCount();
@@ -233,16 +234,17 @@ function smarty_function_formz_list($params, &$smarty) {
 				if ($action['page'] < $page_count) {
 					$page_links[] = "<a href='" . url($zone_path) . "?page=" . $page_count . "'>Last</a>";
 				}
-				$value = implode(' | ',$page_links);
+				$list_actions[] = implode(' | ',$page_links);
 			} else {
 				$control = &getGuiControl('button', $key);
 				$control->setParams($action);			
-				$form_items[] = $control->render();
+				$list_actions[] = $control->render();
 			}
 		}
 		
-		if (!empty($value)) {
-			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">" . $value . "</td>\n\t\t</tr>\n";
+		if (count($list_actions)) {
+			$action_html = implode(Config::get('zoop.formz.list_actions.separator'), $list_actions);
+			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">" . $action_html . "</td>\n\t\t</tr>\n";
 			switch(Config::get('zoop.formz.list_action_position', 'both')) {
 				case 'top':
 					array_unshift($rows, $actionRow);

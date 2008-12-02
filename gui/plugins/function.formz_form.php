@@ -73,6 +73,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
+		if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
 		
 		if (isset($field['embedFormz'])) {
 			$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
