@@ -280,7 +280,9 @@ function smarty_function_formz_list($params, &$smarty) {
 				if ($action['page'] < $page_count) {
 					$page_links[] = "<a href='" . url($zone_path) . "?page=" . $page_count . "'>Last</a>";
 				}
-				$list_actions[] = implode(' | ',$page_links);
+				if (count($page_links)) {
+					$list_actions[] = implode(' | ',$page_links);
+				}
 			} else {
 				$control = &getGuiControl('button', $key);
 				$control->setParams($action);			

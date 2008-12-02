@@ -4,7 +4,6 @@ lotsa_classes: true
 
 # Formz pagination defaults.
 paginate:
-    autopaginate: 0
     limit: 25
 
 rowaction:

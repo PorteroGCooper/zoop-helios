@@ -66,6 +66,7 @@ class CrudZone extends zone {
 			$this->Aliases = array();
 		}
 		$this->form = new Formz($this->tableName);
+		
 		$this->construct();
 	}
 
@@ -78,6 +79,9 @@ class CrudZone extends zone {
 	function construct() { } 
 
 	function initZone() {
+		if (Config::get('zoop.zone.crud_zone.auto_paginate')) {
+			$this->form->setPaginated();
+		}
 		$this->initCrudZone();
 	}
 
