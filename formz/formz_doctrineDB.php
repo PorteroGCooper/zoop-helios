@@ -730,23 +730,24 @@ class formz_doctrineDB implements formz_driver_interface {
 			// Obtain and loop through all the related records for the current class ($rel).
 			$related_records = $this->record->$rel->toArray();
 
-			if (isset($submitted_relations[$rel]) && !empty($submitted_relations[$rel])) {
-				foreach ($related_records as $record) {
-					if (in_array($record['id'], $submitted_relations[$rel])) {
-						// Assume duplicate related records are a bad thing and don't try adding one.
-						$dup_key = array_search($record['id'], $submitted_relations[$rel]);
-						unset($submitted_relations[$rel][$dup_key]);
-					} else {
-						// Related record in database was not submitted, add to array for removal.
-						$unlink_rel[] = $record['id'];
+			if (isset($submitted_relations[$rel])) {
+				if (!empty($submitted_relations[$rel])) {
+					foreach ($related_records as $record) {
+						if (in_array($record['id'], $submitted_relations[$rel])) {
+							// Assume duplicate related records are a bad thing and don't try adding one.
+							$dup_key = array_search($record['id'], $submitted_relations[$rel]);
+							unset($submitted_relations[$rel][$dup_key]);
+						} else {
+							// Related record in database was not submitted, add to array for removal.
+							$unlink_rel[] = $record['id'];
+						}
 					}
+				} else {
+					// No related records submitted. Giving doctrine an empty array/value removes all relations.
+					$unlink_rel = array();
 				}
 			}
-			else {
-				// No related records submitted. Giving doctrine an empty array/value removes all relations.
-				$unlink_rel = array();
-			}
-			
+
 			// Passing Doctrine an empty array or value unlinks all related records for the class.
 			// Therefore, this checks isset() instead of is_array() or !empty()
 			if (isset($unlink_rel)) {
