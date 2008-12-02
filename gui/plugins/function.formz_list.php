@@ -244,7 +244,14 @@ function smarty_function_formz_list($params, &$smarty) {
 		
 		if (count($list_actions)) {
 			$action_html = implode(Config::get('zoop.formz.list_actions.separator'), $list_actions);
-			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . count($fields) . "\">" . $action_html . "</td>\n\t\t</tr>\n";
+			
+			if (count($rowActions) > $rowActionColumnThreshold) {
+				$totalRows = count($fields) + 1;
+			} else { 
+				$totalRows = count($fields) + count($rowActions);
+			}
+			
+			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . $totalRows . "\">" . $action_html . "</td>\n\t\t</tr>\n";
 			switch(Config::get('zoop.formz.list_action_position', 'both')) {
 				case 'top':
 					array_unshift($rows, $actionRow);
