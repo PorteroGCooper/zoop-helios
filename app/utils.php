@@ -1846,6 +1846,14 @@ function nv_title_skip_dotted($matches) {
 
 
 
+/**
+ *  Addin lcfirst in builds where it is not yet present
+ */
+if ( false === function_exists('lcfirst') ) {
+	function lcfirst( $str ) { 
+		return (string)(strtolower(substr($str,0,1)).substr($str,1));
+	}
+}
 
 /**
  * @todo If we're removing php 4 support, the following should be removed and utils5 should be combined with this file.
