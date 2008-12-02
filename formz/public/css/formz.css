@@ -16,6 +16,9 @@
 .form-item {
 	margin-bottom: 1em;
 }
+.embedded-formz-wrapper.form-item {
+	margin-bottom: 0;
+}
 .form-item label {
 	display: block;
 	font-weight: bold;
