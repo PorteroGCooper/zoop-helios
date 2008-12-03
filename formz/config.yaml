@@ -14,6 +14,8 @@ list_actions:
     separator: ' '
     position: both
 
+checkboxes_threshold: 15
+
 # Priority for autoselecting table title fields within relations
 title_field_priority:
     - name

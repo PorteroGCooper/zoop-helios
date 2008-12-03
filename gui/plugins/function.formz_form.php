@@ -155,13 +155,30 @@ function smarty_function_formz_form($params, &$smarty) {
 				break;
 			case 'relation':
 				$field['display']['index'] = $form->getTableRelationValues($key);
-
+				
+				// decide whether this should be single or multiple select
 				if ($field['rel_type'] == Formz::ONE) {
+					if (!isset($fields[$key]['display']['type'])) {
+						$type = 'select';
+					}
 					if ($form->editable && !$field['required']) {
 						// TODO remove this field if something's already selected in this dropdown.
 						$null_val = Config::get('zoop.formz.select_null_value');
 						$null_val = str_replace('%field%', $label, $null_val);
 						$field['display']['index'] = array('' => $null_val) + $field['display']['index'];
+					}
+				} else {
+					if (!isset($fields[$key]['display']['type']) || $fields[$key]['display']['type'] === 'relation') {
+						if (isset($field['display']['checkboxThreshold'])) {
+							$threshold = $field['display']['checkboxThreshold'];
+						} else {
+							$threshold = Config::get('zoop.formz.checkboxes_threshold');
+						}
+						if (count($field['display']['index']) > $threshold) {
+							$type = 'multiple';
+						} else {
+							$type = 'checkboxes';
+						}
 					}
 				}
 				break;

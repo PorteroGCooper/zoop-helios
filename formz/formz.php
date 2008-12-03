@@ -576,14 +576,6 @@ class Formz {
 				
 				if (isset($relation_fields[$key]['display']['type'])) {
 					$fields[$key]['display']['type'] = $relation_fields[$key]['display']['type'];
-				} else {
-					// decide whether this should be single or multiple select
-					if ($relation['rel_type'] == Formz::MANY) {
-						// $fields[$key]['display']['type'] = 'multiple';
-						$fields[$key]['display']['type'] = 'checkboxes';
-					} else {
-						$fields[$key]['display']['type'] = 'select';
-					}
 				}
 
 				$fields[$key]['values'] = $values;
