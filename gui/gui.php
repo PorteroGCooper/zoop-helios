@@ -620,6 +620,17 @@ class gui extends Smarty {
 	}
 	
 	/**
+	 * Add jQuery inline javascript. Hotter than gui::add_js().
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function add_jquery($js) {
+		$js = 'jQuery(function($){' . $js . '});';
+		$this->add_js($js, 'inline');
+	}
+	
+	/**
 	 * __call magic method.
 	 *
 	 * This method assigns template files and content to regions.

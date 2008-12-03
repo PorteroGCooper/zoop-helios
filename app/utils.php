@@ -1715,13 +1715,19 @@ if (!function_exists('json_encode')) {
  * URL canonicalization function.
  *
  * Every url should be passed through this or the Smarty {$my_path|url} display filter.
+ *
+ * Optionally, specify whether to use an absolute url (if left blank, will use the app default).
  * 
  * @author Justin Hileman {@link http://justinhileman.com}
  * @access public
  * @param string $url
+ * @param bool $use_absolute Use an absolute (fully qualified) url?
  * @return string Canonicalized url.
  */
-function url($url) {
+function url($url, $use_absolute = null) {
+	if ($use_absolute === null) {
+		$use_absolute = Config::get('zoop.app.use_absolute_urls');
+	}
 
 	// If we're not rewriting urls, or if it's already an absolute url, just return it.
 	if (!Config::get('zoop.app.canonicalize_urls') || strpos($url, '://') !== false) return $url;
@@ -1737,7 +1743,7 @@ function url($url) {
 		$url = zone::getZoneBasePath() . '/' . $url;
 	}
 
-	if (Config::get('zoop.app.use_absolute_urls')) {
+	if ($use_absolute) {
 		return base_href(true) . $url;
 	} else {
 		return $base . $url;
