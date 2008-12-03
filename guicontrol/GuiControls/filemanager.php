@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -17,15 +12,25 @@
 
 include_once(ZOOP_DIR . "/gui/plugins/function.loadmanager.php");
 
-class filemanagerControl extends GuiControl
-{
-	function getPersistentParams()
-	{
+/**
+ * File Manager GuiControl
+ *
+ * @ingroup gui
+ * @ingroup guicontrol
+ */
+class FilemanagerControl extends GuiControl {
+	function getPersistentParams() {
 		return array('validate');
 	}
 
-	function render()
-	{
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML checkbox
+	 */
+	protected function render() {
 		global $smarty;
 
 		$this->params['name'] = $this->getName();
@@ -36,4 +41,3 @@ class filemanagerControl extends GuiControl
 		return $html;
 	}
 }
-?>

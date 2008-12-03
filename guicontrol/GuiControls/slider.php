@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,21 +10,33 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class sliderControl extends GuiControl
-{
-	function getPersistentParams()
-	{
+/**
+ * Slider GuiControl class.
+ *
+ * This GuiControl should be replaced with the jQuery equivalent.
+ *
+ * @todo Fix this so it uses jQuery, valid xhtml.
+ * @ingroup gui
+ * @ingroup guicontrol
+ */
+class SliderControl extends GuiControl {
+	function getPersistentParams() {
 		return array('validate');
 	}
 
-	function view()
-	{
+	function view() {
 		$value = $this->getValue();
 		return $this->params['index'][$value];
 	}
 
-	function render()
-	{
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string slider GuiControl
+	 */
+	protected function render() {
 		global $gui;
 /*
 		if (!isset($this->params['index']))
@@ -107,4 +116,3 @@ class sliderControl extends GuiControl
 		return $html;
 	}
 }
-?>

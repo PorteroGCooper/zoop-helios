@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2005 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,40 +11,38 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * dateControl
+ * DateControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
  * @version $id$
  * @copyright 1997-2006 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
-class dateControl extends GuiControl
-{
+class DateControl extends GuiControl {
+
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string Date selector
 	 */
-	function render()
-	{
+	protected function render() {
 		$attrs = array();
 
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 				case 'maxlength':
@@ -91,4 +84,3 @@ class dateControl extends GuiControl
 		return $html;
 	}
 }
-?>

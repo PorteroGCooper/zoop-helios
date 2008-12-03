@@ -25,8 +25,7 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class betterpasswordControl extends GuiContainer
-{
+class betterpasswordControl extends GuiContainer {
 	/**
 	 * validate
 	 *
@@ -71,12 +70,13 @@ class betterpasswordControl extends GuiContainer
 	}
 
 	/**
-	 * render
+	 * Render Better Password GuiControl as an HTML string.
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string Password fields
 	 */
-	function render() {
+	protected function render() {
 		$attrs = array();
 		// this seems like a bad idea, probably best to put the logic on the recieving end, rather than here.. Don't update if both are '' .
 		//$this->param['origPw'] = $this->params['value'];

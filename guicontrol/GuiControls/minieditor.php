@@ -1,10 +1,14 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
 
 include_once(dirname(__file__) . "/editor.php");
-class minieditorControl extends editorControl
-{
+
+/**
+ * Mini Rich text editor
+ *
+ * @ingroup gui
+ * @ingroup GuiControl
+ * @see EditorControl
+ */
+class MinieditorControl extends editorControl {
+
 }

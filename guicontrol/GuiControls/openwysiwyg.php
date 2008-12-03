@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,19 +10,28 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class openwysiwygControl extends GuiControl
-{
-	function getPersistentParams()
-	{
+/**
+ * OpenWYSIWYG rich text editor.
+ *
+ * @ingroup gui
+ * @ingroup GuiControl
+ */
+class OpenwysiwygControl extends GuiControl {
+	function getPersistentParams() {
 		return array('validate');
 	}
 
-	function render()
-	{
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string OpenWYSIWYG rich text editor
+	 */
+	protected function render() {
 		$attrs = array();
 
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 				case 'rows':
@@ -68,4 +74,3 @@ class openwysiwygControl extends GuiControl
 		return $html;
 	}
 }
-?>

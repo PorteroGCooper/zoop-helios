@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -18,59 +13,48 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
 
 /**
- * checkboxesControl
+ * HTML Checkboxes GuiControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup guicontrol
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class checkboxesControl extends GuiMultiValue
-{
+class CheckboxesControl extends GuiMultiValue {
+
 	/**
 	 * validate
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function validate()
-	{
-		if(isset($this->params['validate']))
-		{
+	function validate() {
+		if(isset($this->params['validate'])) {
 			$value = $this->getValue();
 
-			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
-			{
+			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true) {
 
-				if (!$value)
-				{
+				if (!$value) {
 					$errorState['text'] = "At least one field is required to be checked";
 					$errorState['value'] = $this->getValue();
 					return $errorState;
 				}
 			}
 
-			if (isset($this->params['validate']['min']) || isset($this->params['validate']['max']))
-			{
-				if (is_array($value))
-				{
+			if (isset($this->params['validate']['min']) || isset($this->params['validate']['max'])) {
+				if (is_array($value)) {
 					$validate = Validator::validateQuantity($value, $this->params['validate']);
-				}
-				elseif (!$value)
-				{
+				} elseif (!$value) {
 					if ($this->params['validate']['min'] > 0)
 						$validate = array('message' => "You must check at least ". $this->params['validate']['min'] ." field(s).", 'result'=> false);
-				}
-				else
-				{
+				} else {
 					if ($this->params['validate']['min'] > 1)
 						$validate = array('message' => "You must check at least ". $this->params['validate']['min'] ." fields.", 'result'=> false);
 				}
 
-				if (!$validate['result'])
-				{
+				if (!$validate['result']) {
 					$errorState['text'] = $validate['message'];
 					$errorState['value'] = "";
 					return $errorState;
@@ -87,12 +71,12 @@ class checkboxesControl extends GuiMultiValue
 	 * @access public
 	 * @return void
 	 */
-	function getValue()
-	{
-		if (isset($this->params['value']))
+	function getValue() {
+		if (isset($this->params['value'])) {
 			return $this->params['value'];
-		else
+		} else {
 			return NULL;
+		}
 	}
 
 	/**
@@ -101,57 +85,23 @@ class checkboxesControl extends GuiMultiValue
 	 * @access public
 	 * @return array
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * view
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return string
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML checkboxes
 	 */
-	function view()
-	{
-		$value = $this->getValue();
-
-		$html = "";
-		isset($this->params['separator']) ? $separator = $this->params['separator'] : $separator = " ";
-
-		if (is_array($value))
-		{
-			foreach ($value as $val)
-			{
-				if (isset($this->params['index'][$val]))
-				{
-					$label = $this->params['index'][$val];
-					$html .= $label . $separator;
-				}
-			}
-		}
-		elseif (isset($this->params['index'][$value]))
-		{
-			$html = $this->params['index'][$value];
-		}
-
-		return $html;
-	}
-
-	/**
-	 * render
-	 *
-	 * @access public
-	 * @return string
-	 */
-	function render()
-	{
+	protected function render() {
 		global $gui;
 
 		$smartyParams = array('options' => $this->params['index']);
 
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 					if ($value != '')
@@ -179,8 +129,7 @@ class checkboxesControl extends GuiMultiValue
 		$smartyParams['name'] = $label;
 
 		$html = smarty_function_html_checkboxes($smartyParams, $gui);
-
 		return $html;
 	}
+
 }
-?>

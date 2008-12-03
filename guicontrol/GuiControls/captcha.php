@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,24 +10,22 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-// include captcha class
+// include CAPTCHA class
 require(ZOOP_DIR . "/guicontrol/GuiControls/libs/captcha/php-captcha.inc.php");
 
 /**
- * captcha
- * Produces and validates a captcha image.
+ * Produces and validates a CAPTCHA image.
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class captchaControl extends GuiControl
-{
-	function validate()
-	{
+class CaptchaControl extends GuiControl {
+
+	function validate() {
 		$value = $this->getValue();
 
 		$validate = PhpCaptcha::Validate($value);
@@ -43,25 +38,25 @@ class captchaControl extends GuiControl
 		else
 			return $errorState;
 	}
+	
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string CAPTCHA GuiControl
 	 */
-	function render()
-	{
+	protected function render() {
 		// define fonts
 		$aFonts = array(dirname(__file__) . '/libs/captcha/VeraMoBd.ttf');
 
@@ -87,12 +82,9 @@ class captchaControl extends GuiControl
 		$v = $this->getValue();
 
 		$html = "Please enter the letters you see in the image.<br>";
-		$html .= "<img alt=\"security image\" src=\"". SCRIPT_REF ."/zoopfile/CaptchaImage/$filename\"><br>";
- 		$html .= "<input $ni value=\"$v\">(case insensitive)";
+		$html .= "<img alt=\"security image\" src=\"". SCRIPT_REF ."/zoopfile/CaptchaImage/$filename\" /><br>";
+ 		$html .= "<input $ni value=\"$v\" />(case insensitive)";
 
 		return $html;
 	}
 }
-
-
-?>

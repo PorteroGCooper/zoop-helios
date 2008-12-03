@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -14,11 +11,13 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* @package gui
-* @subpackage guicontrol
-*/
-class GuiControl
-{
+ * Base GuiControl class.
+ *
+ * @ingroup gui
+ * @ingroup guicontrol
+ */
+class GuiControl {
+
 	/**
 	 * params
 	 *
@@ -26,6 +25,7 @@ class GuiControl
 	 * @access public
 	 */
 	var $params;
+
 	/**
 	 * persistent
 	 *
@@ -33,6 +33,7 @@ class GuiControl
 	 * @access public
 	 */
 	var $persistent;
+
 	/**
 	 * parent
 	 *
@@ -58,15 +59,15 @@ class GuiControl
 	function initControl() { }
 
 	/**
-	 * In each guiControl this method must be implemented and return an array of all params then need to persist across requests.
+	 * In each guiControl this method must be implemented and return an array of all params
+	 * then need to persist across requests.
 	 * Ex: return array('validate');
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function getPersistentParams() {
-		trigger_error("Please implement a getPersistentParams that returns an array of the names of
-				all parameters that must be persistent across requests.");
+		trigger_error("Please implement a getPersistentParams that returns an array of the names of all parameters that must be persistent across requests.");
 	}
 
 	/**
@@ -90,8 +91,7 @@ class GuiControl
 	 * @return void
 	 */
 	function setParams($valueArray) {
-		foreach($valueArray as $name => $value)
-		{
+		foreach($valueArray as $name => $value) {
 			$this->params[$name] = $value;
 		}
 	}
@@ -116,10 +116,11 @@ class GuiControl
 	 * @return void
 	 */
 	function getParam($name) {
-		if (isset($this->params[$name]))
+		if (isset($this->params[$name])) {
 			return $this->params[$name];
-		else
+		} else {
 			return;
+		}
 	}
 
 	/**
@@ -140,10 +141,11 @@ class GuiControl
 	 */
 	function getName() {
 		$type = $this->getType();
-		if (!isset($this->parent))
+		if (!isset($this->parent)) {
 			return "controls[$type][{$this->name}]";
-		else
+		} else {
 			return "{$this->parent}[controls][$type][{$this->name}]";
+		}
 	}
 	
 	function getId() {
@@ -174,10 +176,11 @@ class GuiControl
 	 * @return void
 	 */
 	function getDisplayName() {
-		if(isset($this->params['displayName']))
+		if(isset($this->params['displayName'])) {
 			return $this->params['displayName'];
-		else
+		} else {
 			return $this->name;
+		}
 	}
 
 	/**
@@ -187,27 +190,25 @@ class GuiControl
 	 * @return void
 	 */
 	function validate() {
-		if(isset($this->params['validate']))
-		{
-			if (!isset($this->params['validate']['type'])) // make sure essential elements are set
-			{
-				if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
-				{
+		if(isset($this->params['validate'])) {
+			// make sure essential elements are set
+			if (!isset($this->params['validate']['type'])) {
+				if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true) {
 						$this->params['validate']['type'] = 'length';
 						$this->params['validate']['min'] = 1;
 						$this->params['validate']['required'] = true;
-				}
-				else
+				} else {
 					return true;
+				}
 			}
 			$validate = Validator::validate($this->getValue(), $this->params['validate']);
 		
-			if($validate['result'] !== true)
-			{
-				if (isset($validate['message']))
+			if($validate['result'] !== true) {
+				if (isset($validate['message'])) {
 					$errorState['text'] = $validate['message'];
-				else
+				} else {
 					$errorState['text'] = "Invalid, value must be {$this->params['validate']['type']} :";
+				}
 
 				$errorState['value'] = $this->getValue();
 				return $errorState;
@@ -238,8 +239,9 @@ class GuiControl
 	 * @return string
 	 */
 	function getValidationAttr($validate) {
-		if (isset($validate['required']) && $validate['required'] == true && !isset($validate['type']))
+		if (isset($validate['required']) && $validate['required'] == true && !isset($validate['type'])) {
 			$validate['type'] = "length";
+		}
 
 		if(isset($validate['type']) && $validate['type'] != 'none') {
 			return Validator::getAttr($validate);
@@ -256,12 +258,12 @@ class GuiControl
 	 * @return string
 	 */
 	function getValidationDivs($validate = null) {
-		if (empty($validate))
-		{
-			if (!isset($this->params['validate']) || empty ($this->params['validate']))
+		if (empty($validate)) {
+			if (!isset($this->params['validate']) || empty ($this->params['validate'])) {
 				return "";
-			else
+			} else {
 				$validate = $this->params['validate'];
+			}
 		}
 
 		$html = "";
@@ -297,12 +299,13 @@ class GuiControl
 	 * @return string
 	 */
 	function getValidationClasses($validate = null) {
-		if (empty($validate))
-		{
-			if (!isset($this->params['validate']) || empty ($this->params['validate']))
+		if (empty($validate)) {
+			if (!isset($this->params['validate']) || empty ($this->params['validate'])) {
 				return "";
-			else
+			}
+			else {
 				$validate = $this->params['validate'];
+			}
 		}
 
 		return Validator::getJSClassNames($validate);
@@ -333,7 +336,8 @@ class GuiControl
 	}
 
 	/**
-	 * Set the validation type
+	 * Set the validation type.
+	 *
 	 * Type must match that of the Zoop Validation Class
 	 *
 	 * @param mixed $type
@@ -345,7 +349,7 @@ class GuiControl
  	}
 
  	/**
- 	 * Set a validation parameter
+ 	 * Set a validation parameter.
  	 *
  	 * @param mixed $name
  	 * @param mixed $value
@@ -357,8 +361,7 @@ class GuiControl
  	}
 
 	/**
-	 * setDefaultValue
-	 * Sets the value for the control if no value is provided
+	 * Set the value for the control if no value is provided.
 	 *
 	 * @param mixed $value
 	 * @access public
@@ -369,19 +372,21 @@ class GuiControl
 	}
 
 	/**
-	 * Return the value for this control
-	 * Typically called after the user has posted data, returns the value
+	 * Return the value for this control.
+	 *
+	 * Typically called after the user has posted data, returns the value.
 	 *
 	 * @access public
-	 * @return void
+	 * @return mixed
 	 */
 	function getValue() {
-		if (isset($this->params['value']))
+		if (isset($this->params['value'])) {
 			return $this->params['value'];
-		elseif (isset($this->params['default']))
+		} elseif (isset($this->params['default'])) {
 			return $this->params['default'];
-		else
+		} else {
 			return;
+		}
 	}
 
 	/**
@@ -412,19 +417,15 @@ class GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function renderViewState()
-	{
+	function renderViewState() {
 		$viewState = $this->encode($this->getViewState());
 		$name = $this->getName();
 		$html = "<input type=\"hidden\" name=\"{$name}[viewState]\" value=\"$viewState\">";
 		return $html;
 	}
 
-
-	function renderErrorMessage()
-	{
-		if(isset($this->params['errorState']))
-		{
+	function renderErrorMessage() {
+		if(isset($this->params['errorState'])) {
 			$errorState = $this->params['errorState'];
 			$label = $this->getLabelName();
 			$html =" <br><div class='s-message s-error' id='advice-$label'>";
@@ -447,8 +448,7 @@ class GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function encode($value)
-	{
+	function encode($value) {
 		return base64_encode(gzcompress(serialize($value)));
 	}
 
@@ -459,8 +459,7 @@ class GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function decode($string)
-	{
+	function decode($string) {
 		return unserialize(gzuncompress(base64_decode($string)));
 	}
 
@@ -470,12 +469,11 @@ class GuiControl
 	 * Don't call this method directly as you will be missing critical pieces of data, but rather call renderControl
 	 *
 	 * @see GuiControl::renderControl
-	 * @access public
+	 * @access protected
 	 * @return void
 	 */
-	function render() {
-		$html = "Please implement a Render function for " . get_class($this);
-		return $html;
+	protected function render() {
+		trigger_error('Please implement a GuiControl render function for ' . get_class($this));
 	}
 
 	/**
@@ -502,36 +500,52 @@ class GuiControl
 	}
 
 	/**
-	 * Render and Echo
-	 * Display doesn't render all needed elements, rather just the control itself. 
+	 * Changing this method to a final method (to weed out the last of the 'display' functions
+	 * on subclasses [justin]
 	 * 
 	 * @depricated
 	 * @access public
 	 * @return void
 	 */
-	//function display() {
-		//echo ($this->render(true));
-	//}
+	final function display() {
+		deprecated('The use of guicontrol::display() is deprecated. Please use print $mycontrol->render()');
+		print $this->render();
+	}
 
 	/**
-	 * Render the control, along with it's viewstat, validation messaging etc..
-	 * This is the method you want to call to use the guiControl
+	 * Echo or return the guiControl.
+	 *
+	 * Call this method (instead of render()) to use the GuiControl.
 	 * 
 	 * @param mixed $echo 
 	 * @access public
 	 * @return void
 	 */
 	function renderControl($echo = false) {
+		if ($echo) {
+			echo (string)$this;
+		} else {
+			return (string)$this;
+		}
+	}
+
+	/**
+	 * Convert this GuiControl to an HTML string.
+	 *
+	 * Render the control along with it's view state, validation messages, etc..
+	 *
+	 * Use of string conversion is preferred over renderControl() call,
+	 * because GuiControls can be rendered simply by calling 'print $control'.
+	 * 
+	 * @access public
+	 * @return string HTML rendered GuiControl.
+	 */
+	function __toString() {
 		$html =  $this->renderViewState();
 		$html .= $this->getValidationDivs();
 		$html .= $this->render();
 		$html .= $this->renderErrorMessage();
-
-		if ($echo) {
-			echo($html);
-		} else {
-			return $html;
-		}
+		return $html;
 	}
 
 	/**

@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,19 +10,28 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class textareaControl extends GuiControl
-{
-	function getPersistentParams()
-	{
+/**
+ * Textarea GuiControl
+ *
+ * @ingroup gui
+ * @ingroup GuiControl
+ */
+class TextareaControl extends GuiControl {
+	function getPersistentParams() {
 		return array('validate');
 	}
 
-	function render()
-	{
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML textarea
+	 */
+	protected function render() {
 		$attrs = array();
 
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 				case 'rows':
@@ -54,14 +60,21 @@ class textareaControl extends GuiControl
 		$attrs = implode(' ', $attrs);
 
 		$vc = $this->getValidationClasses();
-		if (isset($this->params['class']))
+		if (isset($this->params['class'])) {
 			$vc .= " " . $this->params['class'];
+		}
+		
+		if (!empty($vc)) {
+			$class = ' class="' . $vc . '"';
+		} else {
+			$class = '';
+		}
+		
 		$ni = $this->getNameIdString();
 		$v = $this->getValue();
 
-		$html = "<textarea class=\"$vc\" $ni  $attrs>$v</textarea>";
+		$html = '<textarea' . $class . $ni . ' ' . $attrs. '>' . $v . '</textarea>';
 
 		return $html;
 	}
 }
-?>

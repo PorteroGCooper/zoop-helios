@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -18,36 +13,36 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.loadeditor.php");
 
 /**
- * editorControl
+ * A rich text editor GuiControl
  *
- * @uses GuiControl
+ * @ingroup gui
+ * @ingroup GuiControl
  * @package
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class editorControl extends GuiControl
-{
+class EditorControl extends GuiControl {
+
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string Rich text editor HTML
 	 */
-	function render()
-	{
+	protected function render() {
 		global $smarty;
 
 		$this->params['name'] = $this->getName();
@@ -58,4 +53,3 @@ class editorControl extends GuiControl
 		return $html;
 	}
 }
-?>

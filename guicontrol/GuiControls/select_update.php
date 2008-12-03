@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -116,10 +117,12 @@ include_once(dirname(__file__) . "/select.php");
  * hook that up as well.
  *
  * @ingroup gui
- * @ingroup guicontrol
+ * @ingroup GuiControl
  * @ingroup jquery
+ *
+ * @author Justin Hileman {@link http://justinhileman.com}
  */
-class select_updateControl extends selectControl {
+class Select_updateControl extends SelectControl {
 	
 	function initControl() {
 		global $gui;
@@ -134,7 +137,14 @@ class select_updateControl extends selectControl {
 	}
 */
 
-	function render() {
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string CAPTCHA GuiControl
+	 */
+	protected function render() {
 		global $gui;
 		
 		$label = $this->getLabelName();

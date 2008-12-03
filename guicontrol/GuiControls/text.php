@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,45 +10,42 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
 /**
- * textControl
+ * Text input GuiControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
+ *  
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class textControl extends GuiControl
-{
+class TextControl extends GuiControl {
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML text input
 	 */
-	function render()
-	{
+	protected function render() {
 		$attrs = array();
 		$Sattrs = array();
 
 		$html = array();
 		
 		$html[] = 'input';
-
 
 		if (isset($this->params) && !empty($this->params)) {
 			foreach ($this->params as $parameter => $value) {
@@ -85,8 +79,6 @@ class textControl extends GuiControl
 		} else {
 			$thistype = $this->getType();
 		}
-		
-/* 		die_r($this->params); */
 
 		if (count($Sattrs)) {
 			$html[] = "style=\"" . implode(' ', $Sattrs) . "\"";

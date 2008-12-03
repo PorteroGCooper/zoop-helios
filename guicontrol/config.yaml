@@ -1,3 +1,5 @@
 directories: 
     zoop: %ZOOP_DIR%/guicontrol/GuiControls/
     app: %APP_DIR%/view/GuiControls/
+    
+multi_value_separator: ', '

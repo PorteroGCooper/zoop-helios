@@ -16,33 +16,31 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 
 /**
- * richselectControl
+ * RichSelect GuiControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class richselectControl extends guicontrol
-{
+class RichselectControl extends GuiControl {
 
-	function view()
-	{
+	function view() {
 		$value = $this->getValue();
 		$width = "150";
 		if (isset($this->params['width']))
 			$width = $this->params['width'];
 
-		if (isset($this->params['index'][$value]))
-		{
+		if (isset($this->params['index'][$value])) {
 			$html = $this->params['index'][$value];
 			$html = "<div style=\"position:relative; width:{$width}px;\"> $html </div>";
 			return $html;
-		}
-		else
+		} else {
 			return "";
+		}
 	}
 
 	/**
@@ -51,22 +49,24 @@ class richselectControl extends guicontrol
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string RichSelect GuiControl
 	 */
-	function render()
-	{
+	protected function render() {
 		global $gui;
-		if (!isset($this->params['index']))
-			return 'you need to specify an index for this guiControl';
+		
+		if (!isset($this->params['index'])) {
+			trigger_error('An index must be specified for RichSelect GuiControls.');
+			return;
+		}
 
 		$width = "180";
 		$height = 22;
@@ -112,4 +112,3 @@ class richselectControl extends guicontrol
 		return $html;
 	}
 }
-?>

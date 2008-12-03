@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,33 +11,29 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * checkboxControl
+ * HTML checkbox GuiControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class checkboxControl extends GuiControl
-{
+class CheckboxControl extends GuiControl {
+
 	/**
 	 * validate
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function validate()
-	{
-		if(isset($this->params['validate']))
-		{
+	function validate() {
+		if(isset($this->params['validate'])) {
 
-			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true)
-			{
+			if (isset($this->params['validate']['required']) && $this->params['validate']['required'] == true) {
 				$value = $this->getValue();
-				if (!$value)
-				{
+				if (!$value) {
 					$errorState['text'] = "This box must be checked";
 					$errorState['value'] = $this->getValue();
 					return $errorState;
@@ -58,15 +49,12 @@ class checkboxControl extends GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function getValue()
-	{
-		if (isset($this->params['value']) && $this->params['value'])
-		{
-
+	function getValue() {
+		if (isset($this->params['value']) && $this->params['value']) {
 			return 1;
-		}
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	/**
@@ -75,25 +63,23 @@ class checkboxControl extends GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML checkbox
 	 */
-	function render()
-	{
+	protected function render() {
 		if(!isset($this->params['type']))
 			$this->params['type'] = 'checkbox';
 		$attrs = array();
 		$Sattrs = array();
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 				case 'size':
@@ -121,9 +107,8 @@ class checkboxControl extends GuiControl
 		$vc = $this->getValidationClasses();
 		$ni = $this->getNameIdString();
 
-		$html = "<input class=\"$vc\"  $ni $attrs $checked>";
+		$html = "<input class=\"$vc\"  $ni $attrs $checked />";
 
 		return $html;
 	}
 }
-?>

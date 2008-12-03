@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -18,34 +15,33 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 /**
  * selectControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class selectControl extends GuiMultiValue
-{
+class SelectControl extends GuiMultiValue {
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string HTML (multi)select box
 	 */
-	function render()
-	{
+	protected function render() {
 		global $gui;
 		if (!isset($this->params['index'])) {
 			$this->params['index'] = array();
@@ -54,24 +50,22 @@ class selectControl extends GuiMultiValue
 
 		$attrs = array();
 
-		foreach ($this->params as $parameter => $value)
-		{
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
+		foreach ($this->params as $parameter => $value) {
+			// Here we setup specific parameters that will go into the html
+			switch ($parameter) {
 				case 'title':
 				case 'size':
 				case 'onChange':
 				case 'onBlur':
-					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
+					if (!empty($value)) $attrs[] = "$parameter=\"$value\"";
 					break;
 				case 'readonly':
 				case 'disabled':
-					if ($value)
-						$attrs[] = "disabled=\"true\"";
+					if ($value) $attrs[] = "disabled=\"true\"";
 					break;
 				case 'multiple':
-					if ($value)
-						$attrs[] = "multiple=\"true\"";
+					if ($value) $attrs[] = "multiple=\"true\"";
+					break;
 			}
 		}
 
@@ -80,8 +74,7 @@ class selectControl extends GuiMultiValue
 		$id = $this->getId();
 		$name = $this->getLabelName();
 
-		if (isset($this->params['multiple']) && $this->params['multiple'])
-			$name .= "[]";
+		if (isset($this->params['multiple']) && $this->params['multiple']) $name .= "[]";
 
 		$html =  '<select name="' . $name . '" id="' . $id . '" ' . $attrs . '>';
 		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
@@ -90,4 +83,3 @@ class selectControl extends GuiMultiValue
 		return $html;
 	}
 }
-?>

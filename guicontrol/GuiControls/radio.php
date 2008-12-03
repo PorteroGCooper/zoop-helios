@@ -1,8 +1,5 @@
 <?php
-/**
-* @package gui
-* @subpackage guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,25 +13,24 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_radios.php");
 
 /**
- * radioControl
+ * Radio buttons GuiControl
  *
- * @uses GuiControl
- * @package
- * @version $id$
+ * @ingroup gui
+ * @ingroup GuiControl
+ *
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class radioControl extends GuiControl
-{
+class RadioControl extends GuiControl {
+
 	/**
 	 * getPersistentParams
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
@@ -44,32 +40,34 @@ class radioControl extends GuiControl
 	 * @access public
 	 * @return void
 	 */
-	function view()
-	{
+	function view() {
 		$value = $this->getValue();
 
-		if (isset($this->params['index'][$value]))
+		if (isset($this->params['index'][$value])) {
 			return $this->params['index'][$value];
-		else
+		} else {
 			return $value;
+		}
 	}
 
 	/**
-	 * render
+	 * Render GuiControl
 	 *
-	 * @access public
-	 * @return void
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string Radio buttons
 	 */
-	function render()
-	{
+	protected function render() {
+		if (!isset($this->params['index'])) {
+			trigger_error('An index must be specified for radio button guiControls.');
+			return
+		}
+		
 		global $gui;
-		if (!isset($this->params['index']))
-			return 'you need to specify an index for this guiControl';
 
 		$smartyParams = array('options' => $this->params['index']);
 
-		foreach ($this->params as $parameter => $value)
-		{
+		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
 					if ($value != '')
@@ -94,4 +92,3 @@ class radioControl extends GuiControl
 		return $html;
 	}
 }
-?>

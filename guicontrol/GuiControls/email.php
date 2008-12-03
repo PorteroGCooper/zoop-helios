@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,25 +11,26 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * emailControl
+ * Email GuiControl
  *
- * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup GuiControl
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class emailControl extends GuiControl {
+class EmailControl extends GuiControl {
 
 	/**
-	 * validate
+	 * Validate
+	 *
+	 * @todo Ummm... Should this actually do some validation?
 	 *
 	 * @access public
-	 * @return void
+	 * @return bool
 	 */
-	function validate()
-	{
+	function validate() {
 		return true;
 	}
 
@@ -44,15 +40,13 @@ class emailControl extends GuiControl {
 	 * @access public
 	 * @return void
 	 */
-	function getValue()
-	{
-
-		if (isset($this->params['email']))
+	function getValue() {
+		if (isset($this->params['email'])) {
 			$email = trim($this->params['email']) . "@" . $this->params['domain'];
-		else
+		} else {
 			$email = "";
+		}
 		return $email;
-
 	}
 
 	/**
@@ -61,8 +55,7 @@ class emailControl extends GuiControl {
 	 * @access public
 	 * @return void
 	 */
-	function getLabelName()
-	{
+	function getLabelName() {
 		$label = $this->getName() . "[controls][text][email][text]";
 		return $label;
 	}
@@ -73,26 +66,28 @@ class emailControl extends GuiControl {
 	 * @access public
 	 * @return void
 	 */
-	function getPersistentParams()
-	{
+	function getPersistentParams() {
 		return array('validate');
 	}
 
-	function render()
-	{
+	/**
+	 * Render GuiControl
+	 *
+	 * @see GuiControl::renderControl
+	 * @access protected
+	 * @return string Email input field
+	 */
+	protected function render() {
 		$attrs = array();
 		$value = $this->getValue();
 		$name = $this->getName();
 
 
 		$newvalue = explode('@', $value);
-		if (isset($newvalue[1]))
-		{
+		if (isset($newvalue[1])) {
 			$emailvalue = htmlspecialchars($newvalue[0]);
 			$domainvalue = htmlspecialchars($newvalue[1]);
-		}
-		else
-		{
+		} else {
 			$emailvalue = "";
 			$domainvalue = "";
 		}
