@@ -13,10 +13,13 @@
 /**
  * doctrineDB is a Doctrine connector library for formz.
  *
+ * This Doctrine driver requires Doctrine version 1.1+
+ *
  * @ingroup forms
+ * @ingroup Formz
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
- * @author Justin Hileman <justin@justinhileman.info>
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class formz_doctrineDB implements formz_driver_interface {
@@ -130,10 +133,43 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return $string slug field
 	 */
 	function getSlugField() {
-		$options = $this->table->getTemplate('Doctrine_Template_Sluggable')->getOptions();
-		return $options['name'];
+		return $this->table->getTemplate('Doctrine_Template_Sluggable')->getOption('name');
 	}
-	
+
+	/**
+	 * Return the version field for this table
+	 *
+	 * Returns 'version' if not Doctrine 1.1 or greater
+	 *
+	 * @return string version field
+	 */
+	function getVersionField() {
+		if ((float)substr(Doctrine::VERSION, 0, 3) >= 1.1) {
+			return $this->table->getTemplate('Doctrine_Template_Versionable')->getOption('versionColumn');
+		} else {
+			return 'version';
+		}
+	}
+
+	/**
+	 * Returns the timestamp fields (created, updated) for this table
+	 * 
+	 * @return array Doctrine timestamp fields: array('created_field', 'updated_field')
+	 */
+	function getTimestampFields() {
+		$options = $this->table->getTemplate('Doctrine_Template_Timestampable')->getOptions();
+		return array($options['created']['name'], $options['updated']['name']);
+	}
+
+	/**
+	 * Return the soft delete field for this table
+	 * 
+	 * @return string soft delete field
+	 */
+	function getSoftDeleteField() {
+		return $this->table->getTemplate('Doctrine_Template_SoftDelete')->getOption('name');
+	}
+
 	/**
 	 * setParam
 	 *
@@ -1005,7 +1041,16 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->table->hasTemplate('Doctrine_Template_Sluggable');
 	}
 	
-	
+	/**
+	 * Returns true if this Doctrine table is searchable.
+	 *
+	 * @access public
+	 * @return bool True if this is searchable.
+	 */
+	function isSearchable() {
+		return $this->table->hasTemplate('Doctrine_Template_Searchable');
+	}
+
 	/**
 	 * Returns true if this Doctrine table uses versions.
 	 *

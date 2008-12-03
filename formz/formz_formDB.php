@@ -153,7 +153,34 @@ class Formz_FormDB implements formz_driver_interface {
 	 */
 	function getSlugField() {
 		trigger_error('Slugs are not implemented in driver formDB');
-	}	
+	}
+	
+	/**
+	 * Return the version field for this table
+	 * 
+	 * @return $string version field
+	 */
+	function getVersionField() {
+		trigger_error('Versionable is not implemented in driver formDB');
+	}
+	
+	/**
+	 * Returns the timestamp fields (created, updated) for this table
+	 * 
+	 * @return $array values
+	 */
+	function getTimestampFields() {
+		trigger_error('Timestamps are not implemented in driver formDB');
+	}
+	
+	/**
+	 * Return the soft delete field for this table
+	 * 
+	 * @return $string soft delete field
+	 */
+	function getSoftDeleteField() {
+		trigger_error('Soft Delete is not implemented in driver formDB');
+	}
 	
 	/**
 	 * Return an array of fields in this class/table/form.
@@ -243,6 +270,16 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @return bool
 	 */
 	function isSluggable() {
+		return false;
+	}
+
+	/**
+	 * Returns true if this Doctrine table is searchable.
+	 *
+	 * @access public
+	 * @return bool True if this is searchable.
+	 */
+	function isSearchable() {
 		return false;
 	}
 

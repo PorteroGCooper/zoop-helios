@@ -153,6 +153,30 @@ interface formz_driver_interface {
 	function getSlugField();
 
 	/**
+	 * Fetches the version field for this table
+	 * 
+	 * @access public
+	 * @return $string version field
+	 */
+	function getVersionField();
+
+	/**
+	 * Fetches the timestamp fields (created, updated) for this table
+	 * 
+	 * @access public
+	 * @return $array values
+	 */
+	function getTimestampFields();
+
+	/**
+	 * Fetches the soft delete field for this table
+	 * 
+	 * @access public
+	 * @return $string soft delete field
+	 */
+	function getSoftDeleteField();
+
+	/**
 	 * Fetches a reference to this driver's Doctrine query or
 	 * triggers an error if this is not a Doctrine driver
 	 * 
@@ -193,6 +217,14 @@ interface formz_driver_interface {
 	 * @return bool
 	 */
 	function isSluggable();
+
+	/**
+	 * Returns true if this Doctrine table is searchable.
+	 *
+	 * @access public
+	 * @return bool True if this is searchable.
+	 */
+	function isSearchable();
 
 	/**
 	 * Does this table use versioning?

@@ -8,11 +8,11 @@
  * or a record and an html form. It supports full validation of types
  * and requirements.
  *
- * @author Justin Hileman <justin@justinhileman.info>
- * @package Formz
- * @access public
- * @copyright Supernerd LLC and Contributors
- *
+ * @ingroup forms
+ * @ingroup Formz
+ * @see formz_doctrineDB
+ * @see formz_formDB
+ * @author Justin Hileman {@link http://justinhileman.com}
  */
 class Formz {
 
@@ -35,7 +35,7 @@ class Formz {
 	 *
 	 * At this point, this is either a formDB or a doctrineDB connector.
 	 * 
-	 * @access private
+	 * @access protected
 	 */
 	protected $_driver;
 
@@ -49,14 +49,14 @@ class Formz {
 	/**
 	 * Private fields variable. Used by formz::getFields()
 	 * @var array
-	 * @access private
+	 * @access protected
 	 */
 	protected $_fields = array();
 	
 	/**
 	 * Private relation fields variable. Used by formz::getFields()
 	 * @var array
-	 * @access private
+	 * @access protected
 	 */
 	protected $_relation_fields = array();
 	
@@ -65,7 +65,7 @@ class Formz {
 	 *
 	 * @see formz::setDefaultSort
 	 * @var string
-	 * @access private
+	 * @access protected
 	 */
 	protected $_order = array();
 	
@@ -74,7 +74,7 @@ class Formz {
 	 *
 	 * @see formz::setDefaultSort
 	 * @var string
-	 * @access private
+	 * @access protected
 	 */
 	protected $_defaultSortField = null;
 
@@ -83,7 +83,7 @@ class Formz {
 	 *
 	 * @see formz::setDefaultSort
 	 * @var string
-	 * @access private
+	 * @access protected
 	 */
 	protected $_defaultSortDirection = 'ASC';
 
@@ -462,49 +462,43 @@ class Formz {
 		
 		// default not to show timestampable fields
 		if ($this->isTimestampable()) {
-			// TODO grab the actual timestamp fields.
-			// list($created_at, $updated_at) = $this->getTimestampFields();
-			if (isset($fields['created_at'])) {
-				if (!isset($fields['created_at']['formshow'])) {
-					$fields['created_at']['formshow'] = false;
+			list($created_at, $updated_at) = $this->_driver->getTimestampFields();
+			if (isset($fields[$created_at])) {
+				if (!isset($fields[$created_at]['formshow'])) {
+					$fields[$created_at]['formshow'] = false;
 				}
-				if (!isset($fields['created_at']['listshow'])) {
-					$fields['created_at']['listshow'] = false;
+				if (!isset($fields[$created_at]['listshow'])) {
+					$fields[$created_at]['listshow'] = false;
 				}
-				if (!isset($fields['created_at']['editable'])) {
-					$fields['created_at']['editable'] = false;
+				if (!isset($fields[$created_at]['editable'])) {
+					$fields[$created_at]['editable'] = false;
 				}				
 			}
-			if (isset($fields['updated_at'])) {
-				if (!isset($fields['updated_at']['formshow'])) {
-					$fields['updated_at']['formshow'] = false;
+			if (isset($fields[$updated_at])) {
+				if (!isset($fields[$updated_at]['formshow'])) {
+					$fields[$updated_at]['formshow'] = false;
 				}
-				if (!isset($fields['updated_at']['listshow'])) {
-					$fields['updated_at']['listshow'] = false;
+				if (!isset($fields[$updated_at]['listshow'])) {
+					$fields[$updated_at]['listshow'] = false;
 				}
-				if (!isset($fields['updated_at']['editable'])) {
-					$fields['updated_at']['editable'] = false;
+				if (!isset($fields[$updated_at]['editable'])) {
+					$fields[$updated_at]['editable'] = false;
 				}
 			}
 		}
 		
 		// Don't show the "deleted" field...
 		if ($this->isSoftDeletable()) {
-			// TODO grab the actual soft delete field.
-			// $deleted_field = $this->getDeletedField();
-			if (isset($fields['deleted'])) {
-				
-				// TODO not sure whether this should hide by default?
-				// unset($fields['deleted']);
-				
-				if (!isset($fields['deleted']['formshow'])) {
-					$fields['deleted']['formshow'] = false;
+			$deleted_field = $this->_driver->getSoftDeleteField();
+			if (isset($fields[$deleted_field])) {
+				if (!isset($fields[$deleted_field]['formshow'])) {
+					$fields[$deleted_field]['formshow'] = false;
 				}
-				if (!isset($fields['deleted']['listshow'])) {
-					$fields['deleted']['listshow'] = false;
+				if (!isset($fields[$deleted_field]['listshow'])) {
+					$fields[$deleted_field]['listshow'] = false;
 				}
-				if (!isset($fields['deleted']['editable'])) {
-					$fields['deleted']['editable'] = false;
+				if (!isset($fields[$deleted_field]['editable'])) {
+					$fields[$deleted_field]['editable'] = false;
 				}
 				
 			}
@@ -512,7 +506,7 @@ class Formz {
 		
 		// Don't show the 'slug' field...
 		if ($this->isSluggable()) {
-			$slug_field = $this->getSlugField();
+			$slug_field = $this->_driver->getSlugField();
 			if (isset($fields[$slug_field])) {
 				if (!isset($fields[$slug_field]['formshow'])) {
 					$fields[$slug_field]['formshow'] = false;
@@ -528,17 +522,16 @@ class Formz {
 		
 		// Don't show the 'version' field...
 		if ($this->isVersionable()) {
-			// TODO grab the actual soft delete field.
-			// $version_field = $this->getVersionField();
-			if (isset($fields['version'])) {
-				if (!isset($fields['version']['formshow'])) {
-					$fields['version']['formshow'] = false;
+			$version_field = $this->_driver->getVersionField();
+			if (isset($fields[$version_field])) {
+				if (!isset($fields[$version_field]['formshow'])) {
+					$fields[$version_field]['formshow'] = false;
 				}
-				if (!isset($fields['version']['listshow'])) {
-					$fields['version']['listshow'] = false;
+				if (!isset($fields[$version_field]['listshow'])) {
+					$fields[$version_field]['listshow'] = false;
 				}
-				if (!isset($fields['version']['editable'])) {
-					$fields['version']['editable'] = false;
+				if (!isset($fields[$version_field]['editable'])) {
+					$fields[$version_field]['editable'] = false;
 				}
 			}
 		}
@@ -1413,17 +1406,4 @@ class Formz {
 			trigger_error($method . " method undefined on Formz object.");
 		}
 	}
-
-	/**
-	 * Convert a DB column key into a decent label.
-	 *
-	 * @param string $str Label to convert
-	 * @return string Formatted form label
-	 * @deprecated
-	 */
-	static function format_label ($str) {
-		deprecated('Use util function format_label() instead of Formz::format_label().');
-		return format_label($str);
-	}
-	
 }
