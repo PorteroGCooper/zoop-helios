@@ -161,7 +161,7 @@ class Select_updateControl extends SelectControl {
 			$update_control_label = null;
 		}
 		
-		$url = $this->params['url'];
+		$url = url($this->params['url'], true);
 		$select_id = $this->getId();
 
 		// add a null value to the top.
@@ -183,8 +183,7 @@ class Select_updateControl extends SelectControl {
 			if ($update_control_label) $html .= '<label for="' . $update_id . '">' . $update_control_label . '</label>';
 			$html .= $dependent->renderControl();
 		}
-
-		$gui->add_js('jQuery(function($){$("#' . $select_id . '").selectCombo("' . $url . '", "#' . $update_id . '");});', 'inline');
+		$gui->add_jquery('$("#' . $select_id . '").selectCombo("' . $url . '", "#' . $update_id . '");');
 
 		return $html;
 	}
