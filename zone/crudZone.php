@@ -339,7 +339,7 @@ class CrudZone extends zone {
 		}
 
 		if (getPostText('update_and_create')) {
-			BaseRedirect($this->getZoneBasePath() . 'create', HEADER_REDIRECT);
+			BaseRedirect($this->getZoneBasePath() . '/create', HEADER_REDIRECT);
 		} else {
 			BaseRedirect($this->getZoneBasePath(), HEADER_REDIRECT);
 		}
