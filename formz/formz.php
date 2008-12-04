@@ -554,7 +554,12 @@ class Formz {
 		// mix in info from foreign fields
 		foreach ($this->getTableRelations() as $key => $relation) {
 			if ($return_relations) {
-				$fields[$key]['type'] = 'relation';
+				if (strchr($key, '.') !== false) {
+					$fields[$key]['type'] = 'relation_foreign_field';
+				} else {
+					$fields[$key]['type'] = 'relation';
+				}
+
 				$fields[$key]['relation_alias'] = $relation['alias'];
 				$fields[$key]['rel_type'] = $relation['rel_type'];
 				if (isset($relation['foreign_id_field'])) {
@@ -633,7 +638,9 @@ class Formz {
 		return $this->_driver->getData();
 	}
 	
-	
+	function getValue($fieldname, $id = null) {
+		return $this->_driver->getValue($fieldname, $id);
+	}
 	/**
 	 * Return the relation field data (foreign/local fields, etc) for a given relation name.
 	 * 
@@ -782,6 +789,16 @@ class Formz {
 						$this->_relation_fields[$field] = array();
 					}
 					$this->_relation_fields[$field][$property] = $value;
+				} else if (strchr($field, '.') !== false) {
+					$chunks = explode('.', $field);
+					
+					if (isset($relations[$chunks[0]])) {
+						$this->_relations_fields[$field] = array();
+						$this->_relation_fields[$field][$property] = $value;
+					} else {
+						trigger_error("Field not defined: " . $field);
+						return;
+					}
 				} else {
 					trigger_error("Field not defined: " . $field);
 					return;

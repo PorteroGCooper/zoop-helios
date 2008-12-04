@@ -72,7 +72,6 @@ function smarty_function_formz_list($params, &$smarty) {
 
 	$current_sort = $form->getSortField();
 	$current_order = $form->getSortOrder();
-	
 	// build the table header
 	$row = array();
 	foreach ($fields as $key => $field) {
@@ -80,6 +79,11 @@ function smarty_function_formz_list($params, &$smarty) {
 			unset($fields[$key]);
 		} else {
 			$label = (isset($fields[$key]['display']['label'])) ? $fields[$key]['display']['label'] : format_label($key);
+			
+			// If the field is a foreign field, check for a label and if one doesn't exist then offer a sane default
+			if (!isset($fields[$key]['display']['label']) && strchr($key, '.') !== false) {
+				$label = format_label(str_replace('.', ' ', $key));
+			}
 			
 			// handle all the sorting magick.
 			if ($sortable) {
@@ -146,8 +150,13 @@ function smarty_function_formz_list($params, &$smarty) {
 		
 		if ($use_softdelete && isset($record['deleted']) && $record['deleted']) $row_classes[] = 'deleted';
 		
-		foreach ($field_names as $field) {		
-			if (isset($record[$field])) {
+		foreach ($field_names as $field) {
+			if (strchr($field, '.') !== false) {
+				$value = $form->getValue($field, $id);
+				if (is_array($value)) {
+					$value = implode(', ', $value);
+				}
+			} else if (isset($record[$field])) {
 				$value = $record[$field];
 			} else if (isset($fields[$field]['display']['default'])) {
 				$value = $fields[$field]['display']['default'];

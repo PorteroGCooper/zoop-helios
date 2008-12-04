@@ -182,10 +182,29 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return mixed $value
 	 */
-	function getValue($fieldname) {
-		if ($this->id == 'new')
+	function getValue($fieldname, $id = null) {
+		if (isset($this->id) && $this->id == 'new')
 			return "";
-			
+		
+		if (strchr($fieldname, '.')) {
+			list($relation, $field) = explode('.', $fieldname);
+
+			if ($id !== null) {
+				$relation_record = $this->record($id)->$relation;
+				if (count($relation_record)) {
+					$retVal = array();
+					foreach ($relation_record as $key => $value) {
+						$retVal[] = $value->$field;
+					}
+					return $retVal;
+				} else {
+					return $relation_record->$field;
+				}
+			} else {
+				$this->record->$relation->$field;
+			}
+		}
+		
 		if (isset($this->record->values[$fieldname]->value))
 			return $this->record->values[$fieldname]->value;
 		else
@@ -342,6 +361,22 @@ class formz_doctrineDB implements formz_driver_interface {
 			$id = null;
 		}
 		return $id;
+	}
+	
+	protected function &record($id = null) {
+		if ($id === null) {
+			if ($this->_record) {
+				return $this->_record;
+			} else {
+				trigger_error('No ID or record found');
+				return null;
+			}
+		}
+		if ($record = Doctrine::getTable($this->tablename)->find($id)) {
+			return $record;
+		} else {
+			return null;
+		}
 	}
 		
 	/**
@@ -666,13 +701,13 @@ class formz_doctrineDB implements formz_driver_interface {
 
 	function getRecordRelationsValues($field = null, $searchToken = null) {
 		$data = array();
-		
+
 		if ($field !== null) {
 			$relations = array($this->getTableRelation($field));
 		} else {
 			$relations = $this->getTableRelations();
 		}
-
+		
 		foreach ($relations as $name => $relation) {
 			if ($relation['rel_type'] == Formz::MANY) {
 				$array = $this->record->$name->toArray();
