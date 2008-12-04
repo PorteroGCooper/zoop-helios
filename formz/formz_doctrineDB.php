@@ -288,10 +288,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	private function getRootNodes() {
 		if ($this->isTree()) {
 			return $this->table->findByLevel(0)->toArray();
-			//echo_r($this->getTree()->getBaseQuery()->execute()->toArray());
-			//return $this->getTree()->getBaseQuery()->execute()->toArray();
-			//echo_r($this->getTree()->fetchRoots()->toArray());
-			// return $this->getTree()->fetchRoots()->toArray();
 		} else {
 			return array();
 		}
@@ -428,7 +424,6 @@ class formz_doctrineDB implements formz_driver_interface {
 
 		if ($this->isTree()) {
 			if ($this->hasParentRecord()) {
-				echo_r("i think so");
 				$parent = $this->getParentRecord();
 				$this->record->getNode()->insertAsLastChildOf($parent);
 			} else {
@@ -584,9 +579,6 @@ class formz_doctrineDB implements formz_driver_interface {
 		$ret = array();
 				
 		foreach ($this->table->getRelations() as $name => $relation) {
-			// if ($relation->getClass() === 'Orders') {
-			// 	die_r($relation->toArray());
-			// }
 			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? Formz::MANY : Formz::ONE;
 			
 			$label_field = null;
