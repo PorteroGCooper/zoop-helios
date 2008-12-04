@@ -136,6 +136,13 @@ class Formz {
 	 */
 	protected $_embeddedFormz = array();
 
+	/**
+	 * Search form objects
+	 *
+	 * @access protected
+	 */
+	protected $_searchForms = null;
+
 	var $errors = array();
 	var $editable = true;
 
@@ -145,6 +152,7 @@ class Formz {
 	protected $timestampable = false;
 	protected $sortable = true;
 	protected $versionable = false;
+	protected $searchable = false;
 
 	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
@@ -996,6 +1004,12 @@ class Formz {
 				$this->_driver->setPage($args['page']);
 				$this->_driver->setLimit($args['limit']);
 				break;
+			case 'search':
+				if (!isset($args['q'])) $args['q'] = getGetText('q');
+				$this->_driver->setSearchToken($args['q']);
+				break;
+			case 'filter':
+				break;
 			default:
 				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
@@ -1122,6 +1136,37 @@ class Formz {
 		}
 	}
 	
+	function addSearchForm($tablename = null) {
+		if (!$tablename) {
+			$tablename = $this->tablename;
+		}
+		if (!$this->_searchForms) {
+			$this->_searchForms = array();
+		}
+		
+		$this->_searchForms[$tablename] = $tablename;
+		$this->_driver->addSearchTable($tablename);
+	}
+	
+	function getSearchForms() {
+		return $this->_searchForms;
+	}
+	
+	function setSearchToken($search_token) {
+		$this->_driver->setSearchToken($search_token);
+	}
+
+	/**
+	 * Returns true if this Formz is searchable.
+	 *
+	 * @access public
+	 * @return bool True if this is searchable.
+	 */
+	function isSearchable() {
+		$this->searchable = $this->_driver->isSearchable();
+		return $this->searchable;
+	}
+	
 	/**
 	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
 	 * 
@@ -1213,27 +1258,32 @@ class Formz {
 	 * 
 	 * @access public
 	 * @param boolean $value. (default: true)
-	 * @return void
+	 * @return bool current paginated value
 	 */
 	function setPaginated($value = true) {
+		if ($this->isTree()) {
+			return false;
+		}
 		$this->_driver->setPaginated($value);
 		if ($value) $this->addListAction('paginate');
-		return $this->_driver->isPaginated();
+		return $this->isPaginated();
 	}
 	
 	/**
-	 * When using a nestedSet, used to define the parent. 
+	 * Set a parent record (used in tree data sets).
+	 *
+	 * This is currently a Doctrine specific call. If using a FormDB based Formz object, this
+	 * call will not work.
 	 * 
-	 * @param mixed $node 
+	 * @param string $parent Name of parent record.
 	 * @access public
 	 * @return void
 	 */
-	function setParentRecord($node = false) {
-		if ($node === false) {
-			trigger_error('node required when using "setParentRecord"');
+	function setParentRecord($parent = null) {
+		if ($parent === null) {
+			trigger_error('Parent record name required when using "setParentRecord"');
 		}
-
-		$this->_driver->_parentRecord = $node;
+		return $this->_driver->setParentRecordName($parent);
 	}
 
 	/**
@@ -1300,6 +1350,12 @@ class Formz {
 	function getSlugField() {
 		$this->slug_field = $this->_driver->getSlugField();
 		return $this->slug_field;
+	}
+	
+	function getSlug($record_id) {
+		if (!$this->isSluggable() || !$record_id) return false;
+		$this->_driver->getRecord($record_id);
+		return $this->_driver->getData($this->getSlugField());
 	}
 
 	/**

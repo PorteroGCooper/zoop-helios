@@ -29,14 +29,17 @@ class formz_doctrineDB implements formz_driver_interface {
 	 *
 	 * @var
 	 */
-	var $table;
-	var $tablename;
-	var $query = null;
-	var $record = null;
+	protected $table;
+	protected $tablename;
+	protected $_query = null;
+	protected $record = null;
+	
 	protected $_pageNumber = 1;
 	protected $_pageLimit = null;
 	protected $_pager = null;
 	protected $_paginated = false;
+	protected $_searchToken = null;
+	protected $_searchTables = null;
 	
 	/**
 	 * Values that are fixed for both querying and Create and Update 
@@ -44,7 +47,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @var array
 	 * @access public
 	 */
-	var $fixedValues = array();
+	protected $fixedValues = array();
 
 	/**
 	 * Set only when using nested sets (trees) 
@@ -52,7 +55,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @var mixed
 	 * @access protected
 	 */
-	var $_parentRecord = false;
+	protected $_parentRecordName = null;
+	protected $_parentRecord = null;
+	protected $_tree = null;
 
 	/**
 	 * True if current form is soft deletable
@@ -60,7 +65,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @var bool
 	 * @access private
 	 */
-	var $softdeletable = false;
+	protected $softdeletable = false;
 
 
 	/**
@@ -87,7 +92,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	function getType() {
 		return Formz::DoctrineDB;
 	}
-	
 
 	/**
 	 * Return an array of fields in this class/table/form.
@@ -171,371 +175,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
-	 * setParam
-	 *
-	 * Set a table based parameter
-	 *
-	 * @param string $name
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setParam($name, $value)
-	{
-		$this->table->$name = $value;
-	}
-
-	/**
-	 * setInnerParam
-	 *
-	 * Set a table based inner parameter
-	 *
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setInnerParam($name, $innername, $value)
-	{
-		$this->table->$name[$innername] = $value;
-	}
-
-	/**
-	 * setFieldParam
-	 *
-	 * Set a field specific parameter
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $name
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setFieldParam($fieldname, $name, $value)
-	{
-		if (is_array($fieldname))
-			foreach ($fieldname as $fieldn)
-			{
-				if (isset($this->table->fields[$fieldn]))
-					$this->table->fields[$fieldn]->$name = $value;
-				else
-					trigger_error("No field exists with the name: $fieldn");
-			}
-		else
-		{
-			if (isset($this->table->fields[$fieldname]))
-			{
-				$this->table->fields[$fieldname]->$name = $value;
-			}
-			else
-				trigger_error("No field exists with the name: $fieldname");
-		}
-	}
-	
-	/**
-	 * setFieldWhere
-	 *
-	 * Set a field specific parameter
-	 *
-	 * @param mixed $fieldname must be the name of a field
-	 * @param string $where is a sql statment predicate, like 'between 4 and 5' or '= 4'
-	 * @param mixed $junction is 'AND' or 'OR'
-	 * @access public
-	 * @return void
-	 */
-	function addFieldWhere($fieldname, $where, $junction = 'AND')
-	{
-		if (isset($this->table->fields[$fieldname]))
-		{
-			$this->table->fields[$fieldname]->where[] = array('condition' => $where, 'junction' => $junction);
-		}
-		else
-			trigger_error("No field exists with the name: $fieldname");
-	}
-	
-	/**
-	 * hideField
-	 *
-	 * Don't show the field in a list and don't show it in a form.
-	 *
-	 * @param mixed $fieldname must be the name of a field or an array of fields
-	 * @access public
-	 * @return void
-	 */
-	function hideField($fieldname)
-	{
-		if (is_array($fieldname))
-		{
-			foreach($fieldname as $name)
-			{
-				$this->hideField($fieldname);
-			}
-		}
-		else
-		{
-			if (isset($this->table->fields[$fieldname]))
-			{
-				$this->table->fields[$fieldname]->listshow = false;
-				$this->table->fields[$fieldname]->formshow = false;
-			}
-			else
-				trigger_error("No field exists with the name: $fieldname");
-		}
-	}
-	
-
-	
-	/**
-	 * formatField
-	 *
-	 * A format string to use(especially on dates) when displaying in lists.
-	 *
-	 * @param mixed $fieldname must be the name of a field or an array of fields
-	 * @access public
-	 * @return void
-	 */
-	function formatField($fieldname, $format)
-	{
-		if (isset($this->table->fields[$fieldname])) {
-			$this->table->fields[$fieldname]->format = $format;
-		}
-		else {
-			trigger_error("No field exists with the name: $fieldname");
-		}
-	}
-	
-	/**
-	 * showDelete
-	 *
-	 * show a column of delete links for each record in the listing
-	 *
-	 * @param mixed $path must be the path (not including the zoneUrl) to the delete page.
-	 * An id will be added to the end of the path that is give as a page parameter.
-	 * @access public
-	 * @return void
-	 */
-	function showDelete($path)
-	{
-		$this->table->deleteColumn = true;
-		$this->table->deletelink = $path;
-	}
-	
-	/**
-	 * setRowClasses
-	 *
-	 * set a map of css classes that will be used to display rows.
-	 *
-	 * @param string $field is the field that will be used to index the class map
-	 * @param mixed $map is the map of field values to css classnames
-	 * @access public
-	 * @return void
-	 */
-	function setRowClasses($field, $map)
-	{
-		$this->table->rowclasses['field'] = $field;
-		$this->table->rowclasses['classes'] = $map;
-	}
-
-	/**
-	 * setFieldIndexTable
-	 *
-	 * Setup an index table for a specific field, especially useful for things like select boxes and the like.
-	 * Used to grab a list of possible values and labels from another table in the database
-	 *
-	 * @param string $fieldname
-	 * @param string $tablename
-	 * @param string $id fieldname in the indexed table that has the values in it
-	 * @param string $label fieldname in the indexed table that has the labels in it
-	 * @param string $restriction something like "date = $date"
-	 * @access public
-	 * @return void
-	 */
-	function setFieldIndexTable($fieldname, $tablename, $id, $label, $restriction = null)
-	{
-		$this->table->fields[$fieldname]->setIndexTable($tablename, $id, $label, $restriction);
-	}
-
-	/**
-	 * setFieldIndex
-	 *
-	 * Setup an index for a specific field, especially useful for things like select boxes and the like.
-	 * here an array is passed in and key = value, value = label
-	 *
-	 * @param mixed $fieldname
-	 * @param mixed $index
-	 * @access public
-	 * @return void
-	 */
-	function setFieldIndex($fieldname, $index)
-	{
-		$this->table->fields[$fieldname]->setIndex($index);
-	}
-
-	/**
-	 * setAllFieldsParam
-	 *
-	 * Sets all existing fields to have a specific value for a specific property.
-	 * Useful when you have a table with like 30 fields, but only want to show two in a list.
-	 * setAllFieldsParam('listshow', false); then set the two necessary ones to true
-	 *
-	 * @param mixed $name
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setAllFieldsParam($name, $value)
-	{
- 		foreach ($this->table->fields as $field)
-		{
-			$array[] = $field->name;
-		}
-
-		$this->setFieldParam($array, $name, $value);
-	}
-
-	/**
-	 * setAllFieldsInnerParam
-	 *
-	 * Sets all existing fields to have a specific value for a specific property's parameter.
-	 * Some field parameters like html and validate have their own parameters, this function is used to
-	 * change one of their parameters without changing the entire html or validate parameter.
-	 *
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setAllFieldsInnerParam($name, $innername, $value)
-	{
-		foreach ($this->table->fields as $field)
-		{
-			$array[] = $field->name;
-		}
-
-		$this->setFieldInnerParam($array, $name, $innername, $value);
-	}
-
-	/**
-	 * setFieldInnerParam
-	 *
-	 * Some field parameters like html and validate have their own parameters, this function is used to
-	 * change one of their parameters without changing the entire html or validate parameter.
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $name
-	 * @param string $innername
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function setFieldInnerParam($fieldname, $name, $innername, $value)
-	{
-		if (is_array($fieldname))
-			foreach ($fieldname as $fieldn)
-			{
-				if (isset($this->table->fields[$fieldn]->$name))
-					{
-						$tmp = &$this->table->fields[$fieldn]->$name;
-						$tmp[$innername] = $value;
-					}
-				else
-					trigger_error("No field exists with the name: $fieldn OR No parameter is named $name");
-			}
-		else
-		{
-			if (isset($this->table->fields[$fieldname]->$name))
-			{
-				$tmp = &$this->table->fields[$fieldname]->$name;
-				$tmp[$innername] = $value;
-			}
-			else
-				trigger_error("No field exists with the name: $fieldname OR No parameter is named $name");
-		}
-	}
-
-	/**
-	 * setHTMLoptions
-	 * Setup the html display options used when rendering the form for this field.
-	 * Should be something like $value = array("type" => "text");
-	 * Values of the array other than type are the parameters required/supported by the type of guicontrol.
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param array $value
-	 * @access public
-	 * @return void
-	 * @see guicontrol
-	 */
-	function setHTMLoptions($fieldname, $value)
-	{
-		$this->setFieldParam($fieldname, "html", $value);
-	}
-
-	/**
-	 * setHTMLoption
-	 * Setup a specific html display options to be used when rendering the form for this field.
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $innername option like type
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 * @see guicontrol
-	 */
-	function setHTMLoption($fieldname, $innername, $value)
-	{
-		$this->setFieldInnerParam($fieldname, "html", $innername, $value);
-	}
-
-	/**
-	 * setValidationOptions
-	 * Define the validation for this specific field, or these sepecific fields.
-	 * Values of the array other than type are the parameters required/supported by the type of validation.
-	 * type needs to be one supported by the validate class
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param array $value array needs 'type' set.
-	 * @access public
-	 * @return void
-	 * @see validate
-	 */
-	function setValidationOptions($fieldname, $value)
-	{
-		$this->setFieldParam($fieldname, "validation", $value);
-	}
-
-	/**
-	 * setValidationOption
-	 * Define an individaul validation parameter for this specific field, or these sepecific fields.
-	 * could be something like setValidationOption('name', 'type', 'alphanumeric');
-	 * type needs to be one supported by the validate class
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $innername
-	 * @param string $value
-	 * @access public
-	 * @return void
-	 * @see validate
-	 */
-	function setValidationOption($fieldname, $innername, $value)
-	{
-		$this->setFieldInnerParam($fieldname, "validation", $innername, $value);
-	}
-
-	/**
-	 * required
-	 * set a field or fields to be required as part of the validation.
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function required($fieldname, $value = true) {
-		$this->setValidationOption($fieldname, 'required',  $value);
-	}
-
-	/**
 	 * getValue
 	 * gets the value from the record object and returns it.
 	 *
@@ -550,7 +189,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		if (isset($this->record->values[$fieldname]->value))
 			return $this->record->values[$fieldname]->value;
 		else
-			return NULL;
+			return null;
 // 			trigger_error("No value is set for the field: $fieldname");
 	}
 
@@ -569,66 +208,105 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return array
 	 */
 	function getRecords($limit = null) {
-/*
-		if ($limit !== null)
-			$this->setParam("limit", $limit);
-*/
-		if ($this->query || $this->getFixedValues() || $this->isPaginated()) {
-			if ($this->getFixedValues()) {
-				$this->applyFixedValuesToQuery();
-			}
-			if ($this->isPaginated()) {
-				$this->_paginateQuery();
-			}
-			return $this->getQuery()->execute();
+		/* if ($limit !== null) $this->setParam("limit", $limit); */
 		
-		} elseif ($this->table->isTree()) {
-			if ($this->hasParentRecord()) {
-				if ($children = $this->getParentRecord()->getNode()->getChildren()) {
-					return $children;
-				} else {
-					return array();
+		$this->_applyQueryConstraints();
+		
+		if ($this->isTree()) {
+			return $this->_executeTree();
+		} else {
+			return $this->getQuery()->execute()->toArray();
+		}
+	}
+	
+	protected function _applyQueryConstraints() {
+		// apply any fixed values
+		if ($this->getFixedValues()) {
+			$this->_applyFixedValuesToQuery();
+		}
+		// add search constraints
+		if (false && $this->isSearchable()) {
+			$this->_applySearchToQuery();
+		}
+		// paginate this query
+		if ($this->isPaginated()) {
+			$this->_paginateQuery();
+		}
+		// everything else will automatically do a findAll() style query
+	}
+	
+	protected function _executeTree() {
+		if (!$this->isTree()) {
+			trigger_error('Unable to execute tree query on non-tree table.');
+			return;
+		}
+
+		$this->getTree()->setBaseQuery($this->getQuery());
+		$nodes = array();		
+		if ($this->hasParentRecord()) {
+			if ($parent = $this->getParentRecord()) {
+				if ($children = $parent->getNode()->getChildren()) {
+					$id_field = $this->getIdField();
+					foreach ($children->toArray() as $key => $child) {
+						$nodes[$key] = $this->table->find($child[$id_field])->toArray();
+					}
 				}
-			} else {
-				return $this->getRootNodes();
 			}
 		} else {
-			return $this->table->findAll()->toArray();
-			//$record = $this->getQuery()->fetchOne();
+			$nodes = $this->getRootNodes();
 		}
+		$this->getTree()->resetBaseQuery();
+		
+		return $nodes;
+	}
+	
+	protected function _applySearchToQuery() {
+		if (!isset($this->_searchToken) || empty($this->_searchToken)) return;
+		
+		$query = $this->getQuery();
+
+		$tablename = $this->table->getTableName();
+		foreach($this->getSearchTables() as $tablename) {
+			// $query = $this->getQuery()->copy();
+			// $query->from($tablename . ' ' . lcfirst($tablename[0]));
+			$query->from($tablename . ' c');
+			$result = Doctrine::getTable($this->tablename)->search('*' . $this->_searchToken . '*', $query);
+			
+			$results = array();
+			$results += $result->fetchArray();
+		}
+
 	}
 
 
 	/**
 	 * When Working with Trees, get the root nodes in the tree 
 	 * 
-	 * @access public
-	 * @return array
+	 * @access private
+	 * @return array Set of root node records (in array form)
 	 */
-	function getRootNodes() {
-		if ($this->table->isTree()) {
+	private function getRootNodes() {
+		if ($this->isTree()) {
 			return $this->table->findByLevel(0)->toArray();
-			//echo_r($this->table->getTree()->getBaseQuery()->execute()->toArray());
-			//return $this->table->getTree()->getBaseQuery()->execute()->toArray();
-			//echo_r($this->table->getTree()->fetchRoots()->toArray());
-			// return $this->table->getTree()->fetchRoots()->toArray();
+			//echo_r($this->getTree()->getBaseQuery()->execute()->toArray());
+			//return $this->getTree()->getBaseQuery()->execute()->toArray();
+			//echo_r($this->getTree()->fetchRoots()->toArray());
+			// return $this->getTree()->fetchRoots()->toArray();
 		} else {
 			return array();
 		}
 	}
-
-	/**
-	 * When working with trees, fetch the entire tree 
-	 * 
-	 * @access public
-	 * @return array
-	 */
-	function getTree() {
-		if ($this->table->isTree()) {
-			return $this->table->getTree()->toArray();
-		} else {
-			return array();
+	
+	protected function &getTree() {
+		if (!$this->isTree()) {
+			trigger_error('Unable to return tree on non-tree database.');
+			return null;
 		}
+		
+		if (!$this->_tree) {
+			$this->_tree = $this->table->getTree();
+		}
+		return $this->_tree;
 	}
 
 	/**
@@ -650,7 +328,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				$this->record->fromArray($this->getFixedValues());
 			}
 		} elseif ($this->getFixedValues()) {
-			$record = $this->applyFixedValuesToQuery()->fetchOne();
+			$record = $this->_applyFixedValuesToQuery()->fetchOne();
 			
 			// if you didn't find one, return.
 			if (!$record && $record !== 0) return null;
@@ -687,7 +365,11 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function getRecordIdBySlug($slug) {
 		$id_field = $this->getIdField();
-		$records = $this->table->createQuery()->select($id_field)->addWhere('slug = ?', $slug)->execute()->toArray();
+		$records = $this->table->createQuery()
+				->select($id_field)
+				->addWhere('slug = ?', $slug)
+				->execute()
+				->toArray();
 		if (count($records)) {
 			return $records[0][$id_field];
 		} else {
@@ -695,9 +377,11 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 	}
 
+
 	function &getDoctrineQuery() {
 		return $this->getQuery();
 	}
+
 
 	function &getDoctrineRecord($id = false) {
 		if ($id && isset($this->record)) {
@@ -742,13 +426,14 @@ class formz_doctrineDB implements formz_driver_interface {
 			$this->record->$key = $val;
 		}
 
-		if ($this->table->isTree()) {
+		if ($this->isTree()) {
 			if ($this->hasParentRecord()) {
+				echo_r("i think so");
 				$parent = $this->getParentRecord();
 				$this->record->getNode()->insertAsLastChildOf($parent);
 			} else {
 				$this->record->root_id = 1;
-				$this->table->getTree()->createRoot($this->record);
+				$this->getTree()->createRoot($this->record);
 			}
 		} else {
 			$this->record->save();
@@ -820,21 +505,20 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return int The db id of the saved record.
 	 */
 	function destroyRecord($id = null) {
-	
-		// get the record we want to save...
+		// get the record we want to delete...
 		if ($id !== null) {
 			if (!$this->getRecord($id)) {
-				trigger_error("Unable to initialize record: " . $id);
+				trigger_error("Unable to find record: " . $id);
 				return false;
 			}
 		}
-			
-		if ($this->table->isTree()) {
+		
+		if ($this->isTree()) {
 			return $this->record->getNode()->delete();
 		} else {
 			return $this->record->delete();
 		}
-	}	
+	}
 	
 	/**
 	 * Return the record ID field name
@@ -846,18 +530,6 @@ class formz_doctrineDB implements formz_driver_interface {
 		if (is_array($id)) $id = array_shift($id);
 		
 		return $id;
-	}
-
-	/**
-	 * deleteRecord
-	 * Removes a record from the database
-	 *
-	 * @param mixed $id
-	 * @access public
-	 * @return void
-	 */
-	function deleteRecord($id) {
-		$this->_deleteRecord($this->tablename, $id);
 	}
 	
 	/**
@@ -996,9 +668,16 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $data;
 	}
 
-	function getRecordRelationsValues() {
+	function getRecordRelationsValues($field = null, $searchToken = null) {
 		$data = array();
-		foreach ($this->getTableRelations() as $name => $relation) {
+		
+		if ($field !== null) {
+			$relations = array($this->getTableRelation($field));
+		} else {
+			$relations = $this->getTableRelations();
+		}
+
+		foreach ($relations as $name => $relation) {
 			if ($relation['rel_type'] == Formz::MANY) {
 				$array = $this->record->$name->toArray();
 				foreach ($array as $value) {
@@ -1071,7 +750,6 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->table->isTree();
 	}
 
-	
 	/**
 	 * Order results by given column and direction.
 	 *
@@ -1081,7 +759,6 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 */
 	function sort($fieldname, $direction = "ASC") {
-		//$this->query->orderBy("$fieldname $direction");
 		$this->getQuery()->orderBy("$fieldname $direction");
 	}
 
@@ -1106,7 +783,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		*/
 		return $this->getPager()->getLastPage();
 	}
-	
+
 	/**
 	 * Set the current page. Used by Formz object to pass in GET params.
 	 * 
@@ -1130,20 +807,59 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
+	 * Set the token for searching
+	 * 
+	 * @access public
+	 * @param string $token
+	 * @return void
+	 */
+	function setSearchToken($token) {
+		$this->_searchToken = $token;
+	}
+
+	/**
+	 * Add table(s) for searching.
+	 *
+	 * Accepts either a single table name (string) or an array of table names to search on.
+	 * 
+	 * @access public
+	 * @param mixed $tablename
+	 * @return void
+	 */
+	function addSearchTable($tablename) {
+		if ($this->_searchTables === null) {
+			$this->_searchTables = array();
+		}
+		
+		foreach ((array)$tablename as $name) {
+			$this->_searchTables[] = $name;
+		}
+	}
+
+	/**
+	 * Get tables for searching
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getSearchTables() {
+		return $this->_searchTables;
+	}
+
+	/**
 	 * Return's this query. If it doesn't exist, create and apply fixed values to it.  
 	 * 
 	 * @access protected
 	 * @return void
 	 */
 	protected function &getQuery() {
-		if (!$this->query) {
-			$this->query = $this->table->createQuery();
+		if (!$this->_query) {
+			$this->_query = $this->table->createQuery();
 		}
-
-		return $this->query;
+		return $this->_query;
 	}
 
-	function &applyFixedValuesToQuery() {
+	private function &_applyFixedValuesToQuery() {
 		$fixed = $this->getFixedValues();
 		if ($fixed) {
 			foreach ($fixed as $key => $value) {
@@ -1164,9 +880,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access protected
 	 * @return Doctrine_Query object
 	 */
-	protected function _paginateQuery() {
+	private function _paginateQuery() {
 		$this->getPager()->execute();
-		$this->query=$this->getPager()->getQuery();
+		$this->query = $this->getPager()->getQuery();
 		return $this->query;
 	}
 	
@@ -1177,8 +893,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access protected
 	 * @return Doctrine_Pager object
 	 */
-	protected function &getPager() {
-		if ($this->_pager===null) {
+	private function &getPager() {
+		if (!$this->isPaginated()) return null;
+		
+		if ($this->_pager === null) {
 			$currentPage = $this->_pageNumber;
 			if ($this->_pageLimit===null) {
 				$resultsPerPage = Config::get('zoop.formz.paginate.limit');
@@ -1255,59 +973,95 @@ class formz_doctrineDB implements formz_driver_interface {
 	/**
 	 * if the form has a parent node set, return true 
 	 * 
-	 * @access public
+	 * @access private
 	 * @return bool
 	 */
-	function hasParentRecord() {
-		if ($this->_parentRecord) {
+	private function hasParentRecord() {
+		if ($this->_parentRecordName) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
-	//function getParentRecord() {
-		//$record = $this->table->find($this->_parentRecord);
-
-	//}
+	
+	/**
+	 * Add a parent record (by name), remove the current one if it exists.
+	 * 
+	 * @access public
+	 * @param string $parent
+	 * @return void
+	 */
+	function setParentRecordName($parent) {
+		$this->_parentRecordName = $parent;
+		$this->_parentRecord = null;
+	}
 
 	/**
 	 * Get the parent node for this form 
 	 * Used when using nested sets
 	 * 
-	 * @access public
-	 * @return objects
+	 * @access private
+	 * @return object
 	 */
-	function getParentRecord() {
-		if ($this->hasParentRecord() ) {
-			if (is_object($this->_parentRecord)) {
-				return $this->_parentRecord;
-			} else {
-				return $this->table->find($this->_parentRecord);
+	private function &getParentRecord() {
+		if ($this->hasParentRecord()) {
+			if (!$this->_parentRecord) {
+				$this->_parentRecord = $this->table->find($this->_parentRecordName);
 			}
+			return $this->_parentRecord;
 		} else {
-			return false;
+			return null;
 		}
 	}
-
+	
+/////////////////////////////////////////////////////////
+// LEGACY CODE:                                        //
+// THESE METHODS PROB'LY DON'T BELONG IN THE DRIVER... //
+/////////////////////////////////////////////////////////
+	
 	/**
-	 * returns the current Record
+	 * setValidationOptions
+	 * Define the validation for this specific field, or these sepecific fields.
+	 * Values of the array other than type are the parameters required/supported by the type of validation.
+	 * type needs to be one supported by the validate class
 	 *
+	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
+	 * @param array $value array needs 'type' set.
 	 * @access public
-	 * @return mixed
+	 * @return void
+	 * @see validate
 	 */
-	function &returnRecord() {
-		return $this->record;
+	function setValidationOptions($fieldname, $value) {
+		$this->setFieldParam($fieldname, "validation", $value);
 	}
 
 	/**
-	 * returns the current TableName
+	 * setValidationOption
+	 * Define an individaul validation parameter for this specific field, or these sepecific fields.
+	 * could be something like setValidationOption('name', 'type', 'alphanumeric');
+	 * type needs to be one supported by the validate class
 	 *
+	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
+	 * @param string $innername
+	 * @param string $value
 	 * @access public
-	 * @return mixed
+	 * @return void
+	 * @see validate
 	 */
-	function &returnTableName() {
-		return $this->tablename;
-	}	
-	
+	function setValidationOption($fieldname, $innername, $value) {
+		$this->setFieldInnerParam($fieldname, "validation", $innername, $value);
+	}
+
+	/**
+	 * required
+	 * set a field or fields to be required as part of the validation.
+	 *
+	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
+	 * @param mixed $value
+	 * @access public
+	 * @return void
+	 */
+	function required($fieldname, $value = true) {
+		$this->setValidationOption($fieldname, 'required',  $value);
+	}
 }

@@ -37,8 +37,15 @@ function smarty_function_formz_list($params, &$smarty) {
 	$tablename = strtolower($form->tablename);
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	$sortable = $form->isSortable();
-	
+	$searchable = $form->isSearchable();
+		
 	$html = "\n\n";
+
+	// TODO Make this pretty.
+	if ($searchable && $form->getSearchForms() !== null) {
+		$html .= '<form>' . '<input id="search_text" name="q" type="text">' . 
+				'<input id="search_button" name="search_button" type="button" value="Search">' . '</form>';
+	}
 
 	// figure out class names for this form.
 	$form_classes = (isset($form->display['class'])) ? $form->display['class'] : array();

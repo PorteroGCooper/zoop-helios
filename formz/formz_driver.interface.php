@@ -110,11 +110,11 @@ interface formz_driver_interface {
 	/**
 	 * Remove a record from the database
 	 *
-	 * @param mixed $id
+	 * @param int $id
 	 * @access public
-	 * @return void
+	 * @return bool True on success
 	 */
-	function deleteRecord($id);
+	function destroyRecord($id = null);
 
 	/**
 	 * Get all db relations.
@@ -241,6 +241,8 @@ interface formz_driver_interface {
 	 * @return void
 	 */
 	function isTree();
+	
+	function setParentRecordName($parent);
 
 	/**
 	 * Order results by given column and direction.
@@ -284,6 +286,32 @@ interface formz_driver_interface {
 	 */
 	function setLimit($limit);
 
+	/**
+	 * Set the search term to check for
+	 * 
+	 * @access public
+	 * @param string $token
+	 * @return void
+	 */
+	function setSearchToken($token);
+
+	/**
+	 * Add table for searching
+	 * 
+	 * @access public
+	 * @param string $tablename
+	 * @return void
+	 */
+	function addSearchTable($tablename);
+
+	/**
+	 * Get tables for searching
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getSearchTables();
+	
 	/**
 	 * Returns true if this form uses pagination.
 	 * 

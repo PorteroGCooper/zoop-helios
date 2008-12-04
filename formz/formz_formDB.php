@@ -303,6 +303,11 @@ class Formz_FormDB implements formz_driver_interface {
 	function isTree() {
 		return false;
 	}
+	
+	function setParentRecordName() {
+		trigger_error('FormDB Formz driver is unable to implement tree data types.');
+		return false;
+	}
 
 	/**
 	 * setParam
@@ -757,6 +762,18 @@ class Formz_FormDB implements formz_driver_interface {
 
 	function getRecordIdBySlug($slug) {
 		trigger_error("FormDB driver doesn't implement sluggable");
+	}
+
+	function setSearchToken($token) {
+		trigger_error("FormDB driver doesn't implement search tokens");
+	}
+
+	function addSearchTable($tablename) {
+		trigger_error("FormDB driver doesn't implement search tables");
+	}
+
+	function getSearchTables() {		
+		trigger_error("FormDB driver doesn't implement search tables");
 	}
 
 	/**
