@@ -215,7 +215,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		if ($this->isTree()) {
 			return $this->_executeTree();
 		} else {
-			return $this->getQuery()->execute()->toArray();
+			return $this->query()->execute()->toArray();
 		}
 	}
 	
@@ -245,7 +245,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			return;
 		}
 
-		$this->getTree()->setBaseQuery($this->getQuery());
+		$this->tree()->setBaseQuery($this->query());
 		$nodes = array();		
 		if ($this->hasParentRecord()) {
 			if ($parent = $this->getParentRecord()) {
@@ -259,7 +259,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		} else {
 			$nodes = $this->getRootNodes();
 		}
-		$this->getTree()->resetBaseQuery();
+		$this->tree()->resetBaseQuery();
 		
 		return $nodes;
 	}
@@ -267,14 +267,12 @@ class formz_doctrineDB implements formz_driver_interface {
 	protected function _applySearchToQuery() {
 		if (!isset($this->_searchToken) || empty($this->_searchToken)) return;
 		
-		$query = $this->getQuery();
-
 		$tablename = $this->table->getTableName();
 		foreach($this->getSearchTables() as $tablename) {
 			// $query = $this->getQuery()->copy();
 			// $query->from($tablename . ' ' . lcfirst($tablename[0]));
 			$query->from($tablename . ' c');
-			$result = Doctrine::getTable($this->tablename)->search('*' . $this->_searchToken . '*', $query);
+			$result = Doctrine::getTable($this->tablename)->search('*' . $this->_searchToken . '*', $this->query());
 			
 			$results = array();
 			$results += $result->fetchArray();
@@ -282,8 +280,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	protected function _applyLimitToQuery() {
-		$query = $this->getQuery();
-		$query->limit($this->_pageLimit);
+		$this->query()->limit($this->_pageLimit);
 	}
 
 	/**
@@ -300,7 +297,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 	}
 	
-	protected function &getTree() {
+	protected function &tree() {
 		if (!$this->isTree()) {
 			trigger_error('Unable to return tree on non-tree database.');
 			return null;
@@ -382,7 +379,7 @@ class formz_doctrineDB implements formz_driver_interface {
 
 
 	function &getDoctrineQuery() {
-		return $this->getQuery();
+		return $this->query();
 	}
 
 
@@ -435,7 +432,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				$this->record->getNode()->insertAsLastChildOf($parent);
 			} else {
 				$this->record->root_id = 1;
-				$this->getTree()->createRoot($this->record);
+				$this->tree()->createRoot($this->record);
 			}
 		} else {
 			$this->record->save();
@@ -758,7 +755,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 */
 	function sort($fieldname, $direction = "ASC") {
-		$this->getQuery()->orderBy("$fieldname $direction");
+		$this->query()->orderBy("$fieldname $direction");
 	}
 
 	/**
@@ -851,7 +848,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access protected
 	 * @return void
 	 */
-	protected function &getQuery() {
+	protected function &query() {
 		if (!$this->_query) {
 			$this->_query = $this->table->createQuery();
 		}
@@ -863,9 +860,9 @@ class formz_doctrineDB implements formz_driver_interface {
 		if ($fixed) {
 			foreach ($fixed as $key => $value) {
 				if(is_null($value)) {
-					$this->getQuery()->addWhere($key . ' IS NULL');
+					$this->query()->addWhere($key . ' IS NULL');
 				} else {
-					$this->getQuery()->addWhere("$key = ?", $value);
+					$this->query()->addWhere("$key = ?", $value);
 				}
 			}
 		}
@@ -902,7 +899,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			} else {
 				$resultsPerPage = $this->_pageLimit;
 			}
-			$this->_pager = new Doctrine_Pager($this->getQuery(), $currentPage, $resultsPerPage);
+			$this->_pager = new Doctrine_Pager($this->query(), $currentPage, $resultsPerPage);
 		}
 		return $this->_pager;
 	}
