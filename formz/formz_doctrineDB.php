@@ -231,7 +231,11 @@ class formz_doctrineDB implements formz_driver_interface {
 		// paginate this query
 		if ($this->isPaginated()) {
 			$this->_paginateQuery();
+		} else if ($this->_pageLimit) {
+			// if the form isn't paginated, but has a limit set, apply that limit.
+			$this->_applyLimitToQuery();
 		}
+		
 		// everything else will automatically do a findAll() style query
 	}
 	
@@ -275,9 +279,12 @@ class formz_doctrineDB implements formz_driver_interface {
 			$results = array();
 			$results += $result->fetchArray();
 		}
-
 	}
-
+	
+	protected function _applyLimitToQuery() {
+		$query = $this->getQuery();
+		$query->limit($this->_pageLimit);
+	}
 
 	/**
 	 * When Working with Trees, get the root nodes in the tree 
@@ -795,7 +802,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 */
 	function setLimit($limit) {
-		$this->_pageLimit=$limit;
+		$this->_pageLimit = $limit;
 	}
 
 	/**

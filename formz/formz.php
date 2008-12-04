@@ -1147,13 +1147,17 @@ class Formz {
 		$this->_searchForms[$tablename] = $tablename;
 		$this->_driver->addSearchTable($tablename);
 	}
-	
+
 	function getSearchForms() {
 		return $this->_searchForms;
 	}
-	
+
 	function setSearchToken($search_token) {
 		$this->_driver->setSearchToken($search_token);
+	}
+
+	function setLimit($limit) {
+		$this->_driver->setLimit($limit);
 	}
 
 	/**
