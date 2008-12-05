@@ -12,6 +12,21 @@ directories:
 strip_html: 0
 caching: 0
 
+template_resources:
+    drivers:
+    driver_config:
+        # database format: resource.tablename.key.tablecolumn
+        db:
+            templates:
+                name:      name
+                source:    template
+                timestamp: updated_at
+        doctrine:
+            Templates:
+                name:      name
+                source:    template
+                # Doctrine will figure out the timestamp on its own.
+
 # optionally, do a css reset and set base styles (thanks yui!)
 use_css_reset: 0
 use_css_base: 0

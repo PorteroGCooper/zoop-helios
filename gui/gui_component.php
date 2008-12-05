@@ -14,6 +14,16 @@
 // FOR A PARTICULAR PURPOSE.
 /**
  * component_gui
+ * 
+ * 
+ * @group templates
+ * @section Template Resources
+ * 
+ * When using a database as a template resource, either build your database,
+ * using the default values in gui/config.yaml, or override them in your app's
+ * config.yaml file.
+ * 
+ * @endgroup
  *
  * @uses component
  * @package
@@ -22,18 +32,22 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_gui extends component
-{
+class component_gui extends component {
 	/**
 	 * component_gui
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function component_gui()
-	{
+	function component_gui() {
 		$this->requireComponent('session');
 		$this->requireComponent('validate');
+		if (in_array('db', (array)Config::get('zoop.gui.template_resources.drivers'))) {
+			$this->requireComponent('db');
+		}
+		if (in_array('doctrine', (array)Config::get('zoop.gui.template_resources.drivers'))) {
+			$this->requireComponent('doctrine');
+		}
 	}
 
 	/**
@@ -48,10 +62,8 @@ class component_gui extends component
 		$GLOBALS['gui'] = new gui();
 	}
 	
-	function getIncludes()
-	{
+	function getIncludes() {
 		return array("gui" => $this->getBasePath() . "/gui.php");
 						
 	}
 }
-?>

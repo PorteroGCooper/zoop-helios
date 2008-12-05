@@ -120,6 +120,25 @@ class gui extends Smarty {
 		//$this->plugins_dir = array(APP_DIR . "/guiplugins", dirname(__file__) . "/plugins");
 		$this->plugins_dir = $dirs['plugins'];
 
+		if (in_array('db', (array)Config::get('zoop.gui.template_resources.drivers'))) {
+			include_once($this->plugins_dir[1] . '/resource.db.php');
+			$this->register_resource('db', array(
+				'smarty_resource_db_get_template',
+				'smarty_resource_db_get_timestamp',
+				'smarty_resource_db_get_secure',
+				'smarty_resource_db_get_trusted')
+			);
+		}
+		if (in_array('doctrine', (array)Config::get('zoop.gui.template_resources.drivers'))) {
+			include_once($this->plugins_dir[1] . '/resource.doctrine.php');
+			$this->register_resource('doctrine', array(
+				'smarty_resource_doctrine_get_template',
+				'smarty_resource_doctrine_get_timestamp',
+				'smarty_resource_doctrine_get_secure',
+				'smarty_resource_doctrine_get_trusted')
+			);
+		}
+
 		if($look = Config::get('app.gui.look')) {
 			$this->config_dir = $this->template_dir . "/" . $look . "/configs";
 			$this->debug_tpl = "file:" . $look . "/debug.tpl";
