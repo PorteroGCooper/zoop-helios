@@ -45,6 +45,7 @@ class Formz {
 	var $zone;
 	var $callback;
 	protected $parentTablename;
+	protected $parentId;
 	
 	/**
 	 * Private fields variable. Used by formz::getFields()
@@ -349,6 +350,42 @@ class Formz {
 		}
 		return $this->_driver->destroyRecord($id);
 	}
+
+	/**
+	 * Create and attach a relation to the current record
+	 *
+	 * @param array $values values representing the new relation
+	 * @access public
+	 * @return void
+	 */
+	function createRelation($values, $id = null) {
+		if ($values === false) {
+			$values = getPost();
+		}
+
+		$id_field = $this->getIdField();
+
+		if ($id === null) {
+			if (isset($this->parentId)) {
+				$id = $this->parentId;
+			} else if (isset($values[$id_field])) {
+				$id = $values[$id_field];
+				
+				// strip out $values[$id_field] = 'new' to keep it from saving to db...
+				if ($id == 'new') {
+					unset($values[$id_field]);
+				}
+			}
+			
+			// fail if we still don't have an id...
+			if ($id === null) {
+				trigger_error("Formz element does not have a current record to save.");
+				return null;
+			}
+		}
+		
+		return $this->_driver->createRelation($values, $id);
+	}
 	
 	/**
 	 * Set form field sort order.
@@ -454,7 +491,7 @@ class Formz {
 		$this->fixedValues += $array;
 		$this->_driver->setFixedValues($this->getFixedValues());
 	}
-	
+
 	/**
 	 * Get an array of all relevant field information.
 	 */
@@ -649,6 +686,18 @@ class Formz {
 	 * @param bool $getValues Hydrate the array with values? (default: false)
 	 * @return array An array of information about the requested relation.
 	 */
+
+	/**
+	 * Get foreign fields that should be immutable for this form
+	 *
+	 * @param string $foreign_class name of the foreign relation
+	 * @access public
+	 * @return void
+	 */
+	function getImmutableForeignFields($foreign_class) {
+		return $this->_driver->getImmutableForeignFields($foreign_class);
+	}
+
 	function getTableRelation($name, $getValues = false) {
 		return $this->_driver->getTableRelation($name, $getValues);
 	}
@@ -1068,6 +1117,25 @@ class Formz {
 	 */
 	protected function setParentTablename($parentTablename) {
 		$this->parentTablename = $parentTablename;
+	}
+
+	/**
+	 * Get the id for this form's parent
+	 *
+	 * @return $string parent id
+	 */
+	function getParentId() {
+		return $this->parentId;
+	}
+
+	/**
+	 * Set the parent id for this form.
+	 *
+	 * @param string $parentId
+	 * @return void
+	 */
+	function setParentId($parentId) {
+		$this->parentId = $parentId;
 	}
 
 	/**

@@ -553,6 +553,52 @@ class formz_doctrineDB implements formz_driver_interface {
 			return $this->record->delete();
 		}
 	}
+
+	/**
+	 * Create and attach a relation to the current record
+	 *
+	 * @param array $values values representing the new relation
+	 * @access public
+	 * @return void
+	 */
+	function createRelation($values, $id = null) {
+		// get the record we want to save...
+		if ($id !== null && !isset($this->record)) {
+			if (!$this->isSluggable() && !$this->getRecord($id)) {
+				trigger_error("Unable to initialize record: " . $id);
+				return false;
+			} else if ($this->isSluggable() && !$this->getRecordBySlug($id)) {
+				trigger_error("Unable to initialize record: " . $id);
+				return false;
+			}
+		}
+
+		if (isset($values['child_table'])) {
+			$child_table = $values['child_table'];
+			unset($values['child_table']);
+		}
+
+		if (isset($values['parent_table'])) {
+			$parent_table = $values['parent_table'];
+			unset($values['parent_table']);
+		}
+		
+		unset($values['id']);
+		unset($values['parent_id']);
+		
+		$child_record = new $child_table();
+		foreach ($values as $key => $val) {
+			if (!is_array($val)) {
+				$child_record->$key = $val;
+			}
+		}
+
+		if ($child_record->save()) {
+			$this->record->link($child_table, $child_record['id']);
+		} else {
+			trigger_error('Unable to save child record.');
+		}
+	}
 	
 	/**
 	 * Return the record ID field name
@@ -565,7 +611,28 @@ class formz_doctrineDB implements formz_driver_interface {
 		
 		return $id;
 	}
-	
+
+	/**
+	 * Get foreign fields that should be immutable for this form
+	 *
+	 * @param string $foreign_class name of the foreign relation
+	 * @access public
+	 * @return void
+	 */
+	function getImmutableForeignFields($foreign_class) {
+		$relations = Doctrine::getTable($this->tablename)->getRelations();
+
+		$retVal = array();
+		
+		foreach($relations as $name => $relation) {
+			if ($name == $foreign_class) {
+				$retVal[] = $relation->getLocalFieldName();
+			}
+		}
+
+		return $retVal;
+	}
+		
 	/**
 	 * Get all rows from the named related table
 	 *

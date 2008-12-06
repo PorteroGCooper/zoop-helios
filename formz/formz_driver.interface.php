@@ -117,6 +117,24 @@ interface formz_driver_interface {
 	function destroyRecord($id = null);
 
 	/**
+	 * Create and attach a relation to the current record
+	 *
+	 * @param array $values values representing the new relation
+	 * @access public
+	 * @return void
+	 */
+	function createRelation($values, $id = null);
+
+	/**
+	 * Get foreign fields that should be immutable for this form
+	 *
+	 * @param string $foreign_class name of the foreign relation
+	 * @access public
+	 * @return void
+	 */
+	function getImmutableForeignFields($foreign_class);
+	
+	/**
 	 * Get all db relations.
 	 *
 	 * @access public
@@ -311,7 +329,7 @@ interface formz_driver_interface {
 	 * @return void
 	 */
 	function getSearchTables();
-	
+
 	/**
 	 * Returns true if this form uses pagination.
 	 * 

@@ -46,7 +46,7 @@ function smarty_resource_doctrine_get_template($tpl_name, &$tpl_source, &$smarty
 }
 
 function smarty_resource_doctrine_get_timestamp($tpl_name, &$tpl_timestamp, &$smarty_obj) {
-	list($tpl_name, $table, $name, $source) = _smarty_resource_doctrine_get_config($tpl_name);
+	list($tpl_name, $table, $name) = _smarty_resource_doctrine_get_config($tpl_name);
 
 	// Get timestamp column from doctrine
 	$option = Doctrine::getTable($table)

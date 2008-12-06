@@ -811,6 +811,17 @@ class Formz_FormDB implements formz_driver_interface {
 	}
 
 	/**
+	 * Create and attach a relation to the current record
+	 *
+	 * @param array $values values representing the new relation
+	 * @access public
+	 * @return void
+	 */
+	function createRelation($values, $id = null) {
+		trigger_error("FormDB does not support creating relations");
+	}
+
+	/**
 	 * sort
 	 * tells the getRecords function a sorting to get the records in from the database.
 	 *
@@ -920,6 +931,10 @@ class Formz_FormDB implements formz_driver_interface {
 	
 	function getFieldnameFromModelName($modelName) {
 		trigger_error("This method hasn't been implemented yet.");
+	}
+	
+	function getImmutableForeignFields($foreign_class) {
+		trigger_error("FormDB does not support immutable foreign fields");
 	}
 
 	function &getDoctrineRecord() {

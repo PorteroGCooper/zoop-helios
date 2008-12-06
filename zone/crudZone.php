@@ -344,7 +344,153 @@ class CrudZone extends zone {
 			BaseRedirect($this->getZoneBasePath(), HEADER_REDIRECT);
 		}
 	}
-	
+
+	/**
+	 * Page handler for CRUD add relation action.
+	 *
+	 * Displays an 'edit' form prepopulated with the requested record.
+	 *
+	 * @see postAddRelation()
+	 * @access public
+	 * @return void
+	 **/
+	function pageAddRelation() {
+		if (!$this->checkAuth('update')) return;
+		global $gui;
+
+		$params = $this->getPageParams();		
+		$parentTable = $this->form->tablename;
+		$parentTableIdField = $this->form->getIdField();
+
+		$record_id = $this->getZoneParam('record_id');
+		if ($this->form->isSluggable()) {
+			$record_id = $this->form->getRecordBySlug($record_id);
+		} else {
+			$record_id = $this->form->getRecord($record_id);
+		}
+
+		if (isset($params[0]) && !empty($params[0])) {
+			$this->form = new Formz($params[0]);
+		} else {
+			$this->responsePage(404);
+			return;
+		}
+
+		$immutableFields = $this->form->getImmutableForeignFields($parentTable);
+
+		if ($record_id) {
+			$this->form->setParentId($record_id);
+		} else {
+			die;
+			$this->responsePage(404);
+			return;
+		}
+
+		$this->form->type = 'record';
+		$this->form->setEditable(true);
+
+		$this->form->setFieldFormshow($immutableFields, false);
+
+		$this->form->addAction('save');
+		if ($record_id == 'new') {
+			$this->form->addAction('saveandnew');
+			$this->form->addAction('cancel', array('link' => ''));
+		} else {
+			$this->form->addAction('delete', array('link' => '%id%/destroy'));
+			$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
+			$this->form->addAction('cancel', array('link' => $link));
+		}
+
+		$this->initUpdateForm();
+		$this->form->guiAssign();
+		$gui->generate('forms/formz.tpl');
+	}
+
+	/**
+	 * POST handler for CRUD add relation action.
+	 *
+	 * @see pageAddRelation()
+	 * @access public
+	 * @return void
+	 **/
+	function postAddRelation() {
+		if (!$this->checkAuth('update')) return;
+		if (getPostText('update') || getPostText('update_and_create')) {
+			$params = $this->getPageParams();
+
+			if (!isset($params[0]) || empty($params[0])) {
+				$this->responsePage(404);
+				return;
+			}
+
+			$parentTable = $this->form->tablename;
+			$parentTableIdField = $this->form->getIdField();
+			
+			$record_id = $this->getZoneParam('record_id');
+			if ($this->form->isSluggable()) {
+				$record_id = $this->form->getRecordBySlug($record_id);
+			} else {
+				$record_id = $this->form->getRecord($record_id);
+			}
+
+			if ($record_id === null) {
+				$this->responsePage(404);
+				return;
+			}
+
+			$values = array();
+
+			$values['parent_table'] = $parentTable;
+			$values['child_table'] = $params[0];
+			$values['parent_id'] = $record_id;
+
+			$child_form = new Formz($params[0]);
+
+			$fields = $child_form->getFields();
+			unset($fields['id']);
+
+			foreach ($fields as $name => $field) {
+				if ((!isset($field['editable']) || $field['editable'])
+					&& (!isset($field['formshow']) || $field['formshow'])) {
+					switch($field['type']) {
+						case 'boolean':
+						case 'bool':
+							$values[$name] = getPostCheckbox($name);
+							break;
+						case 'relation':
+							switch ($field['rel_type']) {
+								case Formz::MANY:
+									$values[$name] = getPost($name);
+									if (!is_array($values[$name])) $values[$name] = array();
+									break;
+								case Formz::ONE:
+									$posted_int = getPostInt($name);
+									if (is_integer($posted_int)) {
+										$values[$name] = $posted_int;
+									}
+									break;
+							}
+							break;
+						default:
+							$values[$name] = getPost($name);
+							break;
+					}
+				}
+			}
+			$id = $this->form->createRelation($values, $record_id);
+		} else if (getPostText('destroy')) {
+			// redirect to the destroy page if they're trying to delete this item...
+			$this->zoneRedirect('destroy');
+			return;
+		}
+
+		if (getPostText('update_and_create')) {
+			BaseRedirect($this->getZonePath(0) . '/create', HEADER_REDIRECT);
+		} else {
+			BaseRedirect($this->getZonePath(0), HEADER_REDIRECT);
+		}
+	}
+
 	/**
 	 * Page handler for CRUD Destroy action.
 	 *
