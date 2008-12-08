@@ -103,15 +103,13 @@ class CrudZone extends zone {
 	 * The second function of the index page is to provide a list view if a record id isn't provided.
 	 * This is the equivalent of CRUD/(all)/read.
 	 */
-	function pageIndex() {
-		global $gui;
-
+	function initIndex() {
 		$record_id = $this->getZoneParam('record_id');
-		if ($record_id === '') {
+		if ($record_id === '' || 'index' == strtolower($record_id) || 'index' == strtolower(substr($record_id, 0, strrpos( $record_id, '.')) ) ) {
 			if (!$this->checkAuth('list')) return;
 			
 			// show all the records.
-			$this->_listRecords();
+			$this->_getRecords();
 		} else {
 			if (!$this->checkAuth('read')) return;
 			
@@ -128,6 +126,10 @@ class CrudZone extends zone {
 			
 			$this->_detailRecord($record_id);
 		}
+	}
+
+	function htmlIndex() {
+		$this->_listRecords();
 	}
 
 	/**
@@ -181,6 +183,11 @@ class CrudZone extends zone {
 		$this->_loadAndGenerateForm();
 	}
 
+
+	function _getRecords() {
+		$this->setData( $this->form->getRecords() );
+	}
+
 	/**
 	 * Creates a form object for a list and sets some sane defaults 
 	 * 
@@ -188,7 +195,6 @@ class CrudZone extends zone {
 	 * @return void
 	 */
 	function _listRecords() {
-		$this->form->getRecords();
 		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
 		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
 

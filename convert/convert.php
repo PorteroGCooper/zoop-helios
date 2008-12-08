@@ -25,6 +25,8 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 
+include_once(dirname(__file__) . "/drivers/abstract.php");
+
 class convert {
 
 	/**
@@ -75,7 +77,15 @@ class convert {
 		return self::$instance;
 	}
 
-	public function __call($method, $args) {
+	/**
+	 * magic method, wraps _to and _from calls and passes along driver. 
+	 * 
+	 * @param mixed $method 
+	 * @param mixed $args 
+	 * @access public
+	 * @return void
+	 */
+	public function __call($method, $args ) {
 		if (substr($method, 0, 2) == 'to') {
 			$param_name = strtolower(substr($method, 2));
 			array_unshift($args, $param_name);
@@ -146,13 +156,8 @@ class convert {
 	 * @param $args
 	 * @return unknown_type
 	 */
-	private function _to ($name, $args ) {
-		$driver = $this->loadDriver($name);
-		if (!isset($args['data'])) {
-			$data = array_shift($args);
-		} else {
-			$data = $args['data'];
-		}
+	private function _to ($name, $data, $args = array()) {
+		$driver = $this->_loadDriver($name);
 		return $driver->to($data, $args);
 	}
 
@@ -162,13 +167,8 @@ class convert {
 	 * @param $args
 	 * @return unknown_type
 	 */
-	private function _from ($name, $args ) {
+	private function _from ($name, $data, $args = array() ) {
 		$driver = $this->loadDriver($name);
-		if (!isset($args['data'])) {
-			$data = array_shift($args);
-		} else {
-			$data = $args['data'];
-		}
 		return $driver->from($data, $args);
 	}
 }

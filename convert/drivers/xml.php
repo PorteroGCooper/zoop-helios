@@ -1,4 +1,6 @@
 <?php
+require_once 'XML/Serializer.php'; 
+
 /**
  * @category zoop
  * @package convert
@@ -22,7 +24,6 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-
 class convert_driver_xml extends convert_driver_abstract {
 
 	/**
@@ -32,6 +33,32 @@ class convert_driver_xml extends convert_driver_abstract {
 	 */
 	public function to($data, $options = array()) {
 
+		$serializer_options = array (
+		   'addDecl' => TRUE,
+		   'encoding' => 'ISO-8859-1',
+		   'indent' => '    ',
+		   'indentAttributes' => '_auto',
+		   'rootName'  => 'root',
+		   'replaceEntities' => XML_UTIL_CDATA_SECTION,
+		   'typeHints' => TRUE,
+		); 
+
+		$serializer_options = $serializer_options + $options;
+
+		$serializer = new XML_Serializer();
+
+		// perform serialization
+		$serializer->setOption("indent", "     ");
+		$serializer->setOption("rootName", $root);
+		$serializer->setOption("replaceEntities", XML_UTIL_CDATA_SECTION);
+		$result = $serializer->serialize($data);
+
+		// check result code and display XML if success
+		if($result === true) {
+			$XML = $serializer->getSerializedData();
+		}
+
+		return $XML;
 	}
 
 	/**
@@ -42,7 +69,7 @@ class convert_driver_xml extends convert_driver_abstract {
 	public function from($data, $options = array()) {
 
 
-		if (Config::get('zoop.app.convert.xml.return_simpleXML')) {
+		if (Config::get('zoop.convert.xml.return_simpleXML')) {
 			return $simpleXMLObj;
 		} else {
 			return convert_driver_xml::SimpleXmlElementObjectIntoArray($simpleXMLObj);
@@ -66,13 +93,13 @@ class convert_driver_xml extends convert_driver_abstract {
 	 */
 	public static function SimpleXmlElementObjectIntoArray($simpleXmlElementObject, &$recursionDepth=0) {
 		// Keep an eye on how deeply we are involved in recursion.
-		if ($recursionDepth > Config::get('zoop.app.convert.xml.max_recursion_depth')) {
+		if ($recursionDepth > Config::get('zoop.convert.xml.max_recursion_depth')) {
 			// Fatal error. Exit now.
 			return(null);
 		}
 
 		if ($recursionDepth == 0) {
-			if (get_class($simpleXmlElementObject) != Config::get('zoop.app.convert.xml.simple_xml.php_class')) {
+			if (get_class($simpleXmlElementObject) != Config::get('zoop.convert.xml.simple_xml.php_class')) {
 				// If the external caller doesn't call this function initially
 				// with a SimpleXMLElement object, return now.
 				return(null);
@@ -83,7 +110,7 @@ class convert_driver_xml extends convert_driver_abstract {
 			}
 		} // End of if ($recursionDepth == 0) {
 
-		if (get_class($simpleXmlElementObject) == Config::get('zoop.app.convert.xml.simple_xml.php_class')) {
+		if (get_class($simpleXmlElementObject) == Config::get('zoop.convert.xml.simple_xml.php_class')) {
 			// Get a copy of the simpleXmlElementObject
 			$copyOfsimpleXmlElementObject = $simpleXmlElementObject;
 			// Get the object variables in the SimpleXmlElement object for us to iterate.
@@ -108,8 +135,8 @@ class convert_driver_xml extends convert_driver_abstract {
 				// Uncomment the following block of code if XML attributes are
 				// NOT required to be returned as part of the result array.
 
-				if (!Config::get('zoop.app.convert.xml.simple_xml.maintain_attributes')) {
-					 if((is_string($key)) && ($key == Config::get('zoop.app.convert.xml.simple_xml.object_property_for_attributes'))) {
+				if (!Config::get('zoop.convert.xml.simple_xml.maintain_attributes')) {
+					 if((is_string($key)) && ($key == Config::get('zoop.convert.xml.simple_xml.object_property_for_attributes'))) {
 					 continue;
 					 }
 				}

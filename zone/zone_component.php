@@ -29,11 +29,12 @@ class component_zone extends component
 	function component_zone()
 	{
 		$this->requireComponent('app');
-		if(!defined('zone_saveinsession')  || zone_saveinsession) {
+		if(Config::get('zoop.zone.save_in_session')) {
 			$this->requireComponent('session');
 		}
 //		if (Config::get('zoop.zone.crud_driver') == 'doctrine')
 			$this->requireComponent('doctrine');
+			$this->requireComponent('convert');
 			$this->requireComponent('formz');
 	}
 		

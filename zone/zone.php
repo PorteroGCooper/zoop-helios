@@ -666,14 +666,13 @@ class zone {
 		$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
 		$this->logPageRequest($curPath);
 
-		$initFunc = "init" . array_shift(explode($curPath, "."));
+		$initFunc = "init" . $curPath;
 		if (method_exists($this, $initFunc)) {
 			$this->$initFunc();
 		}
 
 		// REMOVE THE EXTENSION FROM THE PAGE PARAMS
 		$last = array_pop($this->pageVars);
-		echo_r($this->getRequestedExtension());
 		$ext = $this->getExtension();
 
 		if (substr($last, -1 - strlen($ext) ) == "." . $ext) {
@@ -725,7 +724,7 @@ class zone {
 	 */
 	function setAllowableOutput($array = null) {
 		if ($array === null) {
-			$this->allowableOutput = Config::Get('zoop.app.zone.allowable_output');
+			$this->allowableOutput = Config::Get('zoop.zone.allowable_output');
 		} else {
 			$this->allowableOutput = $array;
 		}
@@ -1943,7 +1942,8 @@ class zone {
 	 * @return void
 	 */
 	function outputXML() {
-		header("application/text-xml");
+		header('Content-type: text/xml'); 
+		//header("application/text-xml");
 		$data = convert::gi()->toXML($this->getData());
 		echo $data;
 	}
