@@ -1494,48 +1494,33 @@ class Formz {
 	function __call($method, $args) {
 
 		if (substr($method, 0, 15) == 'setFieldDisplay') {
-			$param_name = substr($method, 15);
-			
-			//lowercasify the first letter...
-			$param_name[0] = strtolower($param_name[0]);
+			$param_name = lcfirst(substr($method, 15));
 			
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setFieldDisplay'), $args);
 		}
 		else if (substr($method, 0, 8) == 'setField') {
-			$param_name = substr($method, 8);
-			
-			//lowercasify the first letter...
-			$param_name[0] = strtolower($param_name[0]);
+			$param_name = lcfirst(substr($method, 8));
 			
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setFieldParam'), $args);
 		}
 		else if (substr($method, 0, 10) == 'setDisplay') {
-			$param_name = substr($method, 10);
-			
-			//lowercasify the first letter...
-			$param_name[0] = strtolower($param_name[0]);
+			$param_name = lcfirst(substr($method, 10));
 			
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setDisplay'), $args);
 		}
 		else if (substr($method, 0, 3) == 'set') {
 			// @TODO we need to get rid of this setter. no me gusta.
-			$param_name = substr($method, 3);
-			
-			// lowercasify the first letter...
-			$param_name[0] = strtolower($param_name[0]);
+			$param_name = lcfirst(substr($method, 3));
 			
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setParam'), $args);
 		}
 		else if (substr($method, 0, 3) == 'get') {
-			$param_name = substr($method, 3);
+			$param_name = lcfirst(substr($method, 3));
 			
-			//lowercasify the first letter...
-			$param_name[0] = strtolower($param_name[0]);
-
 			if (isset($this->$param_name)) return $this->$param_name;
 			else trigger_error($method . " method undefined on Formz object.");
 		}

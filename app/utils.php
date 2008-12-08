@@ -1866,7 +1866,6 @@ function nv_title_skip_dotted($matches) {
 }
 
 
-
 /**
  *  Addin lcfirst in builds where it is not yet present
  */

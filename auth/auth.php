@@ -92,8 +92,12 @@ class auth {
 		$backend = $this->getConfig('backend');
 		$name = "auth_driver_" . $backend;
 		$zoop->addInclude($name, ZOOP_DIR . "/auth/drivers/$backend.php");
-		$this->driver = new $name($this);
-		return $this->driver;
+		if (class_exists($name)) {
+			$this->driver = new $name($this);
+			return $this->driver;
+		} else {
+			trigger_error("Invalid Driver: $name");
+		}
 	}
 
 	/**
