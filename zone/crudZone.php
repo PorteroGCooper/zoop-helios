@@ -110,6 +110,7 @@ class CrudZone extends zone {
 			
 			// show all the records.
 			$this->_getRecords();
+			$this->_listRecords();
 		} else {
 			if (!$this->checkAuth('read')) return;
 			
@@ -129,7 +130,7 @@ class CrudZone extends zone {
 	}
 
 	function htmlIndex() {
-		$this->_listRecords();
+		$this->_loadAndGenerateForm();
 	}
 
 	/**
@@ -180,9 +181,7 @@ class CrudZone extends zone {
 				return;
 			}
 		}
-		$this->_loadAndGenerateForm();
 	}
-
 
 	function _getRecords() {
 		$this->setData( $this->form->getRecords() );
@@ -198,27 +197,8 @@ class CrudZone extends zone {
 		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
 		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
 
-/*
-		// add a fake column called "edit", give it an edit link...
-		$this->form->setFieldFromArray('edit', array(
-			// the %id% will automatically be replaced by the contents of the record id field
-			'listlink' => '%id%/update',
-			'sortable' => 0,
-			'display' => array('label' => '', 'override' => 'edit', 'title' => 'Edit this record.')
-		));
-		// add a fake column called "delete", give it a destroy link...
-		$this->form->setFieldFromArray('delete', array(
-			// the %id% will automatically be replaced by the contents of the record id field
-			'listlink' => '%id%/destroy',
-			'sortable' => 0,
-			'display' => array('label' => '', 'override' => 'delete', 'title' => 'Delete this record.')
-		));
-*/
-
 		$this->form->addRowAction('edit');
 		$this->form->addRowAction('delete');
-		
-		$this->_loadAndGenerateForm();
 	}
 	
 	/**
