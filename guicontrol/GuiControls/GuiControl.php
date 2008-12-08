@@ -169,7 +169,7 @@ class GuiControl {
 			if (substr($type, -7) == 'Control') {
 				$type = substr($type, 0, -7);
 			}
-			$this->type = $type;
+			$this->type = lcfirst($type);
 		}
 		return $this->type;
 	}

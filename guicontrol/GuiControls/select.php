@@ -49,7 +49,6 @@ class SelectControl extends GuiMultiValue {
 		}
 
 		$attrs = array();
-
 		foreach ($this->params as $parameter => $value) {
 			// Here we setup specific parameters that will go into the html
 			switch ($parameter) {
@@ -61,10 +60,14 @@ class SelectControl extends GuiMultiValue {
 					break;
 				case 'readonly':
 				case 'disabled':
-					if ($value) $attrs[] = "disabled=\"true\"";
+					if (!empty($value)) $attrs[] = "disabled=\"disabled\"";
 					break;
 				case 'multiple':
 					if ($value) $attrs[] = "multiple=\"true\"";
+					break;
+				case 'null_label':
+					if (empty($value)) $value = str_replace('%field%', $this->getLabelName(), Config::get('zoop.gui.select_null_value'));
+					$this->params['index'] = array('' => $value) + $this->params['index'];
 					break;
 			}
 		}
