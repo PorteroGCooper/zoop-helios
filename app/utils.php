@@ -662,27 +662,22 @@ function __VerifyHTMLTree($html) {
  * @return void
  */
 function __VerifyHTMLTree_ex(&$htmltree) {
-	global $allowed_tags, $allowed_attributes;
+	$allowed_tags = Config::Get('zoop.app.security.allowed_tags');
+	$allowed_attributes = Config::Get('zoop.app.security.allowed_attributes');
 
-	foreach($htmltree->children as $key => $childtree)
-	{
-		if(in_array($htmltree->children[$key]->name, $allowed_tags))
+	foreach($htmltree->children as $key => $childtree) {
+		if(in_array($htmltree->children[$key]->name, $allowed_tags)) {
 			__VerifyHTMLTree_ex($htmltree->children[$key]);
-		else
-		{
+		} else {
 			unset($htmltree->children[$key]);
 		}
 	}
-	foreach($htmltree->attributes as $key => $value)
-	{
-		if(!in_array($key, $allowed_attributes))
-		{
+
+	foreach($htmltree->attributes as $key => $value) {
+		if(!in_array($key, $allowed_attributes)) {
 			unset($htmltree->attributes[$key]);
-		}
-		else
-		{
-			if(stristr("javascript", $value))
-			{
+		} else {
+			if(stristr("javascript", $value)) {
 				unset($htmltree->attributes[$key]);
 			}
 		}

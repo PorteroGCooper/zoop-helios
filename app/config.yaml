@@ -22,3 +22,5 @@ security:
     hide_post: 1
     hide_get: 1
     show_warnings: 1
+    allowed_tags: [ div, p, root, table, tr, td, span, ul, ol, li, a, br, nobr, img ]
+    allowed_attributes: [ class, align, rel, valign, href, src, target, style ]

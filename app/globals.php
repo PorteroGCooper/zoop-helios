@@ -175,20 +175,6 @@
 
 	define("RELATIVE_PATH", $xtrapath);
 
-	/**
-	 *
-	 * Guess the request type( and it better be a good guess).
-	 *
-	 */
-	if (isset($_REQUEST['jsrsContext']) && substr($_REQUEST['jsrsContext'], 0, 7) == "phpjsrs") {
-		define("REQUEST_TYPE", "JSRS");
-	} elseif (xmlrpc_server::isRequest()) {
-		define("REQUEST_TYPE", "XMLRPC");
-		$GLOBALS["zoopXMLRPCServer"] = new xmlrpc_server();
-		$GLOBALS["zoopXMLRPCServer"]->startServer();
-	} else {
-		define("REQUEST_TYPE", "HTML");
-	}
 
 	// For security reasons, hide direct access to the $_POST variable.
 	$GLOBALS['_POST_UNFILTERED'] = $_POST;
@@ -201,40 +187,6 @@
 	if(Config::get('zoop.app.security.hide_get', true)) {
 		unset($_GET);
 	}
-
-	/**
-	 *
-	 * Defining the Allowed Tags for the post filtering functions.
-	 *
-	 */
-
-	$GLOBALS['allowed_tags'] = array(
-		"div",
-		"p",
-		"root",
-		"table",
-		"tr",
-		"td",
-		"span",
-		"ul",
-		"ol",
-		"li",
-		"a",
-		"br",
-		"nobr",
-		"",
-		"img",
-	);
-
-	$GLOBALS['allowed_attributes'] = array(
-		"class",
-		"align",
-		"valign",
-		"href",
-		"src",
-		"target",
-		"style"
-	);
 
 	/******** URL Rewrite example ****************\
 	*

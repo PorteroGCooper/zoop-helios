@@ -21,9 +21,9 @@ $GLOBALS['gZoneBasePath'] = null;
 /**
  * zone
  * Extend this class any time you need
- * a new section on your site.	 File names
- * should be "zone_{zonename}.php" and
- * should be in the same directory as index.php
+ * a new section on your site.	 
+ * Files should be "{zonename}.php" and
+ * placed in %APP_DIR%/zones/
  *
  * This class is instantiated and the
  * handlerequest function called from the
@@ -74,7 +74,7 @@ class zone {
 	 * @var string
 	 * @access public
 	 */
-	var $zonename = "";	
+	var $zonename = "";
 
 	/**
 	 * zonetype
@@ -83,7 +83,7 @@ class zone {
 	 * @var string
 	 * @access public
 	 */
-	var $zonetype = "";	
+	var $zonetype = "";
 
 	/**
 	 * parent
@@ -92,7 +92,7 @@ class zone {
 	 * @var mixed
 	 * @access public
 	 */
-	var $parent = null;	
+	var $parent = null;
 
 	/**
 	 * _zone
@@ -101,16 +101,34 @@ class zone {
 	 * @var array
 	 * @access protected
 	 */
-	var $_zone = array();	// 
+	var $_zone = array();	//
 
 	/**
-	 * _inPath 
+	 * _inPath
 	 * Variable to store $inPath for entire zone
-	 * 
+	 *
 	 * @var mixed
 	 * @access protected
 	 */
 	var $_inPath;
+
+	/**
+	 * The type of the request. Options are JSRS, XMLRPC, post, get
+	 * @var string
+	 */
+	protected $requestType = null;
+
+	/**
+	 * Set of Data used for Exporting and Rendering. Defined by a page Request
+	 * @var array
+	 */
+	protected $dataSet = array();
+
+	/**
+	 * an array of the given request's (allowed) output.
+	 * @var unknown_type
+	 */
+	var $requestOutput;
 
 	/**
 	 * allowedChildren
@@ -128,7 +146,7 @@ class zone {
 	 * @var array
 	 * @access public
 	 */
-	var $allowedParents = array();	
+	var $allowedParents = array();
 
 	/**
 	 * zoneParamNames
@@ -155,8 +173,8 @@ class zone {
 	var $ancestors = array();
 
 	/**
-	 * pageVars 
-	 * 
+	 * pageVars
+	 *
 	 * @var array
 	 * @since Version 2.0
 	 * @access public
@@ -164,9 +182,9 @@ class zone {
 	var $pageVars = array();
 
 	/**
-	 * _zoneParams 
+	 * _zoneParams
 	 * Place to store the zone parameter array with values
-	 * 
+	 *
 	 * @var array
 	 * @since Version 2.0
 	 * @access private
@@ -180,7 +198,7 @@ class zone {
 	 * ADDED BY SPF - MAY 05
 	 *
 	 * Replaced with a open by default, restrict as requested
-	 * rjl 8/25/2005 
+	 * rjl 8/25/2005
 	 *
 	 * @var array
 	 * @access public
@@ -266,7 +284,7 @@ class zone {
 	var $zcache;
 
 	/**
-	 * Alias 
+	 * Alias
 	 * An array of all the page aliases for this zone.
 	 * This is not the ideal way to do aliases anymore.
 	 *
@@ -280,7 +298,7 @@ class zone {
 	 * @access public
 	 */
 	var $Alias = array();
-	
+
 	/**
 	 * Private array of path aliases, used by addAlias() and getAlias()
 	 *
@@ -290,7 +308,7 @@ class zone {
 	 * @access private
 	 */
 	var $_pathAliases = array();
-	
+
 	/**
 	 * Private array of reverse path aliases, used by Global Redirect.
 	 *
@@ -300,12 +318,12 @@ class zone {
 	 * @access private
 	 */
 	var $_redirectAliases = array();
-	
+
 
 	/**
-	 * Return the Zone Name 
+	 * Return the Zone Name
 	 * In a nested zone, it only returns the final part.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -315,7 +333,7 @@ class zone {
 
 	/**
 	 * Zone Constructor
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -329,8 +347,8 @@ class zone {
 	}
 
 	/**
-	 * findZoneName 
-	 * 
+	 * findZoneName
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -351,22 +369,22 @@ class zone {
 
 		if (!$this->zonetype) {
 			// SET $this->zonetype TO THE ZONENAME OR TO DEFAULT IF $this->zonename == @ROOT
-			$this->zonetype = ($this->zonename != "@ROOT") ? $this->zonename : "Default";  
+			$this->zonetype = ($this->zonename != "@ROOT") ? $this->zonename : "Default";
 		}
-		
+
 		$this->url = implode('/', $gPathParts);
 	}
 
 	/**
-	 * findZoneParams 
-	 * 
+	 * findZoneParams
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function findZoneParams() {
 		global $gUrlVars;
 		global $gPathParts; //an array of all the parts of the path so far
-		
+
 		// CHECK THE ZONE TO SEE IF ANY VARIABLES ARE IN THE PATH.
 		if($urlVarNames = $this->getZoneParamNames()) {
 			// loop once for each name
@@ -433,7 +451,7 @@ class zone {
 	 * base path. THIS IS A PROBLEM.
 	 *
 	 * @todo Make sure gZoneBasePath contains parent zone params.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -473,11 +491,11 @@ class zone {
 	 * How the method runs:
 	 * Establish Index as the "/" and Default as the fall back method names
 	 * If there is an alias, lets use it's value, rather than the url
-	 * First we check the current zone for a matching page, if none exists we look for 
-	 * a zone to match. 
+	 * First we check the current zone for a matching page, if none exists we look for
+	 * a zone to match.
 	 * Lastly, if nothing matches, run default.
 	 *
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -486,7 +504,7 @@ class zone {
 			$pathToken = $this->_inPath[0]; //SET $pathToken TO THE NEXT ZONENAME
 		} else {
 			$pathToken = "Index";
-		} 
+		}
 
 		// Check Aliases first
 		if ( isset ( $this->Alias[$pathToken] ) ) { $pathToken = $this->Alias[$pathToken]; }
@@ -495,7 +513,7 @@ class zone {
 			if ( ($retval = $this->_checkFuncs($pathToken, $this->_inPath) === false) ) {
 				// if none are found Check other child zones next
 				if ( (($retval = $this->_checkZone($pathToken, $this->_inPath)) === false) ) {
-					$this->error = "The name found in the path ($pathToken) was not a valid function or class.  
+					$this->error = "The name found in the path ($pathToken) was not a valid function or class.
 						Perhaps this class should have wildcards enabled?  Executing pageDefault function.";
 
 					if (REQUEST_TYPE == "XMLRPC") {
@@ -514,7 +532,7 @@ class zone {
 	/**
 	 * Support the new key:value or key:value:value url page parameter structure.
 	 * Populate the $this->pageVars variable
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -533,13 +551,13 @@ class zone {
 	}
 
 	/**
-	 * Used to take a string in one of the formats 
+	 * Used to take a string in one of the formats
 	 * value
-	 * key:value 
-	 * key:value:value2:value3:... 
+	 * key:value
+	 * key:value:value2:value3:...
 	 * and return an array with the proper structure.
-	 * 
-	 * @param mixed $inString 
+	 *
+	 * @param mixed $inString
 	 * @access protected
 	 * @return array
 	 */
@@ -558,10 +576,31 @@ class zone {
 		return $new_array;
 	}
 
+
+	/**
+	 * Set the dataset for a single request.
+	 * Typically set in an init method.
+	 *
+	 * @param $data
+	 */
+	function setData($data) {
+		$this->dataSet = $data;
+	}
+
+	/**
+	 * Return the dataset for a single request.
+	 * Called by the output* methods.
+	 *
+	 * @return array
+	 */
+	function getData() {
+		return $this->dataSet;
+	}
+
 	/**
 	 * Where most of the magic of the controller happens
 	 * Take an array which is the various parts of the remainder of the url
-	 * and determine which methods to call and (child) zones to run. 
+	 * and determine which methods to call and (child) zones to run.
 	 *
 	 * Basic logic is as follows..
 	 * * Convert the current path using path aliases for the current zone
@@ -582,7 +621,6 @@ class zone {
 		$this->_inPath = $inPath;
 		$this->findZoneName();
 		$this->checkAlias();
-		
 		// when wildcards are enabled, always execute the default function.
 		if ($this->wildcards) {
 			array_unshift($this->_inPath, 'default');
@@ -601,6 +639,141 @@ class zone {
 		return $retval;
 	}
 
+	function handlePageRequest($curPath) {
+		$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
+		$this->logPageRequest($curPath);
+
+		$initFunc = "init" . $curPath;
+		if (method_exists($this, $initFunc)) {
+			$this->$initFunc();
+		}
+
+		$return = $this->callRequestFunction($curPath);
+
+		$this->closePages($this->_inPath, $GLOBALS['gUrlVars']);
+		if ($this->getRequestType() == 'POST') {
+			$this->closePosts($this->_inPath, $GLOBALS['gUrlVars']);
+		}
+		return $return;
+	}
+
+	function callRequestFunction ($curPath, $outputType = null)  {
+
+		if ($outputType === null) {
+			$outputType = $this->getRequestType();
+		}
+
+		$funcName = strtolower($outputType) . $curPath;
+		$outputFuncName = "output" . strtoupper($outputType);
+
+		if (method_exists($this, $funcName)) {
+			return $this->$funcName($this->_inPath, $GLOBALS['gUrlVars']);
+		} elseif (method_exists($this, $outputFuncName )) {
+			return $this->$outputFuncName($this->_inPath, $GLOBALS['gUrlVars']);
+		} else {
+			return $this->responsePage(404);
+		}
+	}
+
+	/**
+	 * Set the allowable outputs for this request path.
+	 *
+	 * @param $array
+	 * @return $array
+	 */
+	function setAllowableOutput($array = null) {
+		if ($array === null) {
+			$this->allowableOutput = Config::Get('zoop.app.zone.allowable_output');
+		} else {
+			$this->allowableOutput = $array;
+		}
+		return $this->allowableOutput;
+	}
+
+	/**
+	 * Returns an array of all allowable output formats.
+	 * If nothing is set.. Return html.
+	 *
+	 * @return unknown_type
+	 */
+	function getAllowableOutput() {
+		if (isset($this->allowableOutput)) {
+			return $this->allowableOutput;
+		} else {
+			$this->setAllowableOutput();
+			if ( isset($this->allowableOutput) ) {
+				return $this->allowableOutput;
+			} else {
+				return array('html');
+			}
+		}
+	}
+
+	function logPageRequest($curPath) {
+		global $logpath;
+
+		$logpath[] = "$curPath/" . $this->getRequestType();
+		$funcName = $this->getRequestType() . $curPath;
+		$GLOBALS['current_function'] = $funcName;
+	}
+
+	/**
+	 * @todo Write me
+	 * This method determines what the requested output type is and returns it.
+	 * Defaults to html
+	 * First check the requested extension.
+	 * Then check if $GET['output'] is set.
+	 * Finally fallback to the header requested.
+	 *
+	 * @return string
+	 */
+	protected function getRequestedOutputType() {
+	}
+
+	protected function getRequestOutput() {
+		if (isset($this->requestOutput)) {
+			return $this->requestOutput;
+		}
+
+		$output = $this->getRequestedOutputType();
+
+		foreach ($this->getAllowableOutput() as $o) {
+			if (strtolower($output) == strtolower($o)) {
+				$this->requestOutput = strtolower($o);
+				return $this->requestOutput;
+			}
+		}
+
+		$this->responsePage(404);
+	}
+
+	/**
+	 * Figure out which requestType has been requested and return it.
+	 * There are three request types, XMLRPC, GET, POST
+	 *
+	 *
+	 * @return string requestType
+	 */
+	function getRequestType() {
+		if (isset($this->requestType)) {
+			return $this->requestType;
+		}
+
+		if (isset($_REQUEST['jsrsContext']) && substr($_REQUEST['jsrsContext'], 0, 7) == "phpjsrs") {
+			$this->requestType = "JSRS";
+		} elseif (xmlrpc_server::isRequest()) {
+				$this->requestType = "XMLRPC";
+			$GLOBALS["zoopXMLRPCServer"] = new xmlrpc_server();
+			$GLOBALS["zoopXMLRPCServer"]->startServer();
+		} elseif ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
+			$this->requestType = 'POST';
+		} else {
+			$this->requestType = strtoupper($this->getRequestOutput());
+		}
+
+		return $this->requestType;
+	}
+
 	/**
 	 * For a given url Token, check to see if it matches a page or post function
 	 * for this zone
@@ -613,46 +786,31 @@ class zone {
 	function _checkFuncs($curPath, $inPath) {
 		$this->initPageVars();
 
-		if (REQUEST_TYPE == "XMLRPC") {
-			return $this->_xmlrpcDispatch($curPath, $this->_inPath);
-		} else {
+		switch (strtoupper($this->getRequestType())) {
 
-			if ( $_SERVER["REQUEST_METHOD"] == "POST" && $this->_checkAllowedPost($curPath)) {
+			case 'XMLRPC':
+				return $this->_xmlrpcDispatch($curPath, $this->_inPath);
+				break;
+			case 'POST':
 				if (method_exists($this, "post" . $curPath)) {
-					$funcName = "post" . $curPath;
-					$GLOBALS['current_function'] = $funcName;
-					global $logpath;
-					$logpath[] = "$curPath/post";
-					$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
-					$tmp = $this->$funcName($this->_inPath, $GLOBALS['gUrlVars']);
-					$this->closePages($this->_inPath, $GLOBALS['gUrlVars']);
-					$this->closePosts($this->_inPath, $GLOBALS['gUrlVars']);
-					return $tmp;
+					return $this->handlePageRequest($curPath);
 				} else if(method_exists($this, "page" . $curPath)) {
-					// I DON'T KNOW IF THIS IS EVEN USED, DOESN'T APPEAR TO BE
-					global $logpath;
-					$logpath[] = "$curPath/post";
-					//$funcName = "page" . $curPAth;
-					$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
-					//$this->$funcName($this->_inPath);
-					$this->closePages($this->_inPath, $GLOBALS['gUrlVars']);
-					$this->closePosts($this->_inPath, $GLOBALS['gUrlVars']);
+					// $this->handlePageRequest($curPath, true);
 					redirect($_SERVER["REQUEST_URI"]);
 				}
-			} if (method_exists($this, "page" . $curPath)) {
-				global $logpath;
-				$logpath[] = "$curPath/get";
-				$funcName = "page" . $curPath;
-				$GLOBALS['current_function'] = $funcName;
-				$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
-				$tmp = $this->$funcName($this->_inPath);
-
-				$this->closePages($this->_inPath, $GLOBALS['gUrlVars']);
-				return( $tmp );
-			}
-			return false;
+				break;
+			case 'HTML':
+			case 'PAGE':
+				return $this->handlePageRequest($curPath, 'page');
+				break;
+			default:
+				return $this->handlePageRequest($curPath);
+				break;
 		}
+
+		return false;
 	}
+
 
 	/**
 	 * _checkAllowedPost
@@ -688,7 +846,7 @@ class zone {
 	/**
 	 * Check and Execute iff the passed in url Token is a zone.
 	 * First check if an explicit child zone exists, that will take precedence.
-	 * Second check if a zone matches.. if one does. Check it to ensure it 
+	 * Second check if a zone matches.. if one does. Check it to ensure it
 	 * has permission to be adopted.
 	 *
 	 * @see zone::_checkExplicitChildZone
@@ -719,8 +877,8 @@ class zone {
 	}
 
 	/**
-	 * Returns the parent zone if set. 
-	 * 
+	 * Returns the parent zone if set.
+	 *
 	 * @access public
 	 * @return mixed
 	 */
@@ -734,10 +892,10 @@ class zone {
 
 	/**
 	 * Method to get full zone name when working
-	 * with explicit children zones. 
-	 * 
+	 * with explicit children zones.
+	 *
 	 * @access protected
-	 * @return string 
+	 * @return string
 	 */
 	function _getClassNamePath() {
 		$parent = $this->getParent();
@@ -749,13 +907,13 @@ class zone {
 	}
 
 	/**
-	 * Instantiate and validate child zone. 
+	 * Instantiate and validate child zone.
 	 * Setup zone relationships.
 	 * Ensures allowed to be related.
-	 * Run handleRequest on Child Zone 
-	 * 
-	 * @param mixed $zoneName 
-	 * @param mixed $inPath 
+	 * Run handleRequest on Child Zone
+	 *
+	 * @param mixed $zoneName
+	 * @param mixed $inPath
 	 * @access protected
 	 * @return void
 	 */
@@ -766,7 +924,7 @@ class zone {
 			$this->_zone[$zoneName] = new $childZoneName();
 			$this->_zone[$zoneName]->parent =& $this;
 		}
-		
+
 		// check to see if this is an allowed parent for the class we just created
 		if ( count($this->_zone[$zoneName]->allowedParents) > 0
 			&& !in_array($this->zonetype, $this->_zone[$zoneName]->allowedParents)) {
@@ -788,13 +946,13 @@ class zone {
 
 	/**
 	 * Check to see if $zoneName is an explicit child zone.
-	 * An Explicit Child Zone is one that has been placed in a 
+	 * An Explicit Child Zone is one that has been placed in a
 	 * subdirectory with the same name as the parent zone and has
 	 * the class name zone_parentZoneName_ZoneName.
 	 * Explicit Children Zones can only have one parent.
-	 * 
-	 * @param string $zoneName 
-	 * @param array $inPath 
+	 *
+	 * @param string $zoneName
+	 * @param array $inPath
 	 * @access protected
 	 * @return boolean
 	 */
@@ -874,7 +1032,7 @@ class zone {
 
 	/**
 	 * Catchall for any unhanled request to the zone.
-	 * Should be overridden to be the default function 
+	 * Should be overridden to be the default function
 	 * (in case there is either A: no path info, or B: no matching function or class for the path";
 	 * If zone has wildcards on it will handle all requests.
 	 * If the url doesn't match any zone pages or childzones then this method is called. By default it is a 404 page.
@@ -889,13 +1047,13 @@ class zone {
 	}
 
 	/**
-	 * pageIndex 
+	 * pageIndex
 	 * This is the method that gets called when a request is made to host/zone/
-	 * By default it will call $this->pageDefault which will in turn result in a 404 by default. 
+	 * By default it will call $this->pageDefault which will in turn result in a 404 by default.
 	 * Please overload this method.
-	 * 
+	 *
 	 * @since 2.0
-	 * @param mixed $inPath 
+	 * @param mixed $inPath
 	 * @access public
 	 * @return void
 	 */
@@ -904,10 +1062,10 @@ class zone {
 	}
 
 	/**
-	 * responsePage404 
+	 * responsePage404
 	 * a default 404 page to be called throughout the application whenever a page is not found.
-	 * This is a placeholder.. Please modify it to be a better function. 
-	 * Perhaps a subclass with all (many) of the response headers would be in order. 
+	 * This is a placeholder.. Please modify it to be a better function.
+	 * Perhaps a subclass with all (many) of the response headers would be in order.
 	 * Would need to be able to be extended so apps could stylize their own.
 	 *
 	 * @access public
@@ -931,7 +1089,7 @@ class zone {
 	 *             404: response/not_found.tpl
 	 *             403: response/access_denied.tpl
 	 * @code
-	 * 
+	 *
 	 * @access public
 	 * @param int $code. (default: 404)
 	 * @return void
@@ -984,14 +1142,14 @@ class zone {
 			trigger_error('Unknown response code: ' . $code);
 			return;
 		}
-		
+
 		if ($message === null) {
 			$message = $codes[$code];
 		}
 
 		header('Status: ' . $codes[$code], true, $code);
 		global $gui;
-		
+
 		$gui->assign('title', $message);
 		if($template = Config::get('zoop.gui.templates.response.' . $code)) {
 			$gui->assign('response_message', $message);
@@ -1005,7 +1163,7 @@ class zone {
 
 	/**
 	 * Initialize the zone.
-	 * Should be overridden in each zone if you would like code 
+	 * Should be overridden in each zone if you would like code
 	 * to execute each time it hits the zone's handleRequest function.
 	 *
 	 * Other than the constructor, this is the only method that is called in a
@@ -1020,20 +1178,20 @@ class zone {
 
 	/**
 	 * Close the zone.
-	 * Should be overridden in each zone if you would like code 
-	 * to execute each time before it leaves the zone's 
+	 * Should be overridden in each zone if you would like code
+	 * to execute each time before it leaves the zone's
 	 * handleRequest function.
 	 *
 	 * @param mixed $inPath
 	 * @access public
 	 * @return void
 	 */
-	function closeZone($inPath) { } 
+	function closeZone($inPath) { }
 
 	/**
 	 * initPages
 	 * Executed before any page or post function in the zone.
-	 * Only called in the zone you are in. 
+	 * Only called in the zone you are in.
 	 * This method will not be called in parent zones.
 	 *
 	 * @param mixed $inPath
@@ -1063,8 +1221,8 @@ class zone {
 	function closePosts($inPath) { }
 
 	/**
-	 * getName 
-	 * 
+	 * getName
+	 *
 	 * @access public
 	 * @return string The name of the current Zone
 	 */
@@ -1191,7 +1349,7 @@ class zone {
 
 	/**
 	 * Returns the names of all the zones who are ancestors of this zone.
-	 * 
+	 *
 	 * @access public
 	 * @return array the names of the zones that are ancestors of this zone (parent, grandparent,...)
 	 */
@@ -1206,8 +1364,8 @@ class zone {
 
 	/**
 	 * Check if ancestor of current zone
-	 * 
-	 * @param string $str zone name 
+	 *
+	 * @param string $str zone name
 	 * @access public
 	 * @return bool True if zone passed in is an ancestor of current zone
 	 */
@@ -1224,9 +1382,9 @@ class zone {
 
 	/**
 	 * Helper method, wraps isAncestor, accepts multiple input
-	 * 
+	 *
 	 * @see isAncestor
-	 * @param array $strs 
+	 * @param array $strs
 	 * @access public
 	 * @return bool True if any passed are ancestors
 	 */
@@ -1250,7 +1408,7 @@ class zone {
 
 	/**
 	 * Returns a complete url to this zone, not a path
-	 * 
+	 *
 	 *
 	 * @param int $depth
 	 * @access public
@@ -1265,20 +1423,20 @@ class zone {
 	 * Pass in the $depth paramenter to get all previous (parent) zones
 	 * Returns app path for each of the parent zones (depth 1 .. x)
 	 * This method is globally executed, so will have the same result if run in $this-> or $this->parent
-	 * use this function from now on, until we fix the function above 
+	 * use this function from now on, until we fix the function above
 	 *
 	 * @param int $depth
 	 * @access public
 	 * @return string
 	 */
-	function getZonePath($depth = 0) { 
+	function getZonePath($depth = 0) {
 		global $gZoneUrls;
 		return $gZoneUrls[$depth];
 	}
-	
+
 	/**
 	 * Return the current zone base path (without zone params).
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -1364,10 +1522,10 @@ class zone {
 	}
 
 	/**
-	 * guiIsCached 
-	 * 
-	 * @param mixed $tplFile 
-	 * @param mixed $cache_id 
+	 * guiIsCached
+	 *
+	 * @param mixed $tplFile
+	 * @param mixed $cache_id
 	 * @access public
 	 * @return bool
 	 */
@@ -1379,7 +1537,7 @@ class zone {
 	/**
 	 * Called when a required zone parameter is missing.
 	 * To be overloaded to change the default functionality.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -1398,9 +1556,9 @@ class zone {
 	}
 
 	/**
-	 * Provide a path to a template based on a zoneName (and location) 
-	 * 
-	 * @param mixed $tplName 
+	 * Provide a path to a template based on a zoneName (and location)
+	 *
+	 * @param mixed $tplName
 	 * @access public
 	 * @return string
 	 */
@@ -1419,7 +1577,7 @@ class zone {
 
 	/**
 	 * Return the base path of the current zone
-	 * 
+	 *
 	 * @access public
 	 * @return string path
 	 */
@@ -1430,7 +1588,7 @@ class zone {
 
 	/**
 	 * Given zone, page and $page params return a path
-	 * 
+	 *
 	 * @param mixed $z zone params
 	 * @param mixed $page page name
 	 * @param mixed $p page params
@@ -1444,8 +1602,8 @@ class zone {
 	}
 
 	/**
-	 * Special convenience function to return the path to the Index Page for this zone 
-	 * 
+	 * Special convenience function to return the path to the Index Page for this zone
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -1457,7 +1615,7 @@ class zone {
 	/**
 	 * A convenience method for returning the current base zone path
 	 * Doesn't include zone Parameters
-	 * 
+	 *
 	 * @access private
 	 * @return string path
 	 */
@@ -1469,10 +1627,10 @@ class zone {
 
 	/**
 	 * Given zone, page and $page params return a url
-	 * 
-	 * @param mixed $z 
-	 * @param mixed $page 
-	 * @param mixed $p 
+	 *
+	 * @param mixed $z
+	 * @param mixed $page
+	 * @param mixed $p
 	 * @access public
 	 * @return string url
 	 */
@@ -1484,8 +1642,8 @@ class zone {
 
 	/**
 	 * Ensure that required params are passed when using makepath
-	 * 
-	 * @param mixed $z 
+	 *
+	 * @param mixed $z
 	 * @access private
 	 * @return void
 	 */
@@ -1557,7 +1715,7 @@ class zone {
 						$callback--;
 					}
 				}
-			}	
+			}
 		}
 
 		$from_re = '#^' . $from_re . '#';
@@ -1589,7 +1747,7 @@ class zone {
 	 * @see Zone::addAlias
 	 * @param array $aliases
 	 * @access public
-	 **/ 
+	 **/
 	function addAliases($aliases) {
 		foreach ($aliases as $from => $to) {
 			$this->addAlias($from, $to);
