@@ -1,12 +1,4 @@
 <?php
-/**
- * Zoop Smarty plugin
- * @group gui
- * @group plugins
- * @group Formz
- *
- * @author Justin Hileman
- */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -21,7 +13,12 @@
 include_once(dirname(__file__) . "/function.guicontrol.php");
 
 /**
- * smarty_function_formz_form
+ * Smarty plugin to render Formz objects.
+ *
+ * @ingroup gui
+ * @ingroup plugins
+ * @ingroup Formz
+ * @author Justin Hileman {@link http://justinhileman.com}
  *
  * @param array $params
  * @param Smarty $smarty
@@ -30,11 +27,6 @@ include_once(dirname(__file__) . "/function.guicontrol.php");
  */
 function smarty_function_formz_form($params, &$smarty) {
 	if (!isset($params['form'])) return;
-	if (isset($params['buffer_output'])) {
-		$buffer_output = true;
-	} else {
-		$buffer_output = false;
-	}
 	
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
@@ -91,7 +83,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 			$formz_object->setEditable(false);
 			$form_item .= '<div class="form-item-content">';
-			$form_item .= smarty_function_formz(array('form' => $formz_object, 'buffer_output' => true), $smarty);
+			$form_item .= smarty_function_formz(array('form' => $formz_object), $smarty);
 			$form_item .= '</div></div>';
 			$form_items[] = $form_item;
 			continue;
@@ -188,7 +180,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		if ($key == 'id' && $form->record_id == 'new') $value = 'new';
 		
 		// get a new guiControl to deal with this
-		$control = &getGuiControl($type, $key);
+		$control = GuiControl::get($type, $key);
 		if ($form->editable) {
 			// grab the default value, if one isn't set.
 			if (!empty($value) && isset($field['default'])) {
@@ -258,7 +250,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 
 			} else {
-				$control = &getGuiControl('button', $key);
+				$control = GuiControl::get('button', $key);
 				$control->setParams($action);			
 				$form_items[] = $control->renderControl();
 			}
@@ -268,10 +260,5 @@ function smarty_function_formz_form($params, &$smarty) {
 	$content .= implode("\n\t", $form_items);
 	$content .= ($form->editable) ? "\n</form>\n\n" : "\n</div>\n\n";
 
-	if ($buffer_output) {
-		return $content;
-	} else {
-		echo $content;
-	}
-	
+	return $content;
 }

@@ -223,7 +223,7 @@ function smarty_function_formz_list($params, &$smarty) {
 							$link = $id . $rowAction['link'];
 							$value .= '<a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
 						} else {
-							$control = &getGuiControl('button', $key);
+							$control = GuiControl::get('button', $key);
 							$control->setParams($rowAction);
 							$value .= '<span>' . $control->render() . '</span>';
 						}
@@ -236,7 +236,7 @@ function smarty_function_formz_list($params, &$smarty) {
 							$link = $id . $rowAction['link'];
 							$value .= '<td><a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
 						} else {
-							$control = &getGuiControl('button', $key);
+							$control = GuiControl::get('button', $key);
 							$control->setParams($rowAction);
 							$value .= '<td><span>' . $control->render() . '</span></td>';
 						}
@@ -300,7 +300,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					$list_actions[] = implode(' | ',$page_links);
 				}
 			} else {
-				$control = &getGuiControl('button', $key);
+				$control = GuiControl::get('button', $key);
 				$control->setParams($action);			
 				$list_actions[] = $control->render();
 			}

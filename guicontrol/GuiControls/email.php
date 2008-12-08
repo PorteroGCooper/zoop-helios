@@ -92,7 +92,7 @@ class EmailControl extends GuiControl {
 			$domainvalue = "";
 		}
 
-		$usercontrol = &getGuiControl('text', 'email');
+		$usercontrol = GuiControl::get('text', 'email');
 		$usercontrol->setParam('text', $emailvalue);
 		$usercontrol->setParent($name);
 		$usercontrol->setParams($this->params);
@@ -100,7 +100,7 @@ class EmailControl extends GuiControl {
 
 		$html .= " @ ";
 
-		$domaincontrol = &getGuiControl('select', 'domain');
+		$domaincontrol = GuiControl::get('select', 'domain');
 		$domaincontrol->setParam('value', $domainvalue);
 		$domaincontrol->setParams($this->params);
 		$domaincontrol->setParent($name);

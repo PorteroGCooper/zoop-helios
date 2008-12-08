@@ -43,12 +43,14 @@ class GuiControl {
 	var $parent;
 
 	/**
-	 * Constructor. 
-	 * Sets name and call's getPersistentParams();
+	 * Sets name and calls getPersistentParams();
+	 *
+	 * Don't call this function directly, instead use GuiControl::get() method.
 	 *
 	 * @param mixed $name
 	 * @access public
 	 * @return void
+	 * @see GuiControl::get()
 	 */
 	function __construct($name) {
 		$this->name = $name;
@@ -81,6 +83,7 @@ class GuiControl {
 	 */
 	function setParam($name, $value) {
 		$this->params[$name] = $value;
+		return $this;
 	}
 
 	/**
@@ -94,6 +97,7 @@ class GuiControl {
 		foreach($valueArray as $name => $value) {
 			$this->params[$name] = $value;
 		}
+		return $this;
 	}
 
 	/**
@@ -106,6 +110,7 @@ class GuiControl {
 	 */
 	function setParent($parent) {
 		$this->parent = $parent;
+		return $this;
 	}
 
 	/**
@@ -333,6 +338,8 @@ class GuiControl {
 	 */
 	function setRequired($req = true) {
 		$this->params['validate']['required'] = $req;
+		
+		return $this;
 	}
 
 	/**
@@ -346,6 +353,8 @@ class GuiControl {
 	 */
 	function setValidationType($type) {
 		$this->params['validate']['type'] = $type;
+		
+		return $this;
  	}
 
  	/**
@@ -358,6 +367,8 @@ class GuiControl {
  	 */
  	function setValidationParam($name, $value) {
 		$this->params['validate'][$name] = $value;
+		
+		return $this;
  	}
 
 	/**
@@ -368,7 +379,7 @@ class GuiControl {
 	 * @return void
 	 */
 	function setDefaultValue($value) {
-		$this->setParam("default", $value);
+		return $this->setParam("default", $value);
 	}
 
 	/**
@@ -406,6 +417,8 @@ class GuiControl {
 		} else {
 			$this->setParam('value', $value);
 		}
+		
+		return $this;
 	}
 
 	/**
@@ -498,6 +511,20 @@ class GuiControl {
 		$label = $this->getName() . "[value]";
 		return $label;
 	}
+	
+	/**
+	 * Assign this GuiControl to the Smarty param passed as $name
+	 *
+	 * @access public
+	 * @param string $name (Optional, defaults to name passed to constructor)
+	 * @see gui::assign()
+	 */
+	function guiAssign($name = null) {
+		global $gui;
+		if (empty($name)) $name = $this->name;
+		$gui->assign($name, $this);
+		return $this;
+	}
 
 	/**
 	 * Changing this method to a final method (to weed out the last of the 'display' functions
@@ -565,5 +592,48 @@ class GuiControl {
 			}
 		}
 		return $viewState;
+	}
+	
+	/**
+	 * Get an instance of a GuiControl. Use this function instead of the global getGuiControl().
+	 *
+	 * @code
+	 *   $myGuiControl = GuiControl::get('button', 'submit_button');
+	 * @code
+	 *
+	 * This call can be chained together with all sorts of other GuiControl initialization function
+	 * calls, allowing code like the following:
+	 * 
+	 * @code
+	 *   GuiControl::get('button', 'submit_button')
+	 *       ->setParams(array('type' => 'submit', 'value' = 'Save'))
+	 *       ->guiAssign();
+	 * @code
+	 *
+	 * @param string $type
+	 * @param string $name
+	 * @param bool $useGlobal (default: true)
+	 * @return GuiControl
+	 */
+	static function &get($type, $name, $useGlobal = true) {
+	
+		if($useGlobal) {
+			global $controls;
+			if(isset($controls[$type][$name])) {
+				return $controls[$type][$name];
+			}
+		}
+	
+		component_guicontrol::includeGuiControl($type);
+		$className = component_guicontrol::getGuiControlClassName($type);
+
+		if($useGlobal) {
+			$controls[$type][$name] = &new $className($name);
+			return $controls[$type][$name];
+		} else {
+			$control = &new $className($name);
+			return $control;
+		}
+
 	}
 }

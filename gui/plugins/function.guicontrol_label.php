@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -11,8 +12,8 @@
 
 /**
  * Zoop Smarty plugin
- * @package gui
- * @subpackage plugins
+ * @ingroup gui
+ * @ingroup plugins
  */
 
 /*
@@ -23,29 +24,18 @@
  * Purpose:  privide a label tag for a guicontrol.
  * -------------------------------------------------------------
  */
-function smarty_function_guicontrol_label($params, &$smarty)
-{
-	if(isset($params['guicontrol']))
-	{
+function smarty_function_guicontrol_label($params, &$smarty) {
+	if(isset($params['guicontrol'])) {
 		$control = $params['guicontrol'];
 		$name = $control->getDisplayName();
-	}
-	else
-	{
+	} else {
 		$type = $params['type'];
 		$name = $params['name'];
-		$control = &getGuiControl($type, $name);
+		$control = GuiControl::get($type, $name);
 	}
 
 	$for = $control->getId();
-
 	$lname = format_label($name);
-
 	$html = "<label for=\"$for\"> $lname: </label>";
-
 	return $html;
 }
-
-/* vim: set expandtab: */
-
-?>

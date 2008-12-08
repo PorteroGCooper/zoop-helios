@@ -39,25 +39,22 @@ include_once(dirname(__file__) . "/select.php");
  *
  * @code
  *   pageFoo() {
- *       $first_select = getGuiControl('select_update', 'first');
- *       $second_select = getGuiControl('select_update', 'second');
- *       $third_select = getGuiControl('select', 'third');
- *       
- *       $first_select->setParams(array(
- *           'index' => $first_select_values,
- *           'url' => 'bar',
- *           'update_id' => $second_select->getId()
- *       ));
- *       $second_select->setParams(array(
- *           'url' => 'baz',
- *           'update_id' => $third_select->getId()
- *       ));
- *       
+ *       GuiControl::get('select_update', 'first')
+ *           ->setParams(array(
+ *               'index' => $first_select_values,
+ *               'url' => 'bar',
+ *               'update_id' => $second_select->getId()
+ *           ))
+ *           ->guiAssign();
+ *       GuiControl::get('select_update', 'second')
+ *           ->setParams(array(
+ *               'url' => 'baz',
+ *               'update_id' => $third_select->getId()
+ *           ))
+ *           ->guiAssign();
+ *       GuiControl::get('select', 'third')
+ *           ->guiAssign();
  *       global $gui;
- *       $gui->assign('first', $first_select);
- *       $gui->assign('second', $second_select);
- *       $gui->assign('third', $third_select);
- *       
  *       $gui->generate('selects.tpl');
  *   }
  *   
@@ -177,7 +174,7 @@ class Select_updateControl extends SelectControl {
 		
 		// add the dependent dropdown...
 		if ($render_update_select) {
-			$dependent = &getGuiControl('select', $update_id);
+			$dependent = GuiControl::get('select', $update_id);
 			$update_id = $dependent->getId();
 			$dependent->setParams(array('index' => array()));
 			if ($update_control_label) $html .= '<label for="' . $update_id . '">' . $update_control_label . '</label>';

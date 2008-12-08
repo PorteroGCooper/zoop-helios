@@ -113,7 +113,7 @@ function smarty_function_forms_form($params, &$smarty)
 						$value = $field->description->default;
 					}
 
-					$control = &getGuiControl($type, $name);
+					$control = GuiControl::get($type, $name);
 
 					if ($type == 'textarea' || $type == 'editor' || $type == 'minieditor' || $type == 'fulleditor' || $type == 'blockeditor') {		// No need for htmlspecialchars function to run.
 						$control->setValue($value);
@@ -141,7 +141,7 @@ function smarty_function_forms_form($params, &$smarty)
 					$formpart = $control->renderControl();
 					$formpart .= "\r";
 				} else { 
-					$control = &getGuiControl($type, $name);
+					$control = GuiControl::get($type, $name);
 					$control->setParam('value', $value);
 					$control->setParam('index', $index);
 					$control->setParams($field->description->html);

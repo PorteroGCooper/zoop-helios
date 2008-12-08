@@ -179,7 +179,7 @@ class component_guicontrol extends component
 		{
 			foreach($controlset as $name => $controlitems)
 			{
-				$controls[$type][$name] = &getGuiControl($type, $name, $useGlobals);
+				$controls[$type][$name] = GuiControl::get($type, $name, $useGlobals);
 
 				if(is_array($controlitems))
 				{
@@ -258,8 +258,8 @@ class component_guicontrol extends component
 			include_once( "$zoop_dir/$filename");
 		else
 			trigger_error("Please Implement a $type Control and place it in " .
-						"$app_dir/$filename" . " or " .
-						"$zoop_dir/$filename");
+				"$app_dir/$filename" . " or " .
+				"$zoop_dir/$filename");
 	}
 
 	/**
@@ -277,36 +277,13 @@ class component_guicontrol extends component
 /**
  * &getGuiControl
  *
- * @param mixed $type
- * @param mixed $name
- * @param mixed $useGlobal
+ * @param string $type
+ * @param string $name
+ * @param bool $useGlobal
  * @access public
  * @return void
  */
 function &getGuiControl($type, $name, $useGlobal = true) {
-
-
-	if($useGlobal) {
-		global $controls;
-
-		if(isset($controls[$type][$name])) {
-			return $controls[$type][$name];
-		}
-	}
-
-	component_guicontrol::includeGuiControl($type);
-
-	$className = component_guicontrol::getGuiControlClassName($type);
-
-
-	if($useGlobal) {
-		$controls[$type][$name] = &new $className($name);
-		return $controls[$type][$name];
-	} else {
-		$control = &new $className($name);
-		return $control;
-	}
+	deprecated('The getGuiControl() global function has been deprecated in favor of GuiControl::get()');
+	return GuiControl::get($type, $name, $useGlobal);
 }
-
-
-?>

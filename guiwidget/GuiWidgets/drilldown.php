@@ -61,8 +61,7 @@ class guiwidget_drilldown extends GuiWidget {
 		
 		$html = '<a class="menuBtn menuAction menuNavigator" id="'. $link_id .'" href="'. url($this->params['url']) .'">'. $link_text .'</a>';
 		
-		$gui->add_js('jQuery(function($){
-			var menuContent_' . $link_id . ' = $.get($("#' . $link_id . '").attr("href"), function(data){menuContent_' . $link_id . ' = data;});
+		$gui->add_jquery('var menuContent_' . $link_id . ' = $.get($("#' . $link_id . '").attr("href"), function(data){menuContent_' . $link_id . ' = data;});
 			$("#' . $link_id . '").click(function(){			
 				var menu'. $link_id .' = new Menu(this, {
 					content: menuContent_' . $link_id . ',
@@ -76,13 +75,12 @@ class guiwidget_drilldown extends GuiWidget {
 					altClasses: "drilldown"
 				}).create();
 				return false;
-			});			
-		});
+			});
 		
-		function foo() {
-			alert("this");
-		}
-		', 'inline');
+			function foo() {
+				alert("this");
+			}
+		');
 		
 		return $html;
 	}

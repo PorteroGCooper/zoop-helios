@@ -1,10 +1,5 @@
 <?php
-/**
-* Zoop Guicontrol
-* @package gui
-* @subpackage guicontrol
-*
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -19,13 +14,15 @@
  * betterpassword (confirm, and supports encryption)
  *
  * @uses GuiControl
- * @package
+ * @ingroup gui
+ * @ingroup guicontrol
  * @version $id$
  * @copyright 2008 Portero Inc
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class betterpasswordControl extends GuiContainer {
+
 	/**
 	 * validate
 	 *
@@ -78,12 +75,13 @@ class betterpasswordControl extends GuiContainer {
 	 */
 	protected function render() {
 		$attrs = array();
-		// this seems like a bad idea, probably best to put the logic on the recieving end, rather than here.. Don't update if both are '' .
+		// this seems like a bad idea, probably best to put the logic on the recieving end,
+		// rather than here.. Don't update if both are '' .
 		//$this->param['origPw'] = $this->params['value'];
 		$name = $this->getName();
 		$this->setValue('', true);
 
-		$pwcontrol = &getGuiControl('password', 'password');
+		$pwcontrol = GuiControl::get('password', 'password');
 		$pwcontrol->setParams($this->params);
 		$pwcontrol->setValue('', true);
 		$pwcontrol->setParam('type', 'password');
@@ -91,7 +89,7 @@ class betterpasswordControl extends GuiContainer {
 		$pwcontrol->setParent($name);
 		$html = $pwcontrol->renderControl();
 
-		$pwccontrol = &getGuiControl('password', 'confirmpassword');
+		$pwccontrol = GuiControl::get('password', 'confirmpassword');
 		$pwccontrol->setParams($this->params);
 		$pwccontrol->setParam('type', 'password');
 		$pwccontrol->setParam('errorState', null);
