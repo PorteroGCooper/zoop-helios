@@ -125,10 +125,25 @@ class zone {
 	protected $dataSet = array();
 
 	/**
-	 * an array of the given request's (allowed) output.
-	 * @var unknown_type
+	 * The extension specificied in the path 
+	 * 
+	 * @var mixed
+	 * @access public
 	 */
-	var $requestOutput;
+	var $requestedExt;
+
+	/**
+	 * The extension that the zone will allow and render for this request 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
+	var $ext;
+	/**
+	 * an array of the given request's (allowed) output.
+	 * @var String
+	 */
+	var $outputType;
 
 	/**
 	 * allowedChildren
@@ -516,7 +531,7 @@ class zone {
 					$this->error = "The name found in the path ($pathToken) was not a valid function or class.
 						Perhaps this class should have wildcards enabled?  Executing pageDefault function.";
 
-					if (REQUEST_TYPE == "XMLRPC") {
+					if ($this->getRequestType() == "XMLRPC") {
 						$GLOBALS["zoopXMLRPCServer"]->returnFault(1, "Invalid XMLRPC function, $pathToken");
 						$retval = true;
 					}
@@ -609,7 +624,7 @@ class zone {
 	 * * Check for Sequences.
 	 * * Capture remainder of url tokens as Page Variables
 	 * * Initialize this zone.
-	 * * Determine if next token (part of the url) is a page or a zone and execute
+	 * * Determine if next token (part of the url) is a method in this zone,  or a child zone and execute
 	 *
 	 * @see zone::addAlias
 	 * @see zone::executeNextFunction
@@ -619,6 +634,7 @@ class zone {
 	 */
 	function handleRequest( $inPath ) {
 		$this->_inPath = $inPath;
+		$this->setExtFromPath();
 		$this->findZoneName();
 		$this->checkAlias();
 		// when wildcards are enabled, always execute the default function.
@@ -639,16 +655,33 @@ class zone {
 		return $retval;
 	}
 
-	function handlePageRequest($curPath) {
+	function setExtFromPath() {
+		$last = array_peek($this->_inPath);
+
+		$this->requestedExt = substr(strrchr($last,'.'),1);  
+		return $this->requestedExt;
+	}
+
+	function handlePageRequest($curPath, $prefix = null) {
 		$this->initPages($this->_inPath, $GLOBALS['gUrlVars']);
 		$this->logPageRequest($curPath);
 
-		$initFunc = "init" . $curPath;
+		$initFunc = "init" . array_shift(explode($curPath, "."));
 		if (method_exists($this, $initFunc)) {
 			$this->$initFunc();
 		}
 
-		$return = $this->callRequestFunction($curPath);
+		// REMOVE THE EXTENSION FROM THE PAGE PARAMS
+		$last = array_pop($this->pageVars);
+		echo_r($this->getRequestedExtension());
+		$ext = $this->getExtension();
+
+		if (substr($last, -1 - strlen($ext) ) == "." . $ext) {
+			$last = substr($last, 0, -1 - strlen($ext));
+		}
+
+		array_push($this->pageVars, $last);
+		$return = $this->callRequestFunction($curPath, $prefix);
 
 		$this->closePages($this->_inPath, $GLOBALS['gUrlVars']);
 		if ($this->getRequestType() == 'POST') {
@@ -663,15 +696,24 @@ class zone {
 			$outputType = $this->getRequestType();
 		}
 
-		$funcName = strtolower($outputType) . $curPath;
+		// If the curPath has the allowed ext, strip it.
+		$ext = $this->getExtension();
+		if (substr($curPath, -1 - strlen($ext) ) == "." . $ext) {
+			$curPath = substr($curPath, 0, -1 - strlen($ext));
+		}
+
+		$funcName = strtolower($outputType) . ucfirst($curPath);
 		$outputFuncName = "output" . strtoupper($outputType);
+		$pageFunc =  'page' . ucfirst($curPath) ;
 
 		if (method_exists($this, $funcName)) {
 			return $this->$funcName($this->_inPath, $GLOBALS['gUrlVars']);
+		} elseif ($outputType == 'HTML' && method_exists($this, $pageFunc)) {
+			return $this->$pageFunc($this->_inPath, $GLOBALS['gUrlVars']);
 		} elseif (method_exists($this, $outputFuncName )) {
 			return $this->$outputFuncName($this->_inPath, $GLOBALS['gUrlVars']);
 		} else {
-			return $this->responsePage(404);
+			return false;
 		}
 	}
 
@@ -717,8 +759,38 @@ class zone {
 		$GLOBALS['current_function'] = $funcName;
 	}
 
+
 	/**
-	 * @todo Write me
+	 * Figure out and return the extension that is being explicitly requested. 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function getExtension() {
+		$ext = $this->getRequestedExtension();
+
+		foreach ($this->getAllowableOutput() as $o) {
+			if (strtolower($ext) == strtolower($o)) {
+				$this->ext = strtolower($o);
+				return $this->ext;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the requested Extension
+	 * This is set during the handleRequest method. 
+	 * 
+	 * @access public
+	 * @return string
+	 */
+	function getRequestedExtension() {
+		return $this->requestedExt;
+	}
+
+	/**
 	 * This method determines what the requested output type is and returns it.
 	 * Defaults to html
 	 * First check the requested extension.
@@ -728,19 +800,26 @@ class zone {
 	 * @return string
 	 */
 	protected function getRequestedOutputType() {
+		if ($this->getExtension() ) {
+			return $this->getExtension(); 
+		} elseif ($get = getGetText('output')) {
+			return $get;
+		} 
+
+		return "html";
 	}
 
-	protected function getRequestOutput() {
-		if (isset($this->requestOutput)) {
-			return $this->requestOutput;
+	protected function getOutputType() {
+		if (isset($this->outputType)) { 
+			return $this->outputType;
 		}
 
 		$output = $this->getRequestedOutputType();
 
 		foreach ($this->getAllowableOutput() as $o) {
 			if (strtolower($output) == strtolower($o)) {
-				$this->requestOutput = strtolower($o);
-				return $this->requestOutput;
+				$this->outputType = strtolower($o);
+				return $this->outputType;
 			}
 		}
 
@@ -768,15 +847,15 @@ class zone {
 		} elseif ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 			$this->requestType = 'POST';
 		} else {
-			$this->requestType = strtoupper($this->getRequestOutput());
+			$this->requestType = strtoupper($this->getOutputType());
 		}
 
 		return $this->requestType;
 	}
 
 	/**
-	 * For a given url Token, check to see if it matches a page or post function
-	 * for this zone
+	 * For a given url Token, find the function to execute in this zone
+	 * 
 	 *
 	 * @param string $curPath
 	 * @param array $inPath
@@ -794,23 +873,19 @@ class zone {
 			case 'POST':
 				if (method_exists($this, "post" . $curPath)) {
 					return $this->handlePageRequest($curPath);
-				} else if(method_exists($this, "page" . $curPath)) {
-					// $this->handlePageRequest($curPath, true);
+				} else if((method_exists($this, "page" . $curPath)) || (method_exists($this, "init" . $curPath))) {
 					redirect($_SERVER["REQUEST_URI"]);
 				}
 				break;
-			case 'HTML':
-			case 'PAGE':
-				return $this->handlePageRequest($curPath, 'page');
-				break;
 			default:
-				return $this->handlePageRequest($curPath);
-				break;
+				if((method_exists($this, "page" . $curPath)) || (method_exists($this, "init" . $curPath))) {
+					return $this->handlePageRequest($curPath);
+					break;
+				}
 		}
 
 		return false;
 	}
-
 
 	/**
 	 * _checkAllowedPost
@@ -1817,5 +1892,23 @@ class zone {
 		}
 	}
 
+	function outputHTML () { 
+		
+	}
+
+	/**
+	 * outputJSON 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function outputJSON () {
+		header(‘application/text-json’);
+		echo json_encode($this->getData());
+	}
+
+	function outputXML() {
+
+	}
 
 }

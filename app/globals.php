@@ -24,7 +24,6 @@
 //
 //	//	these comments need to be rewritten and distributed throughout the document
 //
-//	*	REQUEST_TYPE = "HTML" or "JSRS" depending on the request type.
 //	*	SCRIPT_REF = base ref for the script (trailing /)
 //	*	SCRIPT_URL = actual URL of the script (no path_info or querystring)
 //	*	SCRIPT_BASE = the location of where the script is located
