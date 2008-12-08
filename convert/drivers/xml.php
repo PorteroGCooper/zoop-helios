@@ -1,5 +1,6 @@
 <?php
-require_once 'XML/Serializer.php'; 
+
+include("XML/Serializer.php");
 
 /**
  * @category zoop
@@ -29,28 +30,20 @@ class convert_driver_xml extends convert_driver_abstract {
 	/**
 	 * Take an array and convert it to an xml string
 	 * @param $data array
+	 * @param $options array
 	 * @return string
 	 */
 	public function to($data, $options = array()) {
 
-		$serializer_options = array (
-		   'addDecl' => TRUE,
-		   'encoding' => 'ISO-8859-1',
-		   'indent' => '    ',
-		   'indentAttributes' => '_auto',
-		   'rootName'  => 'root',
-		   'replaceEntities' => XML_UTIL_CDATA_SECTION,
-		   'typeHints' => TRUE,
-		); 
+		$serializer_options = Config::get('zoop.convert.xml.serializer');
+		$serializer_options['linkbreak'] = "\n";
+		$serializer_options = array_merge($serializer_options, $options );
 
-		$serializer_options = $serializer_options + $options;
+		if ($serializer_options['use_cdata']) {
+			$serializer_options['replaceEntities'] = XML_UTIL_CDATA_SECTION;
+		}
 
-		$serializer = new XML_Serializer();
-
-		// perform serialization
-		$serializer->setOption("indent", "     ");
-		$serializer->setOption("rootName", $root);
-		$serializer->setOption("replaceEntities", XML_UTIL_CDATA_SECTION);
+		$serializer = new XML_Serializer($serializer_options);
 		$result = $serializer->serialize($data);
 
 		// check result code and display XML if success
@@ -62,8 +55,9 @@ class convert_driver_xml extends convert_driver_abstract {
 	}
 
 	/**
-	 * Take a serialized string and return a Simple XML object or array, default SimpleXML
+	 * Take a XML string and return a Simple XML object or array, default SimpleXML
 	 * @param $string string
+	 * @param $options array
 	 * @return array
 	 */
 	public function from($data, $options = array()) {

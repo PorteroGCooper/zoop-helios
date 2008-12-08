@@ -5,3 +5,18 @@ xml:
         object_property_for_attributes: "@attributes"
         php_class: "SimpleXMLElement"
         maintain_attributes: true
+    serializer:
+        indent: "    "
+        typeHints: false
+        addDecl: true
+        encoding: 'UTF-8'
+        rootName: 'root'
+        defaultTagName: "item"
+        use_cdata: true
+csv:
+    delimiter: ','
+    enclosure: '"'
+    use_keys: true 
+yaml:
+    indent: 4
+    wordwrap: 60

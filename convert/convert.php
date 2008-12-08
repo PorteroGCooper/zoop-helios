@@ -30,81 +30,12 @@ include_once(dirname(__file__) . "/drivers/abstract.php");
 class convert {
 
 	/**
-	* The following variables and methods should be duplicated in each class that extends this one
-	*/
-
-	private static $instance;
-
-	/**
-	 * The private construct prevents instantiating the class externally.
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function __construct() { }
-
-	/**
-	 * Prevents external instantiation of copies of the Singleton class,
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function __clone() {
-		trigger_error('Clone is not allowed.', E_USER_ERROR);
-	}
-
-	/**
-	 * Prevents external instantiation of copies of the Singleton class,
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function __wakeup() {
-		trigger_error('Deserializing is not allowed.', E_USER_ERROR);
-	}
-
-	/**
-	 * get Instance: a singleton method
-	 *
-	 * @static
-	 * @access public
-	 * @return void
-	 */
-	public static function gi() {
-		if (!self::$instance instanceof self) {
-			self::$instance = new self;
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * magic method, wraps _to and _from calls and passes along driver. 
-	 * 
-	 * @param mixed $method 
-	 * @param mixed $args 
-	 * @access public
-	 * @return void
-	 */
-	public function __call($method, $args ) {
-		if (substr($method, 0, 2) == 'to') {
-			$param_name = strtolower(substr($method, 2));
-			array_unshift($args, $param_name);
-			return call_user_func_array(array($this, '_to'), $args);
-		} elseif (substr($method, 0, 4) == 'from') {
-			$param_name = strtolower(substr($method, 4));
-			array_unshift($args, $param_name);
-			return call_user_func_array(array($this, '_from'), $args);
-		}
-
-	}
-
-	/**
 	 * array holding the loaded drivers
 	 *
 	 * @var mixed
 	 * @access public
 	 */
-	var $drivers;
+	static $drivers;
 
 	/**
 	 * Get the backend driver and load it into the instance var.
@@ -112,13 +43,13 @@ class convert {
 	 * @access protected
 	 * @return void
 	 */
-	function _loadDriver($backend) {
+	private function _loadDriver($backend) {
 		global $zoop;
 		$name = "convert_driver_" . $backend;
 		$zoop->addInclude($name, ZOOP_DIR . "/convert/drivers/$backend.php");
 		if (class_exists($name)) {
-			$this->drivers[$backend] = new $name($this);
-			return $this->drivers[$backend];
+			self::$drivers[$backend] = new $name($this);
+			return self::$drivers[$backend];
 		} else {
 			trigger_error("Invalid Driver: $name");
 		}
@@ -131,11 +62,11 @@ class convert {
 	 * @return void
 	 */
 	function getDriver($backend) {
-		if (!$this->drivers[$backend]) {
-			return $this->_loadDriver($backend);
+		if (!self::$drivers[$backend]) {
+			return self::_loadDriver($backend);
 		}
 
-		return $this->drivers[$backend];
+		return self::$drivers[$backend];
 	}
 
 	/**
@@ -146,29 +77,78 @@ class convert {
 	 * @return void
 	 */
 	function testDriver($driver) {
-		$drv = $this->getDriver($driver);
+		$drv = self::getDriver($driver);
 		return $drv->test();
 	}
 
 	/**
-	 * Called by the magic method, wraps driver to call.
+	 * Called by the each to* method, wraps driver to call.
 	 * @param $name
 	 * @param $args
 	 * @return unknown_type
 	 */
 	private function _to ($name, $data, $args = array()) {
-		$driver = $this->_loadDriver($name);
+		$driver = self::_loadDriver($name);
 		return $driver->to($data, $args);
 	}
 
 	/**
-	 * Called by the magic method, wraps driver from call.
+	 * Called by the each from* method, wraps driver from call.
 	 * @param $name
 	 * @param $args
 	 * @return unknown_type
 	 */
 	private function _from ($name, $data, $args = array() ) {
-		$driver = $this->loadDriver($name);
+		$driver = self::loadDriver($name);
 		return $driver->from($data, $args);
 	}
+
+	function toJSON($data, $args = array()) { 
+		return self::_to('json', $data, $args);
+	}
+
+	function fromJSON($data, $args = array()) { 
+		return self::_from('json', $data, $args);
+	}
+
+	function toSerialized($data, $args = array()) { 
+		return self::_to('serialized', $data, $args);
+	}
+
+	function fromSerialized($data, $args = array()) { 
+		return self::_from('serialized', $data, $args);
+	}
+
+	function toXML($data, $args = array()) { 
+		return self::_to('xml', $data, $args);
+	}
+
+	function fromXML($data, $args = array()) { 
+		return self::_from('xml', $data, $args);
+	}
+
+	function toCSV($data, $args = array()) { 
+		return self::_to('csv', $data, $args);
+	}
+
+	function fromCSV($data, $args = array()) { 
+		return self::_from('csv', $data, $args);
+	}
+
+	function toYAML($data, $args = array()) { 
+		return self::_to('yaml', $data, $args);
+	}
+
+	function fromYAML($data, $args = array()) { 
+		return self::_from('yaml', $data, $args);
+	}
+
+	function toXLS($data, $args = array()) { 
+		return self::_to('xls', $data, $args);
+	}
+
+	function fromXLS($data, $args = array()) { 
+		return self::_from('xls', $data, $args);
+	}
+
 }

@@ -28,6 +28,7 @@ class convert_driver_serialized extends convert_driver_abstract {
 	/**
 	 * Take an array and convert it to a serialized php string
 	 * @param $data array
+	 * @param $options array
 	 * @return string
 	 */
 	public function to($data, $options = array()) {
@@ -37,11 +38,11 @@ class convert_driver_serialized extends convert_driver_abstract {
 	/**
 	* Take a serialized string and return a php data structure (array)
 	* @param $string string
+	* @param $options array
 	* @return array
 	*/
 	public function from($string) {
 		return unserialize($string);
 	}
-
 
 }

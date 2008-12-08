@@ -1931,7 +1931,43 @@ class zone {
 	 */
 	function outputJSON () {
 		header("application/text-json");
-		$data = convert::gi()->toJSON($this->getData());
+		$data = convert::toJSON($this->getData());
+		echo $data;
+	}
+
+	/**
+	 * The default method for outputing (echoing) CSV data.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputCSV () {
+		header("application/text-csv");
+		$data = convert::toCSV($this->getData());
+		echo $data;
+	}
+
+	/**
+	 * The default method for outputing (echoing) XLS data.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputXLS () {
+		header("Content-type: application/vnd.ms-excel");
+		$data = convert::toXLS($this->getData());
+		echo $data;
+	}
+
+	/**
+	 * The default method for outputing (echoing) YAML data.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputYAML () {
+		header("application/text-yaml");
+		$data = convert::toYAML($this->getData());
 		echo $data;
 	}
 
@@ -1943,8 +1979,8 @@ class zone {
 	 */
 	function outputXML() {
 		header('Content-type: text/xml'); 
-		//header("application/text-xml");
-		$data = convert::gi()->toXML($this->getData());
+		$options = array('rootName' => $this->getName(), 'defaultTagName' => $this->form->tablename );
+		$data = convert::toXML($this->getData(), $options);
 		echo $data;
 	}
 
@@ -1956,7 +1992,7 @@ class zone {
 	 */
 	function outputSerialized() {
 		header("application/text");
-		$data = convert::gi()->toSerialized($this->getData());
+		$data = convert::toSerialized($this->getData());
 		echo $data;
 	}
 
