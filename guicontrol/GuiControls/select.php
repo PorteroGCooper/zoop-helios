@@ -13,8 +13,15 @@
 include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 
 /**
- * selectControl
+ * HTML Select GuiControl
  *
+ * The select GuiControl can be passed a 'null_label' parameter. This will prepend a null value to
+ * the options list for the GuiControl. This label defaults to something like:
+ *
+ * "- Select %field% -"
+ *
+ * The %field% string is automatically replaced with the name of this GuiControl.
+ * 
  * @ingroup gui
  * @ingroup GuiControl
  * 
@@ -66,7 +73,9 @@ class SelectControl extends GuiMultiValue {
 					if ($value) $attrs[] = "multiple=\"true\"";
 					break;
 				case 'null_label':
-					if (empty($value)) $value = str_replace('%field%', $this->getLabelName(), Config::get('zoop.gui.select_null_value'));
+					if (empty($value) || $value === true) {
+						$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
+					}
 					$this->params['index'] = array('' => $value) + $this->params['index'];
 					break;
 			}
