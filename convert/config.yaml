@@ -1,0 +1,7 @@
+xml:
+    max_recursion_depth: 25
+    return_simpleXML: true
+    simple_xml:
+        object_property_for_attributes: "@attributes"
+        php_class: "SimpleXMLElement"
+        maintain_attributes: true

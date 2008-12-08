@@ -13,10 +13,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/** 
+/**
  * convert
- * A metaclass to wrap the conversion drivers. 
- * Convert takes data from a given format and converts it to and from a php associated array.
+ * A metaclass to wrap the conversion drivers.
+ * Convert takes data from a given format and converts it to and from a php data type (associated array).
  *
  * @package
  * @version $id$
@@ -25,7 +25,7 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 
-static class convert {
+class convert {
 
 	/**
 	* The following variables and methods should be duplicated in each class that extends this one
@@ -34,8 +34,8 @@ static class convert {
 	private static $instance;
 
 	/**
-	 * The private construct prevents instantiating the class externally.  
-	 * 
+	 * The private construct prevents instantiating the class externally.
+	 *
 	 * @access private
 	 * @return void
 	 */
@@ -43,7 +43,7 @@ static class convert {
 
 	/**
 	 * Prevents external instantiation of copies of the Singleton class,
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -53,7 +53,7 @@ static class convert {
 
 	/**
 	 * Prevents external instantiation of copies of the Singleton class,
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -62,14 +62,14 @@ static class convert {
 	}
 
 	/**
-	 * get Instance: a singleton method 
-	 * 
+	 * get Instance: a singleton method
+	 *
 	 * @static
 	 * @access public
 	 * @return void
 	 */
 	public static function gi() {
-		if (!self::$instance instanceof self) { 
+		if (!self::$instance instanceof self) {
 			self::$instance = new self;
 		}
 		return self::$instance;
@@ -77,11 +77,11 @@ static class convert {
 
 	public function __call($method, $args) {
 		if (substr($method, 0, 2) == 'to') {
-			$param_name = lcfirst(substr($method, 2));
+			$param_name = strtolower(substr($method, 2));
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, '_to'), $args);
 		} elseif (substr($method, 0, 4) == 'from') {
-			$param_name = lcfirst(substr($method, 4));
+			$param_name = strtolower(substr($method, 4));
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, '_from'), $args);
 		}
@@ -89,16 +89,16 @@ static class convert {
 	}
 
 	/**
-	 * array holding the loaded drivers 
-	 * 
+	 * array holding the loaded drivers
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $drivers;
 
 	/**
-	 * Get the backend driver and load it into the instance var. 
-	 * 
+	 * Get the backend driver and load it into the instance var.
+	 *
 	 * @access protected
 	 * @return void
 	 */
@@ -115,8 +115,8 @@ static class convert {
 	}
 
 	/**
-	 * get the backend driver 
-	 * 
+	 * get the backend driver
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -129,9 +129,9 @@ static class convert {
 	}
 
 	/**
-	 * Get the Driver and call test on it. 
-	 * Driver->test() will connect to the store and return true; 
-	 * 
+	 * Get the Driver and call test on it.
+	 * Driver->test() will connect to the store and return true;
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -140,11 +140,35 @@ static class convert {
 		return $drv->test();
 	}
 
-	public function _to ($name, $args ) {
-
+	/**
+	 * Called by the magic method, wraps driver to call.
+	 * @param $name
+	 * @param $args
+	 * @return unknown_type
+	 */
+	private function _to ($name, $args ) {
+		$driver = $this->loadDriver($name);
+		if (!isset($args['data'])) {
+			$data = array_shift($args);
+		} else {
+			$data = $args['data'];
+		}
+		return $driver->to($data, $args);
 	}
 
-	public function _from ($name, $args ) {
-
+	/**
+	 * Called by the magic method, wraps driver from call.
+	 * @param $name
+	 * @param $args
+	 * @return unknown_type
+	 */
+	private function _from ($name, $args ) {
+		$driver = $this->loadDriver($name);
+		if (!isset($args['data'])) {
+			$data = array_shift($args);
+		} else {
+			$data = $args['data'];
+		}
+		return $driver->from($data, $args);
 	}
 }

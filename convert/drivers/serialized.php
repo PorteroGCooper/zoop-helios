@@ -13,8 +13,8 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/** 
- * Takes a php array and converts it into serialized php
+/**
+ * Takes a php array and converts it into serialized php or vice versa
  *
  * @package
  * @version $id$
@@ -25,11 +25,23 @@
 
 class convert_driver_serialized extends convert_driver_abstract {
 
-	public function from($data) {
-        return unserialize($data);
-    }
-
-    public function to($data) {
+	/**
+	 * Take an array and convert it to a serialized php string
+	 * @param $data array
+	 * @return string
+	 */
+	public function to($data, $options = array()) {
 		return serialize($data);
-    }
+	}
+
+	/**
+	* Take a serialized string and return a php data structure (array)
+	* @param $string string
+	* @return array
+	*/
+	public function from($string) {
+		return unserialize($string);
+	}
+
+
 }

@@ -21,7 +21,7 @@ $GLOBALS['gZoneBasePath'] = null;
 /**
  * zone
  * Extend this class any time you need
- * a new section on your site.	 
+ * a new section on your site.
  * Files should be "{zonename}.php" and
  * placed in %APP_DIR%/zones/
  *
@@ -125,16 +125,16 @@ class zone {
 	protected $dataSet = array();
 
 	/**
-	 * The extension specificied in the path 
-	 * 
+	 * The extension specificied in the path
+	 *
 	 * @var mixed
 	 * @access public
 	 */
 	var $requestedExt;
 
 	/**
-	 * The extension that the zone will allow and render for this request 
-	 * 
+	 * The extension that the zone will allow and render for this request
+	 *
 	 * @var mixed
 	 * @access public
 	 */
@@ -658,7 +658,7 @@ class zone {
 	function setExtFromPath() {
 		$last = array_peek($this->_inPath);
 
-		$this->requestedExt = substr(strrchr($last,'.'),1);  
+		$this->requestedExt = substr(strrchr($last,'.'),1);
 		return $this->requestedExt;
 	}
 
@@ -761,8 +761,8 @@ class zone {
 
 
 	/**
-	 * Figure out and return the extension that is being explicitly requested. 
-	 * 
+	 * Figure out and return the extension that is being explicitly requested.
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -781,8 +781,8 @@ class zone {
 
 	/**
 	 * Returns the requested Extension
-	 * This is set during the handleRequest method. 
-	 * 
+	 * This is set during the handleRequest method.
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -801,16 +801,16 @@ class zone {
 	 */
 	protected function getRequestedOutputType() {
 		if ($this->getExtension() ) {
-			return $this->getExtension(); 
+			return $this->getExtension();
 		} elseif ($get = getGetText('output')) {
 			return $get;
-		} 
+		}
 
 		return "html";
 	}
 
 	protected function getOutputType() {
-		if (isset($this->outputType)) { 
+		if (isset($this->outputType)) {
 			return $this->outputType;
 		}
 
@@ -855,7 +855,7 @@ class zone {
 
 	/**
 	 * For a given url Token, find the function to execute in this zone
-	 * 
+	 *
 	 *
 	 * @param string $curPath
 	 * @param array $inPath
@@ -1892,23 +1892,72 @@ class zone {
 		}
 	}
 
-	function outputHTML () { 
-		
+
+	/**
+	 * The default method for rendering HTML.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputHTML () {
+		global $gui;
+		$gui->generate();
 	}
 
 	/**
-	 * outputJSON 
-	 * 
+	 * The default method for rendering PDF.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputPDF() {
+
+	}
+
+	/**
+	 * The default method for rendering PDF.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputPNG() {
+
+	}
+
+	/**
+	 * The default method for outputing (echoing) JSON data.
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function outputJSON () {
-		header(‘application/text-json’);
-		echo json_encode($this->getData());
+		header("application/text-json");
+		$data = convert::gi()->toJSON($this->getData());
+		echo $data;
 	}
 
+	/**
+	 * The default method for outputing (echoing) XML data.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	function outputXML() {
+		header("application/text-xml");
+		$data = convert::gi()->toXML($this->getData());
+		echo $data;
+	}
 
+	/**
+	 * The default method for outputing (echoing) Serialized (PHP) data.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputSerialized() {
+		header("application/text");
+		$data = convert::gi()->toSerialized($this->getData());
+		echo $data;
 	}
 
 }
