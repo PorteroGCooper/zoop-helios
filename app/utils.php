@@ -323,13 +323,32 @@ function &MapArray(&$transformee, &$transformer) {
 }
 
 /**
+ * Return the last (or nth) element in an array.
+ * 
+ * @access public
+ * @param array $stack 
+ * @param int $where (optional, defaults to last index)
+ * @return void
+ */
+function array_peek($stack, $where = null) {
+	$cnt = count($stack);
+	if ($cnt==0) return null;
+	
+	if ($where === null) $where = $cnt - 1;
+	
+	if ($where >= $cnt || $where < 0) $where = $cnt - 1;
+	
+	return $stack[$where];
+}
+
+/**
  * validEmailAddress
  *
  * @param mixed $email
  * @access public
  * @return void
  */
-function validEmailAddress ($email) {
+function validEmailAddress($email) {
 	if (eregi("[_\.0-9a-z-]+@[0-9a-z][-0-9a-z\.]+", $email, $check))
 	{
 		return true;
