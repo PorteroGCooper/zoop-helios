@@ -10,28 +10,37 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
+include_once(dirname(__file__) . "/text.php");
+
 /**
  * DateControl
  *
  * @ingroup gui
  * @ingroup GuiControl
  * @version $id$
- * @copyright 1997-2006 Supernerd LLC
- * @author Steve Francia <webmaster@supernerd.com>
+ * @copyright 1997-2008 Supernerd LLC
+ * @author Andy Nu <nuandy@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/ss.4/7/license.html}
  */
-class DateControl extends GuiControl {
+class DateControlControl extends TextControl {
 
-	/**
-	 * getPersistentParams
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function getPersistentParams() {
-		return array('validate');
+	function initControl() {
+		global $gui;
+		$gui->add_js('/zoopfile/gui/js/jquery.js', 'zoop');
+		$gui->add_js('/zoopfile/gui/js/jquery.date_input.js', 'zoop');
+		$gui->add_css('/zoopfile/gui/css/date_input.css', 'zoop');
 	}
-
+	
+	function validate() {
+		if(isset($this->params['validate'])) {
+			$date = Validator::validateDate($this->getValue(), $this->params['validate']);
+			if($date['result'] !== true) {
+				echo_r($date['message']);
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Render GuiControl
 	 *
@@ -39,48 +48,36 @@ class DateControl extends GuiControl {
 	 * @access protected
 	 * @return string Date selector
 	 */
+	 
 	protected function render() {
-		$attrs = array();
-
-		foreach ($this->params as $parameter => $value) {
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
-				case 'title':
-				case 'maxlength':
-				case 'width':
-				case 'height':
-				case 'size':
-				case 'type':
-					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
-					break;
-				case 'readonly':
-					if ($value)
-						$attrs[] = "readonly=\"true\"";
-				case 'validate':
-					$attrs[] = $this->getValidationAttr($this->params['validate']);
-					break;
+		global $gui;
+		
+		$input_id = $this->getId();
+		
+		$size = parent::setParam('size','20');
+		$maxlength = parent::setParam('maxlength','20');
+		
+		$html = parent::render();
+		
+		$gui->add_jquery('$("#'.$input_id.'").date_input({
+			stringToDate: function(string) {
+				var matches;
+				if (matches = string.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2})$/)) {
+					return new Date(matches[1], matches[2] - 1, matches[3]);
+				} else {
+					return null;
+				};
+			},
+			dateToString: function(date) {
+				var month = (date.getMonth() + 1).toString();
+				var dom = date.getDate().toString();
+				if (month.length == 1) month = "0" + month;
+				if (dom.length == 1) dom = "0" + dom;
+				return date.getFullYear() + "-" + month + "-" + dom;
 			}
-		}
-
-		$value = $this->getValue();
-		$attrs = implode(' ', $attrs);
-		$label = $this->getLabelName();
-		$ni = $this->getNameIdString();
-
-
-		$html = "<input $attrs value=\"$value\" $ni onfocus=\"show_Calendar(id);\">";
-		$html .= "<img src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/cal2.gif\" onclick=\"toggle_Calendar('{$label}');\" style=\"cursor:pointer;\">";
-		$html .= "<script src=\"" . SCRIPT_URL . "/zoopfile/guicontrol/js/datechooser/datechooser.js\"></script>";
-		$html .= file_get_contents(ZOOP_DIR . "/guicontrol/public/js/datechooser/cal_div.htm");
-		if(!empty($value))
-		{
-			//make the cool calendar choosing thing start on the month that my value is.
-			$date = explode('-', $value);
-			$year = $date[0];
-			$month = (int)$date[1] - 1;
-			$html .= "<script>var calYear = document.getElementById('cal_Year'); calYear.innerHTML = '$year'; var calMonth = document.getElementById('cal_Month'); calMonth.title = '$month';</script>";
-		}
-
+		});');
+		
 		return $html;
 	}
+	
 }
