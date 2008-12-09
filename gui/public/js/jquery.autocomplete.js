@@ -58,7 +58,7 @@ jQuery.fn.autocomplete = function(url, settings )
 			if (text != oldText && (settings.minChars != null && text.length >= settings.minChars))
 			{
 				clear();
-				if (settings.before == "function") 
+				if (settings.before) 
 				{
 					settings.before(textInput,text);
 				}
@@ -82,7 +82,7 @@ jQuery.fn.autocomplete = function(url, settings )
 						  hover(function() { $(this).addClass("selected").siblings().removeClass("selected");}, function() { $(this).removeClass("selected") } ).
 						  click(function () { valueInput.val( $(this).attr('value') );textInput.val( $(this).text() ); clear(); });
 						}
-						if (settings.after == "function") 
+						if (settings.after) 
 						{
 							settings.after(textInput,text);
 						}

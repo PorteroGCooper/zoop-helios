@@ -50,16 +50,16 @@ class zone_zoopfile extends zone
 
 		$jsfile = ZOOP_DIR . '/' . $module . '/public/' . implode('/', $inPath);
 
-		if(file_exists($jsfile))
+		if(file_exists($jsfile)) {
 			$mtime = filemtime($jsfile);
-		else
-			return $this->responsePage404($inPath);
+		} else {
+			return $this->responsePage(404);
+		}
 
 		$headers = $this->getheaders();
 		$mdate = date('l, d M Y H:i:s T', $mtime);
 
-		switch (strtolower(substr(strrchr($jsfile, "."), 1)))
-		{
+		switch (strtolower(substr(strrchr($jsfile, "."), 1))) {
 			case 'js':
 				header('Content-Type: x-application/javascript');
 				break;

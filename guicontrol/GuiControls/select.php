@@ -20,7 +20,9 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
  *
  * "- Select %field% -"
  *
- * The %field% string is automatically replaced with the name of this GuiControl.
+ * The %field% string is automatically replaced with the name of this GuiControl. If the user doesn't
+ * select anything, this field will post as $field === ''... Validation should ensure that this field
+ * posts as anything !== '' if this field is required.
  * 
  * @ingroup gui
  * @ingroup GuiControl
@@ -52,7 +54,6 @@ class SelectControl extends GuiMultiValue {
 		global $gui;
 		if (!isset($this->params['index'])) {
 			$this->params['index'] = array();
-/* 			trigger_error ('you need to specify an index for this guiControl'); */
 		}
 
 		$attrs = array();
@@ -63,15 +64,17 @@ class SelectControl extends GuiMultiValue {
 				case 'size':
 				case 'onChange':
 				case 'onBlur':
-					if (!empty($value)) $attrs[] = "$parameter=\"$value\"";
+					if (!empty($value)) $attrs[] = $parameter .'="'. $value .'"';
 					break;
 				case 'readonly':
 				case 'disabled':
-					if (!empty($value)) $attrs[] = "disabled=\"disabled\"";
+					if (!empty($value)) $attrs[] = 'disabled="disabled"';
 					break;
 				case 'multiple':
-					if ($value) $attrs[] = "multiple=\"true\"";
+					if ($value) $attrs[] = 'multiple="true"';
 					break;
+				// The 'null_label' is a "- Select an Option -" style value at the top of a single select list.
+				// this param should not be supplied on a multi-select list.
 				case 'null_label':
 					if (empty($value) || $value === true) {
 						$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
@@ -81,7 +84,6 @@ class SelectControl extends GuiMultiValue {
 			}
 		}
 
-		$value = $this->getValue();
 		$attrs = implode(' ', $attrs);
 		$id = $this->getId();
 		$name = $this->getLabelName();
@@ -89,7 +91,7 @@ class SelectControl extends GuiMultiValue {
 		if (isset($this->params['multiple']) && $this->params['multiple']) $name .= "[]";
 
 		$html =  '<select name="' . $name . '" id="' . $id . '" ' . $attrs . '>';
-		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $value), $gui);
+		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
 		$html .=  "</select>";
 
 		return $html;
