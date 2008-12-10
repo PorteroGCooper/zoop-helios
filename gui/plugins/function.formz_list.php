@@ -230,17 +230,18 @@ function smarty_function_formz_list($params, &$smarty) {
 					}
 					$value .= '</td>';
 				} else {
+					$value = array();
 					foreach ($rowActions as $key => $rowAction) {
-						$value .= ' ';
 						if ($rowAction['type'] == 'link') {
 							$link = $id . $rowAction['link'];
-							$value .= '<td><a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
+							$value[] = '<td><a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
 						} else {
 							$control = GuiControl::get('button', $key);
 							$control->setParams($rowAction);
-							$value .= '<td><span>' . $control->render() . '</span></td>';
+							$value[] = '<td><span>' . $control->render() . '</span></td>';
 						}
 					}
+					$value = implode("\n\t\t\t", $value);
 				}
 			}
 		}
