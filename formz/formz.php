@@ -776,12 +776,15 @@ class Formz {
 		global $gui;
 		$gui->add_css('zoopfile/formz/css/formz.css', 'zoop');
 		
-		if ($this->type == 'list') {
+		// only set up the sorting magick if this is a single page formz list.
+		if ($this->type == 'list' && (!$this->isPaginated() || $this->getPageCount() < 2)) {
 			$gui->add_js('zoopfile/gui/js/jquery.js', 'zoop');
 			$gui->add_js('zoopfile/gui/js/jquery.metadata.js', 'zoop');
 			$gui->add_js('zoopfile/gui/js/jquery.tablesorter.js', 'zoop');
-/* 			$gui->add_js('zoopfile/formz/js/sortable.js', 'zoop');			 */
-			$gui->add_js('jQuery(function($){$(".formz-list.sortable table").tablesorter();});', 'inline');
+
+			// add a sortable() call for *this* sortable formz table.
+			$formz_table_id = 'formz_' . strtolower($this->tablename) . '_list';
+			$gui->add_jquery('$("#'. $formz_table_id .'.sortable table").tablesorter();', 'inline');
 		}
 		$gui->assign($name, $this);
 	}
