@@ -777,9 +777,9 @@ class Formz {
 		$gui->add_css('zoopfile/formz/css/formz.css', 'zoop');
 		
 		if ($this->type == 'list') {
-			$gui->add_js('zoopfile/gui/js/jquery.min.js', 'zoop');
-			$gui->add_js('zoopfile/gui/js/jquery.metadata.min.js', 'zoop');
-			$gui->add_js('zoopfile/gui/js/jquery.tablesorter.min.js', 'zoop');
+			$gui->add_js('zoopfile/gui/js/jquery.js', 'zoop');
+			$gui->add_js('zoopfile/gui/js/jquery.metadata.js', 'zoop');
+			$gui->add_js('zoopfile/gui/js/jquery.tablesorter.js', 'zoop');
 /* 			$gui->add_js('zoopfile/formz/js/sortable.js', 'zoop');			 */
 			$gui->add_js('jQuery(function($){$(".formz-list.sortable table").tablesorter();});', 'inline');
 		}

@@ -59,7 +59,7 @@ class RadioControl extends GuiControl {
 	 */
 	protected function render() {
 		if (!isset($this->params['index'])) {
-			trigger_error('An index must be specified for radio button guiControls.');
+			trigger_error('An index must be specified for radio button GuiControls.');
 			return
 		}
 		

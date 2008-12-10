@@ -55,3 +55,4 @@ templates:
 # Label for 'nothing selected' in a dropdown.
 # Will autoreplace %field% with the actual field name.
 select_null_value: - Select %field% -
+select_threshold: 15
