@@ -57,23 +57,20 @@ class TextareaControl extends GuiControl {
 			}
 		}
 
-		$attrs = implode(' ', $attrs);
-
 		$vc = $this->getValidationClasses();
 		if (isset($this->params['class'])) {
 			$vc .= " " . $this->params['class'];
 		}
 		
 		if (!empty($vc)) {
-			$class = ' class="' . $vc . '"';
-		} else {
-			$class = '';
+			$attrs[] = ' class="' . $vc . '"';
 		}
 		
 		$ni = $this->getNameIdString();
-		$v = $this->getValue();
+		$v = htmlentities($this->getValue());
+		$attrs = implode(' ', $attrs);
 
-		$html = '<textarea' . $class . $ni . ' ' . $attrs. '>' . $v . '</textarea>';
+		$html = '<textarea '. $ni .' '. $attrs .'>'. $v .'</textarea>';
 
 		return $html;
 	}

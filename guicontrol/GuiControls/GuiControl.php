@@ -13,6 +13,11 @@
 /**
  * Base GuiControl class.
  *
+ * GuiControl parameters:
+ * - displayTitle   - Will be shown as the GuiControl's 'label' (if {guicontrol_label} is output)
+ * - label          - Same as displayTitle
+ * - caption        - Caption shown under GuiControl: could be instructions for use, etc.
+ *
  * @ingroup gui
  * @ingroup guicontrol
  */
@@ -53,6 +58,9 @@ class GuiControl {
 	 * @see GuiControl::get()
 	 */
 	function __construct($name) {
+		global $gui;
+		$gui->add_css('/zoopfile/guicontrol/css/guicontrols.css', 'zoop');
+	
 		$this->name = $name;
 		$this->persistent = $this->getPersistentParams();
 		$this->initControl();
@@ -181,8 +189,10 @@ class GuiControl {
 	 * @return void
 	 */
 	function getDisplayName() {
-		if(isset($this->params['displayName'])) {
+		if (isset($this->params['displayName'])) {
 			return $this->params['displayName'];
+		} else if (isset($this->params['label'])) {
+			return $this->params['label'];
 		} else {
 			return $this->name;
 		}
@@ -453,6 +463,12 @@ class GuiControl {
 		}
 		return "";
 	}
+	
+	function renderCaption() {
+		if ($caption = $this->getParam('caption')) {
+			return '<p class="caption">' . $caption . '</p>';
+		}
+	}
 
 	/**
 	 * encode
@@ -571,6 +587,7 @@ class GuiControl {
 		$html =  $this->renderViewState();
 		$html .= $this->getValidationDivs();
 		$html .= $this->render();
+		$html .= $this->renderCaption();
 		$html .= $this->renderErrorMessage();
 		return $html;
 	}

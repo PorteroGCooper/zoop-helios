@@ -2,16 +2,10 @@
 <html{* $xmlns *}{* $xml_lang *}>
 	<head>
 		<title>{$title}</title>
-		<base href="{$BASE_HREF}/" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		{resources}
 	</head>
 	<body>
-{*
-		{regions name='header'}
-		{regions name='content'}
-		{regions name='sidebar'}
-*}
 		{regions}
 	</body>
 </html>

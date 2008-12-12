@@ -1750,12 +1750,37 @@ function url($url, $use_absolute = null) {
 	if (strpos($url, $base) === 0) {
 		// make sure each url is only canonicalized once...
 		$url = substr($url, strlen($base));
-	} else if (empty($url) || $url[0] !== '/') {
-		// tack on a zone path if this isn't absolute from base.
-		// THIS SHOULD BE a path relative to the zone base path, not the zone path with params.
-		// (hard coding a depth of 0 doesn't seem too much of a hack in this case)
+	} else if (empty($url)) {
 		$url = zone::getZoneBasePath() . '/' . $url;
-	}
+	} else {
+		switch ($url[0]) {
+			case '?':
+				// should prepend the zone path + page path + page params here...
+				if ($use_absolute) {
+					trigger_error('problems with url queries and absolute urls... fix this soon.');
+					return base_href(true) . getPath() . $url;
+				} else {
+					return $url;
+				}
+				break;
+			case '#':
+				// this is just a fragment... return either the fragment or the base href plus fragment.
+				if ($use_absolute) {
+					trigger_error('problems with url fragments and absolute urls... fix this soon.');
+					return base_href(true) . getPath() . $url;
+				} else {
+					return $url;
+				}
+				break;
+			case '/':
+				break;
+			default:
+				// tack on a zone path if this isn't a query, a fragment, or absolute from base.
+				// THIS SHOULD BE a path relative to the zone base path, not the zone path with params.
+				$url = zone::getZoneBasePath() . '/' . $url;
+				break;
+		}
+	} 
 
 	if ($use_absolute) {
 		return base_href(true) . $url;
