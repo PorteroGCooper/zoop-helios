@@ -31,14 +31,14 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	protected $table;
 	protected $tablename;
-	protected $_query = null;
-	protected $record = null;
+	protected $_query        = null;
+	protected $record        = null;
 	
-	protected $_pageNumber = 1;
-	protected $_pageLimit = null;
-	protected $_pager = null;
-	protected $_paginated = false;
-	protected $_searchToken = null;
+	protected $_pageNumber   = 1;
+	protected $_pageLimit    = null;
+	protected $_pager        = null;
+	protected $_paginated    = false;
+	protected $_searchToken  = null;
 	protected $_searchTables = null;
 	
 	/**
@@ -703,7 +703,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				$local_field   = $relation->getLocalFieldName();
 				$foreign_field = $relation->getForeignFieldName();
 			} else {
-				$local_field   = $relation->getClass();
+				$local_field   = $name;
 				$foreign_field = $foreign_class->getIdentifier();
 				
 				// This is the local field from the point of view of the other end of the relation
