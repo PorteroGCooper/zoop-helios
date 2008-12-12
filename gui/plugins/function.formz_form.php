@@ -13,7 +13,7 @@
 include_once(dirname(__file__) . "/function.guicontrol.php");
 
 /**
- * Smarty plugin to render Formz objects.
+ * Smarty plugin to render Formz objects as HTML forms (edit and view).
  *
  * @ingroup gui
  * @ingroup plugins

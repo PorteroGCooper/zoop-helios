@@ -1,12 +1,4 @@
 <?php
-/**
- * Zoop Smarty plugin
- * @group gui
- * @group plugins
- * @group Formz
- *
- * @author Justin Hileman
- */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -18,10 +10,13 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-// include_once(dirname(__file__) . "/function.guicontrol.php");
-
 /**
- * smarty_function_formz_form
+ * Smarty plugin for rendering Formz lists
+ *
+ * @ingroup gui
+ * @ingroup plugins
+ * @ingroup Formz
+ * @author Justin Hileman {@link http://justinhileman.com}
  *
  * @param array $params
  * @param Smarty $smarty

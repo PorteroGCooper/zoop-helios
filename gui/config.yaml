@@ -9,8 +9,15 @@ directories:
     plugins:
         - %APP_DIR%/view/guiplugins
         - %ZOOP_DIR%/gui/plugins
+
 strip_html: 0
 caching: 0
+
+page_title:
+    # specify the format for the page title (shown in window titlebar)
+    # something like the following is pretty okay:
+    #format: '%title% | %app_title%'
+    format: '%title%';
 
 template_resources:
     drivers:
