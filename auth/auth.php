@@ -609,7 +609,12 @@ class auth {
 	protected function _showLogin() {
 		$redirect = $this->getConfig('locations.login');
 		if ($redirect_param = $this->getConfig('login_redirect_param', false)) {
-			$redirect .= '/?' . $redirect_param . '=' . urlencode($GLOBALS['PATH_INFO']);
+			
+			// grab the redirect path
+			$path = $GLOBALS['PATH_INFO'];
+			if ($_SERVER['QUERY_STRING']) $path .= '?' . $_SERVER['QUERY_STRING'];
+			
+			$redirect .= '/?' . $redirect_param . '=' . urlencode($path);
 		}
 		BaseRedirect($redirect);
 	}
