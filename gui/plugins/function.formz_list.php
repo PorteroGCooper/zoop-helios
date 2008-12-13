@@ -38,7 +38,7 @@ function smarty_function_formz_list($params, &$smarty) {
 
 	// TODO Make this pretty.
 	if ($searchable && $form->getSearchForms() !== null) {
-		$html .= '<form>' . '<input id="search_text" name="q" type="text">' . 
+		$html .= '<form class="formz-search-form">' . '<input id="search_text" name="q" type="text">&nbsp;' . 
 				'<input id="search_button" name="search_button" type="button" value="Search">' . '</form>';
 	}
 

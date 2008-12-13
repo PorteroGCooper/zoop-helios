@@ -40,6 +40,8 @@ class formz_doctrineDB implements formz_driver_interface {
 	protected $_paginated    = false;
 	protected $_searchToken  = null;
 	protected $_searchTables = null;
+	protected $_searchTablesets = null;
+	protected $_tableAlias   = null;
 	
 	/**
 	 * Values that are fixed for both querying and Create and Update 
@@ -238,13 +240,23 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 	}
 	
+	/**
+	 * Apply all query constraints in order
+	 *
+	 * This method grabs the query for this form's table and applies all constraints that
+	 * have been specified, including fixed values, search tokens, pagination and page limits.
+	 * In order for page limits to be enforced correctly, the constraints must be applied in
+	 * the specified order (fixed values -> search token / relations -> pagination -> page limit)
+	 *
+	 * @access protected
+	 */
 	protected function _applyQueryConstraints() {
 		// apply any fixed values
 		if ($this->getFixedValues()) {
 			$this->_applyFixedValuesToQuery();
 		}
 		// add search constraints
-		if (false && $this->isSearchable()) {
+		if ($this->isSearchable() && !$this->isTree()) {
 			$this->_applySearchToQuery();
 		}
 		// paginate this query
@@ -283,21 +295,42 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $nodes;
 	}
 	
+	/**
+	 * Apply search parameters to the query constraints
+	 *
+	 * This method grabs all table search sets that are stored and loops through them to
+	 * apply parameters for the given search token.  Table search sets take the form of a
+	 * 2D array where the top array is indexed with the name of the table/relation to search on
+	 * and its value is an array of strings referencing which fields in that relation to search on.
+	 *
+	 * @access protected
+	 */
 	protected function _applySearchToQuery() {
 		if (!isset($this->_searchToken) || empty($this->_searchToken)) return;
-		
-		$tablename = $this->table->getTableName();
-		foreach($this->getSearchTables() as $tablename) {
-			// $query = $this->getQuery()->copy();
-			// $query->from($tablename . ' ' . lcfirst($tablename[0]));
-			$query->from($tablename . ' c');
-			$result = Doctrine::getTable($this->tablename)->search('*' . $this->_searchToken . '*', $this->query());
-			
-			$results = array();
-			$results += $result->fetchArray();
+
+		foreach($this->getSearchTablesets() as $tableset => $search_fields) {
+			foreach($search_fields as $search_field) {
+				if (strtolower($tableset) === strtolower($this->getTableAlias())) {
+					$this->query()->select('*') // try to optimize this, remove the select *?
+								  ->from($tableset . ' c')
+								  ->where('c.' . $search_field . ' like "%' . $this->_searchToken . '%"');
+				} else {
+					$this->query()->leftJoin('c.' . $tableset . ' b')
+								  ->orWhere('b.' . $search_field . ' like "%' . $this->_searchToken . '%"');
+				}
+			}
 		}
+		
+		
 	}
 	
+	/**
+	 * Applies a page limit to the query results
+	 *
+	 * If we've got a page limit for this query's results, go ahead and apply it
+	 *
+	 * @access protected
+	 */
 	protected function _applyLimitToQuery() {
 		$this->query()->limit($this->_pageLimit);
 	}
@@ -905,6 +938,26 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
+	 * Get the table alias for this formz object
+	 *
+	 * @access public
+	 * @return string $tableAlias
+	 */
+	protected function getTableAlias() {
+		return $this->_tableAlias;
+	}
+
+	/**
+	 * Set the table alias for this formz object
+	 *
+	 * @access public
+	 * @param string $tableAlias
+	 */
+	function setTableAlias($tableAlias) {
+		$this->_tableAlias = $tableAlias;
+	}
+
+	/**
 	 * Set the token for searching
 	 * 
 	 * @access public
@@ -945,6 +998,35 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
+	 * Add table sets for searching.
+	 *
+	 * Accepts either a single table set (tablename => search fields) or an array of table sets
+	 * 
+	 * @access public
+	 * @param mixed $tableset(s)
+	 * @return void
+	 */
+	function addSearchTableset($tablesets) {
+		if ($this->_searchTablesets === null) {
+			$this->_searchTablesets = array();
+		}
+
+		foreach ((array)$tablesets as $key => $tableset) {
+			$this->_searchTablesets[$key] = $tableset;
+		}
+	}
+
+	/**
+	 * Get table sets for searching
+	 * 
+	 * @access public
+	 * @return array table sets
+	 */
+	function getSearchTablesets() {
+		return $this->_searchTablesets;
+	}
+
+	/**
 	 * Return's this query. If it doesn't exist, create and apply fixed values to it.  
 	 * 
 	 * @access protected
@@ -957,6 +1039,13 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $this->_query;
 	}
 
+	/**
+	 * Apply fixed values to the query
+	 *
+	 * Essentially, specify the key/value requirements in the WHERE clause of the query
+	 *
+	 * @access private
+	 */
 	private function &_applyFixedValuesToQuery() {
 		$fixed = $this->getFixedValues();
 		if ($fixed) {

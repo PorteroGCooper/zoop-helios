@@ -776,6 +776,14 @@ class Formz_FormDB implements formz_driver_interface {
 		trigger_error("FormDB driver doesn't implement search tables");
 	}
 
+	function addSearchTableset($tableset) {
+		trigger_error("FormDB driver doesn't implement search table sets");
+	}
+
+	function getSearchTablesets() {		
+		trigger_error("FormDB driver doesn't implement search table sets");
+	}
+
 	/**
 	 * Write the current record to the database.
 	 * If the record is new it will insert it, if not it will update it.

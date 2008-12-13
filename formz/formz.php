@@ -143,7 +143,14 @@ class Formz {
 	 * @access protected
 	 */
 	protected $_searchForms = null;
-
+	
+	/**
+	 * Search form set objects
+	 *
+	 * @access protected
+	 */
+	protected $_searchFormsets = null;
+	
 	var $errors = array();
 	var $editable = true;
 
@@ -180,6 +187,8 @@ class Formz {
 			case Formz::DoctrineDB:
 			case 'doctrine':
 				$this->_driver = new Formz_DoctrineDB($tablename);
+				// Make this driver aware of its table alias
+				$this->_driver->setTableAlias($tablename);
 				break;
 			case Formz::FormDB:
 			case 'forms':
@@ -192,7 +201,7 @@ class Formz {
 		
 		// grab the default field definitions, we'll mess with 'em later :)
 		$this->_fields = $this->_driver->getFields();
-		
+
 		// set the sort field and order
 		$sort = $this->getSortField();
 		if ($sort) {
@@ -1223,7 +1232,14 @@ class Formz {
 			}
 		}
 	}
-	
+
+	/**
+	 * Add a search form for processing
+	 *
+	 * Add a table or relation to the list of items to search on
+	 *
+	 * @access public
+	 */
 	function addSearchForm($tablename = null) {
 		if (!$tablename) {
 			$tablename = $this->tablename;
@@ -1236,14 +1252,89 @@ class Formz {
 		$this->_driver->addSearchTable($tablename);
 	}
 
+	/**
+	 * Get search forms for processing
+	 *
+	 * Get a list of tables and relations to search on
+	 *
+	 * @access public
+	 */
 	function getSearchForms() {
 		return $this->_searchForms;
 	}
 
+	/**
+	 * Add a search form set for processing
+	 *
+	 * Add a table or relation set to the list of items to search on.
+	 * Sets include the table/relation name as well as a list of fields in
+	 * the relation to check against.  The data structure is:
+	 * array($tablename => ($field1, $field2))
+	 *
+	 * @access public
+	 */
+	function addSearchFormSet($tableset = null) {
+		if (!$tableset) {
+			$tableset = array($this->tablename => array());
+		}
+		if (!$this->_searchFormsets) {
+			$this->_searchFormsets = array();
+		}
+		
+		$this->_searchFormsets[] = $tableset;
+		$this->_driver->addSearchTableset($tableset);
+	}
+
+	/**
+	 * Get search form sets for processing
+	 *
+	 * Returns an array of all table/relation sets to process
+	 *
+	 * @access public
+	 */
+	function getSearchFormsets() {
+		return $this->_searchFormsets;
+	}
+
+	/**
+	 * Set the search token constraint for this form
+	 *
+	 * Takes and sets the search token to use to constrain the search
+	 * to a subset of matched results
+	 *
+	 * @access public
+	 */
 	function setSearchToken($search_token) {
 		$this->_driver->setSearchToken($search_token);
 	}
 
+	/**
+	 * Get the table alias for this formz object
+	 *
+	 * @access public
+	 * @return string $tableAlias
+	 */
+//	function getTableAlias() {
+//		return $this->_driver->getTableAlias();
+//	}
+
+	/**
+	 * Set the table alias for this formz object
+	 *
+	 * @access public
+	 * @param string $tableAlias
+	 */
+//	function setTableAlias($tableAlias) {
+//		$this->_driver->setTableAlias($tableAlias);
+//	}
+
+	/**
+	 * Set the results limit
+	 *
+	 * Set the limit on the number of results to return
+	 *
+	 * @access public
+	 */
 	function setLimit($limit) {
 		$this->_driver->setLimit($limit);
 	}

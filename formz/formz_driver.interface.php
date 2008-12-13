@@ -331,6 +331,23 @@ interface formz_driver_interface {
 	function getSearchTables();
 
 	/**
+	 * Add table set for searching
+	 * 
+	 * @access public
+	 * @param string $tableset
+	 * @return void
+	 */
+	function addSearchTableset($tableset);
+
+	/**
+	 * Get table sets for searching
+	 * 
+	 * @access public
+	 * @return array $tablesets
+	 */
+	function getSearchTablesets();
+
+	/**
 	 * Returns true if this form uses pagination.
 	 * 
 	 * @access public
