@@ -278,22 +278,77 @@ function smarty_function_formz_list($params, &$smarty) {
 				}
 				$list_actions[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 			} else if ($action['type']=='paginate') {
+			
+
+			/*
+				// get the pagination format:
+				$format = Config::get('zoop.formz.paginate.format');
+				$delimiter = Config::get('zoop.formz.paginate.format_delimiter');
+				
+				$chunks = explode($delimiter, $format);
+				
+				die_r($chunks);
 				$page_links = array();
-				$page_count = $form->getPageCount();
-				if ($action['page'] > 1) {
-					$page_links[] = "<a href='" . url($zone_path) . "'>First</a>";
-					if ($action['page'] >= 2) {
-						$page_links[] = "<a href='" . url($zone_path) . "?page=" . ($action['page'] - 1) . "'>Previous</a>";
+				
+				// grab first, prev
+
+				while ($chunk = array_shift($chunks)) {
+					if (is_integer($chunk)) {
+						
+					} else if {
+						strpos()
 					}
 				}
-				if ($page_count > $action['page']) {
-					$page_links[] = "<a href='" . url($zone_path) . "?page=" . ($action['page'] + 1) . "'>Next</a>";
+			*/
+			
+			
+				$page_links = array();
+				$page_count = $form->getPageCount();
+				
+				if ($page_count == 1) continue;
+				
+				$format = Config::get('zoop.formz.paginate.format');
+				
+				if ($format['first']) {
+					if ($action['page'] > 1) {
+						$page_links[] = '<a class="page-first" href="' . url($zone_path) . '" title="First page">' . $format['first'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-first">' . $format['first'] .'</span>';
+					}
 				}
-				if ($action['page'] < $page_count) {
-					$page_links[] = "<a href='" . url($zone_path) . "?page=" . $page_count . "'>Last</a>";
+				if ($format['prev']) {
+					if ($action['page'] > 1) {
+						$page_links[] = '<a class="page-prev" href="' . url($zone_path) . '?page=' . ($action['page'] - 1) . '" title="Previous page">' . $format['prev'] . '</a>';
+					} else {
+						$page_links[] = '<span class="page-prev">' . $format['prev'] . '</span>';
+					}
+				}
+				
+			/*
+				// deal with the page links in the middle of the pagination format array.
+				if (is_array($format['mid']) && count($format['mid'])) {
+					if (in_array('...', $format['mid'])) {
+						
+					}
+				}
+			*/
+				
+				if ($format['next']) {
+					if ($page_count > $action['page']) {
+						$page_links[] = '<a class="page-next" href="' . url($zone_path) . '?page=' . ($action['page'] + 1) . '" title="Next page">'. $format['next'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-next">'. $format['next'] .'</span>';
+					}
+				}
+				if ($format['last']) {
+					if ($action['page'] < $page_count) {
+						$page_links[] = '<a class="page-last" href="' . url($zone_path) . '?page=' . $page_count . '" title="Last page">'. $format['last'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-last">'. $format['last'] .'</span>';
+					}
 				}
 				if (count($page_links)) {
-					$list_actions[] = implode(' | ',$page_links);
+					$list_actions[] = '<span class="formz-paginate">' . implode(Config::get('zoop.formz.paginate.format_delimiter'), $page_links) . '</span>';
 				}
 			} else {
 				$control = GuiControl::get('button', $key);

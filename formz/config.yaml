@@ -5,6 +5,21 @@ lotsa_classes: true
 # Formz pagination defaults.
 paginate:
     limit: 25
+    
+    # TODO: would like to enable stuff like this later. not now.
+    # format: 'First Previous Next Last'
+    # format: '<< < 1 2 3 4 5 > >>'
+    # format: '<< < 1 2 3 4 ... 10 > >>'
+    
+    # disable any pagination links by setting them to 0... i.e. first: 0 will remove the first link.
+    format:
+        first: '<<'
+        prev: '<'
+        mid: [1, 2, 3, '...', 5]
+        next: '>'
+        last: '>>'
+        
+    format_delimiter: ' '
 
 rowaction:
     # Formz threshold for combining row action columns.
