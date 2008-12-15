@@ -466,14 +466,16 @@ class gui extends Smarty {
 	 * Will use a default template file for the region if no template is speficied.
 	 *
 	 * Note: This new region will be appended to the list of regions, so it will display
-	 * below the footer if you don't do something about it. {@see gui::sortRegions}
+	 * below the footer if you don't do something about it. Either add an $after param
+	 * or {@see gui::sortRegions}
 	 *
 	 * @param string $name Name of this region.
 	 * @param string $template_var for this region. (optional)
+	 * @param string $after Insert the region after given region name. (optional)
 	 * @return void
 	 * @todo Verify that templates actually exist instead of blindly accepting the names?
 	 */
-	function addRegion($name, $template_var = null) {
+	function addRegion($name, $template_var = null, $after = null) {
 		if (isset($this->_regions[$name])) {
 			trigger_error("Region already defined: $name");
 			return;
@@ -485,7 +487,16 @@ class gui extends Smarty {
 			}
 		}
 		
-		$this->_regions[$name] = $template_var;
+		if ($after !== null && array_key_exists($after, $this->_regions)) {
+			$new = array();
+			foreach($this->_regions as $_key => $_val) {
+				$new[$_key] = $_val;
+				if ($_key == $after) $new[$name] = $template_var;
+			}
+			$this->_regions = $new;
+		} else {
+			$this->_regions[$name] = $template_var;
+		}
 	}
 	
 	/**
