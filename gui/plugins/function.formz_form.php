@@ -146,7 +146,9 @@ function smarty_function_formz_form($params, &$smarty) {
 				}
 				break;
 			case 'relation':
-				$field['display']['index'] = $form->getTableRelationValues($key);
+				if (!isset($field['display']['index'])) {
+					$field['display']['index'] = $form->getTableRelationValues($key);
+				}
 				
 				// decide whether this should be single or multiple select
 				if ($field['rel_type'] == Formz::ONE) {

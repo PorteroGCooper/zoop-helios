@@ -628,24 +628,9 @@ class Formz {
 					$relation_label_field = $relation['label_field'];
 				}
 
-				$values = array();
-				foreach ($relation['values'] as $item) {
-					$values[$item[$relation['foreign_field']]] = $item[$relation_label_field];
+				if (isset($relation_fields[$key]['display'])) {
+					$fields[$key]['display'] = $relation_fields[$key]['display'];
 				}
-				
-				if (isset($relation_fields[$key]['display']['type'])) {
-					$fields[$key]['display']['type'] = $relation_fields[$key]['display']['type'];
-				}
-
-				$fields[$key]['values'] = $values;
-				
-	    		if (isset($relation_fields[$key]['display'])) {
-	    			$fields[$key]['display'] = $relation_fields[$key]['display'];
-	    		}
-	    		
-	    		if (!isset($fields[$key]['display']['index'])) {
-	    			$fields[$key]['display']['index'] = $values;
-	    		}
 
 			} else {
 				$fields[$key]['listshow'] = false;
