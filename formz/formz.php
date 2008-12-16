@@ -828,7 +828,10 @@ class Formz {
 			}
 		} else {
 			if (!isset($this->_fields[$field])) {
-				$relations = $this->getTableRelations();
+				$relations = array();
+				foreach ($this->getTableRelations() as $relation) {
+					$relations[$relation['alias']] = $relation;
+				}
 
 				if (in_array($field, array_keys($relations))) {
 					if (!isset($this->_relation_fields[$field])) {
@@ -837,7 +840,7 @@ class Formz {
 					$this->_relation_fields[$field][$property] = $value;
 				} else if (strchr($field, '.') !== false) {
 					$chunks = explode('.', $field);
-					
+
 					if (isset($relations[$chunks[0]])) {
 						$this->_relations_fields[$field] = array();
 						$this->_relation_fields[$field][$property] = $value;

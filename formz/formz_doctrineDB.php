@@ -193,15 +193,17 @@ class formz_doctrineDB implements formz_driver_interface {
 
 			if ($id !== null) {
 				$relation_record = $this->record($id)->$relation;
-				if (count($relation_record)) {
+
+				if ($relation_record instanceof Doctrine_Record) {
+					return $relation_record->$field;
+				} else if (count((array)$relation_record)) {
 					$retVal = array();
 					foreach ($relation_record as $key => $value) {
 						$retVal[] = $value->$field;
 					}
 					return $retVal;
-				} else {
-					return $relation_record->$field;
 				}
+				
 			} else {
 				$this->record->$relation->$field;
 			}
