@@ -1034,8 +1034,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	protected function &query() {
 		if (!$this->_query) {
-			$this->_query = $this->table->createQuery();
+			$this->_query = $this->table->createQuery('t');
 		}
+
 		return $this->_query;
 	}
 
@@ -1050,8 +1051,15 @@ class formz_doctrineDB implements formz_driver_interface {
 		$fixed = $this->getFixedValues();
 		if ($fixed) {
 			foreach ($fixed as $key => $value) {
+				if (strpos($key, '.') !== false) {
+					$relation = array_shift(explode('.', $key));
+					$this->query()->leftJoin('t.' . $relation . ' r');
+					$key = 'r.id';
+				}
 				if(is_null($value)) {
 					$this->query()->addWhere($key . ' IS NULL');
+				} else if (is_array($value)) {
+					$this->query()->whereIn($key, $value);
 				} else {
 					$this->query()->addWhere("$key = ?", $value);
 				}
@@ -1118,6 +1126,8 @@ class formz_doctrineDB implements formz_driver_interface {
 
 	/**
 	 * Set a fixed value to be used when seleting as well as updating 
+	 *
+	 * To add a SQL IN (x, y) style constraint, pass an array of values as 'val'.
 	 * 
 	 * @param mixed $array 
 	 * @access public
@@ -1129,6 +1139,8 @@ class formz_doctrineDB implements formz_driver_interface {
 	
 	/**
 	 * Adds new fixed value(s) to the existing ones.
+	 * 
+	 * To add a SQL IN (x, y) style constraint, pass an array of values as 'val'.
 	 *
 	 * @param array Fixed value to add, in the form array('key' => 'val')
 	 * @access public

@@ -149,7 +149,16 @@ function smarty_function_formz_list($params, &$smarty) {
 			if (strchr($field, '.') !== false) {
 				$value = $form->getValue($field, $id);
 				if (is_array($value)) {
-					$value = implode(', ', $value);
+					// if (isset($fields[$field]['listexpand']) && $fields[$field]['listexpand']) {
+					// 	$tmp = '<table>';
+					// 	foreach ($value as $entry) {
+					// 		$tmp .= '<tr><td>' . $entry . '</td></tr>';
+					// 	}
+					// 	$tmp .= '</table>';
+					// 	$value = $tmp;
+					// } else {
+						$value = implode(', ', $value);
+					// }
 				}
 			} else if (isset($record[$field])) {
 				$value = $record[$field];
@@ -192,7 +201,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					if (substr($link, -1) != '/') $link .= '/';
 					$link .= $record[$id_field];
 				}
-				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . url(url($zone_path . $link)) . '"><span>' . $value . '</span></a>';
+				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . url($link) . '"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
 				$value = '<a ' . $link_title . 'href="' . url(call_user_func($fields[$field]['listlinkCallback'], $id)) . '">' . $value . '</a>';
