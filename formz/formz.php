@@ -1073,6 +1073,13 @@ class Formz {
 		}
 	}
 	
+	function removeAction($action) {
+		foreach ((array)$action as $name) {
+			if (isset($this->_formActions[$name])) {
+				unset($this->_formActions[$name]);
+			}
+		}
+	}
 	
 	/**
 	 * Add an action to the list view for this form.
@@ -1127,6 +1134,14 @@ class Formz {
 	 */
 	function getListActions() {
 		return $this->_formListActions;
+	}
+	
+	function removeListAction($action) {
+		foreach ((array)$action as $name) {
+			if (isset($this->_formListActions[$name])) {
+				unset($this->_formListActions[$name]);
+			}
+		}
 	}
 	
 	/**
@@ -1226,10 +1241,18 @@ class Formz {
 		}
 
 		$this->_formRowActions[$name] = $args;
-	}	
+	}
 
 	function getRowActions() {
 		return $this->_formRowActions;
+	}
+	
+	function removeRowAction($action) {
+			foreach ((array)$action as $name) {
+			if (isset($this->_formRowActions[$name])) {
+				unset($this->_formRowActions[$name]);
+			}
+		}
 	}
 
 	function addEmbeddedForm($tablename, $form = null) {

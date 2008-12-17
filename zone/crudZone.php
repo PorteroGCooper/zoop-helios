@@ -247,7 +247,7 @@ class CrudZone extends zone {
 			$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
 			$this->form->addAction('cancel', array('link' => $link));
 		}
-		
+
 		$this->initUpdateForm();
 		$this->form->guiAssign();
 		$gui->generate('forms/formz.tpl');
