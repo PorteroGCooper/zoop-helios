@@ -917,7 +917,12 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 		}
 		*/
-		return $this->getPager()->getLastPage();
+
+		if ($this->getPager()->getExecuted()) {
+			return $this->getPager()->getLastPage();
+		} else {
+			// TODO: figure out the else clause on this...
+		}
 	}
 
 	/**
