@@ -160,6 +160,8 @@ function smarty_function_formz_list($params, &$smarty) {
 						$value = implode(', ', $value);
 					// }
 				}
+			} else if (isset($fields[$field]['type']) && $fields[$field]['type'] == 'aggregate') {
+				$value = $form->getValue($field, $id);
 			} else if (isset($record[$field])) {
 				$value = $record[$field];
 			} else if (isset($fields[$field]['display']['default'])) {
@@ -190,11 +192,14 @@ function smarty_function_formz_list($params, &$smarty) {
 			if (isset($fields[$field]['listlink'])) {
 				$link = $fields[$field]['listlink'];
 				$matches = array();
-				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
+				preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
 				if (count($matches)) {
 					// replace with this table's id field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
 					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
+					if (!isset($record[$matches[1]])) {
+						$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
+					}
 					$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
 				} else {
 					// automatically tack on the id if there's no wildcard to replace
@@ -272,12 +277,14 @@ function smarty_function_formz_list($params, &$smarty) {
 			if ($action['type'] == 'link') {		
 				$link = $action['link'];
 				$matches = array();
-				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
+				preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
 				if (count($matches)) {
 					// replace with this table's id field or slug field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
 					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
-					if (!isset($data[$matches[1]])) $data[$matches[1]] = '0';
+					if (!isset($data[$matches[1]])) {
+						$data[$matches[1]] = $form->getValue($matches[1], $data[$id_field]);
+					}
 					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
 				} else {
 					// automatically tack on the id if there's no wildcard to replace.

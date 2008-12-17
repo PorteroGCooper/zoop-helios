@@ -39,7 +39,8 @@ class component_formz extends component {
 				"formz_driver_interface" => $base . "/formz_driver.interface.php",
 				"formz_doctrineDB" => $base . "/formz_doctrineDB.php",
 				"formz_formDB" => $base . "/formz_formDB.php",
-
+				"FormzField" => $base . "/FormzField.php",
+				
 				"table" => $base . "/table.php",
 				"record" => $base . "/record.php",
 				"field" => $base . "/field.php",

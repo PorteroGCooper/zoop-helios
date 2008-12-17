@@ -185,35 +185,38 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return mixed $value
 	 */
 	function getValue($fieldname, $id = null) {
-		if (isset($this->id) && $this->id == 'new')
-			return "";
-		
 		if (strchr($fieldname, '.')) {
-			list($relation, $field) = explode('.', $fieldname);
-
+			$chunks = explode('.', $fieldname);
+			
 			if ($id !== null) {
-				$relation_record = $this->record($id)->$relation;
-
-				if ($relation_record instanceof Doctrine_Record) {
-					return $relation_record->$field;
-				} else if (count((array)$relation_record)) {
-					$retVal = array();
-					foreach ($relation_record as $key => $value) {
-						$retVal[] = $value->$field;
-					}
-					return $retVal;
-				}
-				
+				$val = $this->record($id);
 			} else {
-				$this->record->$relation->$field;
+				$val = $this->record;
 			}
+			
+			while ($field = array_shift($chunks)) {
+				$val = $val->$field;
+			}
+			return $val;
+/*
+
+			if ($relation_record instanceof Doctrine_Record) {
+				while ($r = $r->$chunks[0]) {
+					
+				}
+				return $relation_record->$field;
+			} else if (count((array)$relation_record)) {
+				$retVal = array();
+				foreach ($relation_record as $key => $value) {
+					$retVal[] = $value->$field;
+				}
+				return $retVal;
+			}
+*/
 		}
 		
-		if (isset($this->record->values[$fieldname]->value))
-			return $this->record->values[$fieldname]->value;
-		else
-			return null;
-// 			trigger_error("No value is set for the field: $fieldname");
+		if (isset($this->record($id)->$fieldname)) return $this->record($id)->$fieldname;
+		else trigger_error("No value is set for the field: $fieldname");
 	}
 
 	/**

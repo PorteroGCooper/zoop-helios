@@ -670,8 +670,31 @@ class Formz {
 	}
 	
 	function getValue($fieldname, $id = null) {
+	
+		// if this is an aggregate field, we'll have to handle it here.
+		if (
+			isset($this->_fields[$fieldname])
+			&& isset($this->_fields[$fieldname]['type'])
+			&& $this->_fields[$fieldname]['type'] == 'aggregate'
+		) {
+			
+			$value = $this->_fields[$fieldname]['format_string'];
+			
+			$matches = array();
+			preg_match_all('#%([a-zA-Z_\.]+?)%#', $value, $matches);
+			
+			foreach ($matches[1] as $_key => $_val) {
+				$matches[1][$_key] = $this->_driver->getValue($_val, $id);
+			}
+			$value = str_replace($matches[0], $matches[1], $value);
+			
+			return $value;
+		}
+		
+		// otherwise, pass it off to the driver.
 		return $this->_driver->getValue($fieldname, $id);
 	}
+	
 	/**
 	 * Return the relation field data (foreign/local fields, etc) for a given relation name.
 	 * 
@@ -923,7 +946,7 @@ class Formz {
 	 * @access public
 	 * @param string $name
 	 * @param array $defaults. (default: array()
-	 * @return void
+	 * @return FormzField object for accessing this field.
 	 */
 	function addField($name, $defaults = array()) {
 		if (isset($this->_fields[$name])) {
@@ -931,6 +954,15 @@ class Formz {
 			return false;
 		}
 		$this->_fields[$name] = $defaults;
+		
+		return $this->field($name);
+	}
+	
+	function addAggregateField($name, $format, $defaults = array()) {
+		$defaults['type'] = 'aggregate';
+		$defaults['format_string'] = $format;
+		
+		return $this->addField($name, $defaults);
 	}
 	
 	/**
@@ -1561,6 +1593,10 @@ class Formz {
 
 	function &getDoctrineRecord() {
 		return $this->_driver->getDoctrineRecord();
+	}
+	
+	function field($name) {
+		return new FormzField($name, $this);
 	}
 
 	/**
