@@ -958,6 +958,25 @@ class Formz {
 		return $this->field($name);
 	}
 	
+	/**
+	 * Add a formatted aggregate field.
+	 *
+	 * Aggregate fields are composed of values from other fields, arranged together in a string.
+	 *
+	 * @code
+	 *   $recent_orders->addAggregateField('name', '%first_name% %last_name%')
+	 *      ->setDisplayLabel('Full Name');
+	 * @endcode
+	 *
+	 * Replacement fields are designated with %field%, and can be in the format %relation.field%
+	 * or even %relation.newrelation.anotherrelation.field%
+	 *
+	 * @access public
+	 * @see Formz::addField
+	 * @param string $name Aggregate field name.
+	 * @param string $format Aggregate field value format.
+	 * @see Formz::addListAction
+	 */
 	function addAggregateField($name, $format, $defaults = array()) {
 		$defaults['type'] = 'aggregate';
 		$defaults['format_string'] = $format;
@@ -997,7 +1016,6 @@ class Formz {
 	function addAction($name, $args = array()) {
 		// Default label, also capitalized...
 		if (!isset($args['label'])) $args['label'] = format_label($name);
-		if (!isset($args['value'])) $args['value'] = $args['label'];
 		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
 		
 		switch (strtolower($name)) {
@@ -1009,7 +1027,7 @@ class Formz {
 			case 'saveandaddnew':
 			case 'updateandcreate':
 			case 'update_and_create':
-				$name = 'update_and_create';
+				$name = 'saveandnew';
 				if (!isset($args['value'])) $args['value'] = 'Save and Add New';
 				if (!isset($args['label'])) $args['label'] = 'Save and Add New';
 				if (!isset($args['type'])) $args['type'] = 'submit';
@@ -1042,6 +1060,7 @@ class Formz {
 				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
 		}
+		if (!isset($args['value'])) $args['value'] = $args['label'];
 		
 		$this->_formActions[$name] = $args;
 	}
@@ -1072,7 +1091,12 @@ class Formz {
 			return $actions;
 		}
 	}
-	
+	/**
+	 * Remove a form action.
+	 *
+	 * @access public
+	 * @param mixed $action Action (or array of actions) to remove.
+	 */
 	function removeAction($action) {
 		foreach ((array)$action as $name) {
 			if (isset($this->_formActions[$name])) {
@@ -1136,53 +1160,21 @@ class Formz {
 		return $this->_formListActions;
 	}
 	
+	/**
+	 * Return this form's list view actions.
+	 *
+	 * Unlike Formz::getActions, if no actions have been defined, this function will
+	 * return an empty set of actions.
+	 *
+	 * @access public
+	 * @see Formz::addListAction
+	 */
 	function removeListAction($action) {
 		foreach ((array)$action as $name) {
 			if (isset($this->_formListActions[$name])) {
 				unset($this->_formListActions[$name]);
 			}
 		}
-	}
-	
-	/**
-	 * Get the table name for this form
-	 *
-	 * @return $string tablename
-	 */
-	function getParentTablename() {
-		return $this->parentTablename;
-	}
-	
-	/**
-	 * Set the parent table name for this form.
-	 *
-	 * This function is protected, since it's only used by formz when embedding other formz objects.
-	 * You shouldn't ever need to call this function.
-	 *
-	 * @param string $parentTablename
-	 * @return void
-	 */
-	protected function setParentTablename($parentTablename) {
-		$this->parentTablename = $parentTablename;
-	}
-
-	/**
-	 * Get the id for this form's parent
-	 *
-	 * @return $string parent id
-	 */
-	function getParentId() {
-		return $this->parentId;
-	}
-
-	/**
-	 * Set the parent id for this form.
-	 *
-	 * @param string $parentId
-	 * @return void
-	 */
-	function setParentId($parentId) {
-		$this->parentId = $parentId;
 	}
 
 	/**
@@ -1243,16 +1235,71 @@ class Formz {
 		$this->_formRowActions[$name] = $args;
 	}
 
+	/**
+	 * Get the set of row actions for this formz list.
+	 *
+	 * @access public
+	 * @return array Row actions on this form
+	 */
 	function getRowActions() {
 		return $this->_formRowActions;
 	}
 	
+	/**
+	 * Remove Row action
+	 *
+	 * @access public
+	 * @param mixed $action An action name (or array of names) to remove.
+	 * @return void
+	 */
 	function removeRowAction($action) {
 			foreach ((array)$action as $name) {
 			if (isset($this->_formRowActions[$name])) {
 				unset($this->_formRowActions[$name]);
 			}
 		}
+	}
+
+	
+	/**
+	 * Get the table name for this form
+	 *
+	 * @return $string tablename
+	 */
+	function getParentTablename() {
+		return $this->parentTablename;
+	}
+	
+	/**
+	 * Set the parent table name for this form.
+	 *
+	 * This function is protected, since it's only used by formz when embedding other formz objects.
+	 * You shouldn't ever need to call this function.
+	 *
+	 * @param string $parentTablename
+	 * @return void
+	 */
+	protected function setParentTablename($parentTablename) {
+		$this->parentTablename = $parentTablename;
+	}
+
+	/**
+	 * Get the id for this form's parent
+	 *
+	 * @return $string parent id
+	 */
+	function getParentId() {
+		return $this->parentId;
+	}
+
+	/**
+	 * Set the parent id for this form.
+	 *
+	 * @param string $parentId
+	 * @return void
+	 */
+	function setParentId($parentId) {
+		$this->parentId = $parentId;
 	}
 
 	function addEmbeddedForm($tablename, $form = null) {
