@@ -32,7 +32,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	protected $table;
 	protected $tablename;
 	protected $_query        = null;
-	protected $record        = null;
+	protected $_record        = null;
 	
 	protected $_pageNumber   = 1;
 	protected $_pageLimit    = null;
@@ -119,8 +119,8 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	function getData($return_formz = false) {
-		if (!$this->record) return null;
-		$data = $this->record->toArray();
+		if (!$this->_record) return null;
+		$data = $this->_record->toArray();
 
 		if (!$return_formz) {
 			$data = $data + $this->getRecordRelationsValues();
@@ -191,7 +191,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			if ($id !== null) {
 				$val = $this->record($id);
 			} else {
-				$val = $this->record;
+				$val = $this->_record;
 			}
 			
 			while ($field = array_shift($chunks)) {
@@ -380,9 +380,9 @@ class formz_doctrineDB implements formz_driver_interface {
 			$this->type = 'record';
 			$classname  = $this->tablename;
 			$classname[0] = strtoupper($classname[0]);
-			$this->record = new $classname();
+			$this->_record = new $classname();
 			if ($this->getConstraints()) {
-				$this->record->fromArray($this->getConstraints());
+				$this->_record->fromArray($this->getConstraints());
 			}
 		} elseif ($this->getConstraints()) {
 			$record = $this->_applyUserConstraintsToQuery()->fetchOne();
@@ -391,10 +391,10 @@ class formz_doctrineDB implements formz_driver_interface {
 			if (!$record && $record !== 0) return null;
 			
 			$this->type = 'record';
-			$this->record = $record;
+			$this->_record = $record;
 		} elseif ($record = Doctrine::getTable($this->tablename)->find($id)) {
 			$this->type = 'record';
-			$this->record = $record;
+			$this->_record = $record;
 		} else {
 			$id = null;
 		}
@@ -457,11 +457,11 @@ class formz_doctrineDB implements formz_driver_interface {
 
 
 	function &getDoctrineRecord($id = false) {
-		if ($id && isset($this->record)) {
-			return $this->record;
+		if ($id && isset($this->_record)) {
+			return $this->_record;
 		} else {
 			$this->getRecord($id);
-			return $this->record;
+			return $this->_record;
 		}
 	}
 
@@ -496,19 +496,19 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 		
 		foreach ($values as $key => $val) {
-			$this->record->$key = $val;
+			$this->_record->$key = $val;
 		}
 
 		if ($this->isTree()) {
 			if ($this->hasParentRecord()) {
 				$parent = $this->getParentRecord();
-				$this->record->getNode()->insertAsLastChildOf($parent);
+				$this->_record->getNode()->insertAsLastChildOf($parent);
 			} else {
-				$this->record->root_id = 1;
-				$this->tree()->createRoot($this->record);
+				$this->_record->root_id = 1;
+				$this->tree()->createRoot($this->_record);
 			}
 		} else {
-			$this->record->save();
+			$this->_record->save();
 		}
 
 		// Get relation classes for the current table.
@@ -518,7 +518,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		foreach ($relationships as $rel => $foo) {
 
 			// skip this one if no relation records are returned.
-			if (!is_object($this->record->$rel)) continue;
+			if (!is_object($this->_record->$rel)) continue;
 			
 			// Unlinking related records can happen on each loop. $unlink_rel needs to be *unset*
 			// in order to keep records from being unlinked when we don't want them to be.
@@ -526,7 +526,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			if (isset($unlink_rel)) unset($unlink_rel);
 
 			// Obtain and loop through all the related records for the current class ($rel).
-			$related_records = $this->record->$rel->toArray();
+			$related_records = $this->_record->$rel->toArray();
 
 			if (isset($submitted_relations[$rel])) {
 				if (!empty($submitted_relations[$rel])) {
@@ -549,7 +549,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			// Passing Doctrine an empty array or value unlinks all related records for the class.
 			// Therefore, this checks isset() instead of is_array() or !empty()
 			if (isset($unlink_rel)) {
-				$this->record->unlink($rel, $unlink_rel);
+				$this->_record->unlink($rel, $unlink_rel);
 			}
 
 		}
@@ -562,11 +562,11 @@ class formz_doctrineDB implements formz_driver_interface {
 				// Doctrine 1.0.* assumes the array starts with an index of 0.
 				// This fixes our array keys so Doctrine doesn't barf on $ids.
 				if (is_array($ids)) sort($ids);
-				$this->record->link($relation_class, $ids);
+				$this->_record->link($relation_class, $ids);
 			}
 		}
 		
-		return array_shift($this->record->identifier());
+		return array_shift($this->_record->identifier());
 	}
 
 	/**
@@ -586,9 +586,9 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 		
 		if ($this->isTree()) {
-			return $this->record->getNode()->delete();
+			return $this->_record->getNode()->delete();
 		} else {
-			return $this->record->delete();
+			return $this->_record->delete();
 		}
 	}
 
@@ -601,7 +601,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function createRelation($values, $id = null) {
 		// get the record we want to save...
-		if ($id !== null && !isset($this->record)) {
+		if ($id !== null && !isset($this->_record)) {
 			if (!$this->isSluggable() && !$this->getRecord($id)) {
 				trigger_error("Unable to initialize record: " . $id);
 				return false;
@@ -632,7 +632,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		}
 
 		if ($child_record->save()) {
-			$this->record->link($child_table, $child_record['id']);
+			$this->_record->link($child_table, $child_record['id']);
 		} else {
 			trigger_error('Unable to save child record.');
 		}
@@ -798,7 +798,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	function getRecordRelations() {
 		$data = array();
 		foreach ($this->table->getRelations() as $name => $relation) {
-			$data[$name] = $this->record->$name->toArray();
+			$data[$name] = $this->_record->$name->toArray();
 		}
 
 		return $data;
@@ -815,12 +815,12 @@ class formz_doctrineDB implements formz_driver_interface {
 		
 		foreach ($relations as $name => $relation) {
 			if ($relation['rel_type'] == Formz::MANY) {
-				$array = $this->record->$name->toArray();
+				$array = $this->_record->$name->toArray();
 				foreach ($array as $value) {
 					$data[$name][] = $value[$relation['foreign_field']]; // = $value[$relation['label_field']];
 				}
 			} else {
-				$data[$name] = $this->record->$name;
+				$data[$name] = $this->_record->$name;
 			}
 		}
 

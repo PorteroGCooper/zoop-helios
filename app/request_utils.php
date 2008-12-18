@@ -192,28 +192,39 @@ function _getRequestIsset($get_or_post, $var_name = false) {
 }
 
 /**
- * Checks to see if a Checkbox GET was checked or not checked
+ * Checks to see if a boolean value GET was checked or not checked
  *
  * @todo Find out if we can return 'null' if unset.
  *
  * @param string $var_name Name of the GET request variable
  * @return boolean This returns 0 or 1 (for some unknown reason).
  */
-function getGetCheckbox($var_name = false) {
+function getGetBool($var_name = false) {
 	return _findRequestItem('get', $var_name);
 }
 
 /**
- * Checks to see if a Checkbox POST was checked or not checked
+ * Checks to see if a boolean value POST was checked or not checked
  *
  * @todo Find out if we can return 'null' if unset.
  *
  * @param string $var_name Name of the POST request variable to check
  * @return boolean This returns 0 or 1 (for some unknown reason).
  */
-function getPostCheckbox($var_name = false) {
+function getPostBool($var_name = false) {
 	return _findRequestItem('post', $var_name);
 }
+
+/**
+ * @deprecated
+ * @param string $var_name
+ * @return bool Checkbox value
+ */
+function getPostCheckbox($var_name = false) {
+	deprecated('Use getPostBool instead of getPostCheckbox');
+	return getGetBool($var_name);
+}
+
 
 /**
  * Checks to see if a Checkbox GET was checked or not checked
@@ -225,7 +236,7 @@ function getPostCheckbox($var_name = false) {
  * @param string $var_name Name of the variable
  * @return boolean This returns 0 or 1
  */
-function _getRequestCheckbox($get_or_post, $var_name = false) {
+function _getRequestBool($get_or_post, $var_name = false) {
 	$item = _findRequestItem($get_or_post, $var_name);
 	if(!$item) {
 		return 0;

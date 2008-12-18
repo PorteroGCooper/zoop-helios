@@ -174,7 +174,7 @@ class Formz {
 	 * @return object implementing Formz interface
 	 * @access public
 	 */
-	function Formz($tablename, $driver_type = 'default') {
+	function __construct($tablename, $driver_type = 'default') {
 		$this->valid_properties = get_class_vars(get_class($this));
 
 		// get the default Formz ORM driver
@@ -310,7 +310,7 @@ class Formz {
 			
 			// fail if we still don't have an id...
 			if ($id === null) {
-				trigger_error("Formz element does not have a current record to save.");
+				trigger_error("Formz object does not have a current record to save.");
 				return null;
 			}
 		}
@@ -1655,12 +1655,19 @@ class Formz {
 		$this->_defaultSortDirection = strtoupper($direction);
 	}
 	
-	
+	/**
+	 * Return the best guess at a title field for this formz object.
+	 *
+	 * Title field priority is set by the config parameter zoop.formz.title_field_priority.
+	 *
+	 * @access public
+	 * @return string Database title field
+	 */
 	function getTitleField() {
 		$label_field = $this->getIdField();
 
+		$fields = $this->getFields();
 		foreach(Config::get('zoop.formz.title_field_priority') as $field_name){
-			$fields = $this->getFields();
 			if (isset($fields[$field_name])) {
 				$label_field = $field_name;
 				break;
@@ -1668,6 +1675,18 @@ class Formz {
 		}
 
 		return $label_field;
+	}
+	
+	/**
+	 * Return the best guess at a title for this formz object. Returns the value of the column
+	 * returned by Formz::getTitleField()
+	 *
+	 * @access public
+	 * @see Formz::getTitleField
+	 * @return string Record title
+	 */
+	function getTitle() {
+		return $this->getValue($this->getTitleField());
 	}
 
 	function &getDoctrineQuery() {
@@ -1678,6 +1697,23 @@ class Formz {
 		return $this->_driver->getDoctrineRecord();
 	}
 	
+	/**
+	 * Get a FormzField object for the given field name.
+	 *
+	 * This is super rad, since it lets you do things like this:
+	 *
+	 * @code
+	 *    $myform->field('password')
+	 *       ->setDisplayType('betterpassword')
+	 *       ->setRequired()
+	 *       ->setEditable()
+	 *       ->setLabel('New Password');
+	 * @endcode
+	 *
+	 * @access public
+	 * @param string $name Field name
+	 * @return FormzField
+	 */
 	function field($name) {
 		return new FormzField($name, $this);
 	}
