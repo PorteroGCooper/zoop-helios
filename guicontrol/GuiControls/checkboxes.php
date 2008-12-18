@@ -23,7 +23,12 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class CheckboxesControl extends GuiMultiValue {
-
+	
+	function initControl() {
+		global $gui;
+		$gui->add_js('/zoopfile/gui/js/jquery.js', 'zoop');
+	}
+	
 	/**
 	 * validate
 	 *
@@ -100,7 +105,11 @@ class CheckboxesControl extends GuiMultiValue {
 		global $gui;
 
 		$smartyParams = array('options' => $this->params['index']);
-
+		
+		$input_id = $this->getId();
+		
+		$class = array('checkboxes');
+		
 		foreach ($this->params as $parameter => $value) {
 			switch ($parameter) {   // Here we setup specific parameters that will go into the html
 				case 'title':
@@ -118,6 +127,14 @@ class CheckboxesControl extends GuiMultiValue {
 				case 'onClick':
 					$smartyParams['onClick'] = $value;
 					break;
+				case 'checkall':
+					$class[] = 'checkable';
+					$gui->add_jquery('$("#'.$input_id.'").prepend("<label><input type=\"checkbox\" class=\"check-all\" />Check All</label>");');
+					$gui->add_jquery('$("#'.$input_id.' .check-all").click(function(){
+						var checked_status = this.checked;
+						$("#'.$input_id.' input[@type$=\'checkbox\']").each(function(){
+						this.checked = checked_status;});});');
+					break;
 			}
 		}
 
@@ -127,8 +144,10 @@ class CheckboxesControl extends GuiMultiValue {
 
 		$smartyParams['selected'] = $value;
 		$smartyParams['name'] = $label;
-
-		$html = smarty_function_html_checkboxes($smartyParams, $gui);
+		
+		$html = '<div id="'.$this->getId().'" class="'.implode(' ',$class).'">';
+		$html .= smarty_function_html_checkboxes($smartyParams, $gui);
+		$html .= '</div>';
 		return $html;
 	}
 
