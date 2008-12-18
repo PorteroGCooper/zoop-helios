@@ -29,6 +29,9 @@ class CrudZone extends zone {
 	// this should be in an init function or something :-/
 	var $zoneParamNames = array('record_id');
 	var $wildcards = '';
+	
+	var $immutableFields = null;
+	var $foreign_relation_key = 'parent_id';
 
 	/**
 	 * Default URL aliases for CRUD actions. This lets you use 'zonename/foo/edit' instead of
@@ -322,8 +325,10 @@ class CrudZone extends zone {
 					case 'relation':
 						switch ($field['rel_type']) {
 							case Formz::MANY:
-								$values[$name] = getPost($name);
-								if (!is_array($values[$name])) $values[$name] = array();
+								if (getPostIsset($name)) {
+									$values[$name] = getPost($name);
+									if (!is_array($values[$name])) $values[$name] = array();
+								}
 								break;
 							case Formz::ONE:
 								if (getPostIsset($name) && getPost($name) !== '') {
@@ -372,7 +377,11 @@ class CrudZone extends zone {
 			return;
 		}
 
-		$immutableFields = $this->form->getImmutableForeignFields($parentTable);
+		if (!$this->immutableFields) {
+			$immutableFields = $this->form->getImmutableForeignFields($parentTable);
+		} else {
+			$immutableFields = $this->form->getImmutableForeignFields($parentTable, $this->immutableFields);
+		}
 
 		if ($record_id) {
 			$this->form->setParentId($record_id);
@@ -385,8 +394,10 @@ class CrudZone extends zone {
 		$this->form->type = 'record';
 		$this->form->setEditable(true);
 
-		$this->form->setFieldFormshow($immutableFields, false);
-
+		if (!empty($immutableFields)) {
+			$this->form->setFieldFormshow($immutableFields, false);
+		}
+		
 		$this->form->addAction('save');
 		if ($record_id == 'new') {
 			$this->form->addAction('saveandnew');
@@ -438,7 +449,6 @@ class CrudZone extends zone {
 
 			$values['parent_table'] = $parentTable;
 			$values['child_table'] = $params[0];
-			$values['parent_id'] = $record_id;
 
 			$child_form = new Formz($params[0]);
 
@@ -456,8 +466,10 @@ class CrudZone extends zone {
 						case 'relation':
 							switch ($field['rel_type']) {
 								case Formz::MANY:
-									$values[$name] = getPost($name);
-									if (!is_array($values[$name])) $values[$name] = array();
+									if (getPostIsset($name)) {
+										$values[$name] = getPost($name);
+										if (!is_array($values[$name])) $values[$name] = array();
+									}
 									break;
 								case Formz::ONE:
 									$posted_int = getPostInt($name);
