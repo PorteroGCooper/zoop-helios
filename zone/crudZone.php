@@ -304,10 +304,16 @@ class CrudZone extends zone {
 	
 	protected function saveUpdatePost() {
 		$values = array();
-			
 		foreach ($this->form->getFields() as $name => $field) {
 			if ((!isset($field['editable']) || $field['editable'])
 				&& (!isset($field['formshow']) || $field['formshow'])) {
+
+				$controls = $GLOBALS['controls'];
+				if ( (isset($controls['betterpassword']) && isset($controls['betterpassword'][$name]) )  || 
+					( isset($controls['password']) && isset($controls['password'][$name]) )) {
+					if (!getPostIsset($name)) continue;
+				}
+
 				switch($field['type']) {
 					case 'boolean':
 					case 'bool':

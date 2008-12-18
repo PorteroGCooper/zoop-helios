@@ -44,10 +44,12 @@ class betterpasswordControl extends GuiContainer {
 	 * @return void
 	 */
 	function getValue() {
-		if (isset($this->params['encryption'])) {
+		if (!empty($this->params['password']) && isset($this->params['encryption'])) {
 			$encryptionMethod = $this->params['encryption'];
 			if (is_callable($encryptionMethod)) {
 				$value = $encryptionMethod($this->params['password']);
+			} else {
+				$value = $this->params['password'];
 			}
 		} else {
 			$value = $this->params['password'];
@@ -88,6 +90,7 @@ class betterpasswordControl extends GuiContainer {
 		$pwcontrol->setParam('errorState', null);
 		$pwcontrol->setParent($name);
 		$html = $pwcontrol->renderControl();
+		$html .= "<div class=\"betterpassword-confirm\"> Confirm password</div>";
 
 		$pwccontrol = GuiControl::get('password', 'confirmpassword');
 		$pwccontrol->setParams($this->params);
