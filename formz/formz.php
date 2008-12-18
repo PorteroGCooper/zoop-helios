@@ -1312,9 +1312,14 @@ class Formz {
 		$this->parentId = $parentId;
 	}
 
-	function addEmbeddedForm($tablename, $form = null) {
-		if ($form !== null) {
+	function addEmbeddedForm($tablename, $form = null, $fieldname = null) {
+		if ($fieldname !== null && $form !== null) {
+			$this->_embeddedFormz[$fieldname] = $form;
+		} else if ($form !== null) {
 			$this->_embeddedFormz[$tablename] = $form;
+		} else if ($fieldname !== null) {
+			$this->_embeddedFormz[$fieldname] = new Formz($tablename, $this->_driver->getType());
+			$this->_embeddedFormz[$fieldname]->setParentTablename($this->tablename);
 		} else {
 			$this->_embeddedFormz[$tablename] = new Formz($tablename, $this->_driver->getType());
 			$this->_embeddedFormz[$tablename]->setParentTablename($this->tablename);
