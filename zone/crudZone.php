@@ -557,4 +557,12 @@ class CrudZone extends zone {
 	function getRecordIdBySlug($slug) {
 		return $this->form->getRecordIdBySlug($slug);
 	}
+	
+	function recordId() {
+		$record_id = $this->getZoneParam('record_id');
+		if ($this->form->isSluggable()) {
+			$record_id = $this->getRecordIdBySlug($record_id);
+		}
+		return $record_id;
+	}
 }
