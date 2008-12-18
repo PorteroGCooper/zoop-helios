@@ -1070,7 +1070,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 		}
 
-		return $this->query;
+		return $this->query();
 	}
 	
 	/**
