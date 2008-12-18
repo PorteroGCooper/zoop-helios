@@ -1222,14 +1222,14 @@ class Formz {
 			// more synonyms. this time for the D in CRUD.
 			case 'delete':
 			case 'destroy':
-				if (!isset($args['link'])) $args['link'] = '/destroy';
+				if (!isset($args['link'])) $args['link'] = '%id%/destroy';
 				if (!isset($args['type'])) $args['type'] = 'link';
 				if (!isset($args['class'])) $args['class'] = 'delete-link';
 				if (!isset($args['title'])) $args['title'] = 'Delete this record.';
 				break;
 			case 'edit':
 			case 'update':
-				if (!isset($args['link'])) $args['link'] = '/update';
+				if (!isset($args['link'])) $args['link'] = '%id%/update';
 				if (!isset($args['type'])) $args['type'] = 'link';
 				if (!isset($args['class'])) $args['class'] = 'edit-link';
 				if (!isset($args['title'])) $args['title'] = 'Edit this record.';

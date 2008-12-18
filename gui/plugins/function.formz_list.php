@@ -229,8 +229,21 @@ function smarty_function_formz_list($params, &$smarty) {
 					foreach ($rowActions as $key => $rowAction) {
 						$value .= ' ';
 						if ($rowAction['type'] == 'link') {
-							$link = $id . $rowAction['link'];
-							$value .= '<a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
+							$link = $rowAction['link'];
+							
+							// replace placeholders
+							preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+							if (count($matches)) {
+								// replace with this table's id field, if applicable.
+								if ($matches[1] == 'id') $matches[1] = $id_field;
+								if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
+								if (!isset($record[$matches[1]])) {
+									$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
+								}
+								$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
+							}
+							
+							$value .= '<a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
 						} else {
 							$control = GuiControl::get('button', $key);
 							$control->setParams($rowAction);
@@ -242,12 +255,25 @@ function smarty_function_formz_list($params, &$smarty) {
 					$value = array();
 					foreach ($rowActions as $key => $rowAction) {
 						if ($rowAction['type'] == 'link') {
-							$link = $id . $rowAction['link'];
-							$value[] = '<td><a class="'.$rowAction['class'].'" href="' . url($zone_path . $link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
+							$link = $rowAction['link'];
+							
+							// replace placeholders
+							preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+							if (count($matches)) {
+								// replace with this table's id field, if applicable.
+								if ($matches[1] == 'id') $matches[1] = $id_field;
+								if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
+								if (!isset($record[$matches[1]])) {
+									$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
+								}
+								$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
+							}
+							
+							$value[] = '<td><a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
 						} else {
 							$control = GuiControl::get('button', $key);
 							$control->setParams($rowAction);
-							$value[] = '<td><span>' . $control->render() . '</span></td>';
+							$value[] = '<td><span>' . $control->renderControl() . '</span></td>';
 						}
 					}
 					$value = implode("\n\t\t\t", $value);
