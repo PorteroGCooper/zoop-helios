@@ -287,36 +287,8 @@ class CrudZone extends zone {
 		if (!$this->checkAuth('update')) return;
 
 		if (getPostText('update') || getPostText('update_and_create')) {
-			$values = array();
-			
-			foreach ($this->form->getFields() as $name => $field) {
-				if ((!isset($field['editable']) || $field['editable'])
-					&& (!isset($field['formshow']) || $field['formshow'])) {
-					switch($field['type']) {
-						case 'boolean':
-						case 'bool':
-							$values[$name] = getPostCheckbox($name);
-							break;
-						case 'relation':
-							switch ($field['rel_type']) {
-								case Formz::MANY:
-									$values[$name] = getPost($name);
-									if (!is_array($values[$name])) $values[$name] = array();
-									break;
-								case Formz::ONE:
-									if (getPostIsset($name) && getPost($name) !== '') {
-										$values[$name] = getPost($name);
-									}
-									break;
-							}
-							break;
-						default:
-							$values[$name] = getPost($name);
-							break;
-					}
-				}
-			}
-			$id = $this->form->saveRecord($values);
+			// save the posted values.
+			$id = $this->saveUpdatePost();
 		} else if (getPostText('destroy')) {
 			// redirect to the destroy page if they're trying to delete this item...
 			$this->zoneRedirect('destroy');
@@ -328,6 +300,39 @@ class CrudZone extends zone {
 		} else {
 			BaseRedirect($this->getZoneBasePath(), HEADER_REDIRECT);
 		}
+	}
+	
+	protected function saveUpdatePost() {
+		$values = array();
+			
+		foreach ($this->form->getFields() as $name => $field) {
+			if ((!isset($field['editable']) || $field['editable'])
+				&& (!isset($field['formshow']) || $field['formshow'])) {
+				switch($field['type']) {
+					case 'boolean':
+					case 'bool':
+						$values[$name] = getPostCheckbox($name);
+						break;
+					case 'relation':
+						switch ($field['rel_type']) {
+							case Formz::MANY:
+								$values[$name] = getPost($name);
+								if (!is_array($values[$name])) $values[$name] = array();
+								break;
+							case Formz::ONE:
+								if (getPostIsset($name) && getPost($name) !== '') {
+									$values[$name] = getPost($name);
+								}
+								break;
+						}
+						break;
+					default:
+						$values[$name] = getPost($name);
+						break;
+				}
+			}
+		}
+		return $this->form->saveRecord($values);
 	}
 
 	/**

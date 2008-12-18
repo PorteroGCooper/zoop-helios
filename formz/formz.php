@@ -1027,7 +1027,7 @@ class Formz {
 			case 'saveandaddnew':
 			case 'updateandcreate':
 			case 'update_and_create':
-				$name = 'saveandnew';
+				$name = 'update_and_create';
 				if (!isset($args['value'])) $args['value'] = 'Save and Add New';
 				if (!isset($args['label'])) $args['label'] = 'Save and Add New';
 				if (!isset($args['type'])) $args['type'] = 'submit';
