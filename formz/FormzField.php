@@ -10,6 +10,11 @@ class FormzField {
 		$this->form = $form;
 	}
 
+	function setConstraint($value, $is_fixed = true) {
+		$this->form->setFieldConstraint($this->name, $value, $is_fixed);
+		return $this;
+	}
+
 	function __call($method, $args) {
 		array_unshift($args, $this->name);
 		

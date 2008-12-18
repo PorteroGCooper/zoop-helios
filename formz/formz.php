@@ -464,7 +464,8 @@ class Formz {
 	 * @access public
 	 * @return void
 	 */
-	function getFixedValues($key = false) {
+/*
+	function getConstraints($key = false) {
 		if ($key) {
 			if (isset($this->fixedValues[$key])) {
 				return $this->fixedValues[$key];
@@ -475,18 +476,9 @@ class Formz {
 			return $this->fixedValues;
 		}
 	}
+*/
 
-	/**
-	 * Set a fixed value to be used when seleting as well as updating 
-	 * 
-	 * @param mixed $array 
-	 * @access public
-	 * @return void
-	 */
-	function setFixedValues($array) {
-		$this->fixedValues = $array;
-		$this->_driver->setFixedValues($this->getFixedValues());
-	}
+
 
 	/**
 	 * Append a fixed value to the fixed values 
@@ -496,10 +488,38 @@ class Formz {
 	 * @access public
 	 * @return void
 	 */
-	function addFixedValue($array) {
-		$this->fixedValues += $array;
-		$this->_driver->setFixedValues($this->getFixedValues());
+	function setFieldConstraint($fieldname, $value, $is_fixed = true) {
+		$this->_fields[$fieldname]['override'] = $value;
+		if ($is_fixed) {
+			$this->_fields[$fieldname]['editable'] = false;
+			
+		}
+		$this->_driver->addConstraint($fieldname, $value);
 	}
+
+	/**
+	 * Set a fixed value to be used when seleting as well as updating 
+	 * 
+	 * @param mixed $array 
+	 * @access public
+	 * @return void
+	 */
+	function setFieldConstraints($fields, $is_fixed = true) {
+		foreach ($fields as $_key => $_val) {
+			$this->setFieldConstraint($_key, $_val, $is_fixed);
+		}
+	}
+	
+	function removeFieldConstraint($fieldname) {
+		if (isset($this->_fields[$fieldname]['override'])) {
+			unset($this->_fields[$fieldname]['override']);
+		}
+		if (isset($this->_fields[$fieldname]['editable'])) {
+			unset($this->_fields[$fieldname]['editable']);
+		}
+		$this->_driver->removeConstraint($fieldname);
+	}
+
 
 	/**
 	 * Get an array of all relevant field information.
@@ -507,7 +527,7 @@ class Formz {
 	function getFields($return_relations = true) {
 		$fields = $this->_fields;
 		$relation_fields = $this->_relation_fields;
-		
+
 		// hide the record id by default.		
 		$id = $this->_driver->getIdField();
 		if (!isset($fields[$id]['display']['type'])) {
@@ -587,13 +607,6 @@ class Formz {
 				if (!isset($fields[$version_field]['editable'])) {
 					$fields[$version_field]['editable'] = false;
 				}
-			}
-		}
-
-		// Something like this needs to happen here.. This isn't it.. placeholder
-		foreach ($this->getFixedValues() as $key => $val) {
-			if (isset($fields[$key])) {
-				$fields[$key]['editable'] = false;
 			}
 		}
 		

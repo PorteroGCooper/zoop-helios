@@ -27,7 +27,7 @@ include_once(dirname(__file__) . "/function.guicontrol.php");
  */
 function smarty_function_formz_form($params, &$smarty) {
 	if (!isset($params['form'])) return;
-	
+
 	$lotsa_classes = Config::get('zoop.formz.lotsa_classes');
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	$zone_base_path = $smarty->get_template_vars('ZONE_BASE_PATH');
@@ -60,6 +60,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_items[] = '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
 	}
 	$i = -1;
+
 
 	foreach ($fields as $key => $field) {
 		$i++;
@@ -178,8 +179,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				break;
 		}
 
-		// prob'ly a bit ghetto...
-		if ($key == 'id' && $form->record_id == 'new') $value = 'new';
+		if ($key == $form->getIdField() && $form->record_id == 'new') $value = 'new';
 		
 		// get a new guiControl to deal with this
 		$control = GuiControl::get($type, $key);
@@ -190,7 +190,11 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 		}
 		
-		$value = (isset($field['display']['override'])) ? $field['display']['override'] : $value;
+		if (isset($field['editable']) && !$field['editable']) {
+			$field['display']['disabled'] = true;
+		}
+		
+		$value = (isset($field['override'])) ? $field['override'] : $value;
 		
 		// figure out class names for this form item.
 		$form_item_classes = (isset($field['display']['class'])) ? $field['display']['class'] : array();

@@ -49,7 +49,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @var array
 	 * @access public
 	 */
-	protected $fixedValues = array();
+	protected $_constraints = array();
 
 	/**
 	 * Set only when using nested sets (trees) 
@@ -119,9 +119,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 	
 	function getData($return_formz = false) {
-		if(!$this->record) return null;
+		if (!$this->record) return null;
 		$data = $this->record->toArray();
-		
+
 		if (!$return_formz) {
 			$data = $data + $this->getRecordRelationsValues();
 		} else {
@@ -129,7 +129,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				$data[] = new Formz($relation);
 			}
 		}
-		
+
 		return $data;
 	}
 
@@ -256,9 +256,9 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access protected
 	 */
 	protected function _applyQueryConstraints() {
-		// apply any fixed values
-		if ($this->getFixedValues()) {
-			$this->_applyFixedValuesToQuery();
+		// apply user defined constraints
+		if ($this->getConstraints()) {
+			$this->_applyUserConstraintsToQuery();
 		}
 		// add search constraints
 		if ($this->isSearchable() && !$this->isTree()) {
@@ -381,11 +381,11 @@ class formz_doctrineDB implements formz_driver_interface {
 			$classname  = $this->tablename;
 			$classname[0] = strtoupper($classname[0]);
 			$this->record = new $classname();
-			if ($this->getFixedValues()) {
-				$this->record->fromArray($this->getFixedValues());
+			if ($this->getConstraints()) {
+				$this->record->fromArray($this->getConstraints());
 			}
-		} elseif ($this->getFixedValues()) {
-			$record = $this->_applyFixedValuesToQuery()->fetchOne();
+		} elseif ($this->getConstraints()) {
+			$record = $this->_applyUserConstraintsToQuery()->fetchOne();
 			
 			// if you didn't find one, return.
 			if (!$record && $record !== 0) return null;
@@ -491,8 +491,8 @@ class formz_doctrineDB implements formz_driver_interface {
 			unset($values['relations']);
 		}
 		
-		if ($this->getFixedValues()) {
-			$values = array_merge($values, $this->getFixedValues());
+		if ($this->getConstraints()) {
+			$values = array_merge($values, $this->getConstraints());
 		}
 		
 		foreach ($values as $key => $val) {
@@ -1057,10 +1057,10 @@ class formz_doctrineDB implements formz_driver_interface {
 	 *
 	 * @access private
 	 */
-	private function &_applyFixedValuesToQuery() {
-		$fixed = $this->getFixedValues();
-		if ($fixed) {
-			foreach ($fixed as $key => $value) {
+	private function &_applyUserConstraintsToQuery() {
+		$constraints = $this->getConstraints();
+		if ($constraints) {
+			foreach ($constraints as $key => $value) {
 				if (strpos($key, '.') !== false) {
 					$relation = array_shift(explode('.', $key));
 					$this->query()->leftJoin('t.' . $relation . ' r');
@@ -1143,9 +1143,11 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
+/*
 	function setFixedValues($array) {
 		$this->fixedValues = $array;
 	}
+*/
 	
 	/**
 	 * Adds new fixed value(s) to the existing ones.
@@ -1156,8 +1158,14 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function addFixedValue($array) {
-		$this->fixedValues = $this->fixedValues + $array;
+	function addConstraint($name, $value) {
+		$this->_constraints[$name] = $value;
+	}
+	
+	function removeConstraint($name) {
+		if (isset($this->_constraints[$name])) {
+			unset($this->_constraints[$name]);
+		}
 	}
 
 	/**
@@ -1167,15 +1175,15 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function getFixedValues($key = false) {
+	function getConstraints($key = false) {
 		if ($key) {
-			if (isset($this->fixedValues[$key])) {
-				return $this->fixedValues[$key];
+			if (isset($this->_constraints[$key])) {
+				return $this->_constraints[$key];
 			} else {
 				return null;
 			}
 		} else {
-			return $this->fixedValues;
+			return $this->_constraints;
 		}
 	}
 
