@@ -62,7 +62,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	$i = -1;
 
 	// add a form token first.
-	$form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
+	// $form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
 
 	foreach ($fields as $key => $field) {
 		$i++;
