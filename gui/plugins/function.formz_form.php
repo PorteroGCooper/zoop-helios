@@ -72,7 +72,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
 			$form_item = '<div class="formz-field-'.strtolower($key).'-wrapper embedded-formz-wrapper form-item">';
 			
-			$formz_object = $form->getEmbeddedFormz($field['relation_alias']);
+			$formz_object = $form->getEmbeddedFormz($field['relation_class']);
 			
 			if ($field['rel_type'] == Formz::ONE) {
 				if (isset($data[$key])) {
@@ -80,7 +80,6 @@ function smarty_function_formz_form($params, &$smarty) {
 				}
 			} else {
 				$form_item .= '<h3>' . $label . '</h3>';
-				$formz_object->setFixedValues(array($field['foreign_id_field'] => $record_id));
 			}
 			$formz_object->setEditable(false);
 			$form_item .= '<div class="form-item-content">';

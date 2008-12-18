@@ -619,12 +619,9 @@ class Formz {
 					$fields[$key]['type'] = 'relation';
 				}
 
+				$fields[$key]['relation_class'] = $relation['class'];
 				$fields[$key]['relation_alias'] = $relation['alias'];
-				$fields[$key]['rel_type'] = $relation['rel_type'];
-				if (isset($relation['foreign_id_field'])) {
-					// TODO find a much better way of doing this...
-					$fields[$key]['foreign_id_field'] = $relation['label_field'];
-				}
+				$fields[$key]['rel_type']       = $relation['rel_type'];
 
 				if (!isset($fields[$key]['display']['label'])) {
 					if (isset($relation_fields[$key]['display']['label'])) {

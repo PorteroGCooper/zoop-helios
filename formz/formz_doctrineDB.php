@@ -721,12 +721,11 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	function getTableRelations($getValues = false) {
 		$ret = array();
-				
+		
 		foreach ($this->table->getRelations() as $name => $relation) {
 			$rel_type = ($relation->getType() == Doctrine_Relation::MANY) ? Formz::MANY : Formz::ONE;
 			
 			$label_field = null;
-			$foreign_id_field = null;
 			
 			// get the current relation values to put in the array
 			$foreign_class = Doctrine::getTable($relation->getClass());
@@ -736,16 +735,16 @@ class formz_doctrineDB implements formz_driver_interface {
 				$foreign_values = array();
 			}
 			
-			// grab the id field names for each half of this relation
+			// Grab 'field names' for each side of this relation.
 			if ($rel_type == Formz::ONE) {
 				$local_field   = $relation->getLocalFieldName();
 				$foreign_field = $relation->getForeignFieldName();
 			} else {
+				// Formz::MANY requires that the local field be the class name.
 				$local_field   = $name;
 				$foreign_field = $foreign_class->getIdentifier();
 				
-				// This is the local field from the point of view of the other end of the relation
-				$foreign_id_field = $relation->getLocalFieldName();
+				// Skip if this relation is the join table.
 				if (is_array($foreign_field)) continue;
 				
 				// this *will* be used later by GCooper.
@@ -777,19 +776,14 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 			
 			$ret[$local_field] = array(
-				'alias' => $name,
-				'class' => $relation['class'],
-				'rel_type' => $rel_type,
-				'local_field' => $local_field,
+				'alias'         => $name,
+				'class'         => $relation['class'],
+				'rel_type'      => $rel_type,
+				'local_field'   => $local_field,
 				'foreign_field' => $foreign_field,
-				'label_field' => $label_field,
-/* 				'foreign_class' => $foreign_class, */
-				'values' => $foreign_values,
+				'label_field'   => $label_field,
+				'values'        => $foreign_values,
 			);
-			
-			if ($foreign_id_field !== null) {
-				$ret[$local_field]['foreign_id_field'] = $foreign_id_field;
-			}
 		}
 		
 		return $ret;
