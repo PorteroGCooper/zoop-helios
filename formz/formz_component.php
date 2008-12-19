@@ -40,6 +40,7 @@ class component_formz extends component {
 				"formz_doctrineDB" => $base . "/formz_doctrineDB.php",
 				"formz_formDB" => $base . "/formz_formDB.php",
 				"FormzField" => $base . "/FormzField.php",
+				"FormzFieldCollection" => $base . "/FormzFieldCollection.php",
 				
 				"table" => $base . "/table.php",
 				"record" => $base . "/record.php",

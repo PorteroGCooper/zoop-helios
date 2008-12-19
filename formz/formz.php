@@ -1733,6 +1733,30 @@ class Formz {
 	function field($name) {
 		return new FormzField($name, $this);
 	}
+	
+	/**
+	 * Get a FormzField collection for the given field names.
+	 *
+	 * Like Formz::field, but returns multiple fields, like so:
+	 *
+	 * @code
+	 *    $myform->fields('foo', 'bar')
+	 *       ->setListshow()
+	 *       ->setRequired()
+	 *       ->setEditable()
+	 *       ->setLabel('SAME LABEL!');
+	 * @endcode
+	 *
+	 * @ingroup formzfield
+	 * @see Formz::field
+	 *
+	 * @access public
+	 * @param array $names Array of field names to chunk into a collection.
+	 * @return FormzFieldCollection
+	 */
+	function fields($names) {
+		return new FormzFieldCollection($names, $this);
+	}
 
 	/**
 	 * __call magic method.
