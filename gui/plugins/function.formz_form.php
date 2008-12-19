@@ -186,7 +186,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$control = GuiControl::get($type, $key);
 		if ($form->editable) {
 			// grab the default value, if one isn't set.
-			if (!empty($value) && isset($field['default'])) {
+			if (empty($value) && isset($field['default'])) {
 				$value = $field['default'];
 			}
 		}
