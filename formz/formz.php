@@ -691,7 +691,7 @@ class Formz {
 			$value = $this->_fields[$fieldname]['format_string'];
 			
 			$matches = array();
-			preg_match_all('#%([a-zA-Z_\.]+?)%#', $value, $matches);
+			preg_match_all('#%([a-zA-Z0-9_\.]+?)%#', $value, $matches);
 			
 			foreach ($matches[1] as $_key => $_val) {
 				$matches[1][$_key] = $this->_driver->getValue($_val, $id);
@@ -896,10 +896,9 @@ class Formz {
 	 * These display options are almost identical to the ones used by GuiControls. In fact, most things
 	 * set here will be passed directly to a guiControl.
 	 *
-	 * Usually this function will be called through magic methods
-	 * like setFieldDisplayClass('fieldname'). Will accept an array of fields on which to set said
-	 * parameter and value. A wildcard param ('*') may also be passed as the $field, which will set the
-	 * display option on all fields in this table.
+	 * Usually this function will be called through magic methods like setFieldDisplayClass('fieldname');
+	 * Will accept an array of fields on which to set said parameter and value. A wildcard param ('*') may
+	 * also be passed as the $field, which will set the display option on all fields in this table.
 	 * 
 	 * @access public
 	 * @param string $property Display property to set: Class, etc.
@@ -952,6 +951,8 @@ class Formz {
 	 *
 	 * Useful for adding 'edit' links, etc. Will throw an error if the fieldname already
 	 * exists on this form.
+	 *
+	 * @ingroup formzfield
 	 * 
 	 * @access public
 	 * @param string $name
@@ -980,6 +981,8 @@ class Formz {
 	 *
 	 * Replacement fields are designated with %field%, and can be in the format %relation.field%
 	 * or even %relation.newrelation.anotherrelation.field%
+	 *
+	 * @ingroup formzfield
 	 *
 	 * @access public
 	 * @see Formz::addField
@@ -1020,6 +1023,7 @@ class Formz {
 	 * 'delete', 'save', and 'cancel' have predefined defaults. Other actions don't
 	 * know what to do magically, so you'll have to define them further.
 	 *
+	 * @ingroup formzaction
 	 * @param string $name Action name.
 	 * @param array $args Optional set of arguments for this action.
 	 */
@@ -1081,6 +1085,7 @@ class Formz {
 	 * If no actions have been defined, this will return a default set of actions
 	 * (namely 'save' and 'cancel')...
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @see Formz::addAction
 	 */
@@ -1101,9 +1106,11 @@ class Formz {
 			return $actions;
 		}
 	}
+	
 	/**
 	 * Remove a form action.
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @param mixed $action Action (or array of actions) to remove.
 	 */
@@ -1121,6 +1128,7 @@ class Formz {
 	 * Common form actions include 'add' or 'filter'. In fact, 'add' might be the only
 	 * common list action. Who knows. We'll flesh this out further later...
 	 *
+	 * @ingroup formzaction
 	 * @param string $name Action name.
 	 * @param array $args Optional set of arguments for this action.
 	 */
@@ -1163,6 +1171,7 @@ class Formz {
 	 * Unlike Formz::getActions, if no actions have been defined, this function will
 	 * return an empty set of actions.
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @see Formz::addListAction
 	 */
@@ -1176,8 +1185,11 @@ class Formz {
 	 * Unlike Formz::getActions, if no actions have been defined, this function will
 	 * return an empty set of actions.
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @see Formz::addListAction
+	 * @param string List action name
+	 * @return void
 	 */
 	function removeListAction($action) {
 		foreach ((array)$action as $name) {
@@ -1190,6 +1202,7 @@ class Formz {
 	/**
 	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
 	 * 
+	 * @ingroup formzaction
 	 * @access public
 	 * @param string $name Action name
 	 * @param mixed $args Action arguments. (default: array())
@@ -1248,6 +1261,7 @@ class Formz {
 	/**
 	 * Get the set of row actions for this formz list.
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @return array Row actions on this form
 	 */
@@ -1258,6 +1272,7 @@ class Formz {
 	/**
 	 * Remove Row action
 	 *
+	 * @ingroup formzaction
 	 * @access public
 	 * @param mixed $action An action name (or array of names) to remove.
 	 * @return void
@@ -1456,18 +1471,6 @@ class Formz {
 	}
 	
 	/**
-	 * Add a row action. Analogous to list actions or form actions, but apply to a single row.
-	 * 
-	 * @access public
-	 * @param string $name Action name
-	 * @param mixed $args Action arguments. (default: array())
-	 * @return void
-	 */
-	// function addRowAction($name, $args = array()) {
-	// 	trigger_error("addRowAction not yet implemented");
-	// }
-	
-	/**
 	 * Returns true if this Formz does timestamp magick.
 	 *
 	 * @access public
@@ -1492,6 +1495,7 @@ class Formz {
 	/**
 	 * Returns true if this Formz uses slugs.
 	 *
+	 * @ingroup sluggable
 	 * @access public
 	 * @return bool True if this is sluggable.
 	 */
@@ -1632,6 +1636,7 @@ class Formz {
 	/**
 	 * Returns true if this Formz uses slugs.
 	 *
+	 * @ingroup sluggable
 	 * @access public
 	 * @return bool True if this is sluggable.
 	 */
@@ -1640,10 +1645,17 @@ class Formz {
 		return $this->slug_field;
 	}
 	
-	function getSlug($record_id) {
-		if (!$this->isSluggable() || !$record_id) return false;
-		$this->_driver->getRecord($record_id);
-		return $this->_driver->getData($this->getSlugField());
+	/**
+	 * Returns the slug for this table (if applicable).
+	 *
+	 * @see Formz::isSluggable()
+	 * @ingroup sluggable
+	 * @access public
+	 * @return string Slug value for this record
+	 */
+	function getSlug() {
+		if (!$this->isSluggable()) return false;
+		return $this->_driver->getValue($this->getSlugField());
 	}
 
 	/**
@@ -1711,6 +1723,8 @@ class Formz {
 	 *       ->setEditable()
 	 *       ->setLabel('New Password');
 	 * @endcode
+	 *
+	 * @ingroup formzfield
 	 *
 	 * @access public
 	 * @param string $name Field name

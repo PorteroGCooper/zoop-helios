@@ -56,15 +56,13 @@ class CrudZone extends zone {
 	);
 
 	/**
-	 * Crud zone constructor.
+	 * CRUD Zone constructor.
 	 *
-	 * Add all aliases, initialize Formz object for the zone's table/model.
+	 * Use the CrudZone::construct() hook in extending classes rather than overloading this constructor.
 	 *
-	 * Be sure to call parent::__construct() if you provide a constructor in any zone extending
-	 * CrudZone.
-	 *
+	 * @see CrudZone::construct();
 	 */
-	function __construct() {
+	final function __construct() {
 		if (isset($this->Aliases) && count($this->Aliases)) {
 			$this->addAliases($this->Aliases);
 			$this->Aliases = array();
@@ -73,15 +71,14 @@ class CrudZone extends zone {
 		
 		$this->construct();
 	}
-
+	
 	/**
-	 * Hook so overloading can place things into the constructor without calling parent::__construct each time
-	 * 
-	 * @access public
-	 * @return void
+	 * Initialize this CRUD Zone.
+	 *
+	 * Use the CrudZone::initCrudZone() hook in extending classes rather than overloading this method.
+	 *
+	 * @see CrudZone::initCrudZone();
 	 */
-	function construct() { } 
-
 	function initZone() {
 		if (Config::get('zoop.zone.crud_zone.auto_paginate')) {
 			$this->form->setPaginated();
@@ -89,13 +86,97 @@ class CrudZone extends zone {
 		$this->initCrudZone();
 	}
 
+
+	////////////////////////////////////////////////////////
+	//
+	//  HOOKS.
+	//
+	////////////////////////////////////////////////////////
+
+
 	/**
-	 * Hook run inside initZone so Crud Zone can use it and extending classes can run code without calling parent::initZone each time 
+	 * Hook so overloading can place things into the constructor without calling parent::__construct each time
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function construct() { }
+
+
+	/**
+	 * Hook run inside initZone so Crud Zone can use it and extending classes can run code without
+	 * calling parent::initZone each time.
 	 * 
 	 * @access public
 	 * @return void
 	 */
 	function initCrudZone() { }
+
+
+	/**
+	 * initListForm is provided to extending classes, allowing CRUD zones to modify the form
+	 * object just before executing and returning a List.
+	 */
+	function initListForm() { }
+
+	/**
+	 * initCreateForm is provided to extending classes, allowing CRUD zones to modify the form
+	 * object just before executing and returning a Create form.
+	 *
+	 * This CRUD zone's form object is located at $this->form
+	 */
+	function initCreateForm() { }
+
+	/**
+	 * initReadForm is provided to extending classes, allowing CRUD zones to modify the form
+	 * object just before executing and returning a Read form.
+	 *
+	 * This CRUD zone's form object is located at $this->form
+	 */
+	function initReadForm() { }
+	
+	/**
+	 * initUpdateForm is provided to extending classes, allowing CRUD zones to modify the form
+	 * object just before executing and returning an Update form.
+	 *
+	 * This CRUD zone's form object is located at $this->form
+	 */
+	function initUpdateForm() { }
+	
+	/**
+	 * initDestroyForm is provided to extending classes, allowing CRUD zones to modify the form
+	 * object just before executing and returning a Destroy confirmation form.
+	 *
+	 * This CRUD zone's form object is located at $this->form
+	 */
+	function initDestroyForm() { }
+
+
+	/**
+	 * Hook for adding authentication to CRUD.
+	 *
+	 * By default this method will *always* return true. This is on purpose. Otherwise, CrudZone would
+	 * deny access to everything by default, and would be useless...
+	 * 
+	 * Override this method in an extending class so you can implement authentication. Implementing
+	 * subclasses should either redirect to a 'denied' page, or return false if authentication is denied.
+	 *
+	 * @param string $action
+	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', 'destroy' or 'list'.
+	 * @return bool Return 'false' from overriding methods to stop the requested action from happening.
+	 */
+	function checkAuth($action) {
+		return true;
+	}
+
+
+
+	////////////////////////////////////////////////////////
+	//
+	//  Page and Post handlers
+	//
+	////////////////////////////////////////////////////////
+
 
 	/**
 	 * CrudZone index page.
@@ -133,6 +214,9 @@ class CrudZone extends zone {
 		}
 	}
 
+	/**
+	 * Render this crudZone as HTML.
+	 */
 	function htmlIndex() {
 		$this->_loadAndGenerateForm();
 	}
@@ -210,10 +294,11 @@ class CrudZone extends zone {
 				return;
 			}
 		}
+		$this->initReadForm();
 	}
 
 	function _getRecords() {
-		$this->setData( $this->form->getRecords() );
+		$this->setData($this->form->getRecords());
 	}
 
 	/**
@@ -228,6 +313,8 @@ class CrudZone extends zone {
 
 		$this->form->addRowAction('edit');
 		$this->form->addRowAction('delete');
+		
+		$this->initListForm();
 	}
 	
 	/**
@@ -268,6 +355,7 @@ class CrudZone extends zone {
 
 		$this->form->addAction('save');
 /* 		$this->form->addAction('preview'); */
+
 		if ($record_id == 'new') {
 			$this->form->addAction('saveandnew');
 			$this->form->addAction('cancel', array('link' => ''));
@@ -277,32 +365,14 @@ class CrudZone extends zone {
 			$this->form->addAction('cancel', array('link' => $link));
 		}
 
-		$this->initUpdateForm();
+		if ($record_id == 'new') {
+			$this->initCreateForm();
+		} else {
+			$this->initUpdateForm();
+		}
 		$this->form->guiAssign();
+		
 		$gui->generate('forms/formz.tpl');
-	}
-
-	/**
-	 * Hook for editing the edit form before it is assigned  
-	 * Form found at $this->form
-	 */
-	function initUpdateForm() { }
-	
-	/**
-	 * Hook for adding authentication to CRUD.
-	 *
-	 * By default this method will *always* return true. This is on purpose. Otherwise, CrudZone would
-	 * deny access to everything by default, and would be useless...
-	 * 
-	 * Override this method in an extending class so you can implement authentication. Implementing
-	 * subclasses should either redirect to a 'denied' page, or return false if authentication is denied.
-	 *
-	 * @param string $action
-	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', 'destroy' or 'list'.
-	 * @return bool Return 'false' from overriding methods to stop the requested action from happening.
-	 */
-	function checkAuth($action) {
-		return true;
 	}
 
 	/**
@@ -331,6 +401,12 @@ class CrudZone extends zone {
 		}
 	}
 	
+	/**
+	 * Save the POSTed values to this formz object's record.
+	 *
+	 * @access protected
+	 * @return int Record ID
+	 */
 	protected function saveUpdatePost() {
 		$values = array();
 		foreach ($this->form->getFields() as $name => $field) {
@@ -370,6 +446,66 @@ class CrudZone extends zone {
 			}
 		}
 		return $this->form->saveRecord($values);
+	}
+	
+	/**
+	 * Page handler for CRUD Destroy action.
+	 *
+	 * Displays 'delete' confirmation page.
+	 *
+	 * @see postDestroy()
+	 * @access public
+	 * @return void
+	 **/		
+	function pageDestroy() {
+		if (!$this->checkAuth('destroy')) return;
+		
+		global $gui;
+		
+		$record_id = $this->getZoneParam('record_id');
+		if ($this->form->getRecord($record_id) == null) {
+			$this->responsePage(404);
+			return;
+		}
+		
+		// Come up with a title for this bad boy.
+		$record_data = $this->form->getData();
+		$label_field = $this->form->getTitleField();
+		$title_field = $record_data[$label_field];
+		$id_field = $this->form->getIdField();
+		
+		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
+		$message = str_replace(array('%id%', '%title%'), array($record_id, $title_field), $message);
+		
+		$this->form->setFieldFormshow('*', false);
+		$this->form->setFieldFormshow($id_field);
+
+		$this->form->addAction('delete');
+		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
+		$this->form->addAction('cancel', array('link' => $link));
+
+		$this->initDestroyForm();
+		$this->form->guiAssign();
+		
+		$gui->assign('message', $message);
+		$gui->generate('forms/formz.tpl');
+	}
+
+	/**
+	 * POST handler for CRUD Destroy action.
+	 *
+	 * @see pageDestroy()
+	 * @access public
+	 * @return void
+	 **/
+	function postDestroy() {
+		if (!$this->checkAuth('destroy')) return;
+		
+		if (getPostText('destroy')) {
+			$id = getPostInt($this->form->getIdField());
+			$this->form->destroyRecord($id);
+		}
+		BaseRedirect($this->getZoneBasePath());
 	}
 
 	/**
@@ -525,66 +661,6 @@ class CrudZone extends zone {
 		}
 	}
 
-	/**
-	 * Page handler for CRUD Destroy action.
-	 *
-	 * Displays 'delete' confirmation page.
-	 *
-	 * @see postDestroy()
-	 * @access public
-	 * @return void
-	 **/		
-	function pageDestroy() {
-		if (!$this->checkAuth('destroy')) return;
-		
-		global $gui;
-		
-		$record_id = $this->getZoneParam('record_id');
-		if ($this->form->getRecord($record_id) == null) {
-			$this->responsePage(404);
-			return;
-		}
-		
-		// Come up with a title for this bad boy.
-		$record_data = $this->form->getData();
-		$label_field = $this->form->getTitleField();
-		$title_field = $record_data[$label_field];
-		$id_field = $this->form->getIdField();
-		
-		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
-		$message = str_replace(array('%id%', '%title%'), array($record_id, $title_field), $message);
-		
-		$this->form->setFieldFormshow('*', false);
-		$this->form->setFieldFormshow($id_field);
-
-		$this->form->addAction('delete');
-		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
-		$this->form->addAction('cancel', array('link' => $link));
-
-		$this->form->guiAssign();
-		$gui->assign('message', $message);
-		$gui->generate('forms/formz.tpl');
-	}
-
-	/**
-	 * POST handler for CRUD Destroy action.
-	 *
-	 * @todo add handling for non-integer id types.
-	 *
-	 * @see pageDestroy()
-	 * @access public
-	 * @return void
-	 **/
-	function postDestroy() {
-		if (!$this->checkAuth('destroy')) return;
-		
-		if (getPostText('destroy')) {
-			$id = getPostInt($this->form->getIdField());
-			$this->form->destroyRecord($id);
-		}
-		BaseRedirect($this->getZoneBasePath());
-	}
-	
 	/**
 	 * Return a record id for a given slug
 	 *

@@ -192,7 +192,7 @@ function smarty_function_formz_list($params, &$smarty) {
 			if (isset($fields[$field]['listlink'])) {
 				$link = $fields[$field]['listlink'];
 				$matches = array();
-				preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+				preg_match('#%([a-zA-Z0-9_\.]+?)%#', $link, $matches);
 				if (count($matches)) {
 					// replace with this table's id field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;
@@ -232,7 +232,7 @@ function smarty_function_formz_list($params, &$smarty) {
 							$link = $rowAction['link'];
 							
 							// replace placeholders
-							preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+							preg_match('#%([a-zA-Z_0-9\.]+?)%#', $link, $matches);
 							if (count($matches)) {
 								// replace with this table's id field, if applicable.
 								if ($matches[1] == 'id') $matches[1] = $id_field;
@@ -258,7 +258,7 @@ function smarty_function_formz_list($params, &$smarty) {
 							$link = $rowAction['link'];
 							
 							// replace placeholders
-							preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+							preg_match('#%([a-zA-Z0-9_\.]+?)%#', $link, $matches);
 							if (count($matches)) {
 								// replace with this table's id field, if applicable.
 								if ($matches[1] == 'id') $matches[1] = $id_field;
@@ -303,7 +303,7 @@ function smarty_function_formz_list($params, &$smarty) {
 			if ($action['type'] == 'link') {		
 				$link = $action['link'];
 				$matches = array();
-				preg_match('#%([a-zA-Z_\.]+?)%#', $link, $matches);
+				preg_match('#%([a-zA-Z_0-9\.]+?)%#', $link, $matches);
 				if (count($matches)) {
 					// replace with this table's id field or slug field, if applicable.
 					if ($matches[1] == 'id') $matches[1] = $id_field;

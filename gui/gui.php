@@ -655,9 +655,13 @@ class gui extends Smarty {
 	 * @access public
 	 * @return void
 	 */
-	function add_jquery($js) {
-		$js = 'jQuery(function($){' . $js . '});';
-		$this->add_js($js, 'inline');
+	function add_jquery($js = null) {
+		if (empty($js)) {
+			$this->add_js('/zoopfile/gui/js/jquery.js', 'zoop');
+		} else {
+			$js = 'jQuery(function($){' . $js . '});';
+			$this->add_js($js, 'inline');
+		}
 	}
 	
 	/**
