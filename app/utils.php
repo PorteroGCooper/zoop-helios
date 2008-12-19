@@ -343,6 +343,65 @@ function array_peek($stack, $where = null) {
 }
 
 /**
+ * Smash this array. Destroys all keys. Maintains depth first order.
+ *
+ * This:
+ * @code
+ *    Array
+ *    (
+ *        [0] => Array
+ *            (
+ *                [0] => alpha
+ *                [2] => beta
+ *                [3] => Array
+ *                    (
+ *                        [same] => a1
+ *                    )
+ *            )
+ *        [1] => 1
+ *        [2] => 2
+ *        [3] => Array
+ *            (
+ *                [same] => a
+ *            )
+ *        [4] => Array
+ *            (
+ *                [0] => one
+ *            )
+ *    )
+ * @endcode
+ *
+ * Turns into this:
+ * @code
+ *    Array
+ *    (
+ *        [0] => alpha
+ *        [1] => beta
+ *        [2] => a1
+ *        [3] => 1
+ *        [4] => 2
+ *        [5] => a
+ *        [6] => one
+ *    )
+ * @endcode
+ *
+ * @access public
+ * @param array $array
+ * @return array Smashed array.
+ */
+function array_smash($array) {
+	$_ret = array();
+	foreach (array_values($array) as $_i) {
+		if (is_array($_i)) {
+			$_ret = array_merge($_ret, array_smash($_i));
+		} else {
+			$_ret[] = $_i;
+		}
+	}
+	return $_ret;
+}
+
+/**
  * validEmailAddress
  *
  * @param mixed $email

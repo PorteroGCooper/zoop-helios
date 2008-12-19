@@ -1745,17 +1745,26 @@ class Formz {
 	 *       ->setRequired()
 	 *       ->setEditable()
 	 *       ->setLabel('SAME LABEL!');
+	 *    $myform->fields(array('foo', 'bar'));
+	 *    $myform->fields('foo', 'bar');
+	 * @endcode
+	 *
+	 * Names can be passed as an array, or just a list. The following are equivalent:
+	 *
+	 * @code
+	 *    $myform->fields(array('foo', 'bar'));
+	 *    $myform->fields('foo', 'bar');
 	 * @endcode
 	 *
 	 * @ingroup formzfield
 	 * @see Formz::field
 	 *
 	 * @access public
-	 * @param array $names Array of field names to chunk into a collection.
+	 * @param mixed $names Field names to chunk into a collection.
 	 * @return FormzFieldCollection
 	 */
 	function fields($names) {
-		return new FormzFieldCollection($names, $this);
+		return new FormzFieldCollection(array_smash(func_get_args()), $this);
 	}
 
 	/**
