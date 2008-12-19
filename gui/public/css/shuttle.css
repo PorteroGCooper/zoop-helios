@@ -1,0 +1,31 @@
+fieldset.comboselect {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+fieldset.comboselect * {
+	float: left;
+}
+
+fieldset.comboselect select {
+	height: 110px;
+}
+
+fieldset.comboselect fieldset {
+	border: 0;
+	width: 12%;
+	padding: 1em .5em .5em;
+}
+
+fieldset.comboselect fieldset input {
+	width: 100%;
+	clear: left;
+	margin: 5px 0;
+}
+
+fieldset.comboselect select option {
+	width: 100% !important;
+	border: 0;
+	border-bottom: 1px dotted #D0D2D3;
+}
