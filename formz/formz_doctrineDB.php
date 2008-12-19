@@ -508,7 +508,19 @@ class formz_doctrineDB implements formz_driver_interface {
 				$this->tree()->createRoot($this->_record);
 			}
 		} else {
-			$this->_record->save();
+			try {
+				$this->_record->save();
+			} catch(Doctrine_Validator_Exception $e) {
+				$validation_errors = $this->_record->getErrorStack();
+				// getErrorStack() returns an object. Make an array of errors we can use.
+				foreach($validation_errors as $field_name => $error_codes) {
+					$errors[$field_name] = $error_codes;
+					foreach ($error_codes as $code) {
+						trigger_error("$field_name should be $code.");
+					}
+				}
+				return false;
+			}
 		}
 
 		// Get relation classes for the current table.

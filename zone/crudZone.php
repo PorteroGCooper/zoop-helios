@@ -422,7 +422,7 @@ class CrudZone extends zone {
 				switch($field['type']) {
 					case 'boolean':
 					case 'bool':
-						$values[$name] = getPostCheckbox($name);
+						$values[$name] = getPostBool($name);
 						break;
 					case 'relation':
 						switch ($field['rel_type']) {
@@ -623,7 +623,7 @@ class CrudZone extends zone {
 					switch($field['type']) {
 						case 'boolean':
 						case 'bool':
-							$values[$name] = getPostCheckbox($name);
+							$values[$name] = getPostBool($name);
 							break;
 						case 'relation':
 							switch ($field['rel_type']) {

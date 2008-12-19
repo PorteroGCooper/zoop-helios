@@ -75,6 +75,7 @@ class component_doctrine extends component {
 		}
 		
 		$manager->setCurrentConnection($connection_name);
+		$manager->setAttribute(Doctrine::ATTR_VALIDATE, Doctrine::VALIDATE_ALL);
 		$manager->setAttribute('model_loading', Config::get('zoop.doctrine.model_loading'));
 		// DQL Callbacks enable functionality needed for, among other things, SoftDelete.
 		if (Config::get('zoop.doctrine.use_dql_callbacks')) {
@@ -83,5 +84,33 @@ class component_doctrine extends component {
 			$manager->setAttribute('use_dql_callbacks', false);
 		}
 		Doctrine::loadModels(Config::get('zoop.doctrine.models_dir')); // This call will not require the found .php files
+
+		// Attach listeners to the manager, current connection, or another connection.
+		if ($listeners = Config::get('zoop.doctrine.listeners')) {
+			foreach ($listeners as $type => $listener) {
+				if (!$listener['class'] || ! $listener['level']) continue;
+
+				include_once(Config::get('zoop.doctrine.listeners_dir') . '/' . $listener['class'] . '.php');
+
+				switch ($type) {
+					case 'Doctrine_EventListener':
+					case 'Doctrine_EventListener_Interface':
+					case 'Doctrine_Overloadable':
+						$method = 'addListener';
+						break;
+					case 'Doctrine_Record_Listener':
+						$method = 'addRecordListener';
+						break;
+				}
+
+				if ($listener['level'] == 'manager') {
+					$manager->$method(new $listener['class']());
+				} elseif ($listener['level'] == 'active_connection') {
+					$manager->getCurrentConnection()->$method(new $listener['class']());
+				} else {
+					$manager->getConnection($listener['level'])->$method(new $listener['class']());
+				}
+			}
+		}
 	}
 }
