@@ -17,6 +17,7 @@
  * @ingroup smarty
  */
 function smarty_function_resources($params, &$smarty) {
+	$inline_css = $inline_js = array();
 
 	// if either css or js resources are given, use those...
 	if (isset($params['css']) || isset($params['js'])) {
@@ -46,13 +47,19 @@ function smarty_function_resources($params, &$smarty) {
 		$appJs = (isset($smarty->_appJs)) ? $smarty->_appJs : array();
 		$js = array_merge($zoopJs, $appJs);
 		
-		// add inline js stuff here...
-		$inline_js = isset($smarty->_inlineJs) ? $smarty->_inlineJs : array();
+		// add inline resources here...
+		if (isset($smarty->_inlineCss)) $inline_css = $smarty->_inlineCss;
+		if (isset($smarty->_inlineJs)) $inline_js = $smarty->_inlineJs;
 	}
 
 	// spit 'em out.
 	foreach ($css as $file) {
 		echo '<link rel="stylesheet" type="text/css" href="' . url($file) . "\" />\n";
+	}
+	if (count($inline_css)) {
+		echo '<style type="text/css">'."\n\t";
+		echo implode("\n\t", $inline_css);
+		echo "\n</style>\n";
 	}
 	foreach ($js as $file) {
 		echo '<script type="text/javascript" src="' . url($file) . "\"></script>\n";

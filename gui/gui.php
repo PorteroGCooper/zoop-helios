@@ -75,7 +75,16 @@ class gui extends Smarty {
 	 * @see gui::add_js
 	 */
 	var $_inlineJs = array();
-	
+
+	/**
+	 * Inline css includes
+	 *
+	 * @var array
+	 * @access private
+	 * @see gui::add_css
+	 */
+	var $_inlineCss = array();
+
 	/**
 	 * Gui regions definitions.
 	 *
@@ -573,6 +582,22 @@ class gui extends Smarty {
 	 * @return void
 	 */
 	function add_css($path, $scope = 'app') {
+			
+		// handle inline stuff separately.
+		if ($scope == 'inline') {
+				$md5 = hash('md5', $path);
+				
+				// if the header's already been written, spit this out and hope for the best.
+				if ($this->header_written && !isset($this->_inlineCss[$md5])) {
+					echo '<style type="text/css">';
+					echo "\n";
+					echo $path;
+					echo "\n</style>\n";
+				}
+				$this->_inlineCss[$md5] = $path;
+				return;
+		}
+		
 		// for backwards compatability... add the public dir if it's just a file name.
 		if (strpos($path, '/') === false) {
 			$path = Config::get('zoop.gui.directories.public') . '/' . $path;
