@@ -50,6 +50,90 @@ class FormzField {
 	}
 
 	/**
+	 * Return this field's name.
+	 *
+	 * @return string Field name
+	 */
+	function name() {
+		return $this->name;
+	}
+
+	/**
+	 * Insert this field after $field.
+	 *
+	 * This is useful when creating fake or aggregate fields, so that a resort isn't necessary.
+	 * Simply add the field and call ->after('foo') on the result.
+	 *
+	 * This call can be chained after any call which returns a FormzField object.
+	 *
+	 * @code
+	 *    $form->addField('fake')
+	 *       ->after('name');
+	 * @endcode
+	 *
+	 * @see FormzField::after
+	 * @see Formz::addField
+	 * @see Formz::setOrder
+	 *
+	 * @param mixed $field Field or field name to insert this field after.
+	 * @return FormzField This field, for chaining calls.
+	 */
+	function after($field) {
+		if ($field instanceof FormzField) {
+			$field = $field->name();
+		}
+
+		$sort_keys = array();
+		foreach (array_keys($this->form->getFields()) as $_val) {
+			$sort_keys[] = $_val;
+			if ($_val == $field) {
+				$sort_keys[] = $this->name;
+				break;
+			}
+		}
+		$this->form->setOrder($sort_keys);
+		return $this;
+	}
+
+	/**
+	 * Insert this field after $field.
+	 *
+	 * This is useful when creating fake or aggregate fields, so that a resort isn't necessary.
+	 * Simply add the field and call ->after('foo') on the result.
+	 *
+	 * This call can be chained after any call which returns a FormzField object.
+	 *
+	 * @code
+	 *    $form->addField('fake')
+	 *       ->after('name');
+	 * @endcode
+	 *
+	 * @see FormzField::after
+	 * @see Formz::addField
+	 * @see Formz::setOrder
+	 *
+	 * @param mixed $field Field or field name to insert this field after.
+	 * @return FormzField This field, for chaining calls.
+	 */
+	function before($field) {
+		if ($field instanceof FormzField) {
+			$field = $field->name();
+		}
+		
+		$sort_keys = array();
+		foreach (array_keys($this->form->getFields()) as $_val) {
+			if ($_val == $field) {
+				$sort_keys[] = $this->name;
+				break;
+			}
+			$sort_keys[] = $_val;
+		}
+		
+		$this->form->setOrder($sort_keys);
+		return $this;
+	}
+
+	/**
 	 * Wrapper function for Formz::setFieldConstraint(), since that function takes a different
 	 * set of arguments and isn't easily handled by the __call() magic method which handles
 	 * all of the setFoo and setDisplayFoo calls.
