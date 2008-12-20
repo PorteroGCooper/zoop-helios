@@ -13,7 +13,85 @@
 /**
  * Create-Read-Update-Destroy zone, to be extended by zones implementing CRUD.
  * 
- * @ingroup crud
+ * @group crud
+ * 
+ * CrudZone is an implementation of a basic, database independant, Formz based CRUD
+ * controller.
+ *
+ * {@link http://en.wikipedia.org/wiki/Create,_read,_update_and_delete}
+ * 
+ * The Zoop CRUD zone consists of a Formz object (located at $this->form), which it manipulates
+ * to perform each of the CRUD operations. It has a default set of actions, urls, aliases and
+ * templates, but each can be overridden by extending classes.
+ *
+ *
+ * @section Create
+ *
+ * Create operations in CrudZone are handled as a special case of 'Update'. Thus, there is no
+ * 'Create' handler, only an alias to 'crud/new/update'.
+ *
+ * To modify the Create form, use the CrudZone::initCreateForm() hook.
+ *
+ *
+ * @section Read
+ *
+ * To modify the Read form, use the CrudZone::initReadForm() hook.
+ *
+ *
+ * @section Update
+ *
+ * To modify the Update form, use the CrudZone::initUpdateForm() hook.
+ *
+ *
+ * @section Destroy
+ *
+ * To modify the Destroy form, use the CrudZone::initDestroyForm() hook.
+ *
+ *
+ * @section List
+ *
+ * A fifth operation handled by the Zoop CRUD zone is record lists. These can be seen as a 
+ * special case of Read, as in 'crud/all/read'
+ *
+ * To modify the List form, use the CrudZone::initListForm() hook.
+ *
+ * 
+ * @section Security
+ *
+ * Before each CRUD operation, the CrudZone::checkAuth() hook is called, with the intended
+ * operation passed as a parameter. Unless overridden, this hook always returns true.
+ * 
+ * An extending class might integrate the Auth component, or tie into an external library or
+ * authentication system.
+ *
+ * @code
+ *    function checkAuth($action) {
+ *       switch ($action) {
+ *          case 'create':
+ *             return Auth::gi()->checkLoggedIn();
+ *             break;
+ *          case 'read':
+ *             return true;
+ *             break;
+ *          case 'update':
+ *             return Auth::gi()->checkGroup('admin');
+ *             break;
+ *          case 'destroy':
+ *             return Auth::gi()->checkGroup('admin');
+ *             break;
+ *          case 'list':
+ *             return true;
+ *             break;
+ *          default:
+ *             return false;
+ *             break;
+ *       }
+ *    }
+ * @endcode
+ *
+ * 
+ * @endgroup
+ *
  * @ingroup zone
  * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
@@ -33,7 +111,8 @@ class CrudZone extends zone {
 	var $immutableFields = null;
 	var $foreign_relation_key = 'parent_id';
 
-	var $_template;
+	protected $_template;
+	
 	/**
 	 * Default URL aliases for CRUD actions. This lets you use 'zonename/foo/edit' instead of
 	 * 'zonename/foo/update', for example.
@@ -61,6 +140,8 @@ class CrudZone extends zone {
 	 * Use the CrudZone::construct() hook in extending classes rather than overloading this constructor.
 	 *
 	 * @see CrudZone::construct();
+	 * @access public
+	 * @return void;
 	 */
 	final function __construct() {
 		if (isset($this->Aliases) && count($this->Aliases)) {
@@ -116,6 +197,18 @@ class CrudZone extends zone {
 	/**
 	 * initListForm is provided to extending classes, allowing CRUD zones to modify the form
 	 * object just before executing and returning a List.
+	 *
+	 * This CRUD zone's form object is located at $this->form
+	 *
+	 * This is also a good place to overload the template used to generate Read forms.
+	 * 
+	 * @code
+	 *    $this->setTemplate($this->canonicalizeTemplate('customListTemplate.tpl'));
+	 * @endcode
+	 *
+	 * @see CrudZone::setTemplate
+	 * @access public
+	 * @return void
 	 */
 	function initListForm() { }
 
@@ -124,6 +217,16 @@ class CrudZone extends zone {
 	 * object just before executing and returning a Create form.
 	 *
 	 * This CRUD zone's form object is located at $this->form
+	 *
+	 * This is also a good place to overload the template used to generate Read forms.
+	 * 
+	 * @code
+	 *    $this->setTemplate($this->canonicalizeTemplate('customCreateTemplate.tpl'));
+	 * @endcode
+	 *
+	 * @see CrudZone::setTemplate
+	 * @access public
+	 * @return void
 	 */
 	function initCreateForm() { }
 
@@ -132,6 +235,16 @@ class CrudZone extends zone {
 	 * object just before executing and returning a Read form.
 	 *
 	 * This CRUD zone's form object is located at $this->form
+	 *
+	 * This is also a good place to overload the template used to generate Read forms.
+	 * 
+	 * @code
+	 *    $this->setTemplate($this->canonicalizeTemplate('customReadTemplate.tpl'));
+	 * @endcode
+	 *
+	 * @see CrudZone::setTemplate
+	 * @access public
+	 * @return void
 	 */
 	function initReadForm() { }
 	
@@ -140,6 +253,16 @@ class CrudZone extends zone {
 	 * object just before executing and returning an Update form.
 	 *
 	 * This CRUD zone's form object is located at $this->form
+	 *
+	 * This is also a good place to overload the template used to generate Read forms.
+	 * 
+	 * @code
+	 *    $this->setTemplate($this->canonicalizeTemplate('customUpdateTemplate.tpl'));
+	 * @endcode
+	 *
+	 * @see CrudZone::setTemplate
+	 * @access public
+	 * @return void
 	 */
 	function initUpdateForm() { }
 	
@@ -148,6 +271,16 @@ class CrudZone extends zone {
 	 * object just before executing and returning a Destroy confirmation form.
 	 *
 	 * This CRUD zone's form object is located at $this->form
+	 *
+	 * This is also a good place to overload the template used to generate Read forms.
+	 * 
+	 * @code
+	 *    $this->setTemplate($this->canonicalizeTemplate('customDestroyTemplate.tpl'));
+	 * @endcode
+	 *
+	 * @see CrudZone::setTemplate
+	 * @access public
+	 * @return void
 	 */
 	function initDestroyForm() { }
 
@@ -161,6 +294,7 @@ class CrudZone extends zone {
 	 * Override this method in an extending class so you can implement authentication. Implementing
 	 * subclasses should either redirect to a 'denied' page, or return false if authentication is denied.
 	 *
+	 * @access public
 	 * @param string $action
 	 *   CRUD action to authenticate. Will be 'create', 'read', 'update', 'destroy' or 'list'.
 	 * @return bool Return 'false' from overriding methods to stop the requested action from happening.
@@ -187,6 +321,9 @@ class CrudZone extends zone {
 	 *
 	 * The second function of the index page is to provide a list view if a record id isn't provided.
 	 * This is the equivalent of CRUD/(all)/read.
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function initIndex() {
 		$record_id = $this->getZoneParam('record_id');
@@ -238,10 +375,6 @@ class CrudZone extends zone {
 		if (!$template) {
 			// grab the default formz template
 			$template = $this->getTemplate();
-
-			if (!$template) {
-				$template = Config::get('zoop.gui.templates.formz');
-			}
 /*
 			// check if there's a template for rendering this specific object.
 			$template = Config::get('zoop.gui.crud_read_templates.objects.' . strtolower($this->tableName), $template);
@@ -258,9 +391,9 @@ class CrudZone extends zone {
 	}
 
 	/**
-	 * Set the Template that _loadAndGenerateForm will use 
+	 * Set the template file which will be used to render this form.
 	 * 
-	 * @param mixed $template 
+	 * @param string $template 
 	 * @access protected
 	 * @return void
 	 */
@@ -269,13 +402,18 @@ class CrudZone extends zone {
 	}
 
 	/**
-	 * return the template that _loadAndGenerateForm may use, if set
+	 * Return the template file which will be used to render this form.
 	 * 
+	 * @see CrudZone::setTemplate
 	 * @access protected
-	 * @return void
+	 * @return string Template file
 	 */
 	protected function getTemplate() {
-		return $this->_template;
+		if ($this->_template) {
+			return $this->_template;
+		} else {
+			return Config::get('zoop.gui.templates.formz');
+		}
 	}
 
 	/**
@@ -372,7 +510,7 @@ class CrudZone extends zone {
 		}
 		$this->form->guiAssign();
 		
-		$gui->generate('forms/formz.tpl');
+		$gui->generate($this->getTemplate());
 	}
 
 	/**
@@ -453,7 +591,7 @@ class CrudZone extends zone {
 	 *
 	 * Displays 'delete' confirmation page.
 	 *
-	 * @see postDestroy()
+	 * @see CrudZone::postDestroy
 	 * @access public
 	 * @return void
 	 **/		
@@ -488,13 +626,13 @@ class CrudZone extends zone {
 		$this->form->guiAssign();
 		
 		$gui->assign('message', $message);
-		$gui->generate('forms/formz.tpl');
+		$gui->generate($this->getTemplate());
 	}
 
 	/**
 	 * POST handler for CRUD Destroy action.
 	 *
-	 * @see pageDestroy()
+	 * @see CrudZone::pageDestroy
 	 * @access public
 	 * @return void
 	 **/
@@ -572,7 +710,7 @@ class CrudZone extends zone {
 
 		$this->initUpdateForm();
 		$this->form->guiAssign();
-		$gui->generate('forms/formz.tpl');
+		$gui->generate($this->getTemplate());
 	}
 
 	/**
@@ -672,6 +810,15 @@ class CrudZone extends zone {
 		return $this->form->getRecordIdBySlug($slug);
 	}
 	
+	/**
+	 * Return the record id for this CRUD zone (if set).
+	 *
+	 * Grabs the requested record from the zone param. If this is a sluggable CRUD zone,
+	 * converts param from slug to id.
+	 *
+	 * @access public
+	 * @return mixed Requested record ID
+	 */
 	function recordId() {
 		$record_id = $this->getZoneParam('record_id');
 		if ($this->form->isSluggable()) {
