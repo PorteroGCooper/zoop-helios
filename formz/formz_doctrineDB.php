@@ -121,6 +121,13 @@ class formz_doctrineDB implements formz_driver_interface {
 	function getData($return_formz = false) {
 		if (!$this->_record) return null;
 		$data = $this->_record->toArray();
+		
+		// THIS IS GHETTO HAX.
+		foreach ($this->table->getRelations() as $_key => $_val) {
+			if (isset($data[$_key])) {
+				unset($data[$_key]);
+			}
+		}
 
 		if (!$return_formz) {
 			$data = $data + $this->getRecordRelationsValues();
