@@ -12,4 +12,13 @@ include_once(dirname(__file__) . "/text.php");
  */
 class HiddenControl extends textControl {
 
+	/**
+	 * A 'hidden' form element shouldn't show on a Read page.
+	 *
+	 * @return string View state for hidden GuiControls
+	 */
+	function view() {
+		return '';
+	}
+
 }

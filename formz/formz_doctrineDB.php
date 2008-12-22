@@ -129,12 +129,12 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 		}
 
-		if (!$return_formz) {
-			$data = $data + $this->getRecordRelationsValues();
-		} else {
+		if ($return_formz) {
 			foreach ($this->getRecordRelations() as $relation) {
 				$data[] = new Formz($relation);
 			}
+		} else {
+			$data = $data + $this->getRecordRelationsValues();
 		}
 
 		return $data;
