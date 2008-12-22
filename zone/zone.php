@@ -1906,7 +1906,7 @@ class zone {
 	 * @return void
 	 */
 	function outputAJAX() {
-		header("application/html");
+		header("Content-Type: text/html");
 		global $gui;
 		$gui->display($this->_ajaxTemplate);
 	}
@@ -1949,7 +1949,7 @@ class zone {
 	 * @return void
 	 */
 	function outputJSON () {
-		header("application/text-json");
+		header("Content-Type: application/text-json");
 		$data = convert::toJSON($this->getData());
 		echo $data;
 	}
@@ -1961,7 +1961,7 @@ class zone {
 	 * @return void
 	 */
 	function outputCSV () {
-		header("application/text-csv");
+		header("Content-Type: application/text-csv");
 		$data = convert::toCSV($this->getData());
 		echo $data;
 	}
@@ -1985,7 +1985,7 @@ class zone {
 	 * @return void
 	 */
 	function outputYAML () {
-		header("application/text-yaml");
+		header("Content-Type: application/text-yaml");
 		$data = convert::toYAML($this->getData());
 		echo $data;
 	}
@@ -2010,7 +2010,7 @@ class zone {
 	 * @return void
 	 */
 	function outputSerialized() {
-		header("application/text");
+		header("Content-Type: application/text");
 		$data = convert::toSerialized($this->getData());
 		echo $data;
 	}
