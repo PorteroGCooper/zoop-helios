@@ -8,7 +8,7 @@ crud_zone:
     messages:
         # Delete confirmation message. Can include %id% and %title% fields.
         confirm_delete: "Are you sure you want to delete: <strong>%title%</strong>?"
-allowable_output: [ xml, json, yaml, serialized, csv, xls, html, pdf, png, rss ]
+allowable_output: [ xml, json, yaml, serialized, csv, xls, html, pdf, png, rss, ajax ]
 
 zoopfile:
     # The Finfo PECL extension has some serious issues.

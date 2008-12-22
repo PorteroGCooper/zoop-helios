@@ -334,6 +334,13 @@ class zone {
 	 */
 	var $_redirectAliases = array();
 
+	/**
+	 * A default template to be used for partial HTML rendering, such as for Ajax output (.ajax)
+	 *
+	 * @see zone::outputAjax
+	 * @access private
+	 */
+	var $_ajaxTemplate = null;
 
 	/**
 	 * Return the Zone Name
@@ -697,6 +704,7 @@ class zone {
 
 		// If the curPath has the allowed ext, strip it.
 		$ext = $this->getExtension();
+
 		if (substr($curPath, -1 - strlen($ext) ) == "." . $ext) {
 			$curPath = substr($curPath, 0, -1 - strlen($ext));
 		}
@@ -1891,6 +1899,17 @@ class zone {
 		}
 	}
 
+	/**
+	 * The default method for outputting (echoing) partial HTML content, such as for Ajax
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function outputAJAX() {
+		header("application/html");
+		global $gui;
+		$gui->display($this->_ajaxTemplate);
+	}
 
 	/**
 	 * The default method for rendering HTML.

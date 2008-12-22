@@ -118,6 +118,15 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $columns;
 	}
 	
+	/**
+	 * Return all local values for this record.
+	 *
+	 * This will not return values for relations. Get those with getRecordRelations.
+	 *
+	 * @see formz_doctrineDB::getRecordRelations
+	 * @param mixed
+	 * @return array
+	 */
 	function getData($return_formz = false) {
 		if (!$this->_record) return null;
 		$data = $this->_record->toArray();
