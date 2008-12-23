@@ -330,19 +330,26 @@ class formz_doctrineDB implements formz_driver_interface {
 		if (!isset($this->_searchToken) || empty($this->_searchToken)) return;
 
 		foreach($this->getSearchTablesets() as $tableset => $search_fields) {
-			foreach($search_fields as $search_field) {
-				if (strtolower($tableset) === strtolower($this->getTableAlias())) {
-					$this->query()->select('*') // try to optimize this, remove the select *?
-								  ->from($tableset . ' c')
-								  ->where('c.' . $search_field . ' like "%' . $this->_searchToken . '%"');
-				} else {
-					$this->query()->leftJoin('c.' . $tableset . ' b')
-								  ->orWhere('b.' . $search_field . ' like "%' . $this->_searchToken . '%"');
+			if (strtolower($tableset) === strtolower($this->getTableAlias())) {
+				$this->query()->select('*') // try to optimize this, remove the select *?
+							  ->from($tableset . ' c');
+
+				$whereClauseSet = array();
+				foreach($search_fields as $search_field) {
+					$whereClauseSet[] = 'c.' . $search_field . ' like "%' . $this->_searchToken . '%"';
+				}
+				
+				$whereClause = implode(' OR ', $whereClauseSet);
+				$this->query()->where($whereClause);
+			} else {
+				$this->query()->leftJoin('c.' . $tableset . ' b');
+
+				foreach($search_fields as $search_field) {
+					$this->query()->orWhere('b.' . $search_field . ' like "%' . $this->_searchToken . '%"');
 				}
 			}
+
 		}
-		
-		
 	}
 	
 	/**
@@ -1087,11 +1094,14 @@ class formz_doctrineDB implements formz_driver_interface {
 	private function &_applyUserConstraintsToQuery() {
 		$constraints = $this->getConstraints();
 		if ($constraints) {
+			$joinCount = 0;
 			foreach ($constraints as $key => $value) {
 				if (strpos($key, '.') !== false) {
 					$relation = array_shift(explode('.', $key));
-					$this->query()->leftJoin('t.' . $relation . ' r');
-					$key = 'r.id';
+					$identifier = 'r' . $joinCount;
+					$this->query()->leftJoin('t.' . $relation . ' ' . $identifier);
+					$key = $identifier . '.id';
+					$joinCount++;
 				}
 				if(is_null($value)) {
 					$this->query()->addWhere($key . ' IS NULL');
