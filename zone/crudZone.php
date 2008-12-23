@@ -783,9 +783,8 @@ class CrudZone extends zone {
 									}
 									break;
 								case Formz::ONE:
-									$posted_int = getPostInt($name);
-									if (is_integer($posted_int)) {
-										$values[$name] = $posted_int;
+									if (getPostIsset($name) && getPost($name) !== '') {
+										$values[$name] = getPost($name);
 									}
 									break;
 							}
