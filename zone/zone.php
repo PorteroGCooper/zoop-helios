@@ -1537,10 +1537,11 @@ class zone {
 	 * @return void
 	 */
 	function zoneRedirect( $inUrl = '', $redirectType = HEADER_REDIRECT) {
-		if (empty($inUrl))
+		if (empty($inUrl)) {
 			$url = $this->url;
-		else
+		} else {
 			$url = $this->url . "/" . $inUrl;
+		}
 		BaseRedirect( $url, $redirectType);
 	}
 
@@ -1588,8 +1589,7 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function guiCaching($ttl = null)
-	{
+	function guiCaching($ttl = null) {
 		global $gui;
 		if (!defined("gui_caching") || gui_caching == 0)
 			return;
@@ -1917,7 +1917,7 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function outputHTML () {
+	function outputHTML() {
 		global $gui;
 		$gui->generate();
 	}
@@ -1948,7 +1948,7 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function outputJSON () {
+	function outputJSON() {
 		header("Content-Type: application/text-json");
 		$data = convert::toJSON($this->getData());
 		echo $data;
@@ -1960,7 +1960,7 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function outputCSV () {
+	function outputCSV() {
 		header("Content-Type: application/text-csv");
 		$data = convert::toCSV($this->getData());
 		echo $data;
@@ -1972,8 +1972,8 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function outputXLS () {
-		header("Content-type: application/vnd.ms-excel");
+	function outputXLS() {
+		header("Content-Type: application/vnd.ms-excel");
 		$data = convert::toXLS($this->getData());
 		echo $data;
 	}
@@ -1984,7 +1984,7 @@ class zone {
 	 * @access public
 	 * @return void
 	 */
-	function outputYAML () {
+	function outputYAML() {
 		header("Content-Type: application/text-yaml");
 		$data = convert::toYAML($this->getData());
 		echo $data;
@@ -1997,7 +1997,7 @@ class zone {
 	 * @return void
 	 */
 	function outputXML() {
-		header('Content-type: text/xml'); 
+		header('Content-Type: text/xml'); 
 		$options = array('rootName' => $this->getName(), 'defaultTagName' => $this->form->tablename );
 		$data = convert::toXML($this->getData(), $options);
 		echo $data;

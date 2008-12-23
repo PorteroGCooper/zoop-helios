@@ -66,22 +66,5 @@ class component_guiwidget extends component {
  * @return void
  */
 function &getGuiWidget($type, $name, $useGlobal = false) {
-	if($useGlobal) {
-		global $guiwidgets;
-		if(isset($guiwidgets[$type][$name])) {
-			return $guiwidgets[$type][$name];
-		}
-	}
-
-	component_guiwidget::includeGuiWidget($type);
-
-	$className = "guiwidget_{$type}";
-
-	if($useGlobal) {
-		$guiwidgets[$type][$name] = &new $className($name);
-		return $guiwidgets[$type][$name];
-	} else {
-		$control = &new $className($name);
-		return $control;
-	}
+	return GuiWidget::get($type, $name, $useGlobal);
 }

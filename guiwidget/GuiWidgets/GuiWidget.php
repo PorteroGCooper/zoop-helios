@@ -15,6 +15,8 @@
  * @ingroup guiwidget
  */
 class GuiWidget {
+	private $name;
+	
 	var $instanceCount = 1;
 	/**
 	 * params
@@ -84,6 +86,8 @@ class GuiWidget {
 	 */
 	function setParam($name, $value) {
 		$this->params[$name] = $value;
+		
+		return $this;
 	}
 
 	/**
@@ -97,6 +101,8 @@ class GuiWidget {
 		foreach($valueArray as $name => $value) {
 			$this->params[$name] = $value;
 		}
+		
+		return $this;
 	}
 
 	/**
@@ -241,6 +247,52 @@ class GuiWidget {
 		}
 		else {
 			return $html;
+		}
+	}
+	
+	/**
+	 * Assign this GuiWidget to the global $gui object.
+	 * 
+	 * @access public
+	 * @param string $as Assign this GuiWidget as this.
+	 * @return GuiWidget
+	 */
+	function guiAssign($as = null) {
+		if (empty($as)) $as = $this->name;
+		
+		global $gui;
+		$gui->assign($as, $this);
+		
+		return $this;
+	}
+	
+	/**
+	 * Get an instance of a GuiWidget
+	 *
+	 * @param string $type
+	 * @param string $name
+	 * @param bool $useGlobal
+	 * @access public
+	 * @return GuiWidget
+	 */
+	static function &get($type, $name, $useGlobal = false) {
+		if($useGlobal) {
+			global $guiwidgets;
+			if(isset($guiwidgets[$type][$name])) {
+				return $guiwidgets[$type][$name];
+			}
+		}
+	
+		component_guiwidget::includeGuiWidget($type);
+	
+		$className = "guiwidget_{$type}";
+	
+		if($useGlobal) {
+			$guiwidgets[$type][$name] = &new $className($name);
+			return $guiwidgets[$type][$name];
+		} else {
+			$control = &new $className($name);
+			return $control;
 		}
 	}
 }

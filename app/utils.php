@@ -1784,6 +1784,31 @@ if (!function_exists('json_encode')) {
 	}
 }
 
+/**
+ * almost_empty function.
+ *
+ * Like empty(), returns true if input evaluates to 0, '', an empty array, or null.
+ * In addition, almost_empty will return true if input is an n-deep array or object with
+ * only 'empty' values.
+ * 
+ * @see empty
+ * @access public
+ * @param mixed $in
+ * @return bool
+ */
+function almost_empty($in) {
+	if (empty($in)) {
+		return true;
+	} else if (is_array($in) || is_object($in)) {
+		foreach ((array)$in as $_val) {
+			if (!almost_empty($_val)) return false;
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
 if (!function_exists('com_create_guid')) {
 	function com_create_guid() {
