@@ -401,6 +401,8 @@ class formz_doctrineDB implements formz_driver_interface {
 				$this->_record->fromArray($this->getConstraints());
 			}
 		} elseif ($this->getConstraints()) {
+			// add $id as a constraint...
+			$this->addConstraint($this->getIdField(), $id);
 			$record = $this->_applyUserConstraintsToQuery()->fetchOne();
 			
 			// if you didn't find one, return.
