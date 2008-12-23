@@ -227,7 +227,12 @@ function smarty_function_formz_form($params, &$smarty) {
 		if ($form->editable) {
 			$control_html = $control->renderControl();
 		} else {
-			$control_html = '<div class="' . implode(' ', $form_item_classes) . '">' . $control->view() . '</div>';
+			$control_view = $control->view();
+			if (isset($field['formlink']) && !empty($field['formlink'])) {
+				$url = $field['formlink'];
+				$control_view = '<a href="'. url($url) .'">'. $control_view .'</a>';
+			}
+			$control_html = '<div class="'. implode(' ', $form_item_classes) .'">'. $control_view .'</div>';
 		}
 		
 		$form_item .= '<div class="form-item-content">' . $control_html . '</div>';
