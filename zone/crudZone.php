@@ -522,6 +522,8 @@ class CrudZone extends zone {
 	 **/
 	function postUpdate() {
 		if (!$this->checkAuth('update')) return;
+		
+		$this->initUpdateForm();
 
 		if (getPostText('update') || getPostText('update_and_create')) {
 			// save the posted values.
@@ -546,44 +548,53 @@ class CrudZone extends zone {
 	 * @return int Record ID
 	 */
 	protected function saveUpdatePost() {
+		$values = $this->getRecordValues($this->form);
+		return $this->form->saveRecord($values);
+	}
+	
+	protected function getRecordValues(&$form, $post_prefix = '') {
 		$values = array();
-		foreach ($this->form->getFields() as $name => $field) {
+		foreach ($form->getFields() as $name => $field) {
 			if ((!isset($field['editable']) || $field['editable'])
 				&& (!isset($field['formshow']) || $field['formshow'])) {
 
 				$controls = $GLOBALS['controls'];
-				if ( (isset($controls['betterpassword']) && isset($controls['betterpassword'][$name]) )  || 
-					( isset($controls['password']) && isset($controls['password'][$name]) )) {
-					if (!getPostIsset($name)) continue;
+				if ((isset($controls['betterpassword']) && isset($controls['betterpassword'][$post_prefix . $name]))
+					|| (isset($controls['password']) && isset($controls['password'][$post_prefix . $name]))) {
+						if (!getPostIsset($post_prefix . $name)) continue;
 				}
-
+				
 				switch($field['type']) {
 					case 'boolean':
 					case 'bool':
-						$values[$name] = getPostBool($name);
+						$values[$name] = getPostBool($post_prefix . $name);
 						break;
 					case 'relation':
-						switch ($field['rel_type']) {
-							case Formz::MANY:
-								if (getPostIsset($name)) {
-									$values[$name] = getPost($name);
-									if (!is_array($values[$name])) $values[$name] = array();
-								}
-								break;
-							case Formz::ONE:
-								if (getPostIsset($name) && getPost($name) !== '') {
-									$values[$name] = getPost($name);
-								}
-								break;
+						if (isset($field['embeddedForm']) && $field['embeddedForm']) {
+							$values[$name] = $this->getRecordValues($field['embeddedForm'], $post_prefix . $name . '.');
+						} else {
+							switch ($field['rel_type']) {
+								case Formz::MANY:
+									if (getPostIsset($post_prefix . $name)) {
+										$values[$name] = getPost($post_prefix . $name);
+										if (!is_array($values[$name])) $values[$name] = array();
+									}
+									break;
+								case Formz::ONE:
+									if (getPostIsset($post_prefix . $name) && getPost($post_prefix . $name) !== '') {
+										$values[$name] = getPost($post_prefix . $name);
+									}
+									break;
+							}
 						}
 						break;
 					default:
-						$values[$name] = getPost($name);
+						$values[$name] = getPost($post_prefix . $name);
 						break;
 				}
 			}
 		}
-		return $this->form->saveRecord($values);
+		return $values;
 	}
 	
 	/**

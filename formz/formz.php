@@ -48,6 +48,14 @@ class Formz {
 	protected $parentId;
 	
 	/**
+	 * The fieldname prefix is used internally for embedded formz objects.
+	 * Don't mess with it, as it will cause your formz to stop working.
+	 * @access protected
+	 */
+	var $fieldnamePrefix;
+	var $embedded = false;
+	
+	/**
 	 * Private fields variable. Used by formz::getFields()
 	 * @var array
 	 * @access protected
@@ -122,20 +130,6 @@ class Formz {
 	 * @see Formz::getRowActions
 	 */
 	protected $_formRowActions = array();
-
-
-
-
-
-
-
-
-	/**
-	 * Embedded formz objects
-	 *
-	 * @access protected
-	 */
-	protected $_embeddedFormz = array();
 
 	/**
 	 * Search form objects
@@ -290,8 +284,9 @@ class Formz {
 	 * @return int Saved record id.
 	 */
 	function saveRecord($values = false, $id = null) {
+		
 		if ($values === false) {
-			$values = getPost();
+			$values = getRawPost();
 		}
 
 		$id_field = $this->getIdField();
@@ -314,13 +309,47 @@ class Formz {
 				return null;
 			}
 		}
-		
+
 		// only save things that should be saved (no fake fields).
 		$save = array();
 
-		$field_names = $this->getFields();
+		$field_names = $fields = $this->getFields();
 		
-		foreach ($field_names as $name => $field_info) { 
+		foreach ($values as $name => $value) {
+			if (isset($fields[$name])) {
+				if ($fields[$name]['type'] == 'relation') {
+					if (isset($fields[$name]['embeddedForm'])) {
+						$embedded_id_field = $fields[$name]['embeddedForm']->getIdField();
+						$local_field = $fields[$name]['relation_local_field'];
+						if (isset($values[$name][$embedded_id_field])) {
+							$embedded_id = $values[$name][$embedded_id_field];
+							unset($values[$name][$embedded_id_field]);
+						} else if (isset($values[$local_field])) {
+							$embedded_id = $values[$local_field];
+						} else {
+							trigger_error("Unable to save embedded Formz without an ID field");
+						}
+						$save[$local_field] = $fields[$name]['embeddedForm']->saveRecord($values[$name], $embedded_id);
+					} else {
+						if ($fields[$name]['rel_type'] == Formz::MANY) {
+							$save['relations'][$fields[$name]['relation_alias']] = $values[$name];
+						} else {
+							$save[$name] = $values[$name];
+						}
+					}					
+				} else {
+					$save[$name] = $values[$name];
+				}
+			} else if (strpos($name, '.') !== false) {
+				$relation = substr($name, 0, strpos($name, '.'));
+				$rel_field = substr($name, strpos($name, '.') - 1);
+			} else {
+				continue;
+			}
+		}
+		
+		/*
+		foreach ($field_names as $name => $field_info) {
 			if (isset($values[$name])) {
 			
 				if ($field_info['type'] == 'relation') {
@@ -334,6 +363,7 @@ class Formz {
 				} 
 			}
 		}
+		*/
 
 		return $this->_driver->saveRecord($save, $id);
 	}
@@ -618,10 +648,14 @@ class Formz {
 				} else {
 					$fields[$key]['type'] = 'relation';
 				}
-
-				$fields[$key]['relation_class'] = $relation['class'];
-				$fields[$key]['relation_alias'] = $relation['alias'];
-				$fields[$key]['rel_type']       = $relation['rel_type'];
+				
+				// TODO: stop embedding 'rel' here:
+				$fields[$key]['rel'] = $relation;
+				
+				$fields[$key]['relation_class']       = $relation['class'];
+				$fields[$key]['relation_alias']       = $relation['alias'];
+				$fields[$key]['relation_local_field'] = $relation['local_field'];
+				$fields[$key]['rel_type']             = $relation['rel_type'];
 
 				if (!isset($fields[$key]['display']['label'])) {
 					if (isset($relation_fields[$key]['display']['label'])) {
@@ -631,7 +665,7 @@ class Formz {
 					}
 				}
 				
-				// figure out what field to display for this relation
+				// figure out what field to display for this relation (i.e. in a dropdown)
 				if (isset($fields[$key]['relation_label_field'])) {
 					$relation_label_field = $fields[$key]['relation_label_field'];
 				} else {
@@ -1326,7 +1360,26 @@ class Formz {
 	function setParentId($parentId) {
 		$this->parentId = $parentId;
 	}
+	
+	function setFieldEmbeddedForm($fieldname, $form = true) {
+		if ($form && !($form instanceof Formz)) {
+			$fields = $this->getFields($fieldname);
+			if (isset($fields[$fieldname]) && $fields[$fieldname]['type'] == 'relation') {
+				$form = new Formz($fields[$fieldname]['relation_class']);
+			} else {
+				trigger_error("Formz field $fieldname is not a relation field, unable to embed Formz object.");
+			}
+		}
+		$form->setEmbedded(true);
+		$this->setFieldParam('embeddedForm', $fieldname, $form);
+		return $form;
+	}
+	
+	function setFieldnamePrefix($prefix) {
+		$this->fieldnamePrefix = $prefix;
+	}
 
+/*
 	function addEmbeddedForm($tablename, $form = null, $fieldname = null) {
 		if ($fieldname !== null && $form !== null) {
 			$this->_embeddedFormz[$fieldname] = $form;
@@ -1352,6 +1405,7 @@ class Formz {
 			}
 		}
 	}
+*/
 
 	/**
 	 * Add a search form for processing
@@ -1711,6 +1765,21 @@ class Formz {
 		return $this->_driver->getDoctrineRecord();
 	}
 	
+	function __dump() {
+		$ret = array();
+		$ret['table'] = $this->tablename;
+		$ret['fields'] = $this->getFields();
+		foreach ($ret['fields'] as $_key => $_val) {
+			if (isset($ret['fields'][$_key]['embeddedForm'])) {
+				$ret['fields'][$_key]['embeddedForm'] = $ret['fields'][$_key]['embeddedForm']->__dump();
+			}
+		}
+		
+		$ret['relations'] = $this->getTableRelations();
+		
+		return $ret;
+	}
+	
 	/**
 	 * Get a FormzField object for the given field name.
 	 *
@@ -1764,7 +1833,12 @@ class Formz {
 	 * @return FormzFieldCollection
 	 */
 	function fields($names) {
-		return new FormzFieldCollection(array_smash(func_get_args()), $this);
+		if ($names == '*') {
+			$fields = array_keys($this->getFields());
+		} else {
+			$fields = array_smash(func_get_args());
+		}
+		return new FormzFieldCollection($fields, $this);
 	}
 
 	/**

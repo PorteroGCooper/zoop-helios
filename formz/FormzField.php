@@ -149,6 +149,29 @@ class FormzField {
 	}
 
 	/**
+	 * Embed a Formz object in this field.
+	 *
+	 * Optionally, pass a Formz object to embed. If none is passed, this Formz object will create
+	 * a Formz object to embed. This will prob'ly be your best bet.
+	 *
+	 * @code
+	 *    $form->field('user')
+	 *       ->setEmbeddedForm();
+	 *
+	 *    $user_form = new Formz('user');
+ 	 *    $form->field('user')
+	 *       ->setEmbeddedForm($user_form);
+	 * @endcode
+	 * 
+	 * @access public
+	 * @param Formz $form. Optionally, pass a Formz object to embed.
+	 * @return Formz the newly created embedded Formz object.
+	 */
+	function setEmbeddedForm($form = true) {
+		return $this->form->setFieldEmbeddedForm($this->name, $form);
+	}
+
+	/**
 	 * Magic method for thunking FormzField methods into Formz setFieldParam magic method calls...
 	 *
 	 * @access public

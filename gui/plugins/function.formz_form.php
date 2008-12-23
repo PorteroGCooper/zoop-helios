@@ -52,7 +52,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_classes[] = 'formz-' . strtolower($form->tablename);
 	}
 	
-	if ($form->editable) {
+	if ($form->editable && !$form->embedded) {
 		$form_action = (isset($form->callback) && $form->callback != '') ? ' action="' . $form->callback .'"' : '';
 		$form_classes[] = 'formz-editable';
 		$form_items[] = '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
@@ -70,20 +70,25 @@ function smarty_function_formz_form($params, &$smarty) {
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
 		if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
 		
-		if (isset($field['embedFormz'])) {
+		if (isset($field['embeddedForm'])) {
 			$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
 			$form_item = '<div class="formz-field-'.strtolower($key).'-wrapper embedded-formz-wrapper form-item">';
 		
-			$formz_object = $form->getEmbeddedFormz($field['relation_alias']);
-			
+			$formz_object = $field['embeddedForm'];
 			if ($field['rel_type'] == Formz::ONE) {
 				if (isset($data[$key])) {
 					$formz_object->getRecord($data[$key]);
 				}
 			} else {
-				$form_item .= '<h3>' . $label . '</h3>';
+				trigger_error('unable to embed MANY relations (for now)');
+				continue;
+				//$form_item .= '<h3>' . $label . '</h3>';
+				//$formz_object->setFieldConstraint($field['relation_local_field'], $record_id);
 			}
-			$formz_object->setEditable(false);
+			$formz_object->setEditable($form->editable);
+			$formz_object->setFieldnamePrefix($key);
+
+			
 			$form_item .= '<div class="form-item-content">';
 			$form_item .= smarty_function_formz(array('form' => $formz_object), $smarty);
 			$form_item .= '</div></div>';
@@ -182,8 +187,13 @@ function smarty_function_formz_form($params, &$smarty) {
 
 		if ($key == $form->getIdField() && $form->record_id == 'new') $value = 'new';
 		
+		$guicontrol_name = $key;
+		if ($form->embedded) {
+			$guicontrol_name = $form->fieldnamePrefix .'.'. $key;
+		}
+		
 		// get a new guiControl to deal with this
-		$control = GuiControl::get($type, $key);
+		$control = GuiControl::get($type, $guicontrol_name);
 		if ($form->editable) {
 			// grab the default value, if one isn't set.
 			if (empty($value) && isset($field['default'])) {
@@ -242,7 +252,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	}
 
 	// now add the form actions	
-	if ($form->editable) {
+	if ($form->editable && !$form->embedded) {
 		$id_field = $form->getIdField();
 		if ($form->isSluggable()) $slug_field = $form->getSlugField();
 		
@@ -270,7 +280,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	}
 	
 	$content .= implode("\n\t", $form_items);
-	$content .= ($form->editable) ? "\n</form>\n\n" : "\n</div>\n\n";
+	$content .= ($form->editable && !$form->embedded) ? "\n</form>\n\n" : "\n</div>\n\n";
 
 	return $content;
 }

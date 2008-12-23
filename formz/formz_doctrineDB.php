@@ -781,6 +781,8 @@ class formz_doctrineDB implements formz_driver_interface {
 				// $embeddedForm = new Formz($local_field);
 			}
 			
+			$foreign_alias = $relation->getForeign();
+			
 			// guess which column to display in the select
 			$foreign_fields = $foreign_class->getColumnNames();
 			
@@ -811,6 +813,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				'rel_type'      => $rel_type,
 				'local_field'   => $local_field,
 				'foreign_field' => $foreign_field,
+				'foreign_alias' => $foreign_alias,
 				'label_field'   => $label_field,
 				'values'        => $foreign_values,
 			);

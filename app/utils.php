@@ -252,6 +252,9 @@ function xorDecrypt($message, $key) {
 function echo_r($mixed) {
 // 	if(APP_STATUS == "live")
 // 		return;
+	if (is_object($mixed) && method_exists($mixed, '__dump')) {
+		$mixed = $mixed->__dump();
+	}
 
 	echo "<pre>";
 	print_r($mixed);
