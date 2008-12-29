@@ -341,6 +341,10 @@ class formz_doctrineDB implements formz_driver_interface {
 				
 				$whereClause = implode(' OR ', $whereClauseSet);
 				$this->query()->where($whereClause);
+				if ($this->isSoftDeletable()) {
+					$deleteField = $this->getSoftDeleteField();
+					$this->query()->andWhere($deleteField . ' = 0 OR ' . $deleteField . ' IS NULL');
+				}
 			} else {
 				$this->query()->leftJoin('c.' . $tableset . ' b');
 
