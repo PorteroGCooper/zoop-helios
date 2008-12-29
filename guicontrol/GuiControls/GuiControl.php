@@ -161,6 +161,13 @@ class GuiControl {
 		}
 	}
 	
+	/**
+	 * Get a valid (X)HTML element ID for this GuiControl. Use this function instead of
+	 * GuiControl::getLabelName whenever referring to this control in JavaScript or CSS.
+	 * 
+	 * @access public
+	 * @return string GuiControl id
+	 */
 	function getId() {
 		return str_replace(array('[', ']'), array('-', ''), $this->getLabelName());
 	}
@@ -185,16 +192,31 @@ class GuiControl {
 	/**
 	 * getDisplayName
 	 *
+	 * @deprecated
+	 * @see GuiControl::getLabel
 	 * @access public
-	 * @return void
+	 * @return string GuiControl label
 	 */
 	function getDisplayName() {
-		if (isset($this->params['displayName'])) {
-			return $this->params['displayName'];
-		} else if (isset($this->params['label'])) {
+		return $this->getLabel();
+	}
+	
+	/**
+	 * Get a label for this GuiControl.
+	 *
+	 * If no label is specified in the GuiControl params (as either 'label' or 'displayName')
+	 * returns a formatted version of this GuiControl's name.
+	 * 
+	 * @access public
+	 * @return string GuiControl label
+	 */
+	function getLabel() {
+		if (isset($this->params['label'])) {
 			return $this->params['label'];
+		} else if (isset($this->params['displayName'])) {
+			return $this->params['displayName'];
 		} else {
-			return $this->name;
+			return format_label($this->name);
 		}
 	}
 
