@@ -1378,6 +1378,48 @@ class Formz {
 	function setFieldnamePrefix($prefix) {
 		$this->fieldnamePrefix = $prefix;
 	}
+	
+	/**
+	 * Populate placeholders in a string with values from an actual record.
+	 *
+	 * Much like sprintf, you can pass a formatted string with placeholders, and this formz object
+	 * will convert the placeholders to values from db records. This is mostly used for rendering
+	 * listlinks, by setting them to something like: '/user/%id%/create'
+	 *
+	 * If this is used in the context of a record view, don't pass a record id, as this formz object
+	 * already has a record. When used in a list view, a record id must be supplied for each call
+	 * to this function.
+	 * 
+	 * @access public
+	 * @param string $string 
+	 * @param mixed $record_id Optionally, supply a record id to retrieve values from.
+	 * @return string Formatted string.
+	 */
+	function populateString($string, $record_id = null) {
+		$matches = array();
+		preg_match_all('#%([a-zA-Z0-9_\.]+?)%#', $string, $matches);
+
+		if (count($matches)) {
+			$id_field = $this->getIdField();
+			if ($sluggable = $this->isSluggable()) {
+				$slug_field = $this->getSlugField();
+			}
+
+			$fields = $matches[1];
+			$from = $matches[0];
+			$to = array();
+
+			foreach ($from as $i => $match) {
+				// replace with this table's id field, if applicable.
+				if ($fields[$i] == 'id') $fields[$i] = $id_field;
+				if ($sluggable && $fields[$i] == 'slug') $fields[$i] = $slug_field;
+				
+				$to[$i] = urlencode($this->getValue($fields[$i], $record_id));
+			}
+			$string = str_replace($from, $to, $string);
+		}
+		return $string;
+	}
 
 /*
 	function addEmbeddedForm($tablename, $form = null, $fieldname = null) {

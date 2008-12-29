@@ -259,16 +259,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$actions = $form->getActions();
 		foreach ($actions as $key => $action) {
 			if ($action['type'] == 'link') {
-				$link = $action['link'];
-				$matches = array();
-				preg_match('#%([a-zA-Z_]+?)%#', $link, $matches);
-				if (count($matches)) {
-					// replace with this table's id field, if applicable.
-					if ($matches[1] == 'id') $matches[1] = $id_field;
-					// replace with this table's slug field, if applicable.
-					if ($form->isSluggable() && $matches[1] == 'slug') $matches[1] = $slug_field;
-					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
-				}
+				$link = $form->populateString($action['link']);
 				$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 
 			} else {

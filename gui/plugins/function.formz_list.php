@@ -190,22 +190,7 @@ function smarty_function_formz_list($params, &$smarty) {
 
 			// create a listlink
 			if (isset($fields[$field]['listlink'])) {
-				$link = $fields[$field]['listlink'];
-				$matches = array();
-				preg_match('#%([a-zA-Z0-9_\.]+?)%#', $link, $matches);
-				if (count($matches)) {
-					// replace with this table's id field, if applicable.
-					if ($matches[1] == 'id') $matches[1] = $id_field;
-					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
-					if (!isset($record[$matches[1]])) {
-						$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
-					}
-					$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
-				} else {
-					// automatically tack on the id if there's no wildcard to replace
-					if (substr($link, -1) != '/') $link .= '/';
-					$link .= $record[$id_field];
-				}
+				$link = $form->populateString($fields[$field]['listlink'], $record[$id_field]);
 				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . url($link) . '"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
@@ -229,20 +214,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					foreach ($rowActions as $key => $rowAction) {
 						$value .= ' ';
 						if ($rowAction['type'] == 'link') {
-							$link = $rowAction['link'];
-							
-							// replace placeholders
-							preg_match('#%([a-zA-Z_0-9\.]+?)%#', $link, $matches);
-							if (count($matches)) {
-								// replace with this table's id field, if applicable.
-								if ($matches[1] == 'id') $matches[1] = $id_field;
-								if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
-								if (!isset($record[$matches[1]])) {
-									$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
-								}
-								$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
-							}
-							
+							$link = $form->populateString($rowAction['link'], $record[$id_field]);
 							$value .= '<a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
 						} else {
 							$control = GuiControl::get('button', $key);
@@ -255,20 +227,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					$value = array();
 					foreach ($rowActions as $key => $rowAction) {
 						if ($rowAction['type'] == 'link') {
-							$link = $rowAction['link'];
-							
-							// replace placeholders
-							preg_match('#%([a-zA-Z0-9_\.]+?)%#', $link, $matches);
-							if (count($matches)) {
-								// replace with this table's id field, if applicable.
-								if ($matches[1] == 'id') $matches[1] = $id_field;
-								if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
-								if (!isset($record[$matches[1]])) {
-									$record[$matches[1]] = $form->getValue($matches[1], $record[$id_field]);
-								}
-								$link = str_replace($matches[0], urlencode($record[$matches[1]]), $link);
-							}
-							
+							$link = $form->populateString($rowAction['link'], $record[$id_field]);
 							$value[] = '<td><a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
 						} else {
 							$control = GuiControl::get('button', $key);
@@ -300,24 +259,8 @@ function smarty_function_formz_list($params, &$smarty) {
 		// add all list actions to an array (we'll implode them later and put 'em in a row...)
 		$list_actions = array();
 		foreach ($actions as $key => $action) {
-			if ($action['type'] == 'link') {		
-				$link = $action['link'];
-				$matches = array();
-				preg_match('#%([a-zA-Z_0-9\.]+?)%#', $link, $matches);
-				if (count($matches)) {
-					// replace with this table's id field or slug field, if applicable.
-					if ($matches[1] == 'id') $matches[1] = $id_field;
-					if ($sluggable && $matches[1] == 'slug') $matches[1] = $slug_field;
-					if (!isset($data[$matches[1]])) {
-						$data[$matches[1]] = $form->getValue($matches[1], $data[$id_field]);
-					}
-					$link = str_replace($matches[0], urlencode($data[$matches[1]]), $link);
-				} else {
-					// automatically tack on the id if there's no wildcard to replace.
-					// i don't like this one.
-					if (substr($link, -1) != '/') $link .= '/';
-					$action['link'] .= $data[$id_field];
-				}
+			if ($action['type'] == 'link') {
+				$link = $form->populateString($action['link'], $record[$id_field]);
 				$list_actions[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 			} else if ($action['type']=='paginate') {
 			
