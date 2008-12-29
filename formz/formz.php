@@ -1452,20 +1452,22 @@ class Formz {
 	/**
 	 * Add a search form for processing
 	 *
-	 * Add a table or relation to the list of items to search on
+	 * Add a search form to this formz object.  This is an arbitrary value to indicate
+	 * some form of input to be used as a search.  In the future we could branch on search
+	 * form type or expand/refactor this into other accessory html objects to attach to a formz object.
 	 *
 	 * @access public
 	 */
-	function addSearchForm($tablename = null) {
-		if (!$tablename) {
-			$tablename = $this->tablename;
+	function addSearchForm($name = null, $redirect = '') {
+		if (!$name) {
+			$name = $this->tablename;
 		}
 		if (!$this->_searchForms) {
 			$this->_searchForms = array();
 		}
 		
-		$this->_searchForms[$tablename] = $tablename;
-		$this->_driver->addSearchTable($tablename);
+		$this->_searchForms[$name] = array('name' => $name, 'redirect' => $redirect);
+		$this->_driver->addSearchTable($name);
 	}
 
 	/**

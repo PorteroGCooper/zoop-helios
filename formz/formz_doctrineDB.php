@@ -430,7 +430,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		return $id;
 	}
 	
-	protected function &record($id = null) {
+	protected function record($id = null) {
 		if ($id === null) {
 			if ($this->_record) {
 				return $this->_record;

@@ -36,10 +36,14 @@ function smarty_function_formz_list($params, &$smarty) {
 		
 	$html = "\n\n";
 
-	// TODO Make this pretty.
+	// TODO Make this pretty and use $form['name'] to give multiple search paths/types
 	if ($searchable && $form->getSearchForms() !== null) {
-		$html .= '<form class="formz-search-form">' . '<input id="search_text" name="q" type="text">&nbsp;' . 
+		foreach($form->getSearchForms() as $htmlForm) {
+			$html .= '<form class="formz-search-form">' .
+				'<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '">' .
+				'<input id="search_text" name="q" type="text">&nbsp;' .
 				'<input id="search_button" type="submit" value="Search">' . '</form>';
+		}
 	}
 
 	// figure out class names for this form.
