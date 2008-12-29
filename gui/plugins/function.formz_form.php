@@ -156,6 +156,14 @@ function smarty_function_formz_form($params, &$smarty) {
 					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
 				}
 				break;
+			case 'enum':
+				$type = 'select';
+				if(empty($field['display']['index'])) {
+					foreach ($field['values'] as $_value) {
+						$field['display']['index'][$_value] = format_label($_value);
+					}
+				}
+				break;
 			case 'relation':
 				if (!isset($field['display']['index'])) {
 					$field['display']['index'] = $form->getTableRelationValues($key);
