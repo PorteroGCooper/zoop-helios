@@ -13,6 +13,12 @@
 /**
  * Confirmation field GuiControl
  *
+ * Confirmation field label can be changed by setting the confirm_label param:
+ *
+ * @code
+ *    $myControl->setParam('confirm_label', 'Type it again, fool:');
+ * @endcode
+ *
  * @ingroup gui
  * @ingroup guicontrol
  * @author Justin Hileman {@link http://justinhileman.com}

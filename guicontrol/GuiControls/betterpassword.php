@@ -13,6 +13,12 @@
 /**
  * betterpassword (confirm, and supports encryption)
  *
+ * Confirmation field label can be changed by setting the confirm_label param:
+ *
+ * @code
+ *    $myControl->setParam('confirm_label', 'Confirm your password:');
+ * @endcode
+ *
  * @uses GuiControl
  * @ingroup gui
  * @ingroup guicontrol
@@ -90,7 +96,13 @@ class betterpasswordControl extends GuiContainer {
 		$pwcontrol->setParam('errorState', null);
 		$pwcontrol->setParent($name);
 		$html = $pwcontrol->renderControl();
-		$html .= "<div class=\"betterpassword-confirm\"> Confirm password</div>";
+		
+		if (isset($this->params['confirm_label'])) {
+			$confirm_label = $this->params['confirm_label'];
+		} else {
+			$confirm_label = 'Confirm your password by typing it again:';
+		}
+		$html .= '<div class="guicontrol-betterpassword-confirm">'. $confirm_label .'</div>';
 
 		$pwccontrol = GuiControl::get('password', 'confirmpassword');
 		$pwccontrol->setParams($this->params);

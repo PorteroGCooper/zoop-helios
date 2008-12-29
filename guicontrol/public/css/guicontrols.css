@@ -3,3 +3,9 @@ p.caption {
 	font-size: 80%;
 	color: #666;
 }
+
+div.guicontrol-betterpassword-confirm,
+div.confirm-control-label {
+	margin-top: .5em;
+	font-size: 80%;
+}
