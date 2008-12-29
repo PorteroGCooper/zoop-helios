@@ -822,6 +822,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				'foreign_field' => $foreign_field,
 				'foreign_alias' => $foreign_alias,
 				'label_field'   => $label_field,
+				'owning_side'   => $relation['owningSide'],
 				'values'        => $foreign_values,
 			);
 		}

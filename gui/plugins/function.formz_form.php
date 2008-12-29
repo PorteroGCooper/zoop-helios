@@ -68,6 +68,10 @@ function smarty_function_formz_form($params, &$smarty) {
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
+		
+		// skip if field hasn't been explicitly shown and owning_side is false.
+		if (!isset($field['formshow']) && isset($field['rel']['owning_side']) && $field['rel']['owning_side'] == false) continue;
+		
 		if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
 		
 		if (isset($field['embeddedForm'])) {
