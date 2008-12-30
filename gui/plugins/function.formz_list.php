@@ -33,18 +33,8 @@ function smarty_function_formz_list($params, &$smarty) {
 	$zone_path = $smarty->get_template_vars('ZONE_PATH');
 	$sortable = $form->isSortable();
 	$searchable = $form->isSearchable();
-		
+	
 	$html = "\n\n";
-
-	// TODO Make this pretty and use $form['name'] to give multiple search paths/types
-	if ($searchable && $form->getSearchForms() !== null) {
-		foreach($form->getSearchForms() as $htmlForm) {
-			$html .= '<form class="formz-search-form">' .
-				'<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '">' .
-				'<input id="search_text" name="q" type="text">&nbsp;' .
-				'<input id="search_button" type="submit" value="Search">' . '</form>';
-		}
-	}
 
 	// figure out class names for this form.
 	$form_classes = (isset($form->display['class'])) ? $form->display['class'] : array();
@@ -65,6 +55,155 @@ function smarty_function_formz_list($params, &$smarty) {
 	else {
 		$html .= '<div class="formz formz-list '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
 	}
+
+
+
+
+
+
+	// Build the form list actions.
+	$list_actions = array();
+	
+	// search is a special case of list action:
+	// TODO Make this pretty and use $form['name'] to give multiple search paths/types
+	if ($searchable && $form->getSearchForms() !== null) {
+		$search_html = '';
+		foreach($form->getSearchForms() as $htmlForm) {
+			$search_html .= '<form class="formz-search-form">' .
+				'<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '">' .
+				'<input id="search_text" name="q" type="text">&nbsp;' .
+				'<input id="search_button" type="submit" value="Search">' . '</form>';
+		}
+		if (!empty($search_html)) {
+			$list_actions[] = $search_html;
+		}
+	}
+	
+	// and add the rest of the actions.
+	$actions = $form->getListActions();
+	if (count($actions)) {
+		$id_field = $form->getIdField();
+		
+		// add all list actions to an array (we'll implode them later and put 'em in a div...)
+		foreach ($actions as $key => $action) {
+			if ($action['type'] == 'link') {
+				$link = $action['link'];
+				if (isset($action['class']) && !empty($action['class'])) {
+					$class = 'class="'. $action['class'] .'" ';
+				} else {
+					$class = '';
+				}
+				
+				if (isset($action['title']) && !empty($action['title'])) {
+					$title = 'title="'. $action['title'] .'" ';
+				} else {
+					$title = '';
+				}
+				$list_actions[] = '<a '. $class . $title .'href="' . url($link) . '">' . $action['label'] . '</a>';
+			} else if ($action['type']=='paginate') {
+			
+
+			/*
+				// get the pagination format:
+				$format = Config::get('zoop.formz.paginate.format');
+				$delimiter = Config::get('zoop.formz.paginate.format_delimiter');
+				
+				$chunks = explode($delimiter, $format);
+				
+				die_r($chunks);
+				$page_links = array();
+				
+				// grab first, prev
+
+				while ($chunk = array_shift($chunks)) {
+					if (is_integer($chunk)) {
+						
+					} else if {
+						strpos()
+					}
+				}
+			*/
+			
+			
+				$page_links = array();
+				$page_count = $form->getPageCount();
+				
+				if ($page_count == 1) continue;
+				
+				$format = Config::get('zoop.formz.paginate.format');
+				
+				if ($format['first']) {
+					if ($action['page'] > 1) {
+						$page_links[] = '<a class="page-first" href="' . url($zone_path) . '" title="First page">' . $format['first'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-first">' . $format['first'] .'</span>';
+					}
+				}
+				if ($format['prev']) {
+					if ($action['page'] > 1) {
+						$page_links[] = '<a class="page-prev" href="' . url($zone_path) . '?page=' . ($action['page'] - 1) . '" title="Previous page">' . $format['prev'] . '</a>';
+					} else {
+						$page_links[] = '<span class="page-prev">' . $format['prev'] . '</span>';
+					}
+				}
+				
+			/*
+				// deal with the page links in the middle of the pagination format array.
+				if (is_array($format['mid']) && count($format['mid'])) {
+					if (in_array('...', $format['mid'])) {
+						
+					}
+				}
+			*/
+				
+				if ($format['next']) {
+					if ($page_count > $action['page']) {
+						$page_links[] = '<a class="page-next" href="' . url($zone_path) . '?page=' . ($action['page'] + 1) . '" title="Next page">'. $format['next'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-next">'. $format['next'] .'</span>';
+					}
+				}
+				if ($format['last']) {
+					if ($action['page'] < $page_count) {
+						$page_links[] = '<a class="page-last" href="' . url($zone_path) . '?page=' . $page_count . '" title="Last page">'. $format['last'] .'</a>';
+					} else {
+						$page_links[] = '<span class="page-last">'. $format['last'] .'</span>';
+					}
+				}
+				if (count($page_links)) {
+					$list_actions[] = '<span class="formz-paginate">' . implode(Config::get('zoop.formz.paginate.format_delimiter'), $page_links) . '</span>';
+				}
+			} else {
+				$control = GuiControl::get('button', $key);
+				$control->setParams($action);			
+				$list_actions[] = $control->render();
+			}
+		}
+	}
+	
+	if (count($list_actions)) {
+		$list_action_html = '<div class="list-actions">';
+		$list_action_html .= implode(Config::get('zoop.formz.list_actions.separator'), $list_actions);
+		$list_action_html .= "</div>\n";
+	
+		// where should we show it?
+		if (isset($form->listActionPosition)) {
+			$list_action_position = $form->listActionPosition;
+		} else {
+			$list_action_position = Config::get('zoop.formz.list_actions.position');
+		}
+		
+		// and add it to the top...
+		if ($list_action_position == 'top' || $list_action_position == 'both') {
+			$html .= $list_action_html . "\n";
+		}
+	}
+
+
+
+
+	
+	// now build the table
 	$html .= "\n<table>";
 	
 	$fields = $form->getFields(false);
@@ -253,126 +392,18 @@ function smarty_function_formz_list($params, &$smarty) {
 		$rows[] = "<tr" . $class . "\">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";
 		$rowIndex++;
 	}
-	
-	
-	// now add the form list actions
-	$actions = $form->getListActions();
-	if (count($actions)) {
-		$id_field = $form->getIdField();
-		
-		// add all list actions to an array (we'll implode them later and put 'em in a row...)
-		$list_actions = array();
-		foreach ($actions as $key => $action) {
-			if ($action['type'] == 'link') {
-				$link = $form->populateString($action['link'], $record[$id_field]);
-				$list_actions[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
-			} else if ($action['type']=='paginate') {
-			
 
-			/*
-				// get the pagination format:
-				$format = Config::get('zoop.formz.paginate.format');
-				$delimiter = Config::get('zoop.formz.paginate.format_delimiter');
-				
-				$chunks = explode($delimiter, $format);
-				
-				die_r($chunks);
-				$page_links = array();
-				
-				// grab first, prev
-
-				while ($chunk = array_shift($chunks)) {
-					if (is_integer($chunk)) {
-						
-					} else if {
-						strpos()
-					}
-				}
-			*/
-			
-			
-				$page_links = array();
-				$page_count = $form->getPageCount();
-				
-				if ($page_count == 1) continue;
-				
-				$format = Config::get('zoop.formz.paginate.format');
-				
-				if ($format['first']) {
-					if ($action['page'] > 1) {
-						$page_links[] = '<a class="page-first" href="' . url($zone_path) . '" title="First page">' . $format['first'] .'</a>';
-					} else {
-						$page_links[] = '<span class="page-first">' . $format['first'] .'</span>';
-					}
-				}
-				if ($format['prev']) {
-					if ($action['page'] > 1) {
-						$page_links[] = '<a class="page-prev" href="' . url($zone_path) . '?page=' . ($action['page'] - 1) . '" title="Previous page">' . $format['prev'] . '</a>';
-					} else {
-						$page_links[] = '<span class="page-prev">' . $format['prev'] . '</span>';
-					}
-				}
-				
-			/*
-				// deal with the page links in the middle of the pagination format array.
-				if (is_array($format['mid']) && count($format['mid'])) {
-					if (in_array('...', $format['mid'])) {
-						
-					}
-				}
-			*/
-				
-				if ($format['next']) {
-					if ($page_count > $action['page']) {
-						$page_links[] = '<a class="page-next" href="' . url($zone_path) . '?page=' . ($action['page'] + 1) . '" title="Next page">'. $format['next'] .'</a>';
-					} else {
-						$page_links[] = '<span class="page-next">'. $format['next'] .'</span>';
-					}
-				}
-				if ($format['last']) {
-					if ($action['page'] < $page_count) {
-						$page_links[] = '<a class="page-last" href="' . url($zone_path) . '?page=' . $page_count . '" title="Last page">'. $format['last'] .'</a>';
-					} else {
-						$page_links[] = '<span class="page-last">'. $format['last'] .'</span>';
-					}
-				}
-				if (count($page_links)) {
-					$list_actions[] = '<span class="formz-paginate">' . implode(Config::get('zoop.formz.paginate.format_delimiter'), $page_links) . '</span>';
-				}
-			} else {
-				$control = GuiControl::get('button', $key);
-				$control->setParams($action);			
-				$list_actions[] = $control->render();
-			}
-		}
-		
-		if (count($list_actions)) {
-			$action_html = implode(Config::get('zoop.formz.list_actions.separator'), $list_actions);
-			
-			if (count($rowActions) > $rowActionColumnThreshold) {
-				$totalRows = count($fields) + 1;
-			} else { 
-				$totalRows = count($fields) + count($rowActions);
-			}
-
-			$actionRow = "<tr class=\"action-row\">\n\t\t\t<td colspan=\"" . $totalRows . "\">" . $action_html . "</td>\n\t\t</tr>\n";
-			switch(Config::get('zoop.formz.list_actions.position')) {
-				case 'top':
-					array_unshift($rows, $actionRow);
-					break;
-				case 'bottom':
-					$rows[] = $actionRow;
-					break;
-				case 'both':
-				default:
-					array_unshift($rows, $actionRow);
-					$rows[] = $actionRow;
-					break;
-			}
-		}
-	}
 	$html .= implode("\n\t\t", $rows);
 	$html .= "\t</tbody>\n</table>\n";
+
+	// add the list actions to the bottom
+	if (count($list_actions)) {
+		if ($list_action_position == 'bottom' || $list_action_position == 'both') {
+			$html .= $list_action_html . "\n";
+		}
+	}
+
+
 	$html .= ($form->editable) ? "</form>\n\n" : "</div>\n\n";
 	return $html;
 }

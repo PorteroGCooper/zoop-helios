@@ -146,7 +146,7 @@ class Formz {
 	protected $_searchFormsets = null;
 	
 	var $errors = array();
-	var $editable = true;
+	var $editable = false;
 
 	var $record_id;
 	var $slug_field;
@@ -1167,11 +1167,12 @@ class Formz {
 	 * @param array $args Optional set of arguments for this action.
 	 */
 	function addListAction($name, $args = array()) {
-		if (!isset($args['label'])) $args['label'] = format_label($name);
 		if (!isset($args['type']) && isset($args['link'])) $args['type'] = 'link';
-		if (!isset($args['value'])) $args['value'] = $args['label'];
 		
 		switch (strtolower($name)) {
+			case 'more':
+				if (!isset($args['label'])) $args['label'] = format_label($name) . ' &raquo;';
+				break;
 			case 'add':
 				if (!isset($args['link'])) $args['link'] = 'create';
 				if (!isset($args['type'])) $args['type'] = 'link';
@@ -1194,6 +1195,17 @@ class Formz {
 			default:
 				if (!isset($args['type'])) $args['type'] = 'button';
 				break;
+		}
+
+		if (!isset($args['label'])) $args['label'] = format_label($name);
+		if (!isset($args['value'])) $args['value'] = $args['label'];
+		
+		if ($args['type'] == 'link') {
+			if (isset($args['class'])) {
+				$args['class'] .= ' '. $name .'-link action-link';
+			} else {
+				$args['class'] = $name .'-link action-link';
+			}
 		}
 		
 		$this->_formListActions[$name] = $args;

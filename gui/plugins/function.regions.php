@@ -17,6 +17,7 @@ function smarty_function_regions($params, &$smarty) {
 	if (isset($params['name'])) {
 		if (isset($regions[$params['name']])) {
 			$regions = array($params['name'] => $regions[$params['name']]);
+			unset($smarty->_regions[$params['name']]);
 		} else {
 			$regions = array();
 		}

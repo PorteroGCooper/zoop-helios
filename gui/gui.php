@@ -518,8 +518,6 @@ class gui extends Smarty {
 		foreach ((array)$name as $region) {
 			if (isset($this->_regions[$region])) {
 				unset($this->_regions[$region]);
-			} else {
-				trigger_error("Unable to remove region, region $name not defined.");
 			}
 		}
 	}
@@ -542,13 +540,8 @@ class gui extends Smarty {
 				$this->_regions[$name] = $old_regions[$name];
 				unset($old_regions[$name]);
 			}
-			
-			// trigger error? they passed a name that doesn't exist.
 		}
-		
-		if (count($old_regions)) {
-			trigger_error('Some regions unsorted (too few region names passed).');
-		}
+		$this->_regions = $this->_regions + $old_regions;
 	}
 	
 	/**

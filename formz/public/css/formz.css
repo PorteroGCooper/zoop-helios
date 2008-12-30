@@ -86,6 +86,10 @@
 	float:left;
 }
 
+.formz-list .list-actions {
+	background-color: #BBBFC0;
+}
+
 
 /* style boolean values as checkboxes */
 .formz-list .bool-true, .formz .bool-true {
