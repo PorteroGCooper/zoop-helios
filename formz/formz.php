@@ -44,6 +44,7 @@ class Formz {
 	var $title;
 	var $zone;
 	var $callback;
+	var $listActionPosition;
 	protected $parentTablename;
 	protected $parentId;
 	
