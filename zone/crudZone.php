@@ -432,6 +432,8 @@ class CrudZone extends zone {
 				return;
 			}
 		}
+		$this->form->setEditable(false);
+		
 		$this->initReadForm();
 	}
 
@@ -451,6 +453,7 @@ class CrudZone extends zone {
 
 		$this->form->addRowAction('edit');
 		$this->form->addRowAction('delete');
+		$this->form->setEditable(false);
 		
 		$this->initListForm();
 	}
@@ -490,7 +493,7 @@ class CrudZone extends zone {
 		}
 		
 		$this->form->setEditable(true);
-
+		
 		$this->form->addAction('save');
 /* 		$this->form->addAction('preview'); */
 
@@ -628,6 +631,8 @@ class CrudZone extends zone {
 		
 		$this->form->setFieldFormshow('*', false);
 		$this->form->setFieldFormshow($id_field);
+		
+		$this->form->setEditable(true);
 
 		$this->form->addAction('delete');
 		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
