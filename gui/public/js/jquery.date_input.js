@@ -80,8 +80,17 @@ DateInput.prototype = {
     var numDays = this.daysBetween(rangeStart, rangeEnd);
     var dayCells = "";
     
+    /*
+    ** Added by Andy Nu to provide client time stamp.
+    ** Doctrine requires timestamp for date field to be saveable.
+    */
+    var clientDate = new Date();
+    var hours = clientDate.getHours();
+    var minutes = clientDate.getMinutes();
+    var seconds = clientDate.getSeconds();
+    
     for (var i = 0; i <= numDays; i++) {
-      var currentDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate() + i, 12, 00);
+      var currentDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate() + i, hours, minutes, seconds);
       
       if (this.isFirstDayOfWeek(currentDay)) dayCells += "<tr>";
       

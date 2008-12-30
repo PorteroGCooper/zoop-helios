@@ -62,8 +62,8 @@ class DateControlControl extends TextControl {
 		$gui->add_jquery('$("#'.$input_id.'").date_input({
 			stringToDate: function(string) {
 				var matches;
-				if (matches = string.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2})$/)) {
-					return new Date(matches[1], matches[2] - 1, matches[3]);
+				if (matches = string.match(/^([1-2]{1}\d{3,3})-(\d{2,2})-(\d{2,2}) (\d{2,2}):(\d{2,2}):(\d{2,2})$/)) {
+					return new Date(matches[1], matches[2] - 1, matches[3], matches[4], matches[5], matches[6]);
 				} else {
 					return null;
 				};
@@ -71,9 +71,15 @@ class DateControlControl extends TextControl {
 			dateToString: function(date) {
 				var month = (date.getMonth() + 1).toString();
 				var dom = date.getDate().toString();
+				var hour = date.getHours().toString();
+				var minute = date.getMinutes().toString();
+				var second = date.getSeconds().toString();
 				if (month.length == 1) month = "0" + month;
 				if (dom.length == 1) dom = "0" + dom;
-				return date.getFullYear() + "-" + month + "-" + dom;
+				if (hour.length == 1) hour = "0" + hour;
+				if (minute.length == 1) minute = "0" + minute;
+				if (second.length == 1) second = "0" + second;
+				return date.getFullYear() + "-" + month + "-" + dom + " " + hour + ":" +  minute + ":" + second;
 			}
 		});');
 		
