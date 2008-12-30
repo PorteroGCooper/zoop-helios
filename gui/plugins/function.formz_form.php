@@ -70,7 +70,11 @@ function smarty_function_formz_form($params, &$smarty) {
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
 		
 		// skip if field hasn't been explicitly shown and owning_side is false.
-		if (!isset($field['formshow']) && isset($field['rel']['owning_side']) && $field['rel']['owning_side'] == false) continue;
+		if ($key != $form->getIdField()) {
+			if (!isset($field['formshow']) && isset($field['rel']['owning_side']) && $field['rel']['owning_side'] == false) {
+				continue;
+			}
+		}
 		
 		if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
 		
