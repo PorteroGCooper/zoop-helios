@@ -17,6 +17,14 @@ class FormzFieldCollection {
 
 	private $form;
 	private $fields = array();
+	
+	function field($name) {
+		return $this->form->field($name);
+	}
+	
+	function fields() {
+		return call_user_func_array(array($this->form, 'fields'), func_get_args());
+	}
 
 	/**
 	 * FormzFieldCollection constructor.

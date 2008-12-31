@@ -57,6 +57,15 @@ class FormzField {
 	function name() {
 		return $this->name;
 	}
+	
+	function field($name) {
+		return $this->form->field($name);
+	}
+	
+	function fields() {
+		return call_user_func_array(array($this->form, 'fields'), func_get_args());
+	}
+
 
 	/**
 	 * Insert this field after $field.

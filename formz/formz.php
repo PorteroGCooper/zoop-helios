@@ -1843,9 +1843,9 @@ class Formz {
 			switch ($_key) {
 				case '_fields':
 					$ret[$_key] = $this->getFields();
-					foreach ($ret[$_key] as $_key => $_val) {
-						if (isset($ret[$_key][$_key]['embeddedForm'])) {
-							$ret[$_key][$_key]['embeddedForm'] = $ret[$_key][$_key]['embeddedForm']->__dump();
+					foreach ($ret[$_key] as $field => $field_val) {
+						if (isset($ret[$_key][$field]['embeddedForm'])) {
+							$ret[$_key][$field]['embeddedForm'] = $ret[$_key][$field]['embeddedForm']->__dump();
 						}
 					}
 					break;
