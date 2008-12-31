@@ -245,6 +245,12 @@ function smarty_function_formz_form($params, &$smarty) {
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';
 			$form_item .= '<label for="' . $control->getLabelName() .'"' .$titlestr. '>' . $label . $required . '</label>';
+		} else {
+			// this is a hidden form element, just render it and get on with things.
+			if ($form->editable) {
+				$form_items[] = $control->renderControl();
+			}
+			continue;
 		}
 		
 		if (isset($field['display']['caption']))

@@ -40,7 +40,7 @@ class Formz {
 	protected $_driver;
 
 	var $tablename;
-	var $type;	
+	var $type;
 	var $title;
 	var $zone;
 	var $callback;
@@ -1824,7 +1824,15 @@ class Formz {
 	
 	function __dump() {
 		$ret = array();
+		
 		$ret['table'] = $this->tablename;
+		$ret['type'] = $this->type;
+		$ret['driver'] = get_class($this->_driver);
+
+		if ($this->type == 'record') {
+			$ret['values'] = $this->getData();
+		}
+
 		$ret['fields'] = $this->getFields();
 		foreach ($ret['fields'] as $_key => $_val) {
 			if (isset($ret['fields'][$_key]['embeddedForm'])) {
