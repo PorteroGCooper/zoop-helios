@@ -506,7 +506,7 @@ class CrudZone extends zone {
 			$this->form->addAction('cancel', array('link' => $link));
 		}
 
-		if ($record_id == 'new') {
+		if ($record_id == 'new' && method_exists($this, 'initCreateForm')) {
 			$this->initCreateForm();
 		} else {
 			$this->initUpdateForm();
@@ -679,13 +679,8 @@ class CrudZone extends zone {
 		$parentTable = $this->form->tablename;
 		$parentTableIdField = $this->form->getIdField();
 
-		$record_id = $this->getZoneParam('record_id');
-		if ($this->form->isSluggable()) {
-			$record_id = $this->form->getRecordBySlug($record_id);
-		} else {
-			$record_id = $this->form->getRecord($record_id);
-		}
-
+		$record_id = $this->form->getRecord($this->recordId());
+		
 		if (isset($params[0]) && !empty($params[0])) {
 			$this->form = new Formz($params[0]);
 		} else {

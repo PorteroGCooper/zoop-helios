@@ -1762,11 +1762,12 @@ class Formz {
 	 * @see Formz::isSluggable()
 	 * @ingroup sluggable
 	 * @access public
+	 * @param mixed $id Optionally, supply an ID for which to grab the slug.
 	 * @return string Slug value for this record
 	 */
-	function getSlug() {
+	function getSlug($id = null) {
 		if (!$this->isSluggable()) return false;
-		return $this->_driver->getValue($this->getSlugField());
+		return $this->getValue($this->getSlugField(), $id);
 	}
 
 	/**
@@ -1810,8 +1811,8 @@ class Formz {
 	 * @see Formz::getTitleField
 	 * @return string Record title
 	 */
-	function getTitle() {
-		return $this->getValue($this->getTitleField());
+	function getTitle($id = null) {
+		return $this->getValue($this->getTitleField(), $id);
 	}
 
 	function &getDoctrineQuery() {
