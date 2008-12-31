@@ -43,6 +43,8 @@ class formz_doctrineDB implements formz_driver_interface {
 	protected $_searchTablesets = null;
 	protected $_tableAlias   = null;
 	
+	protected $sorted = false;
+	
 	/**
 	 * Values that are fixed for both querying and Create and Update 
 	 * 
@@ -924,6 +926,16 @@ class formz_doctrineDB implements formz_driver_interface {
 	function isTree() {
 		return $this->table->isTree();
 	}
+	
+	/**
+	 * Returns true if a sort has been applied to this table.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function isSorted() {
+		return $this->sorted;
+	}
 
 	/**
 	 * Order results by given column and direction.
@@ -934,6 +946,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 */
 	function sort($fieldname, $direction = "ASC") {
+		$this->sorted = true;
 		$this->query()->orderBy("$fieldname $direction");
 	}
 

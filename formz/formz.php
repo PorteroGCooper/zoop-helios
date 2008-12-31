@@ -262,13 +262,22 @@ class Formz {
 		return $this->_driver->getDoctrineRecord($id);
 	}
 */
-	
+	/**
+	 * Reaturn a list of records (for displaying in a formz list view).
+	 *
+	 * A default sort will be applied if one exists, and if the records haven't already been sorted.
+	 * 
+	 * @access public
+	 * @param mixed $search. (default: false)
+	 * @return void
+	 */
 	function getRecords($search = false) {
 		// if we're doing a sort, do it!
-		if ($this->_defaultSortField != null) {
+		if (!$this->_driver->isSorted() && !empty($this->_defaultSortField)) {
 			$this->sort($this->_defaultSortField, $this->_defaultSortDirection);
 		}
-		return $this->_driver->getRecords($search);
+
+		return $this->_driver->getRecords();
 	}
 	
 	/**
@@ -1826,22 +1835,38 @@ class Formz {
 	function __dump() {
 		$ret = array();
 		
-		$ret['table'] = $this->tablename;
-		$ret['type'] = $this->type;
-		$ret['driver'] = get_class($this->_driver);
-
 		if ($this->type == 'record') {
 			$ret['values'] = $this->getData();
 		}
-
-		$ret['fields'] = $this->getFields();
-		foreach ($ret['fields'] as $_key => $_val) {
-			if (isset($ret['fields'][$_key]['embeddedForm'])) {
-				$ret['fields'][$_key]['embeddedForm'] = $ret['fields'][$_key]['embeddedForm']->__dump();
+		
+		foreach ($this as $_key => $_val) {
+			switch ($_key) {
+				case '_fields':
+					$ret[$_key] = $this->getFields();
+					foreach ($ret[$_key] as $_key => $_val) {
+						if (isset($ret[$_key][$_key]['embeddedForm'])) {
+							$ret[$_key][$_key]['embeddedForm'] = $ret[$_key][$_key]['embeddedForm']->__dump();
+						}
+					}
+					break;
+				case '_relation_fields':
+					$ret[$_key] = $this->getTableRelations();
+					break;
+				case '_driver':
+					$ret[$_key] = get_class($_val);
+					break;
+				case '_order':
+					if (empty($_val)) $_val = array_keys($this->getFields());
+					$ret[$_key] = $_val;
+					break;
+				case 'valid_properties':
+					continue;
+					break;
+				default:
+					$ret[$_key] = $_val;
+					break;
 			}
 		}
-		
-		$ret['relations'] = $this->getTableRelations();
 		
 		return $ret;
 	}

@@ -256,9 +256,17 @@ interface formz_driver_interface {
 	 * Returns true if table is a tree 
 	 * 
 	 * @access public
-	 * @return void
+	 * @return bool
 	 */
 	function isTree();
+	
+	/**
+	 * Returns true if a sort has been applied to this table.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function isSorted();
 	
 	function setParentRecordName($parent);
 
