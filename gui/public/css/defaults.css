@@ -15,6 +15,9 @@ fieldset {
 table {
 	border-collapse: collapse;
 }
+label.check-all {
+	font-style: italic;
+}
 
 /* Markup free clearing */
 .clear-block:after {

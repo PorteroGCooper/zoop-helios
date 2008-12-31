@@ -15,6 +15,15 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
 /**
  * HTML Checkboxes GuiControl
  *
+ * The Checkboxes GuiControl accepts a 'checkall' param. If this is set to true, a jQuery
+ * 'Check All' checkbox will be dynamically prepended on page load.
+ *
+ * @code
+ *    $foo = GuiControl::get('checkboxes', 'foo')
+ *       ->setParam('checkall', true)
+ *       ->setParam('index', $index);
+ * @endcode
+ *
  * @ingroup gui
  * @ingroup guicontrol
  * @version $id$
@@ -26,7 +35,7 @@ class CheckboxesControl extends GuiMultiValue {
 	
 	function initControl() {
 		global $gui;
-		$gui->add_js('/zoopfile/gui/js/jquery.js', 'zoop');
+		$gui->add_jquery();
 	}
 	
 	/**
@@ -129,11 +138,14 @@ class CheckboxesControl extends GuiMultiValue {
 					break;
 				case 'checkall':
 					$class[] = 'checkable';
-					$gui->add_jquery('$("#'.$input_id.'").prepend("<label><input type=\"checkbox\" class=\"check-all\" />Check All</label>");');
-					$gui->add_jquery('$("#'.$input_id.' .check-all").click(function(){
-						var checked_status = this.checked;
-						$("#'.$input_id.' input[@type$=\'checkbox\']").each(function(){
-						this.checked = checked_status;});});');
+					$gui->add_jquery('
+						$("#'.$input_id.'").prepend("<label class=\"check-all\"><input type=\"checkbox\" class=\"check-all\" />Check All</label>");
+						$("#'.$input_id.' input.check-all").change(function(){
+							$("#'.$input_id.' input[@type=\'checkbox\']").attr("checked",this.checked).change(function(){
+								if(!this.checked) {$("#'.$input_id.' input.check-all").attr("checked",false);}
+							});
+						});
+					');
 					break;
 			}
 		}
