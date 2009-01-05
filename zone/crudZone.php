@@ -537,6 +537,16 @@ class CrudZone extends zone {
 			return;
 		}
 
+		$this->_postUpdateRedirect();
+	}
+
+	/**
+	 * After the Update Form is posted, determine where to send the user 
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _postUpdateRedirect() {
 		if (getPostText('update_and_create')) {
 			BaseRedirect($this->getZoneBasePath() . '/create', HEADER_REDIRECT);
 		} else {
