@@ -639,8 +639,8 @@ class CrudZone extends zone {
 		$message = Config::get('zoop.zone.crud_zone.messages.confirm_delete');
 		$message = str_replace(array('%id%', '%title%'), array($record_id, $title_field), $message);
 		
-		$this->form->setFieldFormshow('*', false);
-		$this->form->setFieldFormshow($id_field);
+		$this->form->field('*')->setFormshow(false);
+		$this->form->field($id_field)->setFormshow();
 		
 		$this->form->setEditable(true);
 
@@ -716,7 +716,7 @@ class CrudZone extends zone {
 		$this->form->setEditable(true);
 
 		if (!empty($immutableFields)) {
-			$this->form->setFieldFormshow($immutableFields, false);
+			$this->form->fields($immutableFields)->setFormshow(false);
 		}
 		
 		$this->form->addAction('save');
