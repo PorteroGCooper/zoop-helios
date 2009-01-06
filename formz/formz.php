@@ -1120,6 +1120,14 @@ class Formz {
 		}
 		if (!isset($args['value'])) $args['value'] = $args['label'];
 		
+		if ($args['type'] == 'link') {
+			if (isset($args['class'])) {
+				$args['class'] .= ' '. $name .'-link action-link';
+			} else {
+				$args['class'] = $name .'-link action-link';
+			}
+		}
+		
 		$this->_formActions[$name] = $args;
 	}
 	
