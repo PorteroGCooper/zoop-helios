@@ -449,7 +449,7 @@ class CrudZone extends zone {
 	 */
 	function _listRecords() {
 		$link = ($this->form->isSluggable()) ? '%slug%' : '%id%';
-		$this->form->setFieldListlink(array($this->form->getIdField(), $this->form->getTitleField()), $link);
+		$this->form->fields($this->form->getIdField(), $this->form->getTitleField())->setListlink($link);
 
 		$this->form->addRowAction('edit');
 		$this->form->addRowAction('delete');
