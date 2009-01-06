@@ -1946,12 +1946,22 @@ class Formz {
 
 		if (substr($method, 0, 15) == 'setFieldDisplay') {
 			$param_name = lcfirst(substr($method, 15));
-			
+			if (is_array($args[0])) {
+				deprecated('Deprecated call. Use `$form->fields("'.implode('", "', $args[0]).'")->setDisplay'.ucfirst($param_name).'($args);`');
+			} else {
+				deprecated('Deprecated call. Use `$form->field("'.$args[0].'")->setDisplay'.ucfirst($param_name).'($args);`');
+			}
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setFieldDisplay'), $args);
 		}
 		else if (substr($method, 0, 8) == 'setField') {
 			$param_name = lcfirst(substr($method, 8));
+			
+			if (is_array($args[0])) {
+				deprecated('Deprecated call. Use `$form->fields("'.implode('", "', $args[0]).'")->set'.ucfirst($param_name).'($args);`');
+			} else {
+				deprecated('Deprecated call. Use `$form->field("'.$args[0].'")->set'.ucfirst($param_name).'($args);`');
+			}
 			
 			array_unshift($args, $param_name);
 			return call_user_func_array(array($this, 'setFieldParam'), $args);
