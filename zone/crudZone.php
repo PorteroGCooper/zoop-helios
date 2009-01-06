@@ -228,7 +228,7 @@ class CrudZone extends zone {
 	 * @access public
 	 * @return void
 	 */
-	function initCreateForm() { }
+//	function initCreateForm() { }
 
 	/**
 	 * initReadForm is provided to extending classes, allowing CRUD zones to modify the form

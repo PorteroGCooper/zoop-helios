@@ -253,9 +253,6 @@ function smarty_function_formz_form($params, &$smarty) {
 			continue;
 		}
 		
-		if (isset($field['display']['caption']))
-			$form_item .= '<span class="caption">' . $field['display']['caption'] . '</span>';
-
 		if ($form->editable) {
 			$control_html = $control->renderControl();
 		} else {
