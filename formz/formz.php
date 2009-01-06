@@ -1147,8 +1147,10 @@ class Formz {
 		}
 		else {
 			// set some default actions for this form.
-			$this->addAction('submit');
-			$this->addAction('cancel');
+			if ($this->editable) {
+				$this->addAction('submit');
+				$this->addAction('cancel');
+			}
 			
 			// now remove them from the form... odd, but allows code reuse.
 			$actions = $this->_formActions;
