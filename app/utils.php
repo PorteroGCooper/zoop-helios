@@ -665,10 +665,16 @@ function deprecated($desc = null) {
 	if(Config::get('zoop.app.security.show_warnings', true) == false) return;
 	
 	if(APP_STATUS == 'dev') {
-		$functioninfo = debug_backtrace();
-		print "<p>Deprecated functionality in <strong>" . $functioninfo[0]["file"] . "</strong>";
-		print " on line <strong>" . $functioninfo[0]["line"] . "</strong>";
-		print " in function <strong>" . $functioninfo[1]["function"] . "</strong></p>";
+		$functioninfo = debug_backtrace(true);
+		
+		// find the first line with a filename...
+		for ($i = 1; $i < count($functioninfo); $i++) {
+			if (isset($functioninfo[$i]['file'])) break;
+		}
+
+		print "<p>Deprecated functionality in <strong>" . $functioninfo[$i]["file"] . "</strong>";
+		print " on line <strong>" . $functioninfo[$i]["line"] . "</strong>";
+		print " in function <strong>" . $functioninfo[$i+1]["function"] . "</strong></p>";
 		if ($desc) print "<p>Description: <strong>$desc</strong></p>";
 	}
 }
