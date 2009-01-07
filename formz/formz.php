@@ -876,7 +876,7 @@ class Formz {
 	 * @param mixed $value
 	 * @return void
 	 */
-	function setDisplay($param, $value) {
+	function setDisplay($param, $value = true) {
 		$this->display[$param] = $value;
 	}
 	
