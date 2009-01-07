@@ -24,52 +24,40 @@
  */
 class formz_doctrineDB implements formz_driver_interface {
 
-	/**
-	 * Doctrine table object associated with this formz.
-	 *
-	 * @var
-	 */
+	// Doctrine objects associated with this form.
 	protected $table;
 	protected $tablename;
-	protected $_query        = null;
-	protected $_record        = null;
-	
-	protected $_pageNumber   = 1;
-	protected $_pageLimit    = null;
-	protected $_pager        = null;
-	protected $_paginated    = false;
-	protected $_searchToken  = null;
-	protected $_searchTables = null;
-	protected $_searchTablesets = null;
-	protected $_tableAlias   = null;
-	
-	protected $sorted = false;
-	
-	/**
-	 * Values that are fixed for both querying and Create and Update 
-	 * 
-	 * @var array
-	 * @access public
-	 */
-	protected $_constraints = array();
+	protected $_query            = null;
+	protected $_record           = null;
 
-	/**
-	 * Set only when using nested sets (trees) 
-	 * 
-	 * @var mixed
-	 * @access protected
-	 */
+	// get rid of this.
+	protected $_tableAlias       = null;
+
+	// pagination variables
+	protected $_pageNumber       = 1;
+	protected $_pageLimit        = null;
+	protected $_pager            = null;
+	protected $_paginated        = false;
+	
+	// sorting
+	protected $sorted            = false;
+	
+	// keeping track of joins
+	protected $_joinTables       = array();
+	protected $_joinCount        = 0;
+	
+	// search variables
+	protected $_searchString      = null;
+	protected $_searchFields     = null;
+	
+	// value constraints for creating and updating records.
+	protected $_constraints      = array();
+	
+	// nested set & tree variables
 	protected $_parentRecordName = null;
-	protected $_parentRecord = null;
-	protected $_tree = null;
+	protected $_parentRecord     = null;
+	protected $_tree             = null;
 
-	/**
-	 * True if current form is soft deletable
-	 *
-	 * @var bool
-	 * @access private
-	 */
-	protected $softdeletable = false;
 
 
 	/**
@@ -85,6 +73,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	function formz_doctrineDB($tablename) {
 		$this->tablename = $tablename;
 		$this->table = Doctrine::getTable($this->tablename);
+		$this->_joinTables['@this'] = 'this';
 	}
 	
 	/**
@@ -118,6 +107,63 @@ class formz_doctrineDB implements formz_driver_interface {
 			);
 		}
 		return $columns;
+	}
+	
+	/**
+	 * Return an array of natively searchable fields on this form.
+	 * 
+	 * @access public
+	 * @return array
+	 */
+	function getSearchableFields() {
+		if (!$this->isSearchable()) return;
+		return $this->table->getTemplate('Doctrine_Template_Searchable')->getPlugin()->getOption('fields');
+	}
+	
+	/**
+	 * Set a list of searchable fields for this formz object.
+	 * 
+	 * @access public
+	 * @param array $fields
+	 * @return void
+	 */
+	function setSearchFields($fields) {
+		$relations = $this->getTableRelations();
+
+		foreach ($fields as $field) {
+			$chunks = explode('.', $field);
+			if (count($chunks) > 2) {
+				trigger_error('Formz has trouble searching relations more than one level deep... too many dots.');
+				return;
+			} else if (count($chunks) == 1) {
+				// this is a searchable field on this table.
+				$this->_searchFields[$this->_joinTables['@this']][] = $chunks[0];
+			} else {
+				// this is a searchable field on a relation.
+				$rel_alias = $chunks[0];
+				
+				// find the relation.
+				foreach ($relations as $_key => $_val) {
+					if ($_val['alias'] == $rel_alias) {
+						$rel_name = $_key;
+						break;
+					}
+				}
+				
+				// skip this if there's no relation for this field name.
+				if (!isset($rel_name) || !isset($relations[$rel_name])) continue;
+				
+				// make sure there's a join for this search
+				if (!isset($this->_joinTables[$rel_alias])) $this->_joinTables[$rel_alias] = 'j' . $this->_joinCount++;
+				
+				// make sure there's a section in the search fields for this alias.
+				$join_alias = $this->_joinTables[$rel_alias];
+				if (!isset($this->_searchFields[$join_alias])) $this->_searchFields[$join_alias] = array();
+				
+				// add a search field for the join alias we just set up.
+				$this->_searchFields[$join_alias][] = $chunks[1];
+			}
+		}
 	}
 	
 	/**
@@ -195,8 +241,12 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
-	 * getValue
-	 * gets the value from the record object and returns it.
+	 * Get the value for a field, or a field on a relation.
+	 *
+	 * @code
+	 *    $form->getValue('username'); // returns $form->record->username;
+	 *    $form->getValue('Person.first_name'); // returns $form->record->Person->first_name;
+	 * @endcode
 	 *
 	 * @param string $fieldname
 	 * @access public
@@ -213,28 +263,14 @@ class formz_doctrineDB implements formz_driver_interface {
 			}
 			
 			while ($field = array_shift($chunks)) {
+				if (!$val instanceof Doctrine_Record) return null;
 				$val = $val->$field;
 			}
 			return $val;
-/*
-
-			if ($relation_record instanceof Doctrine_Record) {
-				while ($r = $r->$chunks[0]) {
-					
-				}
-				return $relation_record->$field;
-			} else if (count((array)$relation_record)) {
-				$retVal = array();
-				foreach ($relation_record as $key => $value) {
-					$retVal[] = $value->$field;
-				}
-				return $retVal;
-			}
-*/
 		}
 		
 		if (isset($this->record($id)->$fieldname)) return $this->record($id)->$fieldname;
-		else trigger_error("No value is set for the field: $fieldname");
+		else return null;
 	}
 
 	/**
@@ -254,12 +290,22 @@ class formz_doctrineDB implements formz_driver_interface {
 	function getRecords($limit = null) {
 		/* if ($limit !== null) $this->setParam("limit", $limit); */
 		
+		$this->_applyJoinsToQuery();
 		$this->_applyQueryConstraints();
 		
 		if ($this->isTree()) {
 			return $this->_executeTree();
 		} else {
 			return $this->query()->execute()->toArray();
+		}
+	}
+	
+	protected function _applyJoinsToQuery() {
+		$this_alias = $this->_joinTables['@this'];
+		
+		foreach ($this->_joinTables as $name => $alias) {
+			if ($name == '@this') continue;
+			$this->query()->leftJoin($this_alias . '.' . $name . ' ' . $alias);
 		}
 	}
 	
@@ -329,33 +375,18 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @access protected
 	 */
 	protected function _applySearchToQuery() {
-		if (!isset($this->_searchToken) || empty($this->_searchToken)) return;
-
-		foreach($this->getSearchTablesets() as $tableset => $search_fields) {
-			if (strtolower($tableset) === strtolower($this->getTableAlias())) {
-				$this->query()->select('*') // try to optimize this, remove the select *?
-							  ->from($tableset . ' c');
-
-				$whereClauseSet = array();
-				foreach($search_fields as $search_field) {
-					$whereClauseSet[] = 'c.' . $search_field . ' like "%' . $this->_searchToken . '%"';
-				}
-				
-				$whereClause = implode(' OR ', $whereClauseSet);
-				$this->query()->where($whereClause);
-				if ($this->isSoftDeletable()) {
-					$deleteField = $this->getSoftDeleteField();
-					$this->query()->andWhere($deleteField . ' = 0 OR ' . $deleteField . ' IS NULL');
-				}
-			} else {
-				$this->query()->leftJoin('c.' . $tableset . ' b');
-
-				foreach($search_fields as $search_field) {
-					$this->query()->orWhere('b.' . $search_field . ' like "%' . $this->_searchToken . '%"');
-				}
+		if (!isset($this->_searchString) || empty($this->_searchString)) return;
+		
+		// join on any necessary relations.
+		// make sure fields are searched.
+		$search_like = array();
+		foreach ($this->_searchFields as $alias => $fields) {
+			foreach ($fields as $field) {
+				$search_like[] = $alias . '.' . $field . ' LIKE "%' . $this->_searchString . '%"';
 			}
-
 		}
+		$where = '(' . implode(' OR ', $search_like) . ')';
+		$this->query()->addWhere($where);
 	}
 	
 	/**
@@ -1020,72 +1051,15 @@ class formz_doctrineDB implements formz_driver_interface {
 	}
 
 	/**
-	 * Set the token for searching
+	 * Set a string to search on.
 	 * 
+	 * @see formz_doctrineDB::setSearchFields()
 	 * @access public
-	 * @param string $token
+	 * @param string $query
 	 * @return void
 	 */
-	function setSearchToken($token) {
-		$this->_searchToken = $token;
-	}
-
-	/**
-	 * Add table(s) for searching.
-	 *
-	 * Accepts either a single table name (string) or an array of table names to search on.
-	 * 
-	 * @access public
-	 * @param mixed $tablename
-	 * @return void
-	 */
-	function addSearchTable($tablename) {
-		if ($this->_searchTables === null) {
-			$this->_searchTables = array();
-		}
-		
-		foreach ((array)$tablename as $name) {
-			$this->_searchTables[] = $name;
-		}
-	}
-
-	/**
-	 * Get tables for searching
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	function getSearchTables() {
-		return $this->_searchTables;
-	}
-
-	/**
-	 * Add table sets for searching.
-	 *
-	 * Accepts either a single table set (tablename => search fields) or an array of table sets
-	 * 
-	 * @access public
-	 * @param mixed $tableset(s)
-	 * @return void
-	 */
-	function addSearchTableset($tablesets) {
-		if ($this->_searchTablesets === null) {
-			$this->_searchTablesets = array();
-		}
-
-		foreach ((array)$tablesets as $key => $tableset) {
-			$this->_searchTablesets[$key] = $tableset;
-		}
-	}
-
-	/**
-	 * Get table sets for searching
-	 * 
-	 * @access public
-	 * @return array table sets
-	 */
-	function getSearchTablesets() {
-		return $this->_searchTablesets;
+	function search($query) {
+		$this->_searchString = $query;
 	}
 
 	/**
@@ -1096,7 +1070,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 */
 	protected function &query() {
 		if (!$this->_query) {
-			$this->_query = $this->table->createQuery('t');
+			$this->_query = $this->table->createQuery($this->_joinTables['@this']);
 		}
 
 		return $this->_query;
@@ -1117,7 +1091,7 @@ class formz_doctrineDB implements formz_driver_interface {
 				if (strpos($key, '.') !== false) {
 					$relation = array_shift(explode('.', $key));
 					$identifier = 'r' . $joinCount;
-					$this->query()->leftJoin('t.' . $relation . ' ' . $identifier);
+					$this->query()->leftJoin($this->_joinTables['@this'] . '.' . $relation . ' ' . $identifier);
 					$key = $identifier . '.id';
 					$joinCount++;
 				}

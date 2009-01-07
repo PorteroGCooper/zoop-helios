@@ -764,7 +764,7 @@ class Formz_FormDB implements formz_driver_interface {
 		trigger_error("FormDB driver doesn't implement sluggable");
 	}
 
-	function setSearchToken($token) {
+	function search($token) {
 		trigger_error("FormDB driver doesn't implement search tokens");
 	}
 

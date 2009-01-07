@@ -69,10 +69,13 @@ function smarty_function_formz_list($params, &$smarty) {
 	if ($searchable && $form->getSearchForms() !== null) {
 		$search_html = '';
 		foreach($form->getSearchForms() as $htmlForm) {
-			$search_html .= '<form class="formz-search-form">' .
-				'<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '">' .
-				'<input id="search_text" name="q" type="text">&nbsp;' .
-				'<input id="search_button" type="submit" value="Search">' . '</form>';
+			$search_html .= '<form class="formz-search-form">';
+			if (isset($htmlForm['redirect'])) {
+				$search_html .= '<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '" />';
+			}
+			$search_html .=
+				'<input id="search_text" name="q" type="text" value="' . $htmlForm['q'] . '"/>&nbsp;' .
+				'<input id="search_button" type="submit" value="Search" />' . '</form>';
 		}
 		if (!empty($search_html)) {
 			$list_actions[] = $search_html;

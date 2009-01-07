@@ -63,7 +63,8 @@ class FormzField {
 	}
 	
 	function fields() {
-		return call_user_func_array(array($this->form, 'fields'), func_get_args());
+		$args = func_get_args();
+		return call_user_func_array(array($this->form, 'fields'), $args);
 	}
 
 
@@ -178,6 +179,27 @@ class FormzField {
 	 */
 	function setEmbeddedForm($form = true) {
 		return $this->form->setFieldEmbeddedForm($this->name, $form);
+	}
+	
+	/**
+	 * Set display parameters in one huge chunk. Expects an associative array of parameters to
+	 * set on this field's GuiControl.
+	 *
+	 * @code
+	 *    $form->field('name')
+	 *       ->setDisplayParams(array(
+	 *          'label' => 'User Name',
+	 *          'caption' => 'Enter a user name.',
+	 *          'type' => 'text'
+	 *       ));
+	 * @endcode
+	 * 
+	 * @access public
+	 * @param array $params
+	 * @return FormzField $this, for chaining field manipulation actions.
+	 */
+	function setDisplayParams($params) {
+		$this->form->setFieldDisplayFromArray($this->name, $params);
 	}
 
 	/**

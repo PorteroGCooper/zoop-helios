@@ -23,7 +23,8 @@ class FormzFieldCollection {
 	}
 	
 	function fields() {
-		return call_user_func_array(array($this->form, 'fields'), func_get_args());
+		$args = func_get_args();
+		return call_user_func_array(array($this->form, 'fields'), $args);
 	}
 
 	/**

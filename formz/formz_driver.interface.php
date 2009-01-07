@@ -237,7 +237,7 @@ interface formz_driver_interface {
 	function isSluggable();
 
 	/**
-	 * Returns true if this Doctrine table is searchable.
+	 * Returns true if this table is searchable.
 	 *
 	 * @access public
 	 * @return bool True if this is searchable.
@@ -316,44 +316,10 @@ interface formz_driver_interface {
 	 * Set the search term to check for
 	 * 
 	 * @access public
-	 * @param string $token
+	 * @param string $query
 	 * @return void
 	 */
-	function setSearchToken($token);
-
-	/**
-	 * Add table for searching
-	 * 
-	 * @access public
-	 * @param string $tablename
-	 * @return void
-	 */
-	function addSearchTable($tablename);
-
-	/**
-	 * Get tables for searching
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	function getSearchTables();
-
-	/**
-	 * Add table set for searching
-	 * 
-	 * @access public
-	 * @param string $tableset
-	 * @return void
-	 */
-	function addSearchTableset($tableset);
-
-	/**
-	 * Get table sets for searching
-	 * 
-	 * @access public
-	 * @return array $tablesets
-	 */
-	function getSearchTablesets();
+	function search($query);
 
 	/**
 	 * Returns true if this form uses pagination.

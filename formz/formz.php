@@ -45,6 +45,7 @@ class Formz {
 	var $zone;
 	var $callback;
 	var $listActionPosition;
+	
 	protected $parentTablename;
 	protected $parentId;
 	
@@ -69,6 +70,7 @@ class Formz {
 	 * @access protected
 	 */
 	protected $_relation_fields = array();
+	protected $_searchableFields = array();
 	
 	/**
 	 * Default sort direction for this Formz object
@@ -138,13 +140,6 @@ class Formz {
 	 * @access protected
 	 */
 	protected $_searchForms = null;
-	
-	/**
-	 * Search form set objects
-	 *
-	 * @access protected
-	 */
-	protected $_searchFormsets = null;
 	
 	var $errors = array();
 	var $editable = false;
@@ -550,6 +545,13 @@ class Formz {
 		}
 	}
 	
+	/**
+	 * removeFieldConstraint function.
+	 * 
+	 * @access public
+	 * @param string $fieldname
+	 * @return void
+	 */
 	function removeFieldConstraint($fieldname) {
 		if (isset($this->_fields[$fieldname]['override'])) {
 			unset($this->_fields[$fieldname]['override']);
@@ -666,7 +668,7 @@ class Formz {
 				$fields[$key]['relation_alias']       = $relation['alias'];
 				$fields[$key]['relation_local_field'] = $relation['local_field'];
 				$fields[$key]['rel_type']             = $relation['rel_type'];
-
+				
 				if (!isset($fields[$key]['display']['label'])) {
 					if (isset($relation_fields[$key]['display']['label'])) {
 						$fields[$key]['display']['label'] = $relation_fields[$key]['display']['label'];
@@ -681,16 +683,16 @@ class Formz {
 				} else {
 					$relation_label_field = $relation['label_field'];
 				}
-
+				
 				if (isset($relation_fields[$key]['display'])) {
 					$fields[$key]['display'] = $relation_fields[$key]['display'];
 				}
-
+				
 			} else {
 				$fields[$key]['listshow'] = false;
 			}
 		}
-
+		
 		return $fields;
 	}
 	
@@ -724,39 +726,13 @@ class Formz {
 	}
 	
 	function getValue($fieldname, $id = null) {
-	
-		// if this is an aggregate field, we'll have to handle it here.
-		if (
-			isset($this->_fields[$fieldname])
-			&& isset($this->_fields[$fieldname]['type'])
-			&& $this->_fields[$fieldname]['type'] == 'aggregate'
-		) {
-			
-			$value = $this->_fields[$fieldname]['format_string'];
-			
-			$matches = array();
-			preg_match_all('#%([a-zA-Z0-9_\.]+?)%#', $value, $matches);
-			
-			foreach ($matches[1] as $_key => $_val) {
-				$matches[1][$_key] = $this->_driver->getValue($_val, $id);
-			}
-			$value = str_replace($matches[0], $matches[1], $value);
-			
-			return $value;
+		// if this is an aggregate field, we'll have to handle it a bit different.
+		if (isset($this->_fields[$fieldname]) && isset($this->_fields[$fieldname]['type']) && $this->_fields[$fieldname]['type'] == 'aggregate') {
+			return $this->populateString($this->_fields[$fieldname]['format_string'], $id);
 		}
-		
 		// otherwise, pass it off to the driver.
 		return $this->_driver->getValue($fieldname, $id);
 	}
-	
-	/**
-	 * Return the relation field data (foreign/local fields, etc) for a given relation name.
-	 * 
-	 * @access public
-	 * @param mixed $name A given relation name.
-	 * @param bool $getValues Hydrate the array with values? (default: false)
-	 * @return array An array of information about the requested relation.
-	 */
 
 	/**
 	 * Get foreign fields that should be immutable for this form
@@ -794,7 +770,24 @@ class Formz {
 		}
 		return $ret;
 	}
-	
+		
+	/**
+	 * Return the relation field data (foreign/local fields, etc) for a given relation name.
+	 * 
+	 * @access public
+	 * @param mixed $name A given relation name.
+	 * @param bool $getValues Hydrate the array with values? (default: false)
+	 * @return array An array of information about the requested relation.
+	 */
+	 
+	 
+	 
+	/**
+	 * getTableRelationForeignFields function.
+	 * 
+	 * @access public
+	 * @return array relation fields
+	 */
 	function getTableRelationForeignFields() {
 		$ret = array();
 		
@@ -904,6 +897,14 @@ class Formz {
 				$this->setFieldParam($property, $f, $value);
 			}
 		} else {
+		
+			// special handling for interesting properties.
+			switch($property) {
+				case 'searchable':
+					return $this->setFieldSearchable($field, $value);
+					break;
+			}
+			
 			if (!isset($this->_fields[$field])) {
 				$relations = array();
 				foreach ($this->getTableRelations() as $relation) {
@@ -1207,8 +1208,23 @@ class Formz {
 				$this->_driver->setLimit($args['limit']);
 				break;
 			case 'search':
-				if (!isset($args['q'])) $args['q'] = getGetText('q');
-				$this->_driver->setSearchToken($args['q']);
+				// add the search field to this form
+				$searchForm = array('name' => $this->tablename);
+				
+				// apply url query to this form
+				if (isset($args['q'])) {
+					$searchForm['q'] = $args['q'];
+				} else {
+					$searchForm['q'] = getGetText('q');
+				}
+				
+				// apply the search!
+				if (!empty($searchForm['q'])) $this->search($searchForm['q']);
+				
+				if (isset($args['redirect'])) $searchForm['redirect'] = $args['redirect'];
+				$this->_searchForms[] = $searchForm;
+				
+				return;
 				break;
 			case 'filter':
 				break;
@@ -1393,6 +1409,23 @@ class Formz {
 		$this->parentId = $parentId;
 	}
 	
+	/**
+	 * Add an embedded form for the given field.
+	 *
+	 * Access using a FormField object. Optionally, pass a Formz object to embed.
+	 *
+	 * @code
+	 *    $form->field('person')->setEmbeddedForm();
+	 * @endcode
+	 *
+	 * Returns the formz object which has been embedded in the parent form. This can then
+	 * be used to manipulate fields of the child form.
+	 * 
+	 * @access public
+	 * @param string $fieldname
+	 * @param mixed $form. (default: true)
+	 * @return Formz
+	 */
 	function setFieldEmbeddedForm($fieldname, $form = true) {
 		if ($form && !($form instanceof Formz)) {
 			$fields = $this->getFields($fieldname);
@@ -1453,130 +1486,81 @@ class Formz {
 		return $string;
 	}
 
-/*
-	function addEmbeddedForm($tablename, $form = null, $fieldname = null) {
-		if ($fieldname !== null && $form !== null) {
-			$this->_embeddedFormz[$fieldname] = $form;
-		} else if ($form !== null) {
-			$this->_embeddedFormz[$tablename] = $form;
-		} else if ($fieldname !== null) {
-			$this->_embeddedFormz[$fieldname] = new Formz($tablename, $this->_driver->getType());
-			$this->_embeddedFormz[$fieldname]->setParentTablename($this->tablename);
-		} else {
-			$this->_embeddedFormz[$tablename] = new Formz($tablename, $this->_driver->getType());
-			$this->_embeddedFormz[$tablename]->setParentTablename($this->tablename);
-		}
-	}
-	
-	function getEmbeddedFormz($name = null) {
-		if ($name === null) {
-			return $this->_embeddedFormz;
-		} else {
-			if (isset($this->_embeddedFormz[$name])) {
-				return $this->_embeddedFormz[$name];
-			} else {
-				trigger_error('Requested embedded form does not exist');
-			}
-		}
-	}
-*/
-
 	/**
-	 * Add a search form for processing
-	 *
-	 * Add a search form to this formz object.  This is an arbitrary value to indicate
-	 * some form of input to be used as a search.  In the future we could branch on search
-	 * form type or expand/refactor this into other accessory html objects to attach to a formz object.
-	 *
-	 * @access public
-	 */
-	function addSearchForm($name = null, $redirect = '') {
-		if (!$name) {
-			$name = $this->tablename;
-		}
-		if (!$this->_searchForms) {
-			$this->_searchForms = array();
-		}
-		
-		$this->_searchForms[$name] = array('name' => $name, 'redirect' => $redirect);
-		$this->_driver->addSearchTable($name);
-	}
-
-	/**
-	 * Get search forms for processing
-	 *
-	 * Get a list of tables and relations to search on
+	 * Get search forms. Search forms are a special case of ListAction, and are used by the
+	 * formz_list guiplugin.
 	 *
 	 * @access public
 	 */
 	function getSearchForms() {
 		return $this->_searchForms;
 	}
+	
+	/**
+	 * Get the set of searchable fields on this form.
+	 * 
+	 * @access public
+	 * @return array Searchable fields.
+	 */
+	private function getSearchableFields() {
+		if (!$this->isSearchable()) return array();
+		return array_merge($this->_searchableFields, $this->_driver->getSearchableFields());
+	}
+	
 
 	/**
-	 * Add a search form set for processing
+	 * Helper function to set fields as searchable. This will generally only be used to set things
+	 * as searchable (true), but can be used to unset searchability as well...
+	 * 
+	 * @code
+	 *    $form->field('User.first_name')->setSearchable();
+	 * @endcode
 	 *
-	 * Add a table or relation set to the list of items to search on.
-	 * Sets include the table/relation name as well as a list of fields in
-	 * the relation to check against.  The data structure is:
-	 * array($tablename => ($field1, $field2))
-	 *
-	 * @access public
+	 * @access private
+	 * @param mixed $fieldname
+	 * @param mixed $searchable. (default: true)
+	 * @return void
 	 */
-	function addSearchFormSet($tableset = null) {
-		if (!$tableset) {
-			$tableset = array($this->tablename => array());
+	private function setFieldSearchable($fieldname, $searchable = true) {
+		if ($searchable) {
+			$this->_searchableFields[$fieldname] = $fieldname;
+		} else if (isset($this->_searchableFields[$fieldname])) {
+			unset($this->_searchableFields[$fieldname]);
 		}
-		if (!$this->_searchFormsets) {
-			$this->_searchFormsets = array();
-		}
-		
-		$this->_searchFormsets[] = $tableset;
-		$this->_driver->addSearchTableset($tableset);
 	}
 
 	/**
-	 * Get search form sets for processing
-	 *
-	 * Returns an array of all table/relation sets to process
+	 * Set a search constraint for this formz list.
 	 *
 	 * @access public
 	 */
-	function getSearchFormsets() {
-		return $this->_searchFormsets;
+	function search($query) {
+		$this->_driver->setSearchFields($this->getSearchableFields());
+		$this->_driver->search($query);
 	}
-
-	/**
-	 * Set the search token constraint for this form
-	 *
-	 * Takes and sets the search token to use to constrain the search
-	 * to a subset of matched results
-	 *
-	 * @access public
-	 */
+	
 	function setSearchToken($search_token) {
-		$this->_driver->setSearchToken($search_token);
+		deprecated("setSearchToken has been deprecated. call \$form->search('$search_token'); instead.");
+		return $this->search($search_token);
 	}
-
-	/**
-	 * Get the table alias for this formz object
-	 *
-	 * @access public
-	 * @return string $tableAlias
-	 */
-//	function getTableAlias() {
-//		return $this->_driver->getTableAlias();
-//	}
-
-	/**
-	 * Set the table alias for this formz object
-	 *
-	 * @access public
-	 * @param string $tableAlias
-	 */
-//	function setTableAlias($tableAlias) {
-//		$this->_driver->setTableAlias($tableAlias);
-//	}
+	function addSearchForm($name, $args = array()) {
+		deprecated("addSearchForm has been deprecated. call \$form->addListAction('search', \$args); instead.");
+		return $this->addListAction('search', $args);
+	}
+	function addSearchFormset($args) {
+		$fields = array();
+		foreach ($args as $table => $val) {
+			foreach ($val as $field) {
+				if (strtolower($table) == strtolower($this->tablename)) $fields[] = $field;
+				else $fields[] = $table . '.' . $field;
+			}
+		}
+		$s = (count($fields) > 1) ? 's' : '';
+		$field_string = implode("', '", $fields);
+		
+		deprecated("addSearchFormset has been deprecated. call \$form->field" . $s . "('" . $field_string . "')->setSearchable(); instead.");
+		$this->fields($fields)->setSearchable();
+	}
 
 	/**
 	 * Set the results limit
