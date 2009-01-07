@@ -163,7 +163,7 @@ function _findRequestItem($get_or_post, $var_name = false) {
  * @return boolean
  */
 function getGetIsset($var_name = false) {
-	return _getRequestIsset('post', $var_name);
+	return _getRequestIsset('get', $var_name);
 }
 
 /**
