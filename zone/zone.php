@@ -335,12 +335,13 @@ class zone {
 	var $_redirectAliases = array();
 
 	/**
-	 * A default template to be used for partial HTML rendering, such as for Ajax output (.ajax)
+	 * A default template to be used for HTML rendering.
 	 *
-	 * @see zone::outputAjax
+	 * @see zone::outputAJAX
+	 * @see zone::outputHTML
 	 * @access private
 	 */
-	var $_ajaxTemplate = null;
+	protected $_template = null;
 
 	/**
 	 * Return the Zone Name
@@ -1570,15 +1571,33 @@ class zone {
 	}
 
 	/**
-	 * guiDisplay
+	 * Display the given (or default) template.
 	 *
-	 * @param mixed $inTemplateName
+	 * @see gui::display()
+	 * @param string $template
 	 * @access public
 	 * @return void
 	 */
-	function guiDisplay($inTemplateName) {
+	function guiDisplay($template = null) {
 		global $gui;
-		$gui->display( $this->canonicalizeTemplate($inTemplateName) );
+		if (empty($template)) $template = $this->getTemplate();
+		
+		$gui->display($template);
+	}
+
+	/**
+	 * Generate a page with the given (or default) template.
+	 *
+	 * @see gui::generate()
+	 * @param string $template
+	 * @access public
+	 * @return void
+	 */
+	function guiGenerate($template = null) {
+		global $gui;
+		if (empty($template)) $template = $this->getTemplate();
+		
+		$gui->generate($template);
 	}
 
 	/**
@@ -1656,6 +1675,31 @@ class zone {
 		}
 		return $this->templateBase . '/' . $tplName;
 	}
+	
+	/**
+	 * Set the template file which will be used to render the requested page.
+	 *
+	 * NOTE: this currently only applies to ajax and html request types.
+	 * 
+	 * @param string $template 
+	 * @access protected
+	 * @return void
+	 */
+	protected function setTemplate($template) {
+		$this->_template = $template;
+	}
+
+	/**
+	 * Return the template file which will be used to render the requested page.
+	 * 
+	 * @see Zone::setTemplate
+	 * @access protected
+	 * @return string Template file
+	 */
+	protected function getTemplate() {
+		return $this->_template;
+	}
+
 
 	/**
 	 * Return the base path of the current zone
@@ -1907,8 +1951,7 @@ class zone {
 	 */
 	function outputAJAX() {
 		header("Content-Type: text/html");
-		global $gui;
-		$gui->display($this->_ajaxTemplate);
+		$this->guiDisplay();
 	}
 
 	/**
@@ -1919,7 +1962,7 @@ class zone {
 	 */
 	function outputHTML() {
 		global $gui;
-		$gui->generate();
+		$this->guiGenerate();
 	}
 
 	/**

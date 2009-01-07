@@ -110,8 +110,6 @@ class CrudZone extends zone {
 	
 	var $immutableFields = null;
 	var $foreign_relation_key = 'parent_id';
-
-	protected $_template;
 	
 	/**
 	 * Default URL aliases for CRUD actions. This lets you use 'zonename/foo/edit' instead of
@@ -391,26 +389,15 @@ class CrudZone extends zone {
 	}
 
 	/**
-	 * Set the template file which will be used to render this form.
+	 * Override the default zone::getTemplate() method to allow a default config fallback template.
 	 * 
-	 * @param string $template 
-	 * @access protected
-	 * @return void
-	 */
-	protected function setTemplate($template) {
-		$this->_template = $template;
-	}
-
-	/**
-	 * Return the template file which will be used to render this form.
-	 * 
-	 * @see CrudZone::setTemplate
+	 * @see ZoneZone::getTemplate
 	 * @access protected
 	 * @return string Template file
 	 */
 	protected function getTemplate() {
-		if ($this->_template) {
-			return $this->_template;
+		if ($template = parent::getTemplate()) {
+			return $template;
 		} else {
 			return Config::get('zoop.gui.templates.formz');
 		}
