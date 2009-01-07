@@ -46,9 +46,6 @@ class Formz {
 	var $callback;
 	var $listActionPosition;
 	
-	protected $parentTablename;
-	protected $parentId;
-	
 	/**
 	 * The fieldname prefix is used internally for embedded formz objects.
 	 * Don't mess with it, as it will cause your formz to stop working.
@@ -693,6 +690,11 @@ class Formz {
 			}
 		}
 		
+		// mix in validation options
+		foreach ($fields as $name => $field) {
+			if ($validate = $this->getFieldValidation($field)) $fields[$name]['validate'] = $validate;
+		}
+		
 		return $fields;
 	}
 	
@@ -716,6 +718,68 @@ class Formz {
 			return false;
 		}
 		
+	}
+	
+	private function getFieldValidation($field) {
+		$validate = (isset($field['validate'])) ? $field['validate'] : array();
+		
+		foreach ($field as $param => $value) {
+			switch ($param) {
+				case 'autoincrement':
+					return;
+					break;
+				case 'type':
+					switch($value) {
+						case 'integer':
+						case 'float':
+							$value = 'numeric';
+							break;
+						case 'timestamp':
+							$value = 'date';
+							if (!isset($validate['format'])) $validate['format'] = 'timestamp';
+							break;
+						default:
+							continue 2;
+							break;
+					}
+					if (!isset($validate['type'])) $validate['type'] = $value;
+					break;
+				case 'email':
+					if ($value && !isset($validate['type'])) $validate['type'] = 'email';
+					break;
+				case 'length':
+					switch ($field['type']) {
+						case 'integer':
+						case 'float':
+							$max = pow(2, $value * 8);
+							if (false && isset($field['unsigned']) && $field['unsigned']) {
+								$min = 0;
+							} else {
+								$max = floor($max / 2) - 1;
+								$min = 0 - $max;
+							}
+							if (!isset($validate['max'])) $validate['max'] = $max;
+							if (!isset($validate['min'])) $validate['min'] = $min;
+							break;
+						case 'string':
+							// if (!isset($validate['max'])) $validate['max'] = $value;
+							break;
+					}
+					break;
+				case 'notnull':
+				case 'required':
+					if ($field['type'] == 'boolean') {
+						break;
+					} else {
+						if (!isset($validate['required'])) $validate['required'] = (bool)$value;
+						break;
+					}
+				default:
+					break;
+			}
+		}
+
+		return $validate;
 	}
 	
 	/**

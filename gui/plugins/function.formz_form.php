@@ -75,8 +75,8 @@ function smarty_function_formz_form($params, &$smarty) {
 				continue;
 			}
 		}
-		
-		if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
+
+		// if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
 		
 		if (isset($field['embeddedForm'])) {
 			$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
@@ -95,7 +95,6 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 			$formz_object->setEditable($form->editable);
 			$formz_object->setFieldnamePrefix($key);
-
 			
 			$form_item .= '<div class="form-item-content">';
 			$form_item .= smarty_function_formz(array('form' => $formz_object), $smarty);
@@ -103,6 +102,11 @@ function smarty_function_formz_form($params, &$smarty) {
 			$form_items[] = $form_item;
 			continue;
 		}
+		
+		if (!isset($field['editable'])) $field['editable'] = $form->editable;
+		
+		// set up some validation
+		if (isset($field['validate']) && !empty($field['validate'])) $field['display']['validate'] = $field['validate'];
 		
 		/**
 		 * figure out the 'required' logic
@@ -140,7 +144,16 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 		}
 		
-		$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
+		if (!isset($field['display']['label'])) {
+			$label = $key;
+			if ($field['type'] == 'relation') {
+				if (isset($field['relation_alias'])) $label = $field['relation_alias'];
+				else if (isset($field['relation_class'])) $label = $field['relation_class'];
+			}
+			$label = format_label($label);
+		} else {
+			$label = $field['display']['label'];
+		}
 		$value = isset($data[$key]) ? $data[$key] : '';
 		
 		$field_type = null;
@@ -216,7 +229,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				$value = $field['default'];
 			}
 		}
-		
+
 		if (isset($field['editable']) && !$field['editable']) {
 			$field['display']['disabled'] = true;
 		}
@@ -241,7 +254,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		$form_item = '';
 		
 		if (!isset($field['display']['type']) || $field['display']['type'] != 'hidden') {
-			$required = ($field['required']) ? '<span class="required" title="Required">*</span>' : '';
+			$required = ($form->editable && $field['required']) ? '<span class="required" title="Required">*</span>' : '';
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';
 			$form_item .= '<label for="' . $control->getLabelName() .'"' .$titlestr. '>' . $label . $required . '</label>';
