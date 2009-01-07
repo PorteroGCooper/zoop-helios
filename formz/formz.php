@@ -1856,6 +1856,8 @@ class Formz {
 				case 'valid_properties':
 					continue;
 					break;
+				case '_searchableFields':
+					$ret[$_key] = $this->getSearchableFields();
 				default:
 					$ret[$_key] = $_val;
 					break;
