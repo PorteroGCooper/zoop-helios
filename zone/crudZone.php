@@ -526,7 +526,11 @@ class CrudZone extends zone {
 	function postUpdate() {
 		if (!$this->checkAuth('update')) return;
 		
-		$this->initUpdateForm();
+		if ($this->recordId() == 'new' && method_exists($this, 'initCreateForm')) {
+			$this->initCreateForm();
+		} else {
+			$this->initUpdateForm();
+		}
 
 		if (getPostText('update') || getPostText('update_and_create')) {
 			// save the posted values.

@@ -1008,8 +1008,8 @@ class Formz {
 			trigger_error("Field " . $name . " already exists.");
 			return false;
 		}
+		if (!isset($defaults['type'])) $defaults['type'] = 'text';
 		$this->_fields[$name] = $defaults;
-		
 		return $this->field($name);
 	}
 	
