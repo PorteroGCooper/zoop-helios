@@ -306,6 +306,25 @@ function fetch_r($mixed) {
 }
 
 /**
+ * Echo $in. Really big.
+ * 
+ * @access public
+ * @param mixed $in
+ * @return void
+ */
+function big($in) {
+	echo "<h1>\n\n";
+	
+	if (is_array($in) || is_object($in)) {
+		echo_r($in);
+	} else {
+		echo $in;
+	}
+	
+	echo "\n\n</h1>";
+}
+
+/**
  * &MapArray
  *
  * @param mixed $transformee
