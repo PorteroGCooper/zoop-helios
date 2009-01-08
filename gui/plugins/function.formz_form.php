@@ -284,49 +284,51 @@ function smarty_function_formz_form($params, &$smarty) {
 	}
 
 	// now add the form actions	
-	if ($form->editable && !$form->embedded) {
-		$id_field = $form->getIdField();
-		if ($form->isSluggable()) $slug_field = $form->getSlugField();
-		
-		$actions = $form->getActions();
-		foreach ($actions as $key => $action) {
-			if ($action['type'] == 'link') {
-				$link = $form->populateString($action['link']);
-				$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
-			} else {
-				$control = GuiControl::get('button', $key);
-				$control->setParams($action);			
-				$form_items[] = $control->renderControl();
-			}
-		}
-	} else {
-		// we only want the link actions here.
-		$actions = $form->getActions();
-		$action_links = array();
-		foreach ($actions as $key => $action) {
-			if ($action['type'] == 'link') {
-				$link = $form->populateString($action['link']);
-				
-				if (isset($action['class']) && !empty($action['class'])) {
-					$class = 'class="'. $action['class'] .'" ';
-				} else {
-					$class = '';
-				}
-				
-				if (isset($action['title']) && !empty($action['title'])) {
-					$title = 'title="'. $action['title'] .'" ';
-				} else {
-					$title = '';
-				}
-				$action_links[] = '<a '. $class . $title .'href="' . url($link) . '">' . $action['label'] . '</a>';
-			}
-		}
-		if (count($action_links)) {
-			$action_html = '<div class="form-actions">';
-			$action_html .= implode(Config::get('zoop.formz.list_actions.separator'), $action_links);
-			$action_html .= "</div>\n";
+	if (!$form->embedded) {
+		if ($form->editable) {
+			$id_field = $form->getIdField();
+			if ($form->isSluggable()) $slug_field = $form->getSlugField();
 			
-			$form_items[] = $action_html;
+			$actions = $form->getActions();
+			foreach ($actions as $key => $action) {
+				if ($action['type'] == 'link') {
+					$link = $form->populateString($action['link']);
+					$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
+				} else {
+					$control = GuiControl::get('button', $key);
+					$control->setParams($action);			
+					$form_items[] = $control->renderControl();
+				}
+			}
+		} else {
+			// we only want the link actions here.
+			$actions = $form->getActions();
+			$action_links = array();
+			foreach ($actions as $key => $action) {
+				if ($action['type'] == 'link') {
+					$link = $form->populateString($action['link']);
+					
+					if (isset($action['class']) && !empty($action['class'])) {
+						$class = 'class="'. $action['class'] .'" ';
+					} else {
+						$class = '';
+					}
+					
+					if (isset($action['title']) && !empty($action['title'])) {
+						$title = 'title="'. $action['title'] .'" ';
+					} else {
+						$title = '';
+					}
+					$action_links[] = '<a '. $class . $title .'href="' . url($link) . '">' . $action['label'] . '</a>';
+				}
+			}
+			if (count($action_links)) {
+				$action_html = '<div class="form-actions">';
+				$action_html .= implode(Config::get('zoop.formz.list_actions.separator'), $action_links);
+				$action_html .= "</div>\n";
+				
+				$form_items[] = $action_html;
+			}
 		}
 	}
 	
