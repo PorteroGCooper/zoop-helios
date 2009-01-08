@@ -336,7 +336,7 @@ function smarty_function_formz_list($params, &$smarty) {
 
 			// create a listlink
 			if (isset($fields[$field]['listlink'])) {
-				$link = $form->populateString($fields[$field]['listlink'], $record[$id_field], $record);
+				$link = $form->populateURL($fields[$field]['listlink'], $record[$id_field], $record);
 				$value = '<a ' . $link_title . 'class="listlink ' . $field . '-link" href="' . url($link) . '"><span>' . $value . '</span></a>';
 			} else if (isset($fields[$field]['listlinkCallback'])) {
 				// deal with the callback...
@@ -360,7 +360,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					foreach ($rowActions as $key => $rowAction) {
 						$value .= ' ';
 						if ($rowAction['type'] == 'link') {
-							$link = $form->populateString($rowAction['link'], $record[$id_field], $record);
+							$link = $form->populateURL($rowAction['link'], $record[$id_field], $record);
 							$value .= '<a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a>';
 						} else {
 							$control = GuiControl::get('button', $key);
@@ -373,7 +373,7 @@ function smarty_function_formz_list($params, &$smarty) {
 					$value = array();
 					foreach ($rowActions as $key => $rowAction) {
 						if ($rowAction['type'] == 'link') {
-							$link = $form->populateString($rowAction['link'], $record[$id_field], $record);
+							$link = $form->populateURL($rowAction['link'], $record[$id_field], $record);
 							$value[] = '<td><a class="'.$rowAction['class'].'" href="' . url($link) . '" title="'.$rowAction['title'].'"><span>' . $rowAction['label'] . '</span></a></td>';
 						} else {
 							$control = GuiControl::get('button', $key);

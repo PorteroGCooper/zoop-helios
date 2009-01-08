@@ -1527,15 +1527,19 @@ class Formz {
 	 * already has a record. When used in a list view, a record id must be supplied for each call
 	 * to this function. If available, passing an array of the record is recommended to reduce the
 	 * number of database queries necessary for a list view.
+	 *
+	 * This function also accepts a $urlencode_values parameter. {@see formz::populateURL}
 	 * 
 	 * @access public
 	 * @param string $string 
 	 * @param mixed $record_id Optionally, supply a record id to retrieve values from.
+	 * @param array $record Optionally, supply a record array to grab values from.
+	 * @param bool $urlencode_values
 	 * @return string Formatted string.
 	 */
-	function populateString($string, $record_id = null, $record = array()) {
-		if (isset($this->_populatedStrings[$record_id][$string])) {
-			return $this->_populatedStrings[$record_id][$string];
+	function populateString($string, $record_id = null, $record = array(), $urlencode_values = false) {
+		if (isset($this->_populatedStrings[$record_id][$string][$urlencode_values])) {
+			return $this->_populatedStrings[$record_id][$string][$urlencode_values];
 		}
 		
 		$matches = array();
@@ -1554,7 +1558,8 @@ class Formz {
 			foreach ($from as $i => $match) {
 				// if we have a $record array, use value from that if possible.
 				if (isset($record[$fields[$i]])) {
-					$to[$i] = urlencode($record[$fields[$i]]);
+					$to[$i] = $record[$fields[$i]];
+					if ($urlencode_values) $to[$i] = urlencode($to[$i]);
 					break;
 				}
 
@@ -1562,19 +1567,31 @@ class Formz {
 				if ($fields[$i] == 'id') {
 					$fields[$i] = $id_field;
 					if (!is_null($record_id)) {
-						$to[$i] = urlencode($record_id);
+						$to[$i] = $record_id;
+						if ($urlencode_values) $to[$i] = urlencode($to[$i]);
 						break;
 					}
 				}
 				if ($sluggable && $fields[$i] == 'slug') $fields[$i] = $slug_field;
 				
-				$to[$i] = urlencode($this->getValue($fields[$i], $record_id));
+				$to[$i] = $this->getValue($fields[$i], $record_id);
+				if ($urlencode_values) $to[$i] = urlencode($to[$i]);
 			}
 			$new_string = str_replace($from, $to, $string);
 		}
 
-		if (!is_null($record_id)) $this->_populatedStrings[$record_id][$string] = $new_string;
+		if (!is_null($record_id)) $this->_populatedStrings[$record_id][$string][$urlencode_values] = $new_string;
 		return $new_string;
+	}
+	
+	/**
+	 * A shortcut for URL encoding string population values.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function populateURL($string, $record_id = null, $record = array()) {
+		return $this->populateString($string, $record_id, $record, true);
 	}
 
 	/**

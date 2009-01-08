@@ -292,7 +292,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			$actions = $form->getActions();
 			foreach ($actions as $key => $action) {
 				if ($action['type'] == 'link') {
-					$link = $form->populateString($action['link']);
+					$link = $form->populateURL($action['link']);
 					$form_items[] = '<a href="' . url($link) . '">' . $action['label'] . '</a>';
 				} else {
 					$control = GuiControl::get('button', $key);
@@ -306,7 +306,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			$action_links = array();
 			foreach ($actions as $key => $action) {
 				if ($action['type'] == 'link') {
-					$link = $form->populateString($action['link']);
+					$link = $form->populateURL($action['link']);
 					
 					if (isset($action['class']) && !empty($action['class'])) {
 						$class = 'class="'. $action['class'] .'" ';
