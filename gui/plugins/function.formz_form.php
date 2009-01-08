@@ -65,6 +65,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	// $form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
 
 	foreach ($fields as $key => $field) {
+
 		$i++;
 		// skip ones we don't want on the form...
 		if (isset($field['formshow']) && $field['formshow'] == false) continue;
@@ -75,28 +76,43 @@ function smarty_function_formz_form($params, &$smarty) {
 				continue;
 			}
 		}
+		
+		if (!isset($field['display']['label'])) {
+			$label = $key;
+			if ($field['type'] == 'relation') {
+				if (isset($field['rel']['alias'])) $label = $field['rel']['alias'];
+				else if (isset($field['rel']['class'])) $label = $field['rel']['class'];
+			}
+			$label = format_label($label);
+		} else {
+			$label = $field['display']['label'];
+		}
 
-		// if (isset($field['relation_alias']) && $form->getParentTablename() === $field['relation_alias']) continue;
+		// if (isset($field['rel']['alias']) && $form->getParentTablename() === $field['rel']['alias']) continue;
 		
 		if (isset($field['embeddedForm'])) {
-			$label = (isset($field['display']['label'])) ? $field['display']['label'] : format_label($key);
 			$form_item = '<div class="formz-field-'.strtolower($key).'-wrapper embedded-formz-wrapper form-item">';
-		
+
 			$formz_object = $field['embeddedForm'];
-			if ($field['rel_type'] == Formz::ONE) {
-				if (isset($data[$key])) {
-					$formz_object->getRecord($data[$key]);
-				}
+			if ($field['rel']['rel_type'] == Formz::ONE) {
+				$embedded_id = (isset($data[$key])) ? $data[$key] : 'new';
+				$formz_object->getRecord($embedded_id);
+
+				$formz_object->setEditable($form->editable);
+				$formz_object->setFieldnamePrefix($key);
 			} else {
-				trigger_error('unable to embed MANY relations (for now)');
-				continue;
-				//$form_item .= '<h3>' . $label . '</h3>';
-				//$formz_object->setFieldConstraint($field['relation_local_field'], $record_id);
+				$foreign_constraint_name = $field['rel']['foreign_foreign'];
+				if ($field['rel']['foreign_rel_type'] == Formz::MANY) {
+					$foreign_constraint_name = $field['rel']['foreign_alias'] . '.' . $foreign_constraint_name;
+				}
+				$formz_object->field($foreign_constraint_name)->setConstraint($record_id);
 			}
-			$formz_object->setEditable($form->editable);
-			$formz_object->setFieldnamePrefix($key);
+
 			
 			$form_item .= '<div class="form-item-content">';
+			if ($field['rel']['rel_type'] == Formz::MANY) {
+				$form_item .= '<label class="embedded-formz-many">' . $label . '</label>';
+			}
 			$form_item .= smarty_function_formz(array('form' => $formz_object), $smarty);
 			$form_item .= '</div></div>';
 			$form_items[] = $form_item;
@@ -144,16 +160,6 @@ function smarty_function_formz_form($params, &$smarty) {
 			}
 		}
 		
-		if (!isset($field['display']['label'])) {
-			$label = $key;
-			if ($field['type'] == 'relation') {
-				if (isset($field['relation_alias'])) $label = $field['relation_alias'];
-				else if (isset($field['relation_class'])) $label = $field['relation_class'];
-			}
-			$label = format_label($label);
-		} else {
-			$label = $field['display']['label'];
-		}
 		$value = isset($data[$key]) ? $data[$key] : '';
 		
 		$field_type = null;
@@ -185,9 +191,9 @@ function smarty_function_formz_form($params, &$smarty) {
 				if (!isset($field['display']['index'])) {
 					$field['display']['index'] = $form->getTableRelationValues($key);
 				}
-				
+
 				// decide whether this should be single or multiple select
-				if ($field['rel_type'] == Formz::ONE) {
+				if ($field['rel']['rel_type'] == Formz::ONE) {
 					if (!isset($fields[$key]['display']['type'])) {
 						$type = 'select';
 					}

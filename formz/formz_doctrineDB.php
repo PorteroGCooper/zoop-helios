@@ -811,21 +811,39 @@ class formz_doctrineDB implements formz_driver_interface {
 			
 			// Grab 'field names' for each side of this relation.
 			if ($rel_type == Formz::ONE) {
-				$local_field   = $relation->getLocalFieldName();
+				$local_alias   = $relation->getLocalFieldName();
 				$foreign_field = $relation->getForeignFieldName();
 			} else {
 				// Formz::MANY requires that the local field be the class name.
-				$local_field   = $name;
+				$local_alias   = $name;
 				$foreign_field = $foreign_class->getIdentifier();
 				
 				// Skip if this relation is the join table.
 				if (is_array($foreign_field)) continue;
 				
 				// this *will* be used later by GCooper.
-				// $embeddedForm = new Formz($local_field);
+				// $embeddedForm = new Formz($local_alias);
 			}
 			
-			$foreign_alias = $relation->getForeign();
+			
+			// figure out this foreign junk.
+			unset($foreign_alias, $foreign_rel_type);
+			
+			// find the relation on the other end.
+			foreach ($relation->getTable()->getRelations() as $f_name => $f_relation) {
+				if ($f_relation->getClass() == $this->tablename) {
+					$foreign_rel_type = ($f_relation->getType() == Doctrine_Relation::MANY) ? Formz::MANY : Formz::ONE;
+					if ($foreign_rel_type == Formz::MANY) {
+						$foreign_alias = $f_name;
+						$foreign_foreign = $this->getIdField();
+					} else {
+						$foreign_foreign = $f_relation->getLocal();
+					}
+					break;
+				}
+			}
+			
+/* 			if ($name == 'Orders' || $name == 'AdministratorRole') echo $relation; */
 			
 			// guess which column to display in the select
 			$foreign_fields = $foreign_class->getColumnNames();
@@ -851,17 +869,28 @@ class formz_doctrineDB implements formz_driver_interface {
 				$label_field = $foreign_field;
 			}
 			
-			$ret[$local_field] = array(
-				'alias'         => $name,
-				'class'         => $relation['class'],
-				'rel_type'      => $rel_type,
-				'local_field'   => $local_field,
-				'foreign_field' => $foreign_field,
-				'foreign_alias' => $foreign_alias,
-				'label_field'   => $label_field,
-				'owning_side'   => $relation['owningSide'],
-				'values'        => $foreign_values,
+			$ret[$local_alias] = array(
+				'alias'            => $name,
+				'class'            => $relation['class'],
+				'rel_type'         => $rel_type,
+				'local_alias'      => $local_alias,
+				
+				// TODO: foreign field is named wrong!
+				'foreign_field'    => $foreign_field,
+				'label_field'      => $label_field,
+				'owning_side'      => $relation['owningSide'],
+				'values'           => $foreign_values,
 			);
+
+			if (isset($foreign_foreign)) {
+				$ret[$local_alias]['foreign_foreign'] = $foreign_foreign;
+			}
+			if (isset($foreign_rel_type)) {
+				$ret[$local_alias]['foreign_rel_type'] = $foreign_rel_type;
+			}
+			if (isset($foreign_alias)) {
+				$ret[$local_alias]['foreign_alias'] = $foreign_alias;
+			}
 		}
 		
 		return $ret;

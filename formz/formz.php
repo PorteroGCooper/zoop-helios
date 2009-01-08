@@ -20,8 +20,8 @@ class Formz {
 	 * Constants for defining relationships.
 	 *
 	 */
-	const ONE = 0;
-	const MANY = 1;
+	const ONE = 1;
+	const MANY = 2;
 
 	/**
 	 * Constants for defining driver types.
@@ -330,19 +330,19 @@ class Formz {
 				if ($fields[$name]['type'] == 'relation') {
 					if (isset($fields[$name]['embeddedForm'])) {
 						$embedded_id_field = $fields[$name]['embeddedForm']->getIdField();
-						$local_field = $fields[$name]['relation_local_field'];
+						$local_alias = $fields[$name]['rel']['local_alias'];
 						if (isset($values[$name][$embedded_id_field])) {
 							$embedded_id = $values[$name][$embedded_id_field];
 							unset($values[$name][$embedded_id_field]);
-						} else if (isset($values[$local_field])) {
-							$embedded_id = $values[$local_field];
+						} else if (isset($values[$local_alias])) {
+							$embedded_id = $values[$local_alias];
 						} else {
 							trigger_error("Unable to save embedded Formz without an ID field");
 						}
-						$save[$local_field] = $fields[$name]['embeddedForm']->saveRecord($values[$name], $embedded_id);
+						$save[$local_alias] = $fields[$name]['embeddedForm']->saveRecord($values[$name], $embedded_id);
 					} else {
 						if ($fields[$name]['rel_type'] == Formz::MANY) {
-							$save['relations'][$fields[$name]['relation_alias']] = $values[$name];
+							$save['relations'][$fields[$name]['rel']['alias']] = $values[$name];
 						} else {
 							$save[$name] = $values[$name];
 						}
@@ -364,7 +364,7 @@ class Formz {
 			
 				if ($field_info['type'] == 'relation') {
 					if ($field_info['rel_type'] == Formz::MANY) {
-						$save['relations'][$field_info['relation_alias']] = $values[$name];
+						$save['relations'][$field_info['rel']['alias']] = $values[$name];
 					} else {
 						$save[$name] = $values[$name];
 					}
@@ -666,13 +666,14 @@ class Formz {
 					$fields[$key]['type'] = 'relation';
 				}
 				
-				// TODO: stop embedding 'rel' here:
 				$fields[$key]['rel'] = $relation;
 				
+/*
 				$fields[$key]['relation_class']       = $relation['class'];
 				$fields[$key]['relation_alias']       = $relation['alias'];
-				$fields[$key]['relation_local_field'] = $relation['local_field'];
+				$fields[$key]['relation_local_alias'] = $relation['local_alias'];
 				$fields[$key]['rel_type']             = $relation['rel_type'];
+*/
 				
 				if (!isset($fields[$key]['display']['label'])) {
 					if (isset($relation_fields[$key]['display']['label'])) {
@@ -683,8 +684,8 @@ class Formz {
 				}
 				
 				// figure out what field to display for this relation (i.e. in a dropdown)
-				if (isset($fields[$key]['relation_label_field'])) {
-					$relation_label_field = $fields[$key]['relation_label_field'];
+				if (isset($fields[$key]['rel']['label_field'])) {
+					$relation_label_field = $fields[$key]['rel']['label_field'];
 				} else {
 					$relation_label_field = $relation['label_field'];
 				}
@@ -838,7 +839,7 @@ class Formz {
 		$ret = array();
 		
 		foreach ($this->_driver->getTableRelations() as $key => $rel) {
-			$ret[$rel['local_field']] = $key;
+			$ret[$rel['local_alias']] = $key;
 		}
 		return $ret;
 	}
@@ -1502,13 +1503,15 @@ class Formz {
 		if ($form && !($form instanceof Formz)) {
 			$fields = $this->getFields($fieldname);
 			if (isset($fields[$fieldname]) && $fields[$fieldname]['type'] == 'relation') {
-				$form = new Formz($fields[$fieldname]['relation_class']);
+				$form = new Formz($fields[$fieldname]['rel']['class']);
 			} else {
 				trigger_error("Formz field $fieldname is not a relation field, unable to embed Formz object.");
 			}
 		}
 		$form->setEmbedded(true);
 		$this->setFieldParam('embeddedForm', $fieldname, $form);
+		// if you embed the form, you wants to show it.
+		$this->setFieldParam('formshow', $fieldname, true);
 		return $form;
 	}
 	
@@ -1937,9 +1940,7 @@ class Formz {
 	function __dump() {
 		$ret = array();
 		
-		if ($this->type == 'record') {
-			$ret['values'] = $this->getData();
-		}
+		$ret['values'] = ($this->type == 'record') ? $this->getData(): $this->getRecords();
 		
 		foreach ($this as $_key => $_val) {
 			switch ($_key) {
