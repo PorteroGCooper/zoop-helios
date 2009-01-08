@@ -150,6 +150,14 @@ class Formz {
 	protected $searchable = false;
 
 	/**
+	 * Stores already populated strings to drastically reduce function calls and queries.
+	 *
+	 * @see Formz::populateString()
+	 * @access private
+	 */
+	private $_populatedStrings = array();
+
+	/**
 	 * Formz constructor. Returns an object implementing the Formz interface.
 	 *
 	 * Accepts a param defining which driver type to use. If the param is not passed,
@@ -1517,14 +1525,19 @@ class Formz {
 	 *
 	 * If this is used in the context of a record view, don't pass a record id, as this formz object
 	 * already has a record. When used in a list view, a record id must be supplied for each call
-	 * to this function.
+	 * to this function. If available, passing an array of the record is recommended to reduce the
+	 * number of database queries necessary for a list view.
 	 * 
 	 * @access public
 	 * @param string $string 
 	 * @param mixed $record_id Optionally, supply a record id to retrieve values from.
 	 * @return string Formatted string.
 	 */
-	function populateString($string, $record_id = null) {
+	function populateString($string, $record_id = null, $record = array()) {
+		if (isset($this->_populatedStrings[$record_id][$string])) {
+			return $this->_populatedStrings[$record_id][$string];
+		}
+		
 		$matches = array();
 		preg_match_all('#%([a-zA-Z0-9_\.]+?)%#', $string, $matches);
 
@@ -1539,15 +1552,29 @@ class Formz {
 			$to = array();
 
 			foreach ($from as $i => $match) {
+				// if we have a $record array, use value from that if possible.
+				if (isset($record[$fields[$i]])) {
+					$to[$i] = urlencode($record[$fields[$i]]);
+					break;
+				}
+
 				// replace with this table's id field, if applicable.
-				if ($fields[$i] == 'id') $fields[$i] = $id_field;
+				if ($fields[$i] == 'id') {
+					$fields[$i] = $id_field;
+					if (!is_null($record_id)) {
+						$to[$i] = urlencode($record_id);
+						break;
+					}
+				}
 				if ($sluggable && $fields[$i] == 'slug') $fields[$i] = $slug_field;
 				
 				$to[$i] = urlencode($this->getValue($fields[$i], $record_id));
 			}
-			$string = str_replace($from, $to, $string);
+			$new_string = str_replace($from, $to, $string);
 		}
-		return $string;
+
+		if (!is_null($record_id)) $this->_populatedStrings[$record_id][$string] = $new_string;
+		return $new_string;
 	}
 
 	/**
