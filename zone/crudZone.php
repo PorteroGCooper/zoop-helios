@@ -558,6 +558,7 @@ class CrudZone extends zone {
 	
 	protected function getRecordValues(&$form, $post_prefix = '') {
 		$values = array();
+		
 		foreach ($form->getFields() as $name => $field) {
 			if ((!isset($field['editable']) || $field['editable'])
 				&& (!isset($field['formshow']) || $field['formshow'])) {
@@ -577,7 +578,7 @@ class CrudZone extends zone {
 						if (isset($field['embeddedForm']) && $field['embeddedForm']) {
 							$values[$name] = $this->getRecordValues($field['embeddedForm'], $post_prefix . $name . '.');
 						} else {
-							switch ($field['rel_type']) {
+							switch ($field['rel']['rel_type']) {
 								case Formz::MANY:
 									if (getPostIsset($post_prefix . $name)) {
 										$values[$name] = getPost($post_prefix . $name);
@@ -776,7 +777,7 @@ class CrudZone extends zone {
 							$values[$name] = getPostBool($name);
 							break;
 						case 'relation':
-							switch ($field['rel_type']) {
+							switch ($field['rel']['rel_type']) {
 								case Formz::MANY:
 									if (getPostIsset($name)) {
 										$values[$name] = getPost($name);

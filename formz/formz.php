@@ -341,7 +341,7 @@ class Formz {
 						}
 						$save[$local_alias] = $fields[$name]['embeddedForm']->saveRecord($values[$name], $embedded_id);
 					} else {
-						if ($fields[$name]['rel_type'] == Formz::MANY) {
+						if ($fields[$name]['rel']['rel_type'] == Formz::MANY) {
 							$save['relations'][$fields[$name]['rel']['alias']] = $values[$name];
 						} else {
 							$save[$name] = $values[$name];
@@ -363,7 +363,7 @@ class Formz {
 			if (isset($values[$name])) {
 			
 				if ($field_info['type'] == 'relation') {
-					if ($field_info['rel_type'] == Formz::MANY) {
+					if ($field_info['rel']['rel_type'] == Formz::MANY) {
 						$save['relations'][$field_info['rel']['alias']] = $values[$name];
 					} else {
 						$save[$name] = $values[$name];

@@ -139,6 +139,7 @@ class zone {
 	 * @access public
 	 */
 	var $ext;
+	
 	/**
 	 * an array of the given request's (allowed) output.
 	 * @var String
