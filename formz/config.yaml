@@ -2,6 +2,12 @@ driver: forms
 type: list
 lotsa_classes: true
 
+# Hide the ID column by default in Formz lists.
+hide_id_field: true
+
+# Order Formz lists by the title field (default).
+sort_by_title: true
+
 # Formz pagination defaults.
 paginate:
     limit: 25

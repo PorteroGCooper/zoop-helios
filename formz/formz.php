@@ -201,6 +201,13 @@ class Formz {
 		$sort = $this->getSortField();
 		if ($sort) {
 			$this->sort($sort, $this->getSortOrder());
+		} else if (Config::get('zoop.formz.sort_by_title')) {
+			$this->setDefaultSort($this->getTitleField());
+		}
+		
+		// hide the id field
+		if (Config::get('zoop.formz.hide_id_field')) {
+			$this->field($this->getIdField())->setListshow(false);
 		}
 	}
 	

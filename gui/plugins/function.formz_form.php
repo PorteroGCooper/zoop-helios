@@ -87,11 +87,19 @@ function smarty_function_formz_form($params, &$smarty) {
 		} else {
 			$label = $field['display']['label'];
 		}
-
+		
 		// if (isset($field['rel']['alias']) && $form->getParentTablename() === $field['rel']['alias']) continue;
 		
 		if (isset($field['embeddedForm'])) {
-			$form_item = '<div class="formz-field-'.strtolower($key).'-wrapper embedded-formz-wrapper form-item">';
+			$wrapper_class = 'formz-field-'.strtolower($key).'-wrapper embedded-formz-wrapper form-item';
+			if ($field['rel']['rel_type'] == Formz::MANY) {
+				$wrapper_class .= ' embedded-formz-many-wrapper';
+			} else {
+				$wrapper_class .= ' embedded-formz-one-wrapper';
+			}
+				
+			
+			$form_item = '<div class="' . $wrapper_class . '">';
 
 			$formz_object = $field['embeddedForm'];
 			if ($field['rel']['rel_type'] == Formz::ONE) {
@@ -105,7 +113,7 @@ function smarty_function_formz_form($params, &$smarty) {
 				if ($field['rel']['foreign_rel_type'] == Formz::MANY) {
 					$foreign_constraint_name = $field['rel']['foreign_alias'] . '.' . $foreign_constraint_name;
 				}
-				$formz_object->field($foreign_constraint_name)->setConstraint($record_id);
+				$formz_object->field($foreign_constraint_name)->setConstraint($record_id)->setListshow(false);
 			}
 
 			
