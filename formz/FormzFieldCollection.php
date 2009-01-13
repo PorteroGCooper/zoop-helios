@@ -61,4 +61,12 @@ class FormzFieldCollection {
 		
 		return $this;
 	}
+	
+	function __dump() {
+		$ret = array();
+		foreach ($this->fields as $field) {
+			$ret[$field->name()] = $field->__dump();
+		}
+		return $ret;
+	}
 }

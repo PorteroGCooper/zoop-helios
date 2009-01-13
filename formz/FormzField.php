@@ -200,6 +200,7 @@ class FormzField {
 	 */
 	function setDisplayParams($params) {
 		$this->form->setFieldDisplayFromArray($this->name, $params);
+		return $this;
 	}
 
 	/**
@@ -222,8 +223,18 @@ class FormzField {
 		} else {
 			trigger_error($method . " method undefined on Formz Field object.");
 		}
-		
 		call_user_func_array(array($this->form, $function), $args);
 		return $this;
+	}
+	
+	function __dump() {
+		$ret = array();
+		$fields = $this->form->getFields();
+		if (isset($fields[$this->name])) {
+			$ret['field'] = $fields[$this->name];
+		}
+		$ret['value'] = $this->form->getValue($this->name);
+
+		return $ret;
 	}
 }

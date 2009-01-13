@@ -655,7 +655,7 @@ class auth {
 	 * @return void
 	 */
 	function _logout() {
-		unset( $_SESSION['auth'][$this->getConfig('session_user')] );
+		unset($_SESSION['auth'][$this->getConfig('session_user')]);
 	}
 	
 	/**
@@ -666,19 +666,6 @@ class auth {
 	 */
 	protected function _loginRedirect($include_redirect = true) {
 		
-	}
-
-	/**
-	 * Converting a given parameter to an array if it isn't already
-	 *
-	 * @deprecated
-	 * @param mixed $in
-	 * @access protected
-	 * @return void
-	 */
-	function _arrayize($in) {
-		deprecated('Use type casting instead of a call to _arrayize... (array)$foo');
-		return (array)$in;
 	}
 
 	/**
@@ -704,7 +691,7 @@ class auth {
 			$path = "." . $path;
 		}
 
-		return Config::get($this->configBase . $path );
+		return Config::get($this->configBase . $path);
 	}
 
 	/**

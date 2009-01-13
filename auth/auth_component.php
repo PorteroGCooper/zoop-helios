@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package cache
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -17,8 +14,8 @@
  * component_auth
  * Currently this component is database driven and dependant on sessions. It is configurable, but will use the default database connection
  *
- * @uses component
- * @package
+ * @ingroup zoop
+ * @ingroup auth
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
@@ -41,4 +38,3 @@ class component_auth extends component
 		);
 	}
 }
-?>

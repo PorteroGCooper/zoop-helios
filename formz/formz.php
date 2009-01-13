@@ -691,7 +691,7 @@ class Formz {
 				}
 				
 				if (isset($relation_fields[$key]['display'])) {
-					$fields[$key]['display'] = $relation_fields[$key]['display'];
+					$fields[$key]['display'] = Config::merge($relation_fields[$key]['display'], $fields[$key]['display']);
 				}
 				
 			} else {
@@ -703,7 +703,7 @@ class Formz {
 		foreach ($fields as $name => $field) {
 			if ($validate = $this->getFieldValidation($field)) $fields[$name]['validate'] = $validate;
 		}
-		
+
 		return $fields;
 	}
 	
@@ -1046,6 +1046,7 @@ class Formz {
 				}
 			}
 			$this->_fields[$field]['display'][$property] = $value;
+
 		}
 	}
 	
