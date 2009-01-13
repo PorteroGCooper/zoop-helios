@@ -28,6 +28,16 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class betterpasswordControl extends GuiContainer {
+	private $primary;
+	private $secondary;
+
+	function initControl() {
+		$this->primary = GuiControl::get('password', 'password');
+		$this->primary->setParent($this->getName());
+
+		$this->secondary = GuiControl::get('password', 'confirmpassword');
+		$this->secondary->setParent($this->getName());
+	}
 
 	/**
 	 * validate
@@ -73,6 +83,17 @@ class betterpasswordControl extends GuiContainer {
 	function getPersistentParams() {
 		return array('validate', 'encryption');
 	}
+	
+	/**
+	 * Override the default 'for' value (used for labels). Return the 'for' value of the first
+	 * password field inside this betterpassword guicontrol. This will focus the first field when
+	 * the label is clicked.
+	 *
+	 * @return string
+	 */
+	function getFor() {
+		return $this->primary->getFor();
+	}
 
 	/**
 	 * Render Better Password GuiControl as an HTML string.
@@ -89,13 +110,12 @@ class betterpasswordControl extends GuiContainer {
 		$name = $this->getName();
 		$this->setValue('', true);
 
-		$pwcontrol = GuiControl::get('password', 'password');
-		$pwcontrol->setParams($this->params);
-		$pwcontrol->setValue('', true);
-		$pwcontrol->setParam('type', 'password');
-		$pwcontrol->setParam('errorState', null);
-		$pwcontrol->setParent($name);
-		$html = $pwcontrol->renderControl();
+		$this->primary->setParams($this->params);
+		$this->primary->setParam('type', 'password');
+		$this->primary->setParam('errorState', null);
+		$this->primary->setValue('', true);
+
+		$html = $this->primary->renderControl();
 		
 		if (isset($this->params['confirm_label'])) {
 			$confirm_label = $this->params['confirm_label'];
@@ -104,13 +124,12 @@ class betterpasswordControl extends GuiContainer {
 		}
 		$html .= '<div class="guicontrol-betterpassword-confirm">'. $confirm_label .'</div>';
 
-		$pwccontrol = GuiControl::get('password', 'confirmpassword');
-		$pwccontrol->setParams($this->params);
-		$pwccontrol->setParam('type', 'password');
-		$pwccontrol->setParam('errorState', null);
-		$pwccontrol->setParent($name);
-		$pwccontrol->setValue('', true);
-		$html .= $pwccontrol->renderControl();
+		$this->secondary->setParams($this->params);
+		$this->secondary->setParam('type', 'password');
+		$this->secondary->setParam('errorState', null);
+		$this->secondary->setValue('', true);
+
+		$html .= $this->secondary->renderControl();
 
 		$this->controls = array(&$pwcontrol, &$pwccontrol);
 

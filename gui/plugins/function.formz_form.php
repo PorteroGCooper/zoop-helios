@@ -271,7 +271,7 @@ function smarty_function_formz_form($params, &$smarty) {
 			$required = ($form->editable && $field['required']) ? '<span class="required" title="Required">*</span>' : '';
 		
 			$titlestr = (isset($field['display']['title'])) ? ' title="'. $field['display']['title'] .'"' : '';
-			$form_item .= '<label for="' . $control->getLabelName() .'"' .$titlestr. '>' . $label . $required . '</label>';
+			$form_item .= '<label for="' . $control->getFor() .'"' .$titlestr. '>' . $label . $required . '</label>';
 		} else {
 			// this is a hidden form element, just render it and get on with things.
 			if ($form->editable) {

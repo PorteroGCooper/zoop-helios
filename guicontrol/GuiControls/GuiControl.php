@@ -173,6 +173,14 @@ class GuiControl {
 	}
 	
 	/**
+	 * Return the 'for' value to use in this GuiControl's label. Defaults
+	 *
+	 */
+	function getFor() {
+		return $this->getId();
+	}
+	
+	/**
 	 * Get the type for this GuiControl.
 	 *
 	 * @access public
