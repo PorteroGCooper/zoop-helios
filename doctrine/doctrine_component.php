@@ -87,28 +87,34 @@ class component_doctrine extends component {
 
 		// Attach listeners to the manager, current connection, or another connection.
 		if ($listeners = Config::get('zoop.doctrine.listeners')) {
-			foreach ($listeners as $type => $listener) {
-				if (!$listener['class'] || ! $listener['level']) continue;
+			foreach ($listeners as $type => $listener_classes) {
+				foreach ($listener_classes as $listener) {
+					if (!isset($listener['class']) || !$listener['class']) continue;
+					if ((!isset($listener['level']) || !$listener['level']) && $type != 'Include_Only') continue;
 
-				include_once(Config::get('zoop.doctrine.listeners_dir') . '/' . $listener['class'] . '.php');
+					include_once(Config::get('zoop.doctrine.listeners_dir') . '/' . $listener['class'] . '.php');
 
-				switch ($type) {
-					case 'Doctrine_EventListener':
-					case 'Doctrine_EventListener_Interface':
-					case 'Doctrine_Overloadable':
-						$method = 'addListener';
-						break;
-					case 'Doctrine_Record_Listener':
-						$method = 'addRecordListener';
-						break;
-				}
+					$method = '';
+					switch ($type) {
+						case 'Doctrine_EventListener':
+						case 'Doctrine_EventListener_Interface':
+						case 'Doctrine_Overloadable':
+							$method = 'addListener';
+							break;
+						case 'Doctrine_Record_Listener':
+							$method = 'addRecordListener';
+							break;
+					}
 
-				if ($listener['level'] == 'manager') {
-					$manager->$method(new $listener['class']());
-				} elseif ($listener['level'] == 'active_connection') {
-					$manager->getCurrentConnection()->$method(new $listener['class']());
-				} else {
-					$manager->getConnection($listener['level'])->$method(new $listener['class']());
+					if (empty($method)) continue;
+
+					if ($listener['level'] == 'manager') {
+						$manager->$method(new $listener['class']());
+					} elseif ($listener['level'] == 'active_connection') {
+						$manager->getCurrentConnection()->$method(new $listener['class']());
+					} else {
+						$manager->getConnection($listener['level'])->$method(new $listener['class']());
+					}
 				}
 			}
 		}
