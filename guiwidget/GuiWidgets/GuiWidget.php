@@ -266,6 +266,20 @@ class GuiWidget {
 		return $this;
 	}
 	
+	
+	/**
+	 * Return this Widget's gui object.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function gui() {
+		if (isset($this->gui)) return $this->gui;
+		
+		$this->gui = new WidgetGui();
+		return $this->gui;
+	}
+	
 	/**
 	 * Get an instance of a GuiWidget
 	 *

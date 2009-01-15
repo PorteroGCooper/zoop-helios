@@ -59,6 +59,7 @@ class component_guiwidget extends component {
 /**
  * Get an instance of a guiWidget
  *
+ * @deprecated
  * @param string $type
  * @param string $name
  * @param bool $useGlobal
@@ -66,5 +67,6 @@ class component_guiwidget extends component {
  * @return void
  */
 function &getGuiWidget($type, $name, $useGlobal = false) {
+	deprecated('Call GuiWidget::get() instead of getGuiWidget().');
 	return GuiWidget::get($type, $name, $useGlobal);
 }

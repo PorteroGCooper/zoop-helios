@@ -295,19 +295,17 @@ class gui extends Smarty {
 		return Smarty::fetch($tpl_file, $cache_id, $compile_id);
 	}
 
-	//	what is the point of this function. It isn't adding anything to the base class function
-	//	and the second paramater isn't even being used.
-	// 	Answer:
-	// 	This function echos, instead of displaying.. It doesn't work properly without this
 	/**
-	 * display
+	 * Render and echo a given template. Wraps a call to gui::fetch() and echos the result.
 	 *
-	 * @param mixed $tpl_file
+	 * @param string $tpl_file
+	 * @param string $cache_id (default:null)
+	 * @param string $compile_id (default:null)
 	 * @access public
 	 * @return void
 	 */
- 	function display($tpl_file, $cache_id = null, $compile_id = null)
- 	{
+ 	function display($tpl_file = null, $cache_id = null, $compile_id = null) {
+ 		
  		echo $this->fetch($tpl_file, $cache_id, $compile_id);
  	}
 
@@ -326,8 +324,7 @@ class gui extends Smarty {
 	 * @access protected
 	 * @return void
 	 */
-	function _smarty_include($params)
-	{
+	function _smarty_include($params) {
 		if($look = Config::get('app.gui.look')) {
 			$params['smarty_include_tpl_file'] = $look . "/" . $params['smarty_include_tpl_file'];
 		}
@@ -401,36 +398,6 @@ class gui extends Smarty {
 		$this->display(Config::get('zoop.gui.templates.html'));
 	}
 
-	/**
-	 * assignbrowser
-	 *
-	 * @access public
-	 * @return void
-	 * @deprecated 2.0
-	 */
-	function assignbrowser() {
-		$browser = $_SERVER['HTTP_USER_AGENT'];
-		$ie6 = 'MSIE 6.0';
-		$ie55 = 'MSIE 5.5';
-		$win = 'Window';
-
-		$pos1 = strpos($browser, $win);
-
-		if ($pos1 == true)
-			{
-				$pos2 = strpos($browser, $ie6);
-				$pos3 = strpos($browser, $ie55);
-				if ($pos2 == true)
-					$this->assign("browser", "ie 6");
-				else if ($pos3 == true)
-					$this->assign("browser", "ie 5.5");
-				else
-					$this->assign("browser", "other");
-			}
-		else
-			$this->assign("browser", "other");
-	}
-
 	function is_cached($inTpl, $cache_id = null,  $compile_id = null)
 	{
 
@@ -457,7 +424,7 @@ class gui extends Smarty {
 	 * @access public-ish
 	 * @return void
 	 */
-	function init_regions() {
+	function initRegions() {
 		$sort = Config::get('zoop.gui.regions');
 		$templates = Config::get('zoop.gui.templates');
 		foreach ($sort as $name) {
@@ -467,6 +434,11 @@ class gui extends Smarty {
 				trigger_error("No template file specified for region $name");
 			}
 		}
+	}
+	
+	function init_regions() {
+		deprecated('call initRegions instead.');
+		$this->initRegions();
 	}
 	
 	/**
@@ -718,7 +690,7 @@ class gui extends Smarty {
 			return call_user_func_array(array($this, $call_function), $args);
 		}
 		else {
-			trigger_error($method . " method undefined on Gui object.");
+			trigger_error($method . " method undefined on Gui object.", E_USER_ERROR);
 		}
 	}
 

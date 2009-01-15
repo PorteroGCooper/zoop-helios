@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -23,20 +24,14 @@
  * Purpose:  instantiate a webcontrol and call render() on it.
  * -------------------------------------------------------------
  */
-function smarty_function_guiwidget($params, &$smarty)
-{
-	if(isset($params['guiwidget']))
-	{
+function smarty_function_guiwidget($params, &$smarty {
+
+	if(isset($params['guiwidget'])) {
 		$control = $params['guiwidget'];
-	}
-	else
-	{
+	} else {
 		$type = $params['type'];
-		if (isset($params['name']))
-			$name = $params['name'];
-		else
-			$name = null;
-		$control = &getGuiWidget($type, $name);
+		$name = (isset($params['name'])) ? $params['name'] : null;
+		$control = GuiWidget::get($type, $name);
 	}
 
 	if (isset($params['echo']))
