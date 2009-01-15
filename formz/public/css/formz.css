@@ -33,6 +33,11 @@
 	color: #888;
 }
 
+/* special override for slider guicontrols */
+.formz-slider-wrapper .form-item-content {
+	padding-top: 1em;
+	margin-bottom: 1.5em;
+}
 
 /* style sortable formz */
 .formz-list.sortable table thead th {

@@ -91,13 +91,14 @@
 	position: absolute;
 	overflow: visible;
 	color: #666;
+	text-align: center;
 }
 
 .ui-slider li span.ui-slider-label, .ui-slider dd span.ui-slider-label {
 	display: none;
 	position: relative;
 	top: 0;
-	text-align: right;
+	text-align: center;
 	padding: .2em;
 	font-size: .9em;
 	width: 4em;
@@ -106,13 +107,15 @@
 
 .ui-slider li span.ui-slider-label-show, .ui-slider dd span.ui-slider-label-show {
 	display: block;
-	position: relative;
-	top: 0;
+}
+
+.ui-slider li.first span.ui-slider-label, .ui-slider dd.first span.ui-slider-label {
+	margin-left: 0;
+	text-align: left;
+}
+.ui-slider li.last span.ui-slider-label, .ui-slider dd.last span.ui-slider-label {
+	margin-left: 0;
 	text-align: right;
-	padding: .2em;
-	font-size: .9em;
-	width: 4em;
-	margin-left: -2em;
 }
 
 .ui-slider span.ui-slider-tic {
