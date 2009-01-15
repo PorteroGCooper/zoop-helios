@@ -143,6 +143,7 @@ class Formz {
 
 	var $record_id;
 	var $slug_field;
+	protected $titleField;
 	
 	protected $timestampable = false;
 	protected $sortable = true;
@@ -205,9 +206,12 @@ class Formz {
 			$this->setDefaultSort($this->getTitleField());
 		}
 		
-		// hide the id field
+		// hide the id field (but only if it's not also the title field)
 		if (Config::get('zoop.formz.hide_id_field')) {
-			$this->field($this->getIdField())->setListshow(false);
+			$id_field = $this->getIdField();
+			if ($id_field != $this->getTitleField()) {
+				$this->field($this->getIdField())->setListshow(false);
+			}
 		}
 	}
 	
@@ -1912,17 +1916,30 @@ class Formz {
 	 * @return string Database title field
 	 */
 	function getTitleField() {
-		$label_field = $this->getIdField();
-
+		if (!empty($this->titleField)) return $this->titleField;
+		
+		$id_field = $title_field = $this->getIdField();
 		$fields = $this->getFields();
-		foreach(Config::get('zoop.formz.title_field_priority') as $field_name){
+		
+		// first, try to find a specified title field.
+		foreach (Config::get('zoop.formz.title_field_priority') as $field_name){
+			if ($field_name == $id_field) continue;
 			if (isset($fields[$field_name])) {
-				$label_field = $field_name;
+				$title_field = $field_name;
 				break;
 			}
 		}
-
-		return $label_field;
+		
+		// then try to find a string field
+		foreach ($fields as $field_name => $field) {
+			if ($field['type'] == 'string') {
+				$title_field = $field_name;
+				break;
+			}
+		}
+		
+		// fallback is the id field
+		return $this->titleField = $title_field;
 	}
 	
 	/**
