@@ -174,7 +174,7 @@ class gui extends Smarty {
 		$this->assign("app_dir", APP_DIR);
 		
 		// Initialize the gui object's default regions and template files.
-		$this->init_regions();
+		$this->initRegions();
 
 		if ($title = Config::get('app.title')) {
 			$this->assign("title", $title);

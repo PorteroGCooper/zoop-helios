@@ -24,9 +24,9 @@
  * Purpose:  instantiate a webcontrol and call render() on it.
  * -------------------------------------------------------------
  */
-function smarty_function_guiwidget($params, &$smarty {
+function smarty_function_guiwidget($params, &$smarty) {
 
-	if(isset($params['guiwidget'])) {
+	if (isset($params['guiwidget'])) {
 		$control = $params['guiwidget'];
 	} else {
 		$type = $params['type'];
