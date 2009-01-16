@@ -315,13 +315,18 @@ function smarty_function_formz_list($params, &$smarty) {
 			} else {
 				$value = '';	
 			}
-			
+
 			$field_type = null;
-			if (isset($fields[$field]['type'])) {
+			if (isset($fields[$field]['display']['type'])) {
+				$field_type = $fields[$field]['display']['type'];
+			} else if ($field == 'password' || $field == 'pass') {
+				/// Autodetect password fields, make 'em display as stars.
+				$field_type = 'password';
+			} else if (isset($fields[$field]['type'])) {
 				$field_type = $fields[$field]['type'];
 			}
-			
-			switch ($field_type) {				
+
+			switch ($field_type) {
 				case 'boolean' :
 					$value = $value ? 'true' : 'false';
 					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
@@ -329,6 +334,9 @@ function smarty_function_formz_list($params, &$smarty) {
 			}
 			
 			$value = (isset($fields[$field]['display']['override'])) ? $fields[$field]['display']['override'] : $value;
+			
+			// @todo get rid of this. it's ugly.
+			if ($field_type == 'password' && !Config::get('zoop.guicontrol.enable_show_passwords')) $value = '********';
 
 			// @todo take care of relations...
 
@@ -389,7 +397,7 @@ function smarty_function_formz_list($params, &$smarty) {
 		if (!empty($value) && !empty($rowActions)) {
 			$row[] = $value;
 		}
-		
+
 		if ($lotsa_classes) $row_classes[] = ($rowIndex % 2 == 0) ? 'even' : 'odd';
 		$class = (count($row_classes)) ? ' class="' . implode(' ', $row_classes) . '"' : '';
 		$rows[] = "<tr" . $class . ">\n\t\t\t" . implode("\n\t\t\t", $row) . "\n\t\t</tr>\n";

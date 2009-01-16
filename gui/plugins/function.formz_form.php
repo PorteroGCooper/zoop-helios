@@ -10,8 +10,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-include_once(dirname(__file__) . "/function.guicontrol.php");
-
 /**
  * Smarty plugin to render Formz objects as HTML forms (edit and view).
  *
@@ -61,9 +59,11 @@ function smarty_function_formz_form($params, &$smarty) {
 	}
 	$i = -1;
 
-	// add a form token first.
-	// $form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
-
+	if (!Config::get('zoop.formz.disable_csrf_protection')) {
+		// add a form token first.
+		$form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
+	}
+	
 	foreach ($fields as $key => $field) {
 
 		$i++;

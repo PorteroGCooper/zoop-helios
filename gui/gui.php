@@ -398,8 +398,7 @@ class gui extends Smarty {
 		$this->display(Config::get('zoop.gui.templates.html'));
 	}
 
-	function is_cached($inTpl, $cache_id = null,  $compile_id = null)
-	{
+	function is_cached($inTpl, $cache_id = null,  $compile_id = null) {
 
 		if($look = Config::get('app.gui.look')) {
 			$inTpl = $look . "/" . $inTpl;
@@ -407,19 +406,17 @@ class gui extends Smarty {
 		return  parent::is_cached($inTpl, $cache_id, $compile_id);
 	}
 
-	function init_registrations()
-	{
+	function init_registrations() {
 		$this->register_block('dynamic', array('gui', 'smarty_block_dynamic'), false);
 	}
 
-	function smarty_block_dynamic($param, $content, &$smarty) 
-	{
+	function smarty_block_dynamic($param, $content, &$smarty) {
 		return $content;
 	}
 	
 	/**
 	 * Initialize regions. Called when the gui object is first created, sets up zoop or app
-	 * Defaults and template files.
+	 * defaults and template files.
 	 *
 	 * @access public-ish
 	 * @return void
@@ -434,11 +431,6 @@ class gui extends Smarty {
 				trigger_error("No template file specified for region $name");
 			}
 		}
-	}
-	
-	function init_regions() {
-		deprecated('call initRegions instead.');
-		$this->initRegions();
 	}
 	
 	/**

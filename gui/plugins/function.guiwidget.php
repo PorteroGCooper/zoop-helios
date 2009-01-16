@@ -12,8 +12,10 @@
 
 /**
  * Zoop Smarty plugin
- * @package gui
- * @subpackage plugins
+ *
+ * @ingroup gui
+ * @ingroup plugins
+ * @ingroup GuiWidget
  */
 
 /*
@@ -33,43 +35,33 @@ function smarty_function_guiwidget($params, &$smarty) {
 		$name = (isset($params['name'])) ? $params['name'] : null;
 		$control = GuiWidget::get($type, $name);
 	}
-
-	if (isset($params['echo']))
-		$echo = $params['echo'];
-	else
-		$echo = true;
-
-	foreach($params as $key => $value)
-	{
-		if($key[0] != '_')
-		{
+	
+	$echo = (isset($params['echo'])) ? $params['echo'] : false;
+	
+	foreach ($params as $key => $value) {
+		if ($key[0] != '_') {
 			$control->setParam($key, $value);
-		}
-		else
-		{
+		} else {
 			$keys = explode('_', $key);
 			array_shift($keys);
 			$tmpkeys = $keys;
 			$tmpval  = $value;
-			while (!empty($tmpkeys))
-			{
+			
+			while (!empty($tmpkeys)) {
 				$tmpval = array(array_pop($tmpkeys) => $tmpval);
 			}
 
-			if (isset($specialParams))
+			if (isset($specialParams)) {
 				$specialParams = array_merge_recursive($specialParams, $tmpval);
-			else
+			} else {
 				$specialParams = $tmpval;
+			}
 		}
 	}
-	if(isset($specialParams))
-	{
+	
+	if (isset($specialParams)) {
 		$control->setParams($specialParams);
 	}
 
 	return $control->renderWidget($echo);
 }
-
-/* vim: set expandtab: */
-
-?>
