@@ -2,6 +2,9 @@ driver: forms
 type: list
 lotsa_classes: true
 
+# Disabling CSRF protection is a Bad Idea. Don't change this unless you want to get haxx0rd.
+disable_csrf_protection: false
+
 # Hide the ID column by default in Formz lists.
 hide_id_field: true
 

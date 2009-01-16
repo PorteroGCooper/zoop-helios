@@ -29,6 +29,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
  * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
@@ -55,45 +56,42 @@ class SelectControl extends GuiMultiValue {
 		if (!isset($this->params['index'])) {
 			$this->params['index'] = array();
 		}
-
-		$attrs = array();
-		foreach ($this->params as $parameter => $value) {
-			// Here we setup specific parameters that will go into the html
-			switch ($parameter) {
-				case 'title':
-				case 'size':
-				case 'onChange':
-				case 'onBlur':
-					if (!empty($value)) $attrs[] = $parameter .'="'. $value .'"';
-					break;
-				case 'readonly':
-				case 'disabled':
-					if (!empty($value)) $attrs[] = 'disabled="disabled"';
-					break;
-				case 'multiple':
-					if ($value) $attrs[] = 'multiple="true"';
-					break;
-				// The 'null_label' is a "- Select an Option -" style value at the top of a single select list.
-				// this param should not be supplied on a multi-select list.
-				case 'null_label':
-					if (empty($value) || $value === true) {
-						$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
-					}
-					$this->params['index'] = array('' => $value) + $this->params['index'];
-					break;
+		
+		// add a null label to the index if it's not already set.
+		// The 'null_label' is a "- Select an Option -" style value at the top of a single select list.
+		// this param should not be supplied on a multi-select list.
+		if (isset($this->params['null_label'])) {
+			if (empty($this->params['null_label']) || $this->params['null_label'] === true) {
+				$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
 			}
+			$this->params['index'] = array('' => $value) + $this->params['index'];
 		}
+		
+		$name_id = $this->getNameIdString();
+		$class = 'class="' . $this->getClass() . '"';
+		$attrs = $this->renderHTMLAttrs();
 
-		$attrs = implode(' ', $attrs);
-		$id = $this->getId();
-		$name = $this->getLabelName();
-
-		if (isset($this->params['multiple']) && $this->params['multiple']) $name .= "[]";
-
-		$html =  '<select name="' . $name . '" id="' . $id . '" ' . $attrs . '>';
-		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
-		$html .=  "</select>";
+		$html =  "<select $name_id $class $attrs>";
+		$html .= $this->renderOptions();
+		$html .= "</select>";
 
 		return $html;
+	}
+	
+	function getHTMLAttrs() {
+		$attrs = parent::getHTMLAttrs();
+		if ($multiple = $this->getParam('multiple')) $attrs[] = 'multiple="true"';
+		return $attrs;
+	}
+	
+	function getLabelName() {
+		$name = parent::getLabelName();
+		if (isset($this->params['multiple']) && $this->params['multiple']) $name .= "[]";
+		return $name;
+	}
+	
+	function renderOptions() {
+		global $gui;
+		return smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
 	}
 }

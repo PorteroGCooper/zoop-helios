@@ -29,12 +29,16 @@ class DateControlControl extends TextControl {
 		$gui->add_js('/zoopfile/gui/js/jquery.js', 'zoop');
 		$gui->add_js('/zoopfile/gui/js/jquery.date_input.js', 'zoop');
 		$gui->add_css('/zoopfile/gui/css/date_input.css', 'zoop');
+		
+		$this->setParam('size', 20);
+		$this->setParam('maxlength', 20);
 	}
 	
 	function validate() {
 		if(isset($this->params['validate'])) {
 			$date = Validator::validateDate($this->getValue(), $this->params['validate']);
 			if($date['result'] !== true) {
+				// @todo this shouldn't echo anything...
 				echo_r($date['message']);
 			}
 		}
@@ -52,13 +56,9 @@ class DateControlControl extends TextControl {
 	protected function render() {
 		global $gui;
 		
-		$input_id = $this->getId();
-		
-		$size = parent::setParam('size','20');
-		$maxlength = parent::setParam('maxlength','20');
-		
 		$html = parent::render();
 		
+		$input_id = $this->getId();
 		$gui->add_jquery('$("#'.$input_id.'").date_input({
 			stringToDate: function(string) {
 				var matches;

@@ -10,7 +10,10 @@ include_once(dirname(__file__) . "/text.php");
  * @ingroup guicontrol
  * @see TextControl
  */
-class HiddenControl extends textControl {
+class HiddenControl extends TextControl {
+	function initControl() {
+		$this->type = 'hidden';
+	}
 
 	/**
 	 * A 'hidden' form element shouldn't show on a Read page.

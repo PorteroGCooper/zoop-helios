@@ -29,6 +29,7 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_checkboxes.php");
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class CheckboxesControl extends GuiMultiValue {
@@ -114,13 +115,15 @@ class CheckboxesControl extends GuiMultiValue {
 		global $gui;
 
 		$smartyParams = array('options' => $this->params['index']);
-		
 		$input_id = $this->getId();
-		
 		$class = array('checkboxes');
 		
 		foreach ($this->params as $parameter => $value) {
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
+			switch ($parameter) {
+				case 'class':
+					if (!is_array($value)) $value = explode(' ', $value);
+					$class = array_merge($class, $value);
+					break;
 				case 'title':
 					if ($value != '')
 						$smartyParams[$parameter] = "$value";
@@ -150,16 +153,13 @@ class CheckboxesControl extends GuiMultiValue {
 			}
 		}
 
-		$value = $this->getValue();
-		$value ? $checked = "checked" : $checked = "";
-		$label = $this->getLabelName();
-
-		$smartyParams['selected'] = $value;
-		$smartyParams['name'] = $label;
+		$smartyParams['selected'] = $this->getValue();
+		$smartyParams['name'] = $this->getLabelName();
 		
-		$html = '<div id="'.$this->getId().'" class="'.implode(' ',$class).'">';
+		$html = '<div id="' . $this->getId() . '" class="' . implode(' ', $class) . '">';
 		$html .= smarty_function_html_checkboxes($smartyParams, $gui);
 		$html .= '</div>';
+
 		return $html;
 	}
 

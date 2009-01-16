@@ -27,7 +27,7 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class betterpasswordControl extends GuiContainer {
+class BetterPasswordControl extends GuiContainer {
 	private $primary;
 	private $secondary;
 
@@ -46,7 +46,7 @@ class betterpasswordControl extends GuiContainer {
 	 * @return void
 	 */
 	function validate() {
-		if ($this->params['password'] != $this->params['confirmpassword']) {
+		if ($this->getParam('password') != $this->getParam('confirmpassword')) {
 			return array('text' => 'passwords do not match', 'value' => '');
 		} else {
 			return parent::validate();
@@ -72,6 +72,20 @@ class betterpasswordControl extends GuiContainer {
 		}
 
 		return $value;
+	}
+	
+	/**
+	 * A 'password' form element shouldn't show on a read page or a list, unless
+	 * it is specifically asked for. DANGER!
+	 *
+	 * @return string View state for password GuiControls
+	 */
+	function view() {
+		if ($this->getParam('show_password') || Config::get('zoop.guicontrol.enable_show_passwords')) {
+			return parent::view();
+		} else {
+			return '********';
+		}
 	}
 
 	/**
@@ -130,8 +144,6 @@ class betterpasswordControl extends GuiContainer {
 		$this->secondary->setValue('', true);
 
 		$html .= $this->secondary->renderControl();
-
-		$this->controls = array(&$pwcontrol, &$pwccontrol);
 
 		return $html;
 	}

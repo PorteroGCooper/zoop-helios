@@ -11,9 +11,9 @@ include_once(dirname(__file__) . "/select.php");
  */
 class MultipleControl extends SelectControl {
 	protected function render() {
-		$this->params['multiple'] = 1;
-		if (!isset($this->params['size'])) {
-			$this->params['size'] = 4;
+		$this->setParam('multiple', true);
+		if (!$this->getParam('size')) {
+			$this->setParam('size', 4);
 		}
 		return parent::render();
 	}

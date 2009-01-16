@@ -76,7 +76,7 @@ class RadioControl extends GuiControl {
 				case 'readonly':
 				case 'disabled':
 					if ($value)
-						$smartyParams['disabled']="true";
+						$smartyParams['disabled'] = "true";
 					break;
 				case 'separator':
 					$smartyParams['separator'] = $value;

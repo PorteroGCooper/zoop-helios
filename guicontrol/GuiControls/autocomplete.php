@@ -31,13 +31,6 @@ class AutocompleteControl extends TextControl {
 		$gui->add_css('/zoopfile/gui/css/autocomplete.css', 'zoop');
 	}
 	
-/*
-	function validate() {
-		// die_r($this->getValue());
-		// die_r($GLOBALS);
-	}
-*/
-
 	/**
 	 * Render GuiControl
 	 *

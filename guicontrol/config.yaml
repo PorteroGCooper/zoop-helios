@@ -3,3 +3,6 @@ directories:
     app: %APP_DIR%/view/GuiControls/
     
 multi_value_separator: ', '
+
+#DANGER! DON'T ENABLE THIS!
+enable_show_passwords: false

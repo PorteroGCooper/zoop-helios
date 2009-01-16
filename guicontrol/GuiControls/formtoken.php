@@ -22,8 +22,11 @@ include_once(dirname(__file__) . "/hidden.php");
  * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class FormTokenControl extends hiddenControl {
-
+class FormTokenControl extends HiddenControl {
+	function initControl() {
+		$this->setParam('type', 'hidden');
+	}
+	
 	/**
 	 * validate
 	 *
@@ -31,19 +34,16 @@ class FormTokenControl extends hiddenControl {
 	 * @return void
 	 */
 	function validate() {
-		return parent::validate();
-		
-/*
-		die_r($GLOBALS['controls']);
-	
-		if (!$this->_checkGuid()) {
-			return array('text' => 'There was an error with your form submission. Please resubmit.', 'value' => '');
+		if (!$this->checkGuid()) {
+			$errorStatus = array('text' => 'There was an error with your form submission. Please resubmit.', 'value' => '');
 		} else {
-			// set a new token, even if the old one was right. Every render of this page should set a Guid.
-			$this->setValue($this->_registerGuid());
-			return parent::validate();
+			$errorStatus = parent::validate();
 		}
-*/
+		
+		// set a new token, even if the old one was right. Every render of this page should set a new Guid.
+		$this->setValue($this->getGuid());
+		
+		return $errorStatus;
 	}
 
 	/**
@@ -63,13 +63,11 @@ class FormTokenControl extends hiddenControl {
 	 * @return void
 	 */
 	function render() {
-		$this->setParam('type', 'hidden');
-		$this->setValue($this->_registerGuid());
-		
+		$this->setValue($this->getGuid());
 		return parent::render();
 	}
 	
-	private function _registerGuid() {
+	private function getGuid() {
 		$guid = com_create_guid();
 		
 		// register this as a valid guid.
@@ -82,18 +80,18 @@ class FormTokenControl extends hiddenControl {
 		return $guid;
 	}
 	
-	private function _checkGuid() {
+	private function checkGuid() {
 		$guid = $this->getValue();
 
-die_r($this->params);
-
-		if (isset($this->params['guid'][$guid]) && $this->params['guid'][$guid] > time()) {
-			die_r(date('c', $this->params['guid'][$guid]));
+		$valid_guids = $this->getParam('guid');
+		if (isset($valid_guids[$guid]) && $expiration_date = $valid_guids[$guid]) {
 			// use up this guid.
-			unset($this->params['guid'][$guid]);
-			return true;
-		} else {
-			return false;
+			unset($valid_guids[$guid]);
+			$this->setParams('guid', $guids);
+			
+			if ($expiration_date > time()) return true;
 		}
+		
+		return false;
 	}
 }

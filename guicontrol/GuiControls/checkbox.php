@@ -18,9 +18,14 @@
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class CheckboxControl extends GuiControl {
+
+	function initControl() {
+		$this->type = 'checkbox';
+	}
 
 	/**
 	 * validate
@@ -75,39 +80,15 @@ class CheckboxControl extends GuiControl {
 	 * @return string HTML checkbox
 	 */
 	protected function render() {
-		if(!isset($this->params['type']))
-			$this->params['type'] = 'checkbox';
-		$attrs = array();
-		$Sattrs = array();
-		foreach ($this->params as $parameter => $value) {
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
-				case 'title':
-				case 'size':
-				case 'type':
-					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
-					break;
-				case 'readonly':
-				case 'disabled':
-					if ($value)
-						$attrs[] = "readonly=\"true\"";
-				case 'width':
-				case 'height':
-					if ($value != '')
-						$Sattrs[] = "$parameter:$value;";
-					break;
-			}
-		}
+		$type = (isset($this->params['type'])) ? $this->params['type'] : $this->getType();
+		$type = 'type="' . $type . '"';
+	
+		$name_id = $this->getNameIdString();
+		$class = 'class="' . $this->getClass() .'"';
+		$attrs = $this->renderHTMLAttrs();
+		$checked = $this->getValue() ? 'checked="true"' : '';
 
-		$value = $this->getValue();
-		$value ? $checked = "checked" : $checked = "";
-
-		$attrs[] = "style=\"" . implode(' ', $Sattrs) . "\"";
-		$attrs = implode(' ', $attrs);
-		$vc = $this->getValidationClasses();
-		$ni = $this->getNameIdString();
-
-		$html = "<input class=\"$vc\"  $ni $attrs $checked />";
+		$html = "<input $type $name_id $class $attrs $checked />";
 
 		return $html;
 	}

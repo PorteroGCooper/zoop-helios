@@ -30,48 +30,50 @@ class TextareaControl extends GuiControl {
 	 */
 	protected function render() {
 		$attrs = array();
+		
+		$name_id = $this->getNameIdString();
+		$class = 'class="' . $this->getClass() . '"';
+		$attrs = $this->renderHTMLAttrs();
+		
+		$html = "<textarea $name_id $class $attrs>";
+		$html .= htmlentities($this->getValue());
+		$html .='</textarea>';
 
-		foreach ($this->params as $parameter => $value) {
-			switch ($parameter) {   // Here we setup specific parameters that will go into the html
-				case 'title':
-				case 'rows':
-				case 'cols':
-				case 'wrap':
+		return $html;
+	}
+	
+	/**
+	 * Override default getHTMLAttrs method.
+	 *
+	 * Remove style attr--it'll get reset here, unless it was a width/height value
+	 * those need to be removed since they're used here as aliases for
+	 * rows and columns.
+	 *	
+	 * @access public
+	 * @return string
+	 */
+	function getHTMLAttrs() {
+		$attrs = parent::getHTMLAttrs();
+		
+		if (isset($attrs['style'])) unset($attrs['style']);
+		
+		foreach ($this->params as $param => $value) {
+			switch ($param) {
 				case 'style':
-					if ($value != '')
-						$attrs[] = "$parameter=\"$value\"";
+				case 'wrap':
+					if (!empty($value)) $attrs[$parameter] = "$parameter=\"$value\"";
 					break;
 				case 'width': // alias for cols
-					if ($value != '')
-						$attrs[] = "cols='$value'";
+				case 'cols':
+					if (!empty($value)) $attrs['cols'] = 'cols="' . $value . '"';
 					break;
 				case 'height': // alias for rows
-					if ($value != '')
-						$attrs[] = "rows='$value'";
-					break;
-				case 'readonly':
-				case 'disabled':
-					if ($value)
-						$attrs[] = "disabled=\"true\"";
+				case 'rows':
+					if (!empty($value)) $attrs['rows'] = 'rows="' . $value . '"';
 					break;
 			}
 		}
-
-		$vc = $this->getValidationClasses();
-		if (isset($this->params['class'])) {
-			$vc .= " " . $this->params['class'];
-		}
 		
-		if (!empty($vc)) {
-			$attrs[] = ' class="' . $vc . '"';
-		}
-		
-		$ni = $this->getNameIdString();
-		$v = htmlentities($this->getValue());
-		$attrs = implode(' ', $attrs);
-
-		$html = '<textarea '. $ni .' '. $attrs .'>'. $v .'</textarea>';
-
-		return $html;
+		return $attrs;
 	}
 }

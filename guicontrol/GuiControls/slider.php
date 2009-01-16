@@ -15,10 +15,11 @@ include_once(dirname(__file__) . "/select.php");
 /**
  * Slider GuiControl class.
  *
- *
  * @ingroup gui
- * @ingroup guicontrol
+ * @ingroup GuiControl
  * @author Andy Nu <nuandy@gmail.com>
+ * @author Justin Hileman {@link http://justinhileman.com}
+ * @extends SelectControl
  */
 class SliderControl extends SelectControl {
 	
@@ -31,12 +32,9 @@ class SliderControl extends SelectControl {
 		$gui->add_css('/zoopfile/gui/css/slider.css', 'zoop');
 	}
 	
-	function getPersistentParams() {
-		return array('validate');
-	}
-
 	/**
-	 * Render GuiControl
+	 * Render slider GuiControl. Essentially, add some jQuery to magically convert it to a slider,
+	 * then render parent (a regular select).
 	 *
 	 * @see GuiControl::renderControl
 	 * @access protected
@@ -44,8 +42,6 @@ class SliderControl extends SelectControl {
 	 */
 	protected function render() {
 		global $gui;
-		
-		$select_id = $this->getId();
 		
 		// set up the options
 		if (!isset($this->params['index'])) {
@@ -65,16 +61,14 @@ class SliderControl extends SelectControl {
 			$this->params['index'] = $index;
 		}
 		
-		$html = '<select name="' . $this->getName() . '" id="' . $select_id . '">';
-		$html .= smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
-		$html .= '</select>';
-		
 		$options = array();
 		$options['width'] = (isset($this->params['width'])) ? $this->params['width'] : 400;
-		if (isset($this->params['labels'])) $options['labels'] = $this->params['labels'];
+		if (isset($this->params['labels'])) {
+			$options['labels'] = $this->params['labels'];
+		}
 		
-		$gui->add_jquery('$("#' . $select_id . '").hide().accessibleUISlider(' . json_encode($options) . ');');
-/* 		$gui->add_jquery('$("#' . $select_id . '").hide();'); */
-		return $html;
+		$gui->add_jquery('$("#' . $this->getId() . '").hide().accessibleUISlider(' . json_encode($options) . ');');
+		
+		return parent::render();
 	}
 }

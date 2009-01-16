@@ -230,9 +230,8 @@ class component_guicontrol extends component
 				}
 
 				// We have reached this point but still need to assign the newly POSTED controls into their proper location.
-				if (isset($childControls))
-				{
-					$controls[$type][$name]->params['controls'] = $childControls;
+				if (isset($childControls)) {
+					$controls[$type][$name]->setParam('controls', $childControls);
 				}
 			}
 		}

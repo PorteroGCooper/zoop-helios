@@ -177,7 +177,7 @@ class Select_updateControl extends SelectControl {
 			$dependent = GuiControl::get('select', $update_id);
 			$update_id = $dependent->getId();
 			$dependent->setParams(array('index' => array()));
-			if ($update_control_label) $html .= '<label for="' . $update_id . '">' . $update_control_label . '</label>';
+			if ($update_control_label) $html .= '<label for="' . $dependent->getFor() . '">' . $update_control_label . '</label>';
 			$html .= $dependent->renderControl();
 		}
 		$gui->add_jquery('$("#' . $select_id . '").selectCombo("' . $url . '", "#' . $update_id . '");');

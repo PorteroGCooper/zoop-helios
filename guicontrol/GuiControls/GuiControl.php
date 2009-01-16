@@ -24,25 +24,19 @@
 class GuiControl {
 
 	/**
-	 * params
-	 *
-	 * @var mixed
-	 * @access public
+	 * @var array
+	 * @access protected
 	 */
-	var $params;
+	protected $params;
 
 	/**
-	 * persistent
-	 *
-	 * @var mixed
-	 * @access public
+	 * @var array
+	 * @access protected
 	 */
-	var $persistent;
+	protected $persistent;
 
 	/**
-	 * parent
-	 *
-	 * @var mixed
+	 * @var string
 	 * @access public
 	 */
 	var $parent;
@@ -53,11 +47,12 @@ class GuiControl {
 	 * Don't call this function directly, instead use GuiControl::get() method.
 	 *
 	 * @param mixed $name
-	 * @access public
+	 * @access protected
 	 * @return void
 	 * @see GuiControl::get()
+	 * @see GuiControl::initControl()
 	 */
-	function __construct($name) {
+	protected final function __construct($name) {
 		global $gui;
 		$gui->add_css('/zoopfile/guicontrol/css/guicontrols.css', 'zoop');
 	
@@ -66,6 +61,13 @@ class GuiControl {
 		$this->initControl();
 	}
 	
+	/**
+	 * Override the initControl method in extending classes to modify the GuiControl on
+	 * construction.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	function initControl() { }
 
 	/**
@@ -107,26 +109,13 @@ class GuiControl {
 		}
 		return $this;
 	}
-
-	/**
-	 * When embeding controls, the child control needs parent set. 
-	 * $child->setParent($this->getName());
-	 *
-	 * @param mixed $parent
-	 * @access public
-	 * @return void
-	 */
-	function setParent($parent) {
-		$this->parent = $parent;
-		return $this;
-	}
-
+	
 	/**
 	 * Return param by name
 	 *
 	 * @param mixed $name
 	 * @access public
-	 * @return void
+	 * @return mixed
 	 */
 	function getParam($name) {
 		if (isset($this->params[$name])) {
@@ -135,7 +124,7 @@ class GuiControl {
 			return;
 		}
 	}
-
+	
 	/**
 	 * Return all params
 	 *
@@ -145,7 +134,27 @@ class GuiControl {
 	function getParams() {
 		return $this->params;
 	}
-
+	
+	/**
+	 * When embeding controls, the child control needs parent set.
+	 *
+	 * @code
+	 *    $foo = GuiControl::get('text');
+	 *    $bar = GuiControl::get('text');
+	 *    $bar->setParent($foo); // could also pass $foo->getName() to setParent method.
+	 * @endcode
+	 *
+	 * @param mixed $parent Parent name or GuiControl object.
+	 * @access public
+	 * @return GuiControl $this, for chaining.
+	 */
+	function setParent($parent) {
+		if ($parent instanceof GuiControl) $parent = $parent->getName();
+		
+		$this->parent = $parent;
+		return $this;
+	}
+	
 	/**
 	 * getName
 	 *
@@ -155,10 +164,21 @@ class GuiControl {
 	function getName() {
 		$type = $this->getType();
 		if (!isset($this->parent)) {
-			return "controls[$type][{$this->name}]";
+			return 'controls[' . $type . '][' . $this->name . ']';
 		} else {
-			return "{$this->parent}[controls][$type][{$this->name}]";
+			return $this->parent . '[controls][' . $type . '][' . $this->name .']';
 		}
+	}
+	
+	/**
+	 * getLabelName
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function getLabelName() {
+		$label = $this->getName() . "[value]";
+		return $label;
 	}
 	
 	/**
@@ -173,8 +193,13 @@ class GuiControl {
 	}
 	
 	/**
-	 * Return the 'for' value to use in this GuiControl's label. Defaults
+	 * Return the 'for' value to use in this GuiControl's label. Defaults to this control's id.
 	 *
+	 * If an extending class contains multiple form elements, this function should be overridden to
+	 * return the id of the first form element in the GuiControl (see BetterPassword as an example).
+	 *
+	 * @access public
+	 * @return string
 	 */
 	function getFor() {
 		return $this->getId();
@@ -206,6 +231,7 @@ class GuiControl {
 	 * @return string GuiControl label
 	 */
 	function getDisplayName() {
+		deprecated('call getLabel instead');
 		return $this->getLabel();
 	}
 	
@@ -355,6 +381,14 @@ class GuiControl {
 
 		return Validator::getJSClassNames($validate);
 	}
+	
+	function getClass() {
+		$classes = $this->getValidationClasses();
+		if (isset($this->params['class'])) {
+			$classes .= " " . $this->params['class'];
+		}
+		return $classes;
+	}
 
 	/**
 	 * getNameIdString
@@ -363,10 +397,7 @@ class GuiControl {
 	 * @return string
 	 */
 	function getNameIdString() {
-		$name = $this->getLabelName();
-		$id = $this->getId();
-		
-		return "name=\"$name\" id=\"$id\"";
+		return 'name="' . $this->getLabelName() . '" id="' . $this->getId() . '"';
 	}
 
 	/**
@@ -460,6 +491,69 @@ class GuiControl {
 		
 		return $this;
 	}
+	
+	/**
+	 * Get a set of HTML attributes (used mostly by renderHTMLAttrs() method)
+	 * 
+	 * @access public
+	 * @return array
+	 */
+	function getHTMLAttrs() {
+		$attrs = array();
+		$styleAttrs = array();
+		
+		foreach ($this->params as $parameter => $value) {
+			// Here we setup specific parameters that will go into the html
+			switch ($parameter) {
+				case 'title':
+				case 'size':
+				case 'maxlength':
+				case 'style':
+				case 'onClick':
+				case 'onChange':
+				case 'onBlur':
+					if (!empty($value)) $attrs[$parameter] = $parameter .'="'. $value .'"';
+					break;
+				case 'readonly':
+				case 'disabled':
+					if (is_array($value)) {
+						// handle multiple disabled values (as in select/multiselect/checkboxes)
+					} else if (!empty($value)) {
+						$attrs['disabled'] = 'disabled="disabled"';
+					}
+					break;
+				case 'width':
+				case 'height':
+					if ($value != '')
+						$styleAttrs[] = $parameter . ':' . $value . ';';
+					break;
+			}
+		}
+		
+		// add the `style` attributes (dirty, dirty, dirty)
+		if (count($styleAttrs)) {
+			$newAttrs = implode('', $styleAttrs);
+			
+			if (isset($attrs['style'])) {
+				// splice new attributes into the end of the style deal (preserve the quote mark...
+				$attrs['style'] = substr($attrs['style'], 0, -1) . $newAttrs . substr($attrs['style'], -1);
+			} else {
+				$attrs['style'] = 'style="' . $newAttrs . '"';
+			}
+		}
+
+		return $attrs;
+	}
+	
+	/**
+	 * Render HTML attributes as a string.
+	 * 
+	 * @access public
+	 * @return string
+	 */
+	function renderHTMLAttrs() {
+		return implode(' ', $this->getHTMLAttrs());
+	}
 
 	/**
 	 * ViewState places a bunch of information into the form about this control as hidden fields.
@@ -468,15 +562,36 @@ class GuiControl {
 	 * This method renders the ViewState.
 	 *
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function renderViewState() {
 		$viewState = $this->encode($this->getViewState());
 		$name = $this->getName();
-		$html = "<input type=\"hidden\" name=\"{$name}[viewState]\" value=\"$viewState\">";
+		$id = $this->getId();
+		
+		$html = '<input type="hidden" name="' . $name . '[viewState]" value="' . $viewState .'" />';
 		return $html;
 	}
-
+	
+	/**
+	 * ViewState places a bunch of information into the form about this control as hidden fields.
+	 * This permits guiControls to work without sessions.
+	 *
+	 * This method returns the ViewState.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function getViewState() {
+		$viewState = array();
+		foreach($this->persistent as $param) {
+			if(isset($this->params[$param])) {
+				$viewState[$param] = $this->params[$param];
+			}
+		}
+		return $viewState;
+	}
+	
 	function renderErrorMessage() {
 		if(isset($this->params['errorState'])) {
 			$errorState = $this->params['errorState'];
@@ -494,6 +609,12 @@ class GuiControl {
 		return "";
 	}
 	
+	/**
+	 * Render a caption for this GuiControl.
+	 * 
+	 * @access public
+	 * @return string
+	 */
 	function renderCaption() {
 		if ($caption = $this->getParam('caption')) {
 			return '<p class="caption">' . $caption . '</p>';
@@ -546,17 +667,6 @@ class GuiControl {
 	function view() {
 		return $this->getValue();
 	}
-
-	/**
-	 * getLabelName
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function getLabelName() {
-		$label = $this->getName() . "[value]";
-		return $label;
-	}
 	
 	/**
 	 * Assign this GuiControl to the Smarty param passed as $name
@@ -574,7 +684,7 @@ class GuiControl {
 
 	/**
 	 * Changing this method to a final method (to weed out the last of the 'display' functions
-	 * on subclasses [justin]
+	 * on subclasses) [justin]
 	 * 
 	 * @depricated
 	 * @access public
@@ -614,31 +724,12 @@ class GuiControl {
 	 * @return string HTML rendered GuiControl.
 	 */
 	function __toString() {
-		$html =  $this->renderViewState();
-		$html .= $this->getValidationDivs();
+		$html =  $this->getValidationDivs();
 		$html .= $this->render();
 		$html .= $this->renderCaption();
 		$html .= $this->renderErrorMessage();
+		$html .= $this->renderViewState();
 		return $html;
-	}
-
-	/**
-	 * ViewState places a bunch of information into the form about this control as hidden fields.
-	 * This permits guiControls to work without sessions.
-	 *
-	 * This method returns the ViewState.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function getViewState() {
-		$viewState = array();
-		foreach($this->persistent as $param) {
-			if(isset($this->params[$param])) {
-				$viewState[$param] = $this->params[$param];
-			}
-		}
-		return $viewState;
 	}
 	
 	/**
@@ -663,7 +754,6 @@ class GuiControl {
 	 * @return GuiControl
 	 */
 	static function &get($type, $name, $useGlobal = true) {
-	
 		if($useGlobal) {
 			global $controls;
 			if(isset($controls[$type][$name])) {

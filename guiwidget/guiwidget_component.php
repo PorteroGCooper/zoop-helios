@@ -24,6 +24,7 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class component_guiwidget extends component {
+
 	function component_guiwidget() {
 		$this->requireComponent('gui');
 	}
