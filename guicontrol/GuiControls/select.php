@@ -92,6 +92,15 @@ class SelectControl extends GuiMultiValue {
 	
 	function renderOptions() {
 		global $gui;
-		return smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
+		if (is_array($this->getParam('disabled'))) {
+			return smarty_function_html_options(array(
+				'options' => $this->params['index'],
+				'selected' => $this->getValue(),
+				'disabled' => $this->getParam('disabled')
+			), $gui);
+		} else {
+			return smarty_function_html_options(array('options' => $this->params['index'], 'selected' => $this->getValue()), $gui);
+		}
+		
 	}
 }
