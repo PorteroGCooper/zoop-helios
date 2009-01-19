@@ -292,29 +292,38 @@ function smarty_function_formz_list($params, &$smarty) {
 		if ($use_softdelete && isset($record['deleted']) && $record['deleted']) $row_classes[] = 'deleted';
 		
 		foreach ($field_names as $field) {
-			if (strchr($field, '.') !== false) {
-				$value = $form->getValue($field, $id);
-				if (is_array($value)) {
-					// if (isset($fields[$field]['listexpand']) && $fields[$field]['listexpand']) {
-					// 	$tmp = '<table>';
-					// 	foreach ($value as $entry) {
-					// 		$tmp .= '<tr><td>' . $entry . '</td></tr>';
-					// 	}
-					// 	$tmp .= '</table>';
-					// 	$value = $tmp;
-					// } else {
-						$value = implode(', ', $value);
-					// }
-				}
-			} else if (isset($fields[$field]['type']) && $fields[$field]['type'] == 'aggregate') {
-				$value = $form->getValue($field, $id);
-			} else if (isset($record[$field])) {
-				$value = $record[$field];
-			} else if (isset($fields[$field]['display']['default'])) {
-				$value = $fields[$field]['display']['default'];
+			if (isset($fields[$field]['display']['override'])) {
+				$value =  $fields[$field]['display']['override'];
 			} else {
-				$value = '';	
+				if (strchr($field, '.') !== false) {
+					$value = $form->getValue($field, $id);
+					if (is_array($value)) {
+						// if (isset($fields[$field]['listexpand']) && $fields[$field]['listexpand']) {
+						// 	$tmp = '<table>';
+						// 	foreach ($value as $entry) {
+						// 		$tmp .= '<tr><td>' . $entry . '</td></tr>';
+						// 	}
+						// 	$tmp .= '</table>';
+						// 	$value = $tmp;
+						// } else {
+							$value = implode(', ', $value);
+						// }
+					}
+				} else if (isset($fields[$field]['type']) && $fields[$field]['type'] == 'aggregate') {
+					$value = $form->getValue($field, $id);
+				} else if (isset($record[$field])) {
+					$value = $record[$field];
+				} else if (isset($fields[$field]['display']['default'])) {
+					$value = $fields[$field]['display']['default'];
+				} else {
+					$value = '';	
+				}
+				
+				if (isset($fields[$field]['callback'])) {
+					$value = call_user_func($fields[$field]['callback'], $value);
+				}
 			}
+			
 
 			$field_type = null;
 			if (isset($fields[$field]['display']['type'])) {
@@ -332,8 +341,6 @@ function smarty_function_formz_list($params, &$smarty) {
 					$value = '<span class="bool-' . $value . '">' . $value . '</span>';
 					break;
 			}
-			
-			$value = (isset($fields[$field]['display']['override'])) ? $fields[$field]['display']['override'] : $value;
 			
 			// @todo get rid of this. it's ugly.
 			if ($field_type == 'password' && !Config::get('zoop.guicontrol.enable_show_passwords')) $value = '********';
