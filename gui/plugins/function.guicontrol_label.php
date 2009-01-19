@@ -33,9 +33,8 @@ function smarty_function_guicontrol_label($params, &$smarty) {
 		$name = $params['name'];
 		$control = GuiControl::get($type, $name);
 	}
-
-	$for = $control->getFor();
-	$lname = format_label($name);
-	$html = "<label for=\"$for\"> $lname: </label>";
+	$required_string = $control->isRequired() ? Config::get('zoop.guicontrol.required_indicator') : '';
+	$html = '<label for="' . $control->getFor() . '">' . format_label($name) . $required_string . '</label>';
+	
 	return $html;
 }

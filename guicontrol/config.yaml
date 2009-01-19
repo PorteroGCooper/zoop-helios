@@ -6,3 +6,6 @@ multi_value_separator: ', '
 
 #DANGER! DON'T ENABLE THIS!
 enable_show_passwords: false
+
+# Set this value to false if you don't want 'required' stars.
+required_indicator: '<span class="required">*</span>'

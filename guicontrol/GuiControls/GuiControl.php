@@ -412,6 +412,14 @@ class GuiControl {
 		
 		return $this;
 	}
+	
+	function isRequired() {
+		if (isset($this->params['validate']['required'])) {
+			return $this->params['validate']['required'];
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Set the validation type.
