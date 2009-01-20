@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -8,12 +9,15 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+
 /**
  * Validator
  *
  * Validator is intended to provide a standard means of validating types for the Zoop Framework.
- * This validation is used by the guicontrols, forms and numerous other things to provide consistent validation.
- * Validator provides validation functions for both php based validation, and generating validation instructions to a javascript validation library.
+ * This validation is used by the guicontrols, forms and numerous other things to provide
+ * consistent validation. Validator provides validation functions for both php based validation,
+ * and generating validation instructions to a javascript validation library.
+ *
  * php functions are named validateType
  * js instruction functions are named getTypeAttr
  *
@@ -24,96 +28,161 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class Validator
-{
+class Validator {
+
+	private static $validators = null;
+	private static $jsValidators = null;
+	private static $nativeValidators = null;
+	private static $jsValidationRules = null;
+	
+	static function initValidators() {
+		self::$validators = array();
+		self::$jsValidators = array();
+		self::$nativeValidators = array();
+		
+		// set up ours
+		foreach (get_class_methods('Validator') as $_key => $_val) {
+			if (substr($_val, 0, 10) == 'validateJS') {
+				if ($type = strtolower(substr($_val, 10))) self::$jsValidators[$type] = $_val;
+			} else if (substr($_val, 0, 8) == 'validate') {
+				if ($type = strtolower(substr($_val, 8))) self::$validators[$type] = $_val;
+			}
+		}
+		
+		// add the native validators
+		if (function_exists('filter_list')) {
+			foreach (filter_list() as $filter) {
+				switch ($filter) {
+					case 'int':
+						self::$nativeValidators['int'] = FILTER_VALIDATE_INT;
+						break;
+					case 'boolean':
+						self::$nativeValidators['bool'] = FILTER_VALIDATE_BOOLEAN;
+						break;
+					case 'float':
+						self::$nativeValidators['float'] = FILTER_VALIDATE_FLOAT;
+						break;
+					case 'validate_regexp':
+						self::$nativeValidators['regex'] = FILTER_VALIDATE_REGEXP;
+						break;
+					case 'validate_url':
+						self::$nativeValidators['url'] = FILTER_VALIDATE_URL;
+						break;
+					case 'validate_email':
+						self::$nativeValidators['email'] = FILTER_VALIDATE_EMAIL;
+						break;
+					case 'validate_ip':
+						self::$nativeValidators['ip'] = FILTER_VALIDATE_IP;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		
+		global $gui;
+		
+		$gui->add_jquery();
+		$gui->add_js('/zoopfile/gui/js/jquery.validate.js');
+		$gui->add_jquery('$("form").validate();');
+	}
+	
+	static function validators($type = null) {
+		if ($type !== null) {
+			$type = strtolower($type);
+			if (isset(self::$validators[$type])) return self::$validators[$type];
+			else return false;
+		}
+		return self::$validators;
+	}
+	
+	static function jsValidators($type = null) {
+		if ($type !== null) {
+			$type = strtolower($type);
+			if (isset(self::$jsValidators[$type])) return self::$jsValidators[$type];
+			else return false;
+		}
+		return self::$jsValidators;
+	}
+	
+	static function nativeValidators($type = null) {
+		if ($type !== null) {
+			$type = strtolower($type);
+			if (isset(self::$nativeValidators[$type])) return self::$nativeValidators[$type];
+			else return false;
+		}
+		
+		return self::$nativeValidators;
+	}
+	
 	/**
-	 * getAttr
+	 * Validate the given value (based on validation options).
+	 * 
+	 * The $validate options requires a 'type' => $type index.
 	 *
-	 * validate wrapper for the functions in this class.
-	 * the validate array must have 'type' => $type set for this to work.
+	 * @param mixed $value The value to be validated.
+	 * @param array $validate Validation options.
+	 *    An array of validation parameters, such as type, min/max, etc. as required by validation type.
+	 * @access public
+	 * @return array Validation result
+	 */
+	function validate($value, $validate) {
+		// if no validation type is set, validate as true
+		if (!isset($validate['type'])) $result['result'] = true;
+		
+		// If a value isn't set, handle 'required' then return.
+		if (empty($value)) {
+			// handle required right here.
+			if (isset($validate['required']) && $validate['required']) {
+				$result['message'] = "This field is required";
+				$result['result'] = false;
+				return $result;
+			}
+			if (!isset($validate['required']) || $validate['required'] == false) {
+				$result['result'] = true;
+				return $result;
+			}
+		}
+		
+		if ($function = self::validators($validate['type'])) {
+			return self::$function($value, $validate);
+		} else {
+			trigger_error('No known validation for ' . $validate['type']);
+		}
+	}
+	
+	/**
+	 * Handle JavaScript validation settings.
 	 *
   	 * @param array $validate
 	 * @access public
-  	 * @return string
+  	 * @return string A set of classes to add to a form element for validation.
 	 */
-	function getAttr($validate) // FOR JS VALIDATION
-	{
-		$function = strtolower("get{$validate['type']}Attr");
-
-		$validatorArray = get_class_methods('Validator');
-		foreach ($validatorArray as $key => $validatorElement)
-			$validatorArray[$key] = strtolower($validatorElement);
-		if (in_array($function, $validatorArray))
-			return Validator::$function($validate);
-		else
-			return ""; // Not every Validation function has a javascript counterpart.
+	function validateJS($validate) {
+		if (isset($validate['type']) && $function = self::jsValidators($validate['type'])) {
+			$classes = self::$function($validate);
+		} else {
+			$classes = array();
+		}
+		
+		if (isset($validate['required']) && $validate['required']) $classes[] = 'required';
+		return $classes;
 	}
 
 	/**
-	 * validate
-	 * validate wrapper for the functions in this class.
+	 * Return a boolean (true/false) value for validation, rather than the array returned by other
+	 * validation functions.
 	 *
-	 * the validate array must have 'type' => $type set for this to work.
-	 *
+	 * @see Validator::validate()
 	 * @param mixed $value The value to be validated.
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
+	 * @param array $validate Validation options.
 	 * @access public
-  	 * @return array
+  	 * @return bool Validation result
 	 */
-	function validate($value, $validate) // FOR PHP VALIDATION
-	{
-		if (!isset($validate['type']))  // if no validation type is set, validate as true
- 			  $result['result'] = true;
-
-		$function = strtolower("validate{$validate['type']}");
-
-		$exists = true;
-		if (is_string($value)) {
-			if (strlen ($value) < 1 ) { $exists = false; }
-		} elseif ( is_array($value)) {
-			if (count($value) < 1 ) { $exists = false; }
-		}
-
-		// handle required right here.
-		if (isset($validate['required']) && $validate['required'] && !$exists ) {
-			$result['message'] = "This field is required";
-			$result['result'] = false;
-			return $result;
-		}
-
-		if ((!isset($validate['required']) || $validate['required'] == false) && !$exists) {
-			$result['result'] = true;
-			return $result;
-		}
-
-		$validatorArray = get_class_methods('Validator');
-		foreach ($validatorArray as $key => $validatorElement)
-			$validatorArray[$key] = strtolower($validatorElement);
-		if (in_array($function, $validatorArray))
-			return Validator::$function($value, $validate);
-		else
-			trigger_error("No known validation for {$validate['type']}");
-	}
-
-	/**
-	 * boolValidate
-	 * a boolean validate wrapper for the functions in this class.
-	 * This function will return a boolean true / false for validation, rather than the array returned by the other functions.
-	 * the validate array must have 'type' => $type set for this to work.
-	 *
-	 * @param mixed $value The value to be validated.
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
-	 * @access public
-  	 * @return array
-	 */
-	function boolvalidate($value, $validate)
-	{
+	function boolValidate($value, $validate) {
 		$result = Validator::validate($value, $validate);
-
-		if($result['result'] == true)
-			return true;
-		else
-			return false;
+		
+		return ($result['result'] == true) ? true : false;
 	}
 
 	/**
@@ -177,125 +246,7 @@ class Validator
 
 		return $result;
 	}
-
-	/**
-	 * type2ClassNames
-	 * This function will convert the validation types to the appropriate string of class names to use with the javascript validator
-	 *
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
-	 * @access public
-  	 * @return string
-	 */
-	function type2ClassNames($validate)
-	{
-		if (!isset($validate['type']))
-			return "";
-
-		switch (strtolower($validate['type']))
-		{
-			case "merge" :
-			case "stack" :
-				$names = " ";
-				foreach ($validate['validators'] as $validator)
-				{
-					$names .= Validator::JSClassNames($validator) . " ";
-				}
-				return trim($names);
-				break;
-			default:
-				return Validator::NameToJS($validate['type']);
-				break;
-		}
-	}
-
-	/**
-	 * type2JSParamClassNames
-	 * This function will convert the validation types and properties to the appropriate additional class names for the javascript validator. To be used with type2ClassNames
-	 *
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
-	 * @access public
-  	 * @return string
-	 */
-	function type2JSParamClassNames($validate)
-	{
-		$classes = array();
-		if (isset($validate['required']) && $validate['required'] == true)
-			$classes[] = "required";
-
-		if (isset($validate['max']) && $validate['type'] != 'length')
-			$classes[] = "LessThan";
-
-		if (isset($validate['min']) && $validate['type'] != 'length')
-			$classes[] = "GreaterThan";
-
-		return implode(" ", $classes);
-	}
-
-	/**
-	 * getJSClassNames
-	 * This function will convert the validation array to the appropriate string of class names to use with the javascript validator. Combines output of type2ClassNames and type2JSParamClassNames
-	 *
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
-	 * @access public
-  	 * @return string
-	 */
-	function getJSClassNames($validate)
-	{
-		$cn = array();
-		$cn[] = Validator::type2ClassNames($validate);
-		$cn[] = Validator::type2JSParamClassNames($validate);
-
-		return implode(" ", $cn);
-	}
-
-	/**
-	 * nameToJS
-	 * This function will take one validation type and return the javascript class name equivalent
-	 *
-	 * @param array $validate An array passing parameters to the validation functions (accepts type, and various other things like max & min depending on the validation routine)
-	 * @access public
-  	 * @return string
-	 */
-	function nameToJS($name)
-	{
-		switch(strtolower($name))
-		{
-			case "phone" :
-			case "date" :
-			case "email" :
-			case "domain" :
-			case "url" :
-			case "ssn" :
-			case "password" :
-			case "ip" :
-			case "regexp" :
-				return "validate-$name";
-				break;
-			case "money" :
-				return "validate-currency-dollar";
-				break;
-			case "creditcard" :
-				return "validate-cc";
-				break;
-			case "float" :
-			case "numeric" :
-				return "validate-number";
-    				break;
-			case "alphanumeric" :
-	   			return "validate-alphanum";
-				break;
-			case "equalto" :
-	   			return "EqualTo";
-				break;
-			case "length" :
-	   			return "Length";
-				break;
-			case "int" :
-	   			return "validate-digits";
-				break;
-		}
-	}
-
+	
 	/**
 	 * getPhoneAttr
 	 *
@@ -349,28 +300,41 @@ class Validator
 	/**
 	 * getLengthAttr
 	 *
-  	 * @param array $validate
+	 * @param array $validate
 	 * @access public
-  	 * @return string
+	 * @return string
 	 */
-	function getLengthAttr($validate) // FOR JS VALIDATION
-	{
-		$answer = "validate=\"length";
+	function validateJSLength($validate) {
+		global $gui;
+		$rules = array();
 
- 		if (isset($validate['max']) && is_numeric($validate['max']) && (!isset($validate['min']) || !is_numeric($validate['min'])))
- 			$validate['min'] = 1;
-
-		if(isset($validate['min']) && is_numeric($validate['min']))
-			$answer .= "|{$validate['min']}";
-		if (isset($validate['max']) && is_numeric($validate['max']))
-			$answer .= "|{$validate['max']}";
-
-		if(!isset($validate['required']) || $validate['required'] == 0)
-		{
-			$answer .= "|bok";
+		if(isset($validate['min']) && is_numeric($validate['min'])) {
+			$rules['minlength'] = $validate['min'];
 		}
-		$answer .="\"";
-		return $answer;
+		
+		if (isset($validate['max']) && is_numeric($validate['max'])) {
+			$rules['maxlength'] = $validate['max'];
+			
+			// there's an implied min length here...
+			if (!isset($validate['min']) || !is_numeric($validate['min'])) $rules['maxlength'] = $validate['min'];
+		}
+		
+		if (count($rules)) {
+			$custom_class = 'v' . count(self::$jsValidationRules);
+			$rule = json_encode($rules);
+			$md5 = hash('md5', $rule);
+			
+			if (isset(self::$jsValidationRules[$md5])) {
+				$custom_class = self::$jsValidationRules[$md5];
+			} else {
+				$custom_class = 'v' . count(self::$jsValidationRules[$md5]);
+				self::$jsValidationRules[$md5] = $custom_class;
+				$gui->add_jquery('$.validator.addClassRules("' . $custom_class . '", ' . $rule . ');');
+			}
+			return array($custom_class);
+		}
+		
+		return array();
 	}
 
 	/**
@@ -539,8 +503,7 @@ class Validator
 	 * @access public
   	 * @return array
 	 */
-	function validateInt($value, $validate = array())
-	{
+	function validateInt($value, $validate = array()) {
 		$result = array('message' => "Must be an integer");
 
 		if (is_numeric($value) && ((int)$value == (string)$value)) {
@@ -878,26 +841,8 @@ class Validator
 	 * @access public
   	 * @return string
 	 */
-	function getEmailAttr($validate) // FOR JS VALIDATION
-	{
-		$answer = "validate=\"email";
-
-		if (isset($validate['strict']))
-		{
-			if($validate['strict'])
-				$validate['format'] = 3;
-			else
-				$validate['format'] = 2;
-
-			$answer .= "|{$validate['strict']}";
-		}
-
-		if(!isset($validate['required']) || $validate['required'] == 0)
-		{
-			$answer .= "|bok";
-		}
-		$answer .="\"";
-		return $answer;
+	function validateJSEmail($validate) {
+		return array('email');
 	}
 
 	/**
@@ -991,28 +936,8 @@ class Validator
 	 * @access public
   	 * @return string
 	 */
-	function getUrlAttr($validate)
-	{
-		$answer = "validate=\"url";
-
-		if (isset($validate['hosts']))
-		{
-			$answer .= "|{$validate['hosts']}";
-		}
-		else
-			$answer .= "|http,https";
-
-		if (isset($validate['hostOptional']) && $validate['hostOptional'])
-			$answer .= "|1";
-		else
-			$answer .= "|0";
-
-		if(!isset($validate['required']) || $validate['required'] == 0)
-		{
-			$answer .= "|bok";
-		}
-		$answer .="\"";
-		return $answer;
+	function validateJSUrl($validate) {
+		return array('url');
 	}
 
 	/**
@@ -1227,84 +1152,9 @@ class Validator
 	 * @access public
   	 * @return string
 	 */
-	function getDateAttr($validate)
-	{
-		return ""; // THE Fvalidate routine doesn't quite work properly
-
-		$answer = "validate=\"date";
-
-		if (!isset($validate['format']))
-			$validate['format'] = "us";
-
-		if ($validate['format'] == "writeout") // let PHP handle this
-			return "";
-
-		switch ($validate['format'])
-		{
-			case "us":
-				$answer .= "|mm/dd/yyyy";
-				break;
-			case "european":
-				$answer .= "|dd/mm/yyyy";
-				break;
-			case "universal":
-				$answer .= "|yyyy/mm/dd";
-				break;
-			default:
-				$answer .= "|mm/dd/yyyy";
-				break;
-		}
-
-		if (!isset($validate['delim']))
-			$validate['delim'] = "-";
-
-		switch ($validate['delim'])
-		{
-			case "/":
-				$answer .= "|/";
-				break;
-			case "-/":
-				$answer .= "|-/";
-				break;
-			default:
-				$answer .= "|-/";
-				break;
-		}
-
-		if (isset($validate['relation']) && isset($validate['date']))
-		{
-			switch ($validate['relation'])
-			{
-				case "none":
-					$answer .= "|0";
-					break;
-				case "before":
-					$answer .= "|1";
-					break;
-				case "beforeOn":
-					$answer .= "|2";
-					break;
-				case "after":
-					$answer .= "|3";
-					break;
-				case "afterOn":
-					$answer .= "|4";
-					break;
-				default:
-					$answer .= "|0";
-					break;
-			}
-
-			$answer .= "|{$validate['relation']}";
-		}
-
-
-		if(!isset($validate['required']) || $validate['required'] == 0)
-		{
-			$answer .= "|bok";
-		}
-		$answer .="\"";
-		return $answer;
+	function validateJSDate($validate) {
+		return array('date');
 	}
 }
-?>
+
+Validator::initValidators();

@@ -372,22 +372,25 @@ class GuiControl {
 	function getValidationClasses($validate = null) {
 		if (empty($validate)) {
 			if (!isset($this->params['validate']) || empty ($this->params['validate'])) {
-				return "";
+				return array();
 			}
 			else {
 				$validate = $this->params['validate'];
 			}
 		}
 
-		return Validator::getJSClassNames($validate);
+		return Validator::validateJS($validate);
 	}
 	
 	function getClass() {
 		$classes = $this->getValidationClasses();
 		if (isset($this->params['class'])) {
-			$classes .= " " . $this->params['class'];
+			if (is_string($this->params['class'])) {
+				$this->params['class'] = explode(' ', $this->params['class']);
+			}
+			$classes = array_merge($classes, $this->params['class']);
 		}
-		return $classes;
+		return implode(' ', $classes);
 	}
 
 	/**

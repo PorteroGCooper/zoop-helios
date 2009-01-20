@@ -95,6 +95,7 @@ class gui extends Smarty {
 	 * @see gui::sortRegions
 	 */
 	var $_regions = array();
+	var $_renderedRegions = array();
 	
 	var $header_written = false;
 
@@ -305,7 +306,6 @@ class gui extends Smarty {
 	 * @return void
 	 */
  	function display($tpl_file = null, $cache_id = null, $compile_id = null) {
- 		
  		echo $this->fetch($tpl_file, $cache_id, $compile_id);
  	}
 
@@ -395,11 +395,11 @@ class gui extends Smarty {
 		if ($template_file != null) {
 			$this->assignRegion(Config::get('zoop.gui.primary_region'), $template_file);
 		}
+		if (Config::get('zoop.gui.prerender_regions', true)) $this->renderRegions();
 		$this->display(Config::get('zoop.gui.templates.html'));
 	}
-
+	
 	function is_cached($inTpl, $cache_id = null,  $compile_id = null) {
-
 		if($look = Config::get('app.gui.look')) {
 			$inTpl = $look . "/" . $inTpl;
 		}
@@ -530,6 +530,29 @@ class gui extends Smarty {
 	}
 	
 	/**
+	 * Pre-Render regions to display in the main site template.
+	 * 
+	 * Pre-rendering regions allows Gui to render the <head> tag after all of the body. This way
+	 * javascript and css requirements can be declared lazily (at any point while rendering the body)
+	 * but will all still make it in the <head>. This is vital for compression, aggregation and caching
+	 * of all site resources.
+	 *
+	 * If this is causing problems, disable it via the config option 'zoop.gui.prerender_regions'.
+	 *
+	 * Note: In the event that anything is rendered *after* the <head>, Gui is still smart enough to 
+	 * take care of the resources. If they show up too late to be in <head>, they will be included inline.
+	 * 
+	 * @see Gui::generate()
+	 * @access protected
+	 * @return void
+	 */
+	protected function renderRegions() {
+		foreach ($this->_regions as $name => $region) {
+			$this->_renderedRegions[$name] = $this->fetch($region);
+		}
+	}
+	
+	/**
 	 * Add (require) a CSS file to be linked by the gui object.
 	 *
 	 * @param string $path Path to CSS file
@@ -539,7 +562,6 @@ class gui extends Smarty {
 	 * @return void
 	 */
 	function add_css($path, $scope = 'app') {
-			
 		// handle inline stuff separately.
 		if ($scope == 'inline') {
 				$md5 = hash('md5', $path);
@@ -585,7 +607,7 @@ class gui extends Smarty {
 	 * Add (require) a JS file to be linked by the gui object.
 	 *
 	 * Inline JavaScript can be included by passing 'inline' as the scope argument. Inline js is put in
-	 * the HEAD, just after the rest of the JS includes. Inline js will be checked for uniqueness just like
+	 * the <head>, just after the rest of the JS includes. Inline js will be checked for uniqueness just like
 	 * includes.
 	 *
 	 * @param string $path Path to JS file

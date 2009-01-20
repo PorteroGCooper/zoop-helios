@@ -141,14 +141,7 @@ class CheckboxesControl extends GuiMultiValue {
 					break;
 				case 'checkall':
 					$class[] = 'checkable';
-					$gui->add_jquery('
-						$("#'.$input_id.'").prepend("<label class=\"check-all\"><input type=\"checkbox\" class=\"check-all\" />Check All</label>");
-						$("#'.$input_id.' input.check-all").change(function(){
-							$("#'.$input_id.' input[@type=\'checkbox\']").attr("checked",this.checked).change(function(){
-								if(!this.checked) {$("#'.$input_id.' input.check-all").attr("checked",false);}
-							});
-						});
-					');
+					$gui->add_jquery('$("div.checkboxes.checkable").prepend("<label class=\"check-all\"><input type=\"checkbox\" class=\"check-all\" />Check All</label>").find("input.check-all").change(function(){$(this).parents("div.checkboxes.checkable").eq(0).find("input[@type=\'checkbox\']").attr("checked",this.checked).change(function(){if(!this.checked) {$(this).parents("div.checkboxes.checkable").eq(0).find("input.check-all").attr("checked",false);}});});');
 					break;
 			}
 		}

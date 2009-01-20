@@ -1,7 +1,5 @@
 <?php
-/**
-* @package storage
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -14,12 +12,16 @@
 
 
 /**
-* @package storage
-*/
-class component_validate extends component
-{
-	function getIncludes()
-	{
+ * Validation Zoop component.
+ *
+ * @group Validate
+ *
+ * @endgroup
+ *
+ * @extends component
+ */
+class component_validate extends component {
+	function getIncludes() {
 		return array('Validator' => $this->getBasePath(). '/validate.php');
 	}
 
@@ -29,9 +31,5 @@ class component_validate extends component
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
-
-	}
+	function init() { }
 }
-?>

@@ -987,6 +987,10 @@ class Formz {
 				case 'searchable':
 					return $this->setFieldSearchable($field, $value);
 					break;
+				case 'validate':
+					// thunk this into an implied array('type' => $value)
+					if (is_string($value)) $value = array('type' => $value);
+					break;
 			}
 			
 			if (!isset($this->_fields[$field])) {

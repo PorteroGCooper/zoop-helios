@@ -437,7 +437,7 @@ class zoop
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component
+abstract class component
 {
 	/**
 	 * required
@@ -454,7 +454,7 @@ class component
 	 * @access public
 	 * @return void
 	 */
-	function component() { }
+	function __construct() { }
 
 	/**
 	 * getBasePath 

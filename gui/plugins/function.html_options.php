@@ -72,6 +72,8 @@ function smarty_function_html_options($params, &$smarty)
 
     if (!isset($options) && !isset($values))
         return ''; /* raise error here? */
+    if (!isset($disabled))
+        $disabled = array();
 
     $_html_result = '';
 
