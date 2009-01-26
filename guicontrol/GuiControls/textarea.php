@@ -29,6 +29,8 @@ class TextareaControl extends GuiControl {
 	 * @return string HTML textarea
 	 */
 	protected function render() {
+		global $gui;
+		
 		$attrs = array();
 		
 		$name_id = $this->getNameIdString();
@@ -38,6 +40,12 @@ class TextareaControl extends GuiControl {
 		$html = "<textarea $name_id $class $attrs>";
 		$html .= htmlentities($this->getValue());
 		$html .='</textarea>';
+		
+		if (isset($this->params['grow']) && $this->params['grow']) {
+			$gui->add_jquery();
+			$gui->add_js('/zoopfile/gui/js/jquery.jgrow.js');
+			$gui->add_jquery('$("#' . $this->getId() . '").jGrow();');
+		}
 
 		return $html;
 	}
