@@ -52,6 +52,8 @@ class TextareaControl extends GuiControl {
 			$gui->add_jquery();
 			$gui->add_js('/zoopfile/gui/js/jquery.jgrow.js');
 			$gui->add_jquery('$("#' . $this->getId() . '").jGrow();');
+			// $gui->add_js('/zoopfile/gui/js/jquery.autoexpand.js');
+			// $gui->add_jquery('$("#' . $this->getId() . '").autoExpand();');
 		}
 
 		return $html;

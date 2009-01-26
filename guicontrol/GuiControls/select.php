@@ -60,7 +60,9 @@ class SelectControl extends GuiMultiValue {
 		// add a null label to the index if it's not already set.
 		// The 'null_label' is a "- Select an Option -" style value at the top of a single select list.
 		// this param should not be supplied on a multi-select list.
-		if (isset($this->params['null_label'])) {
+		if (isset($this->params['null_label'])
+			|| ($this->isRequired() && !(isset($this->params['multiple']) && $this->params['multiple']))) {
+
 			if (empty($this->params['null_label']) || $this->params['null_label'] === true) {
 				$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
 			}
