@@ -13,6 +13,13 @@
 /**
  * Textarea GuiControl
  *
+ * Textarea GuiControls can be given a 'grow' param, which will cause the GuiControl to
+ * automatically grow to fit contents.
+ *
+ * @code
+ *    $myControl->setParam('grow', true);
+ * @endcode
+ *
  * @ingroup gui
  * @ingroup GuiControl
  */
