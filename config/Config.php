@@ -9,6 +9,26 @@ class Config {
 
 	static $info = array();
 	private static $file;
+	private static $fileCache;
+	
+	private static function loadFileCache() {
+		if (defined('CONFIG_FILE_CACHE')) include(CONFIG_FILE_CACHE);
+	}
+	
+	private static function loadFile($name) {
+		if (!file_exists($name)) return array();
+		if (empty(self::$fileCache)) self::loadFileCache();
+		
+		$last_modified = filemtime($name);
+		if (!isset(self::$fileCache[$name]) || $last_modified > self::$fileCache[$name]['modified']) {
+			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => Yaml::read($name));
+			if (defined('CONFIG_FILE_CACHE') && is_writable(CONFIG_FILE_CACHE)) {
+				file_put_contents(CONFIG_FILE_CACHE, "<?php \n\n" . 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n");
+			}
+		}
+		
+		return self::$fileCache[$name]['info'];
+	}
 
 	/**
 	 * suggest a value if one isn't already set
@@ -25,7 +45,7 @@ class Config {
 			$root = &self::getReference($prefix);
 		else
 			$root = &self::$info;
-		$root = self::merge(self::_replaceConstantsInArray(Yaml::read($file)), $root);
+		$root = self::merge(self::_replaceConstantsInArray(self::loadFile($file)), $root);
 	}
 	
 	/**
@@ -40,7 +60,7 @@ class Config {
 	 */
 	public static function insist($file, $prefix = NULL) {
 		$root = $prefix ? self::getReference($prefix) : self::$info;
-		self::$info = self::merge($root, self::_replaceConstantsInArray(Yaml::read($file)));
+		self::$info = self::merge($root, self::_replaceConstantsInArray(self::loadFile($file)));
 	}
 		
 	/**
