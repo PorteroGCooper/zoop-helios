@@ -8,29 +8,31 @@ data_fixtures_dir: %APP_DIR%/model/doctrine/data/fixtures
 sql_dir: %APP_DIR%/model/doctrine/data/sql
 yaml_schema_dir: %APP_DIR%/model/doctrine/schema
 listeners_dir: %APP_DIR%/model/doctrine/listeners
+behaviors_dir: %APP_DIR%/model/doctrine/behaviors
 
 ## Doctrine attributes
 model_loading: conservative
 use_dql_callbacks: 1
+validation: 1
+
+## Enable/Disable Profiling
+profiler: 0
 
 ## Doctrine listeners
 listeners:
     Doctrine_EventListener:
-        - class: # class name
-          level: # manager, active_connection, or an actual connection name
+        #- class: # class name
+        #  level: # manager, active_connection, or an actual connection name
     Doctrine_EventListener_Interface:
-        - class:
-          level:
     Doctrine_Overloadable:
-        - class:
-          level:
     Doctrine_Record_Listener:
-        - class:
-          level:
+
+behaviors: # [MyBehavior, ...]
 
 ## Connections
 dsn:
 charset:
+collate:
 active_connection: _dsn_connection
 #connections:
 #    default_connection:
