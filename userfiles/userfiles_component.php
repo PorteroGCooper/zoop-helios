@@ -1,7 +1,5 @@
 <?php
-/**
-* @package storage
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,17 +10,25 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-	include_once("VFS.php");
-	include_once("VFS/sql.php");
-	include(dirname(__file__) . "/userfiledb.php");
+
 /**
-* @package storage
-*/
-class component_userfiles extends component
-{
-	function component_userfiles()
-	{
+ * @ingroup storage
+ */
+class component_userfiles extends component {
+	function component_userfiles() {
 		$this->requireComponent('db');
 	}
+	
+	function getIncludes() {
+		$base = $this->getBasePath();
+		
+		include_once("VFS.php");
+		include_once("VFS/sql.php");
+		
+		return array(
+//			"VFS" => "VFS.php",
+//			"VFS_sql" => "VFS/sql.php",
+			'userfiledb' => $base . "/userfiledb.php"
+		);
+	}
 }
-?>

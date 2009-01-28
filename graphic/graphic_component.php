@@ -1,8 +1,4 @@
 <?php
-/**
-* @category zoop
-* @package zone
-*/
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,64 +13,59 @@
 /**
  * component_zone 
  * 
- * @uses component
- * @package 
+ * @ingroup components
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_graphic extends component
-{
-	function component_graphic()
-	{
+class component_graphic extends component {
+	function component_graphic() {
 		$this->requireComponent('xml');
 		$this->requireComponent('fpdf');
 		$this->requireComponent('pdf');
 	}
 	
-	function getIncludes()
-	{
+	function getIncludes() {
+		$base = $this->getBasePath();
 		return array(
-			'smartgraphic' => $this->getBasePath() . '/SmartGraphic.php',
-			'smartpdf' => $this->getBasePath() . '/SmartPdf.php',
-			'smartimage' => $this->getBasePath() . '/SmartImage.php',
-			'smartimagemap' => $this->getBasePath() . '/SmartImageMap.php',
-			'bmfpdf' => $this->getBasePath() . '/BMFPdf.php',
-			'graphicrospdfengine' => $this->getBasePath() . '/GraphicRosPdfEngine.php',
+			'smartgraphic' => $base . '/SmartGraphic.php',
+			'smartpdf' => $base . '/SmartPdf.php',
+			'smartimage' => $base . '/SmartImage.php',
+			'smartimagemap' => $base . '/SmartImageMap.php',
+			'bmfpdf' => $base . '/BMFPdf.php',
+			'graphicrospdfengine' => $base . '/GraphicRosPdfEngine.php',
 			
 			//	the graphic contexts
-			'graphiccontext' => $this->getBasePath() . '/GraphicContext.php',
-			'imagecontext' => $this->getBasePath() . '/ImageContext.php',
-			'fpdfcontext' => $this->getBasePath() . '/FPdfContext.php',
-			'rospdfcontext' => $this->getBasePath() . '/RosPdfContext.php',
-			'imagecontext' => $this->getBasePath() . '/ImageContext.php',
-			'imagemapcontext' => $this->getBasePath() . '/ImageMapContext.php',
+			'graphiccontext' => $base . '/GraphicContext.php',
+			'imagecontext' => $base . '/ImageContext.php',
+			'fpdfcontext' => $base . '/FPdfContext.php',
+			'rospdfcontext' => $base . '/RosPdfContext.php',
+			'imagecontext' => $base . '/ImageContext.php',
+			'imagemapcontext' => $base . '/ImageMapContext.php',
 
 			//	the graphic objects
-			'graphicobject' => $this->getBasePath() . '/GraphicObject.php',
-			'graphicdiv' => $this->getBasePath() . '/GraphicDiv.php',
-			'graphicdocument' => $this->getBasePath() . '/GraphicDocument.php',
-			'graphictextstyle' => $this->getBasePath() . '/GraphicTextStyle.php',
-			'graphictextstylestack' => $this->getBasePath() . '/GraphicTextStyleStack.php',
-			'graphictextrun' => $this->getBasePath() . '/GraphicTextRun.php',
-			'graphichardbrokenline' => $this->getBasePath() . '/GraphicHardBrokenLine.php',
-			'graphiclist' => $this->getBasePath() . '/GraphicList.php',
-			'graphiclistitem' => $this->getBasePath() . '/GraphicListItem.php',
-			'graphictable' => $this->getBasePath() . '/GraphicTable.php',
-			'graphictablerow' => $this->getBasePath() . '/GraphicTableRow.php',
-			'graphictablecell' => $this->getBasePath() . '/GraphicTableCell.php',
-			'graphicsoftbrokenline' => $this->getBasePath() . '/GraphicSoftBrokenLine.php',
-			'graphicrectangle' => $this->getBasePath() . '/GraphicRectangle.php',
-			'graphicimage' => $this->getBasePath() . '/GraphicImage.php',
-			'graphicline' => $this->getBasePath() . '/GraphicLine.php',
-			'graphictext' => $this->getBasePath() . '/GraphicText.php',
-			'graphicpagebreak' => $this->getBasePath() . '/GraphicPageBreak.php',
-			'graphicraw' => $this->getBasePath() . '/GraphicRaw.php',
-			'graphiccolumnset' => $this->getBasePath() . '/GraphicColumnSet.php',
-			'graphiccolumn' => $this->getBasePath() . '/GraphicColumn.php'
+			'graphicobject' => $base . '/GraphicObject.php',
+			'graphicdiv' => $base . '/GraphicDiv.php',
+			'graphicdocument' => $base . '/GraphicDocument.php',
+			'graphictextstyle' => $base . '/GraphicTextStyle.php',
+			'graphictextstylestack' => $base . '/GraphicTextStyleStack.php',
+			'graphictextrun' => $base . '/GraphicTextRun.php',
+			'graphichardbrokenline' => $base . '/GraphicHardBrokenLine.php',
+			'graphiclist' => $base . '/GraphicList.php',
+			'graphiclistitem' => $base . '/GraphicListItem.php',
+			'graphictable' => $base . '/GraphicTable.php',
+			'graphictablerow' => $base . '/GraphicTableRow.php',
+			'graphictablecell' => $base . '/GraphicTableCell.php',
+			'graphicsoftbrokenline' => $base . '/GraphicSoftBrokenLine.php',
+			'graphicrectangle' => $base . '/GraphicRectangle.php',
+			'graphicimage' => $base . '/GraphicImage.php',
+			'graphicline' => $base . '/GraphicLine.php',
+			'graphictext' => $base . '/GraphicText.php',
+			'graphicpagebreak' => $base . '/GraphicPageBreak.php',
+			'graphicraw' => $base . '/GraphicRaw.php',
+			'graphiccolumnset' => $base . '/GraphicColumnSet.php',
+			'graphiccolumn' => $base . '/GraphicColumn.php'
 		);
-		
 	}
 }
-?>

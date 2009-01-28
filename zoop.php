@@ -5,6 +5,7 @@
  * Two classes are contained in this file: the Zoop class, and the Component base.
  *
  * @group zoop
+ * @endgroup
  */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
@@ -55,10 +56,8 @@
  */
 
 
-if(!defined('zoop_autoload') || zoop_autoload)
-{
-	function __autoload($name)
-	{
+if(!defined('zoop_autoload') || zoop_autoload) {
+	function __autoload($name) {
 		global $zoop;
 
 		if($zoop->autoLoad($name)) {
@@ -81,8 +80,7 @@ if(!defined('zoop_autoload') || zoop_autoload)
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class zoop
-{
+class zoop {
 	/**
 	 * init
 	 *
@@ -333,8 +331,10 @@ class zoop
 	 * @access public
 	 * @return void
 	 */
-	function addInclude($name, $file) {
-		$this->includes[strtolower($name)] = $file;
+	function addInclude($names, $file) {
+		foreach ((array)$names as $name) {
+			$this->includes[strtolower($name)] = $file;
+		}
 		if(version_compare(PHP_VERSION, "5.0", "<")) {
 			include_once($file);
 		}

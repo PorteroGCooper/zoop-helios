@@ -10,7 +10,6 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
 /**
  * Validation Zoop component.
  *
@@ -18,18 +17,11 @@
  *
  * @endgroup
  *
+ * @ingroup components
  * @extends component
  */
 class component_validate extends component {
 	function getIncludes() {
 		return array('Validator' => $this->getBasePath(). '/validate.php');
 	}
-
-	/**
-	 * init
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function init() { }
 }

@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package cache
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,22 +13,17 @@
 /** 
  * component_convert
  *
- * @uses component
- * @package
+ * @ingroup components
+ * @ingroup convert
  * @version $id$
  * @copyright 1997-2008 Portero Inc.
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_convert extends component
-{
-	function component_convert() { }
-	
-	function getIncludes()
-	{
+class component_convert extends component {
+	function getIncludes() {
 		return array(
-				"convert" => $this->getBasePath() . "/convert.php"
+			"convert" => $this->getBasePath() . "/convert.php"
 		);
 	}
 }
-?>

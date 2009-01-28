@@ -1,15 +1,4 @@
 <?php
-/**
-* Main component file for component_app
-*
-* Class to initialize the app component. This is the main component in zoop,
-* and should almost always be included. Almost all of the other components depend
-* on this one.
-* @category zoop
-* @package app
-* @subpackage component_app
-*/
-
 
 //Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -21,18 +10,21 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-/**#@+
-* include subpackages
-*
-*/
-/**#@-*/
 /**
-* @package app
-*/
-class component_app extends component
-{
-	function component_app()
-	{
+ * Main component file for component_app
+ *
+ * Class to initialize the app component. This is the main component in zoop,
+ * and should almost always be included. Almost all of the other components depend
+ * on this one.
+ * 
+ * @ingroup app
+ * @ingroup components
+ * @extends component
+ */
+class component_app extends component {
+	function __construct() {
+		$base = $this->getBasePath();
+		
 		//inlude the define_once function
 //		include($this->getBasePath() . "/define.php");
 
@@ -43,19 +35,21 @@ class component_app extends component
 //		$this->defaultConstants();
 
 		//include errorhandling, as soon as possible
-		include($this->getBasePath() . "/error.php");
-		include($this->getBasePath() . "/xmlrpcClasses.php");
-		include($this->getBasePath() . "/utils.php");
-		if(isset($_SERVER["HTTP_HOST"])) {	
-		        //globals.php only deals with http variables.
-		        include($this->getBasePath() . "/globals.php");
+		include($base . "/error.php");
+		include($base . "/xmlrpcClasses.php");
+		include($base . "/utils.php");
+		include($base . "/request_utils.php");
+		
+		if(isset($_SERVER["HTTP_HOST"])) {
+			//globals.php only deals with http variables.
+			include($base . "/globals.php");
 		}
 		
 		$globalTime = &$GLOBALS['globalTime'];
 		logprofile($globalTime);
-		include($this->getBasePath() . "/request_utils.php");
+		
 		// set up error reporting right quick.
-		//if output compression or buffering is on, we have to know for correct live error handling...
+		// if output compression or buffering is on, we have to know for correct live error handling...
 		define('__zoop_error_ob_start', ob_get_level());
 
 		//error_reporting(E_ALL);
@@ -81,11 +75,8 @@ class component_app extends component
 		global $tz;
 		$tz = date('T');
 		$dst = date('Z');
-		if($dst)
-		{
+		if($dst) {
 			$tz = str_replace('D', 'S', $tz);
 		}
 	}
 }
-
-?>

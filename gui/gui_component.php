@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package gui
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,6 +9,7 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+
 /**
  * component_gui
  * 
@@ -25,45 +23,40 @@
  * 
  * @endgroup
  *
- * @uses component
- * @package
+ * @ingroup components
+ * @ingroup gui
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
+ * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class component_gui extends component {
-	/**
-	 * component_gui
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function component_gui() {
+
+	function __construct() {
 		$this->requireComponent('session');
 		$this->requireComponent('validate');
-		if (in_array('db', (array)Config::get('zoop.gui.template_resources.drivers'))) {
-			$this->requireComponent('db');
-		}
-		if (in_array('doctrine', (array)Config::get('zoop.gui.template_resources.drivers'))) {
-			$this->requireComponent('doctrine');
+
+		// Handle all the template resource driver requirements
+		foreach ((array)Config::get('zoop.gui.template_resources.drivers') as $driver) {
+			switch ($driver) {
+				case 'db':
+					$this->requireComponent('db');
+					break;
+				case 'doctrine':
+					$this->requireComponent('doctrine');
+					break;
+			}
 		}
 	}
 
-	/**
-	 * run
-	 *
-	 * @access public
-	 * @return void
-	 */
 	function run() {
-		$config = Config::get('zoop.gui');
-		mkdirr($config['directories']['temp']);
-		$GLOBALS['gui'] = new gui();
+		global $gui;
+		mkdirr(Config::get('zoop.gui.directories.temp'));
+		$gui = new gui();
 	}
 	
 	function getIncludes() {
 		return array("gui" => $this->getBasePath() . "/gui.php");
-						
 	}
 }

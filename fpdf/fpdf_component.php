@@ -1,8 +1,4 @@
 <?php
-/**
-* @category zoop
-* @package zone
-*/
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -15,22 +11,20 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * component_zone 
+ * FPDF component 
  * 
- * @uses component
- * @package 
+ * @ingroup components
+ * @ingroup fpdf
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_fpdf extends component
-{
-	function getIncludes()
-	{
+class component_fpdf extends component {
+	function getIncludes() {
 		return array(
-						"fpdf" => $this->getBasePath() . "/fpdf.php"
-					);
+			"fpdf" => $this->getBasePath() . "/fpdf.php"
+		);
 	}
 }
-?>

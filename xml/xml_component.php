@@ -1,8 +1,4 @@
 <?php
-/**
-* @category zoop
-* @package zone
-*/
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -17,39 +13,26 @@
 /**
  * component_zone 
  * 
- * @uses component
- * @package 
+ * @ingroup components
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_xml extends component
-{
+class component_xml extends component {
 	
-	function getIncludes()
-	{
+	function getIncludes() {
+		$base = $this->getBasePath();
+		
 		$includes = array();
 		if(version_compare(phpversion(), "5.0.0", "<"))
 			$includes = array('xml_tree' => 'XML/Tree.php');
 		return $includes + array(
-						"xmldom" => $this->getBasePath() . "/XmlDom.php",
-						"xmlnode" => $this->getBasePath() . "/XmlNode.php",
-						"xmlnodelist" => $this->getBasePath() . "/XmlNodeList.php",
-						"propertylist" => $this->getBasePath() . "/PropertyList.php",
-						"xmlutils" => $this->getBasePath() . "/utils.php",
+						"xmldom"       => $base . "/XmlDom.php",
+						"xmlnode"      => $base . "/XmlNode.php",
+						"xmlnodelist"  => $base . "/XmlNodeList.php",
+						"propertylist" => $base . "/PropertyList.php",
+						"xmlutils"     => $base . "/utils.php",
 					);
 	}
-
-
-	/**
-	 * run 
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	function run()
-	{
-	}
 }
-?>

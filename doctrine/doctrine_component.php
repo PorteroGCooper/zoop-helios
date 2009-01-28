@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package doctrine
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,9 +10,10 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
- /**
- * @package doctrine
- * @uses component
+/**
+ * @ingroup doctrine
+ * @ingroup components
+ * @ingroup DB
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com> 
@@ -41,7 +39,6 @@ class component_doctrine extends component {
 	 */
 	function run() {
 		$connections = Config::get('zoop.doctrine.connections', array());
-		
 		$connection_name = Config::get('zoop.doctrine.active_connection');
 
 		if (Config::get('zoop.doctrine.dsn')) {

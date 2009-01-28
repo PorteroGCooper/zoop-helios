@@ -2,24 +2,21 @@
 /**
  * component_config
  *
- * @uses component
- * @package
+ * @ingroup components
+ * @ingroup config
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_config extends component
-{
-	function component_config()
-	{
+class component_config extends component {
+	function component_config() {
 		$this->requireComponent('spyc');
 	}
 
-	function getIncludes()
-	{
+	function getIncludes() {
 		return array(
-				"config" =>  $this->getBasePath() . "/Config.php"
+			"config" =>  $this->getBasePath() . "/Config.php"
 		);
 	}
 }

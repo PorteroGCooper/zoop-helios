@@ -21,20 +21,18 @@
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_auth extends component
-{
-	function component_auth()
-	{
+class component_auth extends component {
+
+	function __construct() {
 		$this->requireComponent('db');
 		$this->requireComponent('session');
 		$this->requireComponent('app');
 		$this->requireComponent('spyc');
 	}
 	
-	function getIncludes()
-	{
+	function getIncludes() {
 		return array(
-				"auth" => $this->getBasePath() . "/auth.php"
+			"auth" => $this->getBasePath() . "/auth.php"
 		);
 	}
 }

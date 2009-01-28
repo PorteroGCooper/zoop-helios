@@ -1,8 +1,4 @@
 <?php
-/**
-* @category zoop
-* @package zone
-*/
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -16,47 +12,42 @@
 
 /**
  * component_zone 
+ *
+ * @group Zone
+ *    
+ * @endgroup
  * 
- * @uses component
- * @package 
+ * 
+ * @ingroup components
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_zone extends component
-{
-	function component_zone()
-	{
+class component_zone extends component {
+	function component_zone() {
 		$this->requireComponent('app');
+		
 		if(Config::get('zoop.zone.save_in_session')) {
 			$this->requireComponent('session');
 		}
-//		if (Config::get('zoop.zone.crud_driver') == 'doctrine')
-			$this->requireComponent('doctrine');
-			$this->requireComponent('convert');
-			$this->requireComponent('formz');
+
+		$this->requireComponent('doctrine');
+		$this->requireComponent('convert');
+		$this->requireComponent('formz');
 	}
 		
-	function getIncludes()
-	{
+	function getIncludes() {
+		$base = $this->getBasePath();
 		return array(
-						"zone" => $this->getBasePath() . "/zone.php",
-						"crudZone" => $this->getBasePath() . '/crudZone.php',
-						"zone_sequence" => $this->getBasePath() . "/zone_sequence.php",
-						"zone_zoopfile" => $this->getBasePath() . "/zone_zoopfile.php"
-					);
+			"zone"          => $base . "/zone.php",
+			"crudZone"      => $base . '/crudZone.php',
+			"zone_sequence" => $base . "/zone_sequence.php",
+			"zone_zoopfile" => $base . "/zone_zoopfile.php"
+		);
 	}
-
-
-	/**
-	 * run 
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	function run()
-	{
+	
+	function run() {
 		global $PATH_ARRAY;
 		if(defined('zone_saveinsession')  && zone_saveinsession) {
 			if (!isset($_SESSION["thsZone"])) {
@@ -79,4 +70,3 @@ class component_zone extends component
 		$thsZone->handleRequest($PATH_ARRAY);
 	}
 }
-?>

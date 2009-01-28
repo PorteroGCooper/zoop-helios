@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package cache
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -16,33 +13,30 @@
 /**
  * component_cache
  *
- * @uses component
- * @package
+ * @ingroup components
+ * @ingroup cache
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_cache extends component
-{
+class component_cache extends component {
 	/**
 	 * init
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function init()
-	{
+	function init() {
 		// make sure the directories are writable and exist or are created properly
  		//mkdirr(app_cache_dir);
 	}
 
-	function getIncludes()
-	{
+	function getIncludes() {
+		$base = $this->getBasePath();
 		return array(
-				"zcache_driver" =>  $this->getBasePath() . "/zcache_driver.php",
-				"zcache" =>  $this->getBasePath() . "/zcache.php"
+			"zcache_driver" => $base . "/zcache_driver.php",
+			"zcache" =>        $base . "/zcache.php"
 		);
 	}
 }
-?>

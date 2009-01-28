@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package guicontrol
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,40 +9,35 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+
 /**
  * component_guicontrol
  *
- * @uses component
- * @package
+ * @ingroup guicontrol
+ * @ingroup components
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @author John LeSueur <john@supernerd.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_guicontrol extends component
-{
-	function component_guicontrol()
-	{
+class component_guicontrol extends component {
+
+	function __construct() {
 		$this->requireComponent('gui');
 	}
 
-	function getIncludes()
-	{
-		$dir = Config::get('zoop.guicontrol.directories.zoop');
-		return array("GuiControl" => "$dir/GuiControl.php",
-		"GuiContainer" => "$dir/GuiContainer.php",
-		"GuiMultiValue" => "$dir/GuiMultiValue.php");
+	function getIncludes() {
+		$base = Config::get('zoop.guicontrol.directories.zoop');
+		return array(
+			"GuiControl"    => $base . "/GuiControl.php",
+			"GuiContainer"  => $base . "/GuiContainer.php",
+			"GuiMultiValue" => $base . "/GuiMultiValue.php"
+		);
 	}
 
-	/**
-	 * run
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function run()
-	{
+	function run() {
 		global $controlData;
 
 		$GLOBALS['controlData'] = NULL;
@@ -246,19 +238,20 @@ class component_guicontrol extends component
 	 * @return void
 	 */
 	function includeGuiControl($type) {
- 		$filename = strtolower($type).".php";
+		$filename = strtolower($type).".php";
 
-		$app_dir = Config::get('zoop.guicontrol.directories.zoop');
+		$app_dir  = Config::get('zoop.guicontrol.directories.zoop');
 		$zoop_dir = Config::get('zoop.guicontrol.directories.app');
 
-		if(file_exists("$app_dir/$filename"))
+		if(file_exists("$app_dir/$filename")) {
 			include_once("$app_dir/$filename");
-		else if(file_exists("$zoop_dir/$filename"))
+		} else if(file_exists("$zoop_dir/$filename")) {
 			include_once( "$zoop_dir/$filename");
-		else
+		} else {
 			trigger_error("Please Implement a $type Control and place it in " .
 				"$app_dir/$filename" . " or " .
 				"$zoop_dir/$filename");
+		}
 	}
 
 	/**
@@ -270,12 +263,12 @@ class component_guicontrol extends component
 	function getGuiControlClassName($type) {
 		return $type . "Control";
 	}
-
 }
 
 /**
  * &getGuiControl
  *
+ * @deprecated
  * @param string $type
  * @param string $name
  * @param bool $useGlobal

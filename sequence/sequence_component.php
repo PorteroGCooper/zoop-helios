@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package sequence
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,25 +10,31 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-class component_sequence extends component
-{
-	function component_sequence()
-	{
+/**
+ * component_sequence class.
+ *
+ * @ingroup components
+ * @ingroup sequence
+ * @extends component
+ */
+class component_sequence extends component {
+
+	function __construct() {
 		$this->requireComponent('session');
 		$this->requireComponent('xml');
 	}
 	
-	function getIncludes()
-	{
-		return array( 'sequencedata' => $this->getBasePath() . "/SequenceData.php",
-					'sequenceparser' => $this->getBasePath() . "/SequenceParser.php",
-					'zonesequence' => $this->getBasePath() . "/zonesequence.php");
+	function getIncludes() {
+		$base = $this->getBasePath();
+		return array(
+			'sequencedata'   => $base . "/SequenceData.php",
+			'sequenceparser' => $base . "/SequenceParser.php",
+			'zonesequence'   => $base . "/zonesequence.php"
+		);
 	}
 
-	function init()
-	{
-		if(defined('sequence_file'))
-		{
+	function init() {
+		if(defined('sequence_file')) {
 			$sequenceFile = sequence_file;
 			global $sequenceData, $sGlobals, $PATH_ARRAY;
 			$sequences = &new SequenceParser($sequenceFile);
@@ -53,4 +56,3 @@ class component_sequence extends component
 		}
 	}
 }
-?>

@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package db
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -12,18 +9,19 @@
 // WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
+
 /**
  * component_db 
  * 
- * @uses component
- * @package 
+ * @ingroup component
+ * @ingroup DB
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class component_db extends component
-{
+class component_db extends component {
+
 	/**
 	 * init 
 	 * 
@@ -40,14 +38,16 @@ class component_db extends component
 	
 	function getIncludes() {
 		$includes = array();
-		if(class_exists('PDO') && Config::get('zoop.db.use_pdo')) {
+		if(Config::get('zoop.db.use_pdo') && class_exists('PDO')) {
 			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
 		} else	{
 			$includes['db'] = 'DB.php';
 			$includes['database'] =  $this->getBasePath() . "/database.php";
 		}
-		if(!version_compare(PHP_VERSION, '5.0', '<'))
+		if(!version_compare(PHP_VERSION, '5.0', '<')) {
 			$includes['dbobject'] = $this->getBasePath() . '/dbobject.php';
+		}
+		
 		return $includes + array(
 				"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
 				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
@@ -61,8 +61,8 @@ class component_db extends component
 	 * @return void
 	 */
 	function run() {
-		if (defined('sql_connect') && sql_connect)
+		if (defined('sql_connect') && sql_connect) {
 			sql_connect();
+		}
 	}
 }
-?>

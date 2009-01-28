@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package spell
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -14,23 +11,24 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
-* @package spell
-*/
-class component_spell extends component
-{
-	function component_spell()
-	{
+ * component_spell class.
+ * 
+ * @ingroup components
+ * @extends component
+ */
+class component_spell extends component {
+	function __construct() {
 		$this->requireComponent('db');
 		$this->requireComponent('gui');
 	}
 
 	function getIncludes() {
+		$base = $this->getBasePath();
 		return array(
-			'spellbase' => $this->getBasePath() . "/spellBase.php",
-			'spell' => $this->getBasePath() . "/spell.php",
-			'guispell' => $this->getBasePath() . "/guispell.php"
+			'spellbase' => $base . "/spellBase.php",
+			'spell'     => $base . "/spell.php",
+			'guispell'  => $base . "/guispell.php"
 		);
-			
 	}	
 
 	function init() {
@@ -43,5 +41,3 @@ class component_spell extends component
 
 	}
 }
-
-?>

@@ -1,8 +1,5 @@
 <?php
-/**
- * @category zoop
- * @package zend
- */
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -20,12 +17,16 @@
  * The default for this value is APP_DIR/lib/zend/library
  * Wherever you want to use a zend component, require it,
  *
- * @example
- * 	require_once('Zend/Service/Flickr.php');
- * 	$flickr = new Zend_Service_Flickr('YOUR_FLICKR_API_KEY HERE');
+ * @code
+ *   require_once('Zend/Service/Flickr.php');
+ *   $flickr = new Zend_Service_Flickr('YOUR_FLICKR_API_KEY HERE');
+ * @endcode
  *
- * @package zend
- * @uses component
+ * @group Zend
+ *   
+ * @endgroup
+ *
+ * @ingroup components
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <webmaster@supernerd.com>

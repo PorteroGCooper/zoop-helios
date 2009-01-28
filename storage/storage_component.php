@@ -1,8 +1,5 @@
 <?php
-/**
-* @category zoop
-* @package sequence
-*/
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -13,28 +10,14 @@
 // WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 // FOR A PARTICULAR PURPOSE.
 
-
-include_once(dirname(__file__) . "/Storage.php");
-include_once(dirname(__file__) . "/fileStorage.php");
-include_once(dirname(__file__) . "/SqliteStorage.php");
-
-class component_storage extends component
-{
-	function component_storage()
-	{
-		//$this->requireComponent('session');
-	}
-
-	function init()
-	{
-	}
-	
-	function getIncludes()
-	{
-		$includes = array();
-		$includes['storage'] = $this->getBasePath() . "/Storage.php";
-		$includes['filestorage'] = $this->getBasePath() . "/fileStorage.php";
-		$includes['sqlitestorage'] = $this->getBasePath() . "/SqliteStorage.php";
+class component_storage extends component {
+	function getIncludes() {
+		$base = $this->getBasePath();
+		
+		return array(
+			'storage'       => $base . "/Storage.php",
+			'filestorage'   => $base . "/fileStorage.php",
+			'sqlitestorage' => $base . "/SqliteStorage.php",
+		);
 	}
 }
-?>

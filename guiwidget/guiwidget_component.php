@@ -25,14 +25,17 @@
  */
 class component_guiwidget extends component {
 
-	function component_guiwidget() {
+	function __construct() {
 		$this->requireComponent('gui');
 	}
 
 	function getIncludes() {
-		return array("GuiWidget" => Config::get('zoop.guiwidget.directories.zoop') . 'GuiWidget.php',
-// 		"GuiContainer" => zoop_guiwidget_dir. 'GuiContainer.php',
-		"WidgetGui" => dirname(__file__) . "/widgetgui.php");
+		$base = $this->getBasePath();
+		return array(
+			"GuiWidget"    => Config::get('zoop.guiwidget.directories.zoop') . 'GuiWidget.php',
+// 			"GuiContainer" => zoop_guiwidget_dir. 'GuiContainer.php',
+			"WidgetGui"    => $base . "/widgetgui.php"
+		);
 	}
 
 	/**
