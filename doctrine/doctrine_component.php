@@ -85,10 +85,22 @@ class component_doctrine extends component {
 		}
 		Doctrine::loadModels(Config::get('zoop.doctrine.models_dir')); // This call will not require the found .php files
 
+		if (Config::get('zoop.doctrine.profiler')) {
+			global $doctrine_profiler;
+			$doctrine_profiler = new Doctrine_Connection_Profiler();
+			$manager->getCurrentConnection()->addListener($doctrine_profiler);
+		}
+		
+		if ($behaviors = Config::get('zoop.doctrine.behaviors')) {
+			foreach ($behaviors as $behavior) {
+				include_once(Config::get('zoop.doctrine.behaviors_dir') . '/' . $behavior . '.php');
+			}
+		}
+
 		// Attach listeners to the manager, current connection, or another connection.
 		if ($listeners = Config::get('zoop.doctrine.listeners')) {
 			foreach ($listeners as $type => $listener_classes) {
-				foreach ($listener_classes as $listener) {
+				foreach ((array)$listener_classes as $listener) {
 					if (!isset($listener['class']) || !$listener['class']) continue;
 					if ((!isset($listener['level']) || !$listener['level']) && $type != 'Include_Only') continue;
 

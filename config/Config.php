@@ -1,12 +1,12 @@
 <?php
+
 /**
  * Configuration class
  * 
  * Provides methods for retrieving configuration options from a YAML config file.
- *
  */
-class Config
-{
+class Config {
+
 	static $info = array();
 	private static $file;
 
