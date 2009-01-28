@@ -15,13 +15,32 @@ class Config {
 		if (defined('CONFIG_FILE_CACHE')) include(CONFIG_FILE_CACHE);
 	}
 	
-	private static function loadFile($name) {
+	/**
+	 * Get a config array from a file.
+	 *
+	 * Load and cache a yaml config file. Optionally, convert all instances of constants in the yaml file
+	 * to their equivalent. This means that config options will be cached with constants replaced:
+	 * i.e. changed constants in the app or Zoop will not be refected in the cached version of the config array.
+	 * Reset the config cache or change APP_STATUS to 'dev' to avoid caching constants in the config cache.
+	 * 
+	 * @access private
+	 * @param mixed $name
+	 * @param bool $cache_replace_constants. (default: true)
+	 * @return array
+	 */
+	private static function loadFile($name, $cache_replace_constants = true) {
 		if (!file_exists($name)) return array();
 		if (empty(self::$fileCache)) self::loadFileCache();
 		
 		$last_modified = filemtime($name);
 		if (!isset(self::$fileCache[$name]) || $last_modified > self::$fileCache[$name]['modified']) {
-			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => Yaml::read($name));
+			$info = Yaml::read($name);
+			
+			// Store replaced constants in config cache.
+			if ($cache_replace_constants) {
+				$info = self::_replaceConstantsInArray($info);
+			}
+			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => $info);
 			if (defined('CONFIG_FILE_CACHE') && is_writable(CONFIG_FILE_CACHE)) {
 				file_put_contents(CONFIG_FILE_CACHE, "<?php \n\n" . 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n");
 			}
@@ -45,7 +64,13 @@ class Config {
 			$root = &self::getReference($prefix);
 		else
 			$root = &self::$info;
-		$root = self::merge(self::_replaceConstantsInArray(self::loadFile($file)), $root);
+		
+		// if (APP_STATUS == 'dev') {
+		// 	$config = self::_replaceConstantsInArray(self::loadFile($file, false));
+		// } else {
+			$config = self::loadFile($file);
+		// }
+		$root = self::merge($config, $root);
 	}
 	
 	/**
@@ -60,7 +85,13 @@ class Config {
 	 */
 	public static function insist($file, $prefix = NULL) {
 		$root = $prefix ? self::getReference($prefix) : self::$info;
-		self::$info = self::merge($root, self::_replaceConstantsInArray(self::loadFile($file)));
+		
+		// if (false && APP_STATUS == 'dev') {
+		// 	$config = self::_replaceConstantsInArray(self::loadFile($file, false));
+		// } else {
+			$config = self::loadFile($file);
+		// }
+		self::$info = self::merge($root, $config);
 	}
 		
 	/**
@@ -106,11 +137,11 @@ class Config {
 	 * @return string 
 	 */
 	private static function _replaceConstantsInString($inString) {
-		if ( strstr($inString, '%') ) {
+		if (strpos($inString, '%') !== false) {
 			preg_match_all("/\%([A-Z_-]+)\%/", $inString, $matches);
 			if ($matches[1]) {
 				foreach($matches[1] as $const) {
-					if ( defined($const) ) {
+					if (defined($const)) {
 						$inString = str_replace("%$const%", constant($const), $inString);
 					}
 				}
