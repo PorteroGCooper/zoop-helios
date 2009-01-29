@@ -14,12 +14,15 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 include_once(dirname(__file__) . "/select.php");
 
 /**
- * Shuttle GuiControl
+ * jQuery Shuttle GuiControl
+ *
+ * The shuttle control overrides the default 'null_value' setting of a regular select, since
+ * it makes no sense to show <none> as a selectable value in a shuttle control.
  * 
  * @ingroup gui
  * @ingroup GuiControl
  * 
- * @extends ShuttleControl
+ * @extends SelectControl
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Andy Nu <nuandy@gmail.com>
@@ -32,6 +35,7 @@ class ShuttleControl extends SelectControl {
 
 		// all shuttle controls are, by default, multiple selects...
 		$this->setParam('multiple', true);
+		$this->setParam('null_label', false);
 
 		$gui->add_jquery();
 		$gui->add_js('/zoopfile/gui/js/jquery.comboselect.js', 'zoop');

@@ -14,12 +14,35 @@ include_once(ZOOP_DIR . "/gui/plugins/function.html_options.php");
 
 /**
  * HTML Select GuiControl
+ * 
+ * @section Null Value
  *
- * The select GuiControl can be passed a 'null_label' parameter. This will prepend a null value to
- * the options list for the GuiControl. This label defaults to something like:
+ * A 'null value' will be automatically prepended to select boxes based on a sane set of rules:
+ * 
+ * If this is a non-required multiselect, <none> will be shown at the top of the list unless
+ * it's overridden on a config-level or individual basis.
+ * 
+ * If this is a required single select, '- Select Fieldname -' will be shown at the top of the list
+ * unless it's overridden on a config-level or individual basis.
  *
- * "- Select %field% -"
+ * @code
+ *    // The following will force a specific null value to be shown.
+ *    $myControl->setParam('null_value', 'Select None');
+ *    
+ *    // The following will suppress the null value from being automatically added.
+ *    $otherControl->setParam('null_value', false);
+ * @endcode
  *
+ * The null value can also be overridden at the application level by setting the 'zoop.guicontrol.multiselect_null_value'
+ * and 'zoop.gui.select_null_value' config parameters:
+ * 
+ * @code
+ *    zoop:
+ *      guicontrol:
+ *        select_null_value: '- Select a %field% -'
+ *        multiselect_null_value: 'Select None'
+ * @endcode
+ * 
  * The %field% string is automatically replaced with the name of this GuiControl. If the user doesn't
  * select anything, this field will post as $field === ''... Validation should ensure that this field
  * posts as anything !== '' if this field is required.
@@ -43,10 +66,20 @@ class SelectControl extends GuiMultiValue {
 	function getPersistentParams() {
 		return array('validate');
 	}
+	
+	/**
+	 * Return true if this is a multiselect field.
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	public function isMultiple() {
+		return (isset($this->params['multiple']) && $this->params['multiple']);
+	}
 
 	/**
-	 * Render GuiControl
-	 *
+	 * Render an HTML select or multi-select field.
+	 * 
 	 * @see GuiControl::renderControl
 	 * @access protected
 	 * @return string HTML (multi)select box
@@ -57,16 +90,40 @@ class SelectControl extends GuiMultiValue {
 			$this->params['index'] = array();
 		}
 		
-		// add a null label to the index if it's not already set.
-		// The 'null_label' is a "- Select an Option -" style value at the top of a single select list.
-		// this param should not be supplied on a multi-select list.
-		if (isset($this->params['null_label'])
-			|| ($this->isRequired() && !(isset($this->params['multiple']) && $this->params['multiple']))) {
-
-			if (empty($this->params['null_label']) || $this->params['null_label'] === true) {
-				$value = str_replace('%field%', format_label($this->name), Config::get('zoop.gui.select_null_value'));
+		// handle prepending a null value.
+		$null_label = false;
+		if ($this->isMultiple()) {
+			// handle the 'null_value' on a multiple select
+			
+			if (isset($this->params['null_label'])) {
+				if ($this->isRequired() || !empty($this->params['null_label'])) {
+					$null_label = $this->params['null_label'];
+				}
+			} else if (!$this->isRequired()) {
+				$null_label = true;
 			}
-			$this->params['index'] = array('' => $value) + $this->params['index'];
+			
+			if ($null_label === true) {
+				$null_label = str_replace('%field%', format_label($this->name), Config::get('zoop.guicontrol.multiselect_null_value'));
+			}
+		} else {
+			// handle the 'null_value' on a single select
+			
+			if (isset($this->params['null_label'])) {
+				if (!$this->isRequired() || !empty($this->params['null_label'])) {
+					$null_label = $this->params['null_label'];
+				}
+			} else if ($this->isRequired()) {
+				$null_label = true;
+			}
+			
+			if ($null_label === true) {
+				$null_label = str_replace('%field%', format_label($this->name), Config::get('zoop.guicontrol.select_null_value'));
+			}
+		}
+		
+		if ($null_label) {
+			$this->params['index'] = array('' => $null_label) + $this->params['index'];
 		}
 		
 		$name_id = $this->getNameIdString();
@@ -88,7 +145,7 @@ class SelectControl extends GuiMultiValue {
 	
 	function getLabelName() {
 		$name = parent::getLabelName();
-		if (isset($this->params['multiple']) && $this->params['multiple']) $name .= "[]";
+		if ($this->isMultiple()) $name .= "[]";
 		return $name;
 	}
 	

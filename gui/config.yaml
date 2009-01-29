@@ -58,8 +58,3 @@ templates:
     # define a set of templates to display when sending http responses.
     response:
         404: response/not_found.tpl
-
-# Label for 'nothing selected' in a dropdown.
-# Will autoreplace %field% with the actual field name.
-select_null_value: - Select %field% -
-select_threshold: 15
