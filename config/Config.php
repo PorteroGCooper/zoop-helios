@@ -10,7 +10,15 @@ class Config {
 	static $info = array();
 	private static $file;
 	private static $fileCache;
+	private static $constCache = array();
 	
+	/**
+	 * Helper function to load the config cache file.
+	 * 
+	 * @access private
+	 * @see Config::loadFile
+	 * @return void
+	 */
 	private static function loadFileCache() {
 		if (defined('CONFIG_FILE_CACHE') && file_exists(CONFIG_FILE_CACHE)) include(CONFIG_FILE_CACHE);
 	}
@@ -18,17 +26,15 @@ class Config {
 	/**
 	 * Get a config array from a file.
 	 *
-	 * Load and cache a yaml config file. Optionally, convert all instances of constants in the yaml file
-	 * to their equivalent. This means that config options will be cached with constants replaced:
-	 * i.e. changed constants in the app or Zoop will not be refected in the cached version of the config array.
-	 * Reset the config cache or change APP_STATUS to 'dev' to avoid caching constants in the config cache.
+	 * Load and cache a yaml config file. Config options will be cached with constants replaced. Config
+	 * keeps a list of constant values, and invalidates the cache if it contains 'dirty' data: i.e. changed
+	 * constants in the app or Zoop will force a recache of the config data.
 	 * 
 	 * @access private
 	 * @param mixed $name
-	 * @param bool $cache_replace_constants. (default: true)
 	 * @return array
 	 */
-	private static function loadFile($name, $cache_replace_constants = true) {
+	private static function loadFile($name) {
 		if (!file_exists($name)) return array();
 		if (empty(self::$fileCache)) self::loadFileCache();
 		
@@ -37,15 +43,18 @@ class Config {
 			$info = Yaml::read($name);
 			
 			// Store replaced constants in config cache.
-			if ($cache_replace_constants) {
-				$info = self::_replaceConstantsInArray($info);
-			}
+			$info = self::_replaceConstantsInArray($info);
+			
 			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => $info);
 			if (defined('CONFIG_FILE_CACHE')) {
 				if (file_exists(CONFIG_FILE_CACHE) && !is_writable(CONFIG_FILE_CACHE)) {
 					trigger_error("Unable to write to config cache. Make sure " . CONFIG_FILE_CACHE . " exists and is writable.");
 				} else {
-					file_put_contents(CONFIG_FILE_CACHE, "<?php \n\n" . 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n");
+					$contents = "<?php \n\n";
+					$contents .= 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n";
+					// add the 'dirty cache' logic.
+					$contents .= 'if (' . implode("\n\t|| ", self::$constCache) . ') { self::$fileCache = array(); }';
+					file_put_contents(CONFIG_FILE_CACHE, $contents);
 				}
 			}
 		}
@@ -64,16 +73,13 @@ class Config {
 	 * @return void
 	 */
 	public static function suggest($file, $prefix = NULL) {
-		if($prefix)
+		if ($prefix) {
 			$root = &self::getReference($prefix);
-		else
+		} else {
 			$root = &self::$info;
+		}
 		
-		// if (APP_STATUS == 'dev') {
-		// 	$config = self::_replaceConstantsInArray(self::loadFile($file, false));
-		// } else {
-			$config = self::loadFile($file);
-		// }
+		$config = self::loadFile($file);
 		$root = self::merge($config, $root);
 	}
 	
@@ -90,11 +96,7 @@ class Config {
 	public static function insist($file, $prefix = NULL) {
 		$root = $prefix ? self::getReference($prefix) : self::$info;
 		
-		// if (false && APP_STATUS == 'dev') {
-		// 	$config = self::_replaceConstantsInArray(self::loadFile($file, false));
-		// } else {
-			$config = self::loadFile($file);
-		// }
+		$config = self::loadFile($file);
 		self::$info = self::merge($root, $config);
 	}
 		
@@ -147,11 +149,16 @@ class Config {
 				foreach($matches[1] as $const) {
 					if (defined($const)) {
 						$inString = str_replace("%$const%", constant($const), $inString);
+						
+						// cache all the replaced constants, so we can watch for a dirty config cache.
+						if (!isset(self::$constCache['def:'.$const])) {
+							self::$constCache['def:'.$const] = '!defined("' . $const . '")';
+							self::$constCache[$const] = 'constant("' . $const . '") != "' . constant($const) . '"';
+						}
 					}
 				}
 			}
-		} 
-
+		}
 		return $inString;
 	}
 
