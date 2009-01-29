@@ -16,6 +16,7 @@ class auth {
 	*/
 
 	private static $instance;
+	private $roles = array();
 
 	/**
 	 * The private construct prevents instantiating the class externally.  
@@ -314,9 +315,28 @@ class auth {
 	 * @return void
 	 */
 	protected function _loadACL() {
-		if ($this->getConfig('permissions_file')) {
-			$this->permissions = Yaml::read($this->getConfig('permissions_file'));
-			$this->_hydrateACL($this->permissions);
+		if ($acl_file = $this->getConfig('permissions_file')) {
+			$cache_file = APP_DIR . '/' . $this->getConfig('permissions_file_cache');
+			
+			if ($cache_file && file_exists($cache_file) && filemtime($cache_file) > filemtime(APP_DIR . '/' . $acl_file)) {
+				include($cache_file);
+			}
+			
+			if (empty($this->permissions)) {
+				$this->permissions = Yaml::read($this->getConfig('permissions_file'));
+				$this->_hydrateACL($this->permissions);
+				
+				if ($cache_file) {
+					if (!file_exists($cache_file)) {
+						mkdir_r($cache_file);
+					} else if (!is_writable($cache_file)) {
+						trigger_error("Unable to write to ACL cache file: $cache_file. Make sure file exists and is writable.");
+						return;
+					}
+					
+					file_put_contents($cache_file, "<?php \n\n" . '$this->permissions = ' . var_export($this->permissions, true) . ";\n\n");
+				}
+			}
 		} else {
 			$this->permissions = array();
 		}
@@ -483,7 +503,10 @@ class auth {
 	 * @return array
 	 */
 	function _roleNametoId($name) {
-		return $this->getDriver()->_roleNametoId($name);
+		if (!isset($this->roles[$name])) {
+			$this->roles[$name] = $this->getDriver()->_roleNametoId($name);
+		}
+		return $this->roles[$name];
 	}
 
 

@@ -12,7 +12,7 @@ class Config {
 	private static $fileCache;
 	
 	private static function loadFileCache() {
-		if (defined('CONFIG_FILE_CACHE')) include(CONFIG_FILE_CACHE);
+		if (defined('CONFIG_FILE_CACHE') && file_exists(CONFIG_FILE_CACHE)) include(CONFIG_FILE_CACHE);
 	}
 	
 	/**
@@ -41,8 +41,12 @@ class Config {
 				$info = self::_replaceConstantsInArray($info);
 			}
 			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => $info);
-			if (defined('CONFIG_FILE_CACHE') && is_writable(CONFIG_FILE_CACHE)) {
-				file_put_contents(CONFIG_FILE_CACHE, "<?php \n\n" . 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n");
+			if (defined('CONFIG_FILE_CACHE')) {
+				if (file_exists(CONFIG_FILE_CACHE) && !is_writable(CONFIG_FILE_CACHE)) {
+					trigger_error("Unable to write to config cache. Make sure " . CONFIG_FILE_CACHE . " exists and is writable.");
+				} else {
+					file_put_contents(CONFIG_FILE_CACHE, "<?php \n\n" . 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n");
+				}
 			}
 		}
 		
