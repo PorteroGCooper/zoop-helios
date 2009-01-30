@@ -207,8 +207,8 @@ class zoop {
 	function addZone($name) {
 		$this->addComponent('zone');
 		$zone_dir = Config::get('zoop.zone.directory');
-		$zone_name = "zone_" . str_replace( DIRECTORY_SEPARATOR, "_", $name);
-		$this->addInclude($zone_name,  "$zone_dir" . DIRECTORY_SEPARATOR . "{$name}.php");
+		$zone_name = 'zone_' . str_replace('/', '_', $name);
+		$this->addInclude($zone_name, $zone_dir . DIRECTORY_SEPARATOR . $name . '.php');
 	}
 
 	/**

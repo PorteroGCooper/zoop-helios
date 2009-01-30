@@ -19,12 +19,13 @@ class auth {
 	private $roles = array();
 
 	/**
-	 * The private construct prevents instantiating the class externally.  
+	 * The protected construct prevents instantiating the class outside of
+	 * itself and extending classes.
 	 * 
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		$this->_loadACL();
 	}
 
