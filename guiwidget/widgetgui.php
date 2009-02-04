@@ -40,7 +40,7 @@ class WidgetGui extends gui {
 		foreach ($template_dirs as $_key => $_val) {
 			$template_dirs[$_key] = $_val . "/widgets";
 		}
-		$this->template_dir = $template_dirs
+		$this->template_dir = $template_dirs;
 	}
 	
 	function add_css($path, $scope = 'app') {
