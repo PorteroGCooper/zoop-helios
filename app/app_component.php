@@ -21,7 +21,7 @@
  * @ingroup components
  * @extends component
  */
-class component_app extends component {
+class Component_App extends Component {
 	function __construct() {
 		$base = $this->getBasePath();
 		
