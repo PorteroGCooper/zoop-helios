@@ -53,7 +53,9 @@ class Config {
 					$contents = "<?php \n\n";
 					$contents .= 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n";
 					// add the 'dirty cache' logic.
-					$contents .= 'if (' . implode("\n\t|| ", self::$constCache) . ') { self::$fileCache = array(); }';
+					if (!empty(self::$constCache)) {
+						$contents .= 'if (' . implode("\n\t|| ", self::$constCache) . ') { self::$fileCache = array(); }';
+					}
 					file_put_contents(CONFIG_FILE_CACHE, $contents);
 				}
 			}
