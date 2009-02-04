@@ -1,11 +1,9 @@
 <?php
+
 /**
  * @file
  *
  * Two classes are contained in this file: the Zoop class, and the Component base.
- *
- * @group zoop
- * @endgroup
  */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
@@ -71,26 +69,33 @@ if(!defined('zoop_autoload') || zoop_autoload) {
 
 /**
  * The Zoop class.
- *
  * The Zoop class is the glue that brings all the different components together.
  * It ties the config to the code and launches the controller.
- *
+ * 
+ * @group zoop
+ * @endgroup
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class zoop {
+class Zoop {
+
 	/**
-	 * init
-	 *
-	 * @var array
+	 * @var array $init
 	 * @access public
 	 */
 	var $init = array();
+	
+	/**
+	 * @var array $components
+	 * @access private
+	 */
+	private $components = array();
 
 	/**
-	 * The zoop constructor.
+	 * The Zoop class constructor.
 	 *
 	 * The constructor adds in the "app" component, which required for all zoop apps.
 	 *
@@ -98,9 +103,9 @@ class zoop {
 	 * @access public
 	 * @return void
 	 */
-	function zoop($appPath = NULL) {
+	function __construct($appPath = null) {
 		$this->path = dirname(__file__);
-		if ($appPath == NULL) {
+		if ($appPath == null) {
 			$this->appPath = $this->path;
 		} else {
 			$this->appPath = $appPath;
@@ -131,6 +136,7 @@ class zoop {
 			$this->components[$name] = &$currComponent;
 		}
 	}
+	
 
 	/**
 	 * Find and instantiate the component 
@@ -149,8 +155,8 @@ class zoop {
 	/**
 	 * Load the config for the component 
 	 * 
-	 * @param mixed $name 
-	 * @param mixed $currComponent 
+	 * @param string $name 
+	 * @param Component $currComponent 
 	 * @access public
 	 * @return void
 	 */
@@ -161,22 +167,39 @@ class zoop {
 			$currComponent->loadConfig();
 		}
 	}
-
+	
+	/**
+	 * Include the given config file.
+	 *
+	 * @param string $name
+	 * @access public
+	 * @return bool Success
+	 */
+	private function includeConfig($name) {
+		$name = strtolower($name);
+		$dir = Config::get('zoop.app.directories.config');
+		if (file_exists("$dir/$name.yaml")) {
+			Config::suggest("$dir/$name.yaml");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * Find and add all required components 
 	 * 
-	 * @param mixed $currComponent 
-	 * @access public
+	 * @param Component $currComponent 
+	 * @access private
 	 * @return void
 	 */
-	function addRequiredComponents(&$currComponent) {
+	private function addRequiredComponents(&$currComponent) {
 		$components = $currComponent->getRequiredComponents();
 		foreach($components as $newname) {
 			$this->addComponent($newname);
 		}
 	}
-
-
+	
 	/**
 	 * Accessor for a component 
 	 * Will load component if it has not been loaded.
@@ -320,14 +343,15 @@ class zoop {
 	
 	/**
 	 * Zoop includer.
-	 *
-	 * In a php 5+ environment with autoinclude it will maintain a hash
+	 * 
+	 * In a PHP 5+ environment with autoinclude it will maintain a hash
 	 * of all includes and using autoinclude, will only include each file one time.
-	 *
-	 * In a php 4 environment, this is a wrapper for include_once()
-	 *
-	 * @param mixed $name
-	 * @param mixed $file
+	 * 
+	 * In a PHP 4 environment, this is a wrapper for include_once()
+	 * 
+	 * @param mixed $names
+	 *    The class name (or a array of names) found in $file.
+	 * @param string $file
 	 * @access public
 	 * @return void
 	 */
@@ -335,7 +359,7 @@ class zoop {
 		foreach ((array)$names as $name) {
 			$this->includes[strtolower($name)] = $file;
 		}
-		if(version_compare(PHP_VERSION, "5.0", "<")) {
+		if (version_compare(PHP_VERSION, "5.0", "<")) {
 			include_once($file);
 		}
 	}
@@ -358,15 +382,16 @@ class zoop {
 	}
 
 	/**
-	 * autoLoad
+	 * The Zoop autoloader.
 	 *
 	 * @param mixed $name
 	 * @access public
 	 * @return boolean
 	 */
 	function autoLoad($name) {
- 		$name = strtolower($name);
-		if( isset( $this->includes[$name])) {
+		$name = strtolower($name);
+
+		if (isset($this->includes[$name])) {
 			include_once($this->includes[$name]);
 			return true;
 		}
@@ -374,9 +399,9 @@ class zoop {
 	}
 
 	/**
-	 * init
-	 * Initalizes the components.
-	 * Calls the init method for each component.
+	 * Initalizes Zoop.
+	 *
+	 * Initializes all included components and registers Zoop::autoLoad() as an autoload handler.
 	 *
 	 * @access public
 	 * @return void
@@ -407,21 +432,6 @@ class zoop {
 			$object->run();
 		}
 	}
-
-	/**
-	 * includeConfig
-	 *
-	 * @param mixed $name
-	 * @access public
-	 * @return void
-	 */
-	function includeConfig($name) {
-		$name = strtolower($name);
-		$dir = Config::get('zoop.app.directories.config');
-		if (file_exists("$dir/$name.yaml")) {
-			Config::suggest("$dir/$name.yaml");
-		}
-	}
 }
 
 /**
@@ -437,8 +447,10 @@ class zoop {
  * @author Steve Francia <steve.francia+zoop@gmail.com>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-abstract class component
-{
+abstract class Component {
+	
+	private $name;
+	
 	/**
 	 * required
 	 *
@@ -468,15 +480,17 @@ abstract class component
 	}
 
 	/**
-	 * getName 
-	 * Returns the name of the component
+	 * Get the (lower case) name of this component.
 	 * 
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function getName() {
-		$className = get_class($this);
-		return $componentName = substr($className, 10);
+		if (!isset($this->name)) {
+			$this->name = strtolower(substr(get_class($this), 10));
+		}
+		
+		return $this->name;
 	}
 
 	/**
@@ -485,21 +499,20 @@ abstract class component
 	 * Included from the defaultConstants file bundled in the component.
 	 *
 	 * @access public
+	 * @return void
 	 */
 	function defaultConstants() {
 		include($this->getBasePath() . "/defaultConstants.php");
 	}
 
 	/**
-	 * requireComponent
-	 *
-	 * Setup a dependency of this component.
+	 * Add a dependency for this component.
 	 *
 	 * @code
-	 * $this->requireComponent('db');
+	 *   $this->requireComponent('db');
 	 * @endcode
 	 *
-	 * @param mixed $name
+	 * @param string $name
 	 * @access public
 	 * @return void
 	 */
@@ -519,29 +532,26 @@ abstract class component
 	}
 
 	/**
-	 * getIncludes
-	 *
-	 * To be overloaded. 
-	 * Typically this method will establish all the files that this 
-	 * component needs to run 
-	 *
-	 * It returns an array. An example of this is
+	 * Get all includes needed for this component to run.
+	 * 
+	 * This method should be overloaded by Component classes. It returns an array, like the following:
+	 * 
 	 * @code
-	 * $file = $this->getBasePath();
-	 * return array(
-	 * 			"form2" => $file . "/forms2.php",
-	 *			"form" => $file . "/forms.php",
-	 *			"table" => $file . "/table.php",
-	 *			"record" => $file . "/record.php",
-	 *			"field" => $file . "/field.php",
-	 *			"cell" => $file . "/cell.php",
-	 *			"xml_serializer" => "XML/Serializer.php"
-	 *	);
-	 *	@endcode
+	 *   $file = $this->getBasePath();
+	 *   return array(
+	 *     // 'class_name'  => 'file_name',
+	 *     "form2"          => $file . "/forms2.php",
+	 *     "form"           => $file . "/forms.php",
+	 *     "table"          => $file . "/table.php",
+	 *     "record"         => $file . "/record.php",
+	 *     "field"          => $file . "/field.php",
+	 *     "cell"           => $file . "/cell.php",
+	 *     "xml_serializer" => "XML/Serializer.php"
+	 *   );
+	 * @endcode
 	 *
 	 * @access public
 	 * @return array
-	 *
 	 */
 	function getIncludes() {
 		return array();
@@ -555,11 +565,10 @@ abstract class component
 	 * @access public
 	 * @return void
 	 */
-	function getConfigPath()
-	{
+	function getConfigPath() {
 		return $this->getName();
 	}
-
+	
 	/**
 	 * loadConfig 
 	 * Loads the config.yaml file from the component directory.
