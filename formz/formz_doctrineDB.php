@@ -623,7 +623,7 @@ class formz_doctrineDB implements formz_driver_interface {
 			// Passing Doctrine an empty array or value unlinks all related records for the class.
 			// Therefore, this checks isset() instead of is_array() or !empty()
 			if (isset($unlink_rel)) {
-				$this->_record->unlink($rel, $unlink_rel);
+				$this->_record->unlink($rel, $unlink_rel, true);
 			}
 
 		}
@@ -633,10 +633,7 @@ class formz_doctrineDB implements formz_driver_interface {
 		// there's nothing currently in the database.
 		if (isset($submitted_relations)) {
 			foreach ($submitted_relations as $relation_class => $ids) {
-				// Doctrine 1.0.* assumes the array starts with an index of 0.
-				// This fixes our array keys so Doctrine doesn't barf on $ids.
-				if (is_array($ids)) sort($ids);
-				$this->_record->link($relation_class, $ids);
+				$this->_record->link($relation_class, $ids, true);
 			}
 		}
 		

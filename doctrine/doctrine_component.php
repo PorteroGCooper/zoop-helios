@@ -39,49 +39,56 @@ class component_doctrine extends component {
 	 */
 	function run() {
 		$connections = Config::get('zoop.doctrine.connections', array());
-		$connection_name = Config::get('zoop.doctrine.active_connection');
-
+		
+		$active_connection = Config::get('zoop.doctrine.active_connection');
+		
 		if (Config::get('zoop.doctrine.dsn')) {
 			// The default active_connection is set to '_dsn_connection' in zoop/doctrine/config.yaml
 			// Unless overridden in APP_DIR/config.yaml this connection will be the active connection.
 			$connections['_dsn_connection']['dsn'] = Config::get('zoop.doctrine.dsn');
-			
-			/*
-			 * From the Doctrine Documentation:
-			 * It is worth noting that for certain databases (Firebird, MySql and PostgreSQL) setting the
-			 * charset option [in model definitions] might not be enough for Doctrine to return data
-			 * properly. For those databases, users are advised to also use the setCharset function of
-			 * the database connection.
-			 */
-			$connections['_dsn_connection']['charset'] = Config::get('zoop.doctrine.charset');
 		}
 		
 		$manager = Doctrine_Manager::getInstance();
 		
-		foreach ($connections as $conn_name => $connection) {
-			if ( ! isset($connection['dsn'])) continue;
+		// Defaults. Any connection without its own collate and charset settings will use these.
+		if (Config::get('zoop.doctrine.collate')) $manager->setCollate(Config::get('zoop.doctrine.collate'));
+		if (Config::get('zoop.doctrine.charset')) $manager->setCharset(Config::get('zoop.doctrine.charset'));
+		
+		foreach ($connections as $conn_name => $conn_options) {
+			if ( ! isset($conn_options['dsn'])) continue;
 			
-			// Use zoop.doctrine.charset for any connections without their own charset.
-			$charset = isset($connection['charset']) ? $connection['charset'] : Config::get('zoop.doctrine.charset');
-
-			if (empty($charset)) {
-				$manager->connection($connection['dsn'], $conn_name);
-			} else {
-				$manager->connection($connection['dsn'], $conn_name)->setCharset($charset);
-			}
+			// Setup the connection.
+			$connection = $manager->connection($conn_options['dsn'], $conn_name);
+			
+			// Even though the defaults have been set on the manager, Doctrine still chokes
+			// on some character sets unless the collate and charset settings are put on
+			// every connection (for Firebird, MySql and PostgreSQL).
+			$collate = isset($conn_options['collate']) ? $conn_options['collate'] : Config::get('zoop.doctrine.collate');
+			$charset = isset($conn_options['charset']) ? $conn_options['charset'] : Config::get('zoop.doctrine.charset');
+			
+			if ($collate) $connection->setCollate($collate);
+			if ($charset) $connection->setCharset($charset);
+		}
+		// No reason to keep the last connection object around.
+		unset($connection);
+		
+		$manager->setCurrentConnection($active_connection);
+		
+		if (Config::get('zoop.doctrine.validation')) {
+			$manager->setAttribute(Doctrine::ATTR_VALIDATE, Doctrine::VALIDATE_ALL);
 		}
 		
-		$manager->setCurrentConnection($connection_name);
-		$manager->setAttribute(Doctrine::ATTR_VALIDATE, Doctrine::VALIDATE_ALL);
-		$manager->setAttribute('model_loading', Config::get('zoop.doctrine.model_loading'));
-		// DQL Callbacks enable functionality needed for, among other things, SoftDelete.
-		if (Config::get('zoop.doctrine.use_dql_callbacks')) {
-			$manager->setAttribute('use_dql_callbacks', true);
+		if (strtolower(Config::get('zoop.doctrine.model_loading')) == 'aggressive') {
+			$manager->setAttribute(Doctrine::ATTR_MODEL_LOADING, Doctrine::MODEL_LOADING_AGGRESSIVE);
 		} else {
-			$manager->setAttribute('use_dql_callbacks', false);
+			$manager->setAttribute(Doctrine::ATTR_MODEL_LOADING, Doctrine::MODEL_LOADING_CONSERVATIVE);
 		}
+		
+		// DQL Callbacks enable functionality needed for, among other things, SoftDelete.
+		$manager->setAttribute(Doctrine::ATTR_USE_DQL_CALLBACKS, (bool) Config::get('zoop.doctrine.use_dql_callbacks'));
+		
 		Doctrine::loadModels(Config::get('zoop.doctrine.models_dir')); // This call will not require the found .php files
-
+		
 		if (Config::get('zoop.doctrine.profiler')) {
 			global $doctrine_profiler;
 			$doctrine_profiler = new Doctrine_Connection_Profiler();
@@ -93,16 +100,16 @@ class component_doctrine extends component {
 				include_once(Config::get('zoop.doctrine.behaviors_dir') . '/' . $behavior . '.php');
 			}
 		}
-
+		
 		// Attach listeners to the manager, current connection, or another connection.
 		if ($listeners = Config::get('zoop.doctrine.listeners')) {
 			foreach ($listeners as $type => $listener_classes) {
 				foreach ((array)$listener_classes as $listener) {
 					if (!isset($listener['class']) || !$listener['class']) continue;
 					if ((!isset($listener['level']) || !$listener['level']) && $type != 'Include_Only') continue;
-
+					
 					include_once(Config::get('zoop.doctrine.listeners_dir') . '/' . $listener['class'] . '.php');
-
+					
 					$method = '';
 					switch ($type) {
 						case 'Doctrine_EventListener':
@@ -114,9 +121,9 @@ class component_doctrine extends component {
 							$method = 'addRecordListener';
 							break;
 					}
-
+					
 					if (empty($method)) continue;
-
+					
 					if ($listener['level'] == 'manager') {
 						$manager->$method(new $listener['class']());
 					} elseif ($listener['level'] == 'active_connection') {
