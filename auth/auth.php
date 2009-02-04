@@ -1,15 +1,15 @@
 <?php
 
 /**
- * auth 
+ * Auth 
  * 
- * @auth 
+ * @Auth 
  * @version $id$
  * @copyright 1997-2008 Portero Inc.
  * @author Steve Francia <steve.francia+zoop@gmail.com> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class auth {
+class Auth {
 
 	/**
 	* The following variables and methods should be duplicated in each class that extends this one
@@ -69,7 +69,7 @@ class auth {
 	 * @var string
 	 * @access public
 	 */
-	var $configBase = "zoop.auth";
+	public $configBase = "zoop.auth";
 
 	/**
 	* End of necessary duplicated lines
@@ -81,7 +81,7 @@ class auth {
 	 * @var mixed
 	 * @access public
 	 */
-	var $driver;
+	public $driver;
 
 	/**
 	 * Get the backend driver and load it into the instance var. 
@@ -89,16 +89,16 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _loadDriver() {
+	protected function _loadDriver() {
 		global $zoop;
 		$backend = $this->getConfig('backend');
-		$name = "auth_driver_" . $backend;
-		$zoop->addInclude($name, ZOOP_DIR . "/auth/drivers/$backend.php");
+		$name = 'AuthDriver_' . $backend;
+		$zoop->addInclude($name, ZOOP_DIR . '/auth/drivers/' . $backend . '.php');
 		if (class_exists($name)) {
 			$this->driver = new $name($this);
 			return $this->driver;
 		} else {
-			trigger_error("Invalid Driver: $name");
+			trigger_error('Invalid Driver: '. $name);
 		}
 	}
 
@@ -108,7 +108,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function getDriver() {
+	public function getDriver() {
 		if (!$this->driver) {
 			$this->_loadDriver();
 		}
@@ -123,7 +123,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function testDriver() {
+	public function testDriver() {
 		$drv = $this->getDriver();
 		return $drv->test();
 	}
@@ -135,7 +135,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function populateActiveUser($user_id) {
+	public function populateActiveUser($user_id) {
 		return $this->getDriver()->populateActiveUser($user_id);
 	}
 
@@ -145,7 +145,7 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getActiveUser() {
+	public function getActiveUser() {
 		return $this->getDriver()->getActiveUser();
 	}
 
@@ -155,7 +155,7 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getActiveUserArray() {
+	public function getActiveUserArray() {
 		return $this->getDriver()->getActiveUserArray();
 	}
 	
@@ -165,9 +165,10 @@ class auth {
 	 * @see auth::getActiveUser
 	 * @see auth::requireCondition
 	 * @param mixed $user
+	 * @access public
 	 * @return bool
 	 */
-	function requireLoggedIn() {
+	public function requireLoggedIn() {
 		return $this->requireCondition($this->getActiveUser());
 	}
 
@@ -180,7 +181,7 @@ class auth {
 	 * @access public
 	 * @return bool
 	 */
-	function checkUserId($user_id) {
+	public function checkUserId($user_id) {
 		return $this->_checkActiveUser((array)$user_id, $this->getConfig('fields.user.id'));
 	}
 
@@ -193,7 +194,7 @@ class auth {
 	 * @access public
 	 * @return bool
 	 */
-	function checkUser($user) {
+	public function checkUser($user) {
 		return $this->_checkActiveUser((array)$user, $this->getConfig('fields.user.username'));
 	}
 
@@ -205,7 +206,7 @@ class auth {
 	 * @access protected
 	 * @return boolean, $field
 	 */
-	function _checkActiveUser($array, $field) {
+	protected function _checkActiveUser($array, $field) {
 		$au = $this->getActiveUserArray();
 		return (isset($au[$field]) && !empty($au[$field]) && in_array($au[$field], $array));
 	}
@@ -216,9 +217,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $user
+	 * @access public
 	 * @return bool
 	 */
-	function requireUser($user) {
+	public function requireUser($user) {
 		return $this->requireCondition($this->checkUser($user));
 	}
 
@@ -228,9 +230,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $user_id
+	 * @access public
 	 * @return bool
 	 */
-	function requireUserId($user_id) {
+	public function requireUserId($user_id) {
 		return $this->requireCondition($this->checkUserId($user_id));
 	}
 
@@ -241,7 +244,7 @@ class auth {
 	 * @access public
 	 * @return mixed
 	 */
-	function getGroups($user = false) {
+	public function getGroups($user = false) {
 		return $this->getDriver()->getGroups($user);
 	}
 
@@ -255,7 +258,7 @@ class auth {
 	 * @access public
 	 * @return boolean
 	 */
-	function checkGroupId($group_id, $user = false) {
+	public function checkGroupId($group_id, $user = false) {
 		return $this->_foundInSet($group_id, $this->getGroups($user));
 	}
 
@@ -270,7 +273,7 @@ class auth {
 	 * @access public
 	 * @return boolean
 	 */
-	function checkGroup($group, $user = false ) {
+	public function checkGroup($group, $user = false ) {
 		return $this->checkGroupId($this->_groupNametoId($group), $user);
 	}
 
@@ -280,9 +283,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $group
+	 * @access public
 	 * @return bool
 	 */
-	function requireGroup($group) {
+	public function requireGroup($group) {
 		return $this->requireGroupId($this->_groupNametoId($group));
 	}
 
@@ -292,9 +296,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $group_id
+	 * @access public
 	 * @return bool
 	 */
-	function requireGroupId($group_id) {
+	public function requireGroupId($group_id) {
 		return $this->requireCondition($this->checkGroupId($group_id));
 	}
 
@@ -305,7 +310,7 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _groupNametoId($name) {
+	protected function _groupNametoId($name) {
 		return $this->getDriver()->_groupNametoId($name);
 	}
 
@@ -353,7 +358,7 @@ class auth {
 	 * @return void
 	 */
 	protected function _hydrateACL(&$permissions, $all = array()) {
-		if (isset($permissions['ALL'])) {
+		if (isset($permissions['ALL']) && is_array($permissions['ALL'])) {
 			$all = array_merge($permissions['ALL'], $all);
 			unset($permissions['ALL']);
 		}
@@ -453,7 +458,7 @@ class auth {
 	 * @access public
 	 * @return boolean
 	 */
-	function checkRoleId($role_id, $user = false) {
+	public function checkRoleId($role_id, $user = false) {
 		return $this->_foundInSet($role_id, $this->getRoles($user));
 	}
 
@@ -468,7 +473,7 @@ class auth {
 	 * @access public
 	 * @return boolean
 	 */
-	function checkRole($role, $user = false ) {
+	public function checkRole($role, $user = false ) {
 		return $this->checkRoleId($this->_roleNametoId($role), $user);
 	}
 
@@ -478,9 +483,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $role
+	 * @access public
 	 * @return bool
 	 */
-	function requireRole($role) {
+	public function requireRole($role) {
 		return $this->requireRoleId($this->_roleNametoId($role));
 	}
 
@@ -490,9 +496,10 @@ class auth {
 	 *
 	 * @see auth::requireCondition
 	 * @param mixed $role_id
+	 * @access public
 	 * @return bool
 	 */
-	function requireRoleId($role_id) {
+	public function requireRoleId($role_id) {
 		return $this->requireCondition($this->checkRoleId($role_id));
 	}
 
@@ -503,7 +510,7 @@ class auth {
 	 * @access protected
 	 * @return array
 	 */
-	function _roleNametoId($name) {
+	protected function _roleNametoId($name) {
 		if (!isset($this->roles[$name])) {
 			$this->roles[$name] = $this->getDriver()->_roleNametoId($name);
 		}
@@ -520,7 +527,7 @@ class auth {
 	 * @return mixed
 	 */
 	/*
-	 *    function requireInRoles($roles) {
+	 *    public function requireInRoles($roles) {
 	 *        $return = false;
 	 *
 	 *        foreach ($roles as $role) {
@@ -542,7 +549,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function requireCondition($var) {
+	public function requireCondition($var) {
 		if ($var) {
 			return true;
 		} else {
@@ -558,7 +565,7 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _checkPassword($username, $password) {
+	protected function _checkPassword($username, $password) {
 		return $this->getDriver()->_checkPassword($username, $password);
 	}
 
@@ -572,7 +579,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function logIn($username, $password) {
+	public function logIn($username, $password) {
 		if ($user_id = $this->_checkPassword($username, $password))	{
 			$this->populateActiveUser($user_id);
 			return true;
@@ -588,7 +595,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function logOut() {
+	public function logOut() {
 		$this->_logout();
 		BaseRedirect($this->getConfig('locations.post_logout'));
 	}
@@ -605,7 +612,7 @@ class auth {
 	 * @access public
 	 * @return void
 	 */
-	function failed() {
+	public function failed() {
 		// if there is no user logged in, give them a chance to log in.
 		if ($this->getConfig('denied.show_login_if_logged_out') && $this->getActiveUser() === null) {
 			return $this->_showLogin();
@@ -678,7 +685,7 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _logout() {
+	protected function _logout() {
 		unset($_SESSION['auth'][$this->getConfig('session_user')]);
 	}
 	
@@ -700,7 +707,7 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _foundInSet($needles, $hay) {
+	protected function _foundInSet($needles, $hay) {
 		return $this->getDriver()->_foundInSet($needles, $hay);
 	}
 
@@ -708,6 +715,7 @@ class auth {
 	 * returns the config value for the auth component.
 	 *
 	 * @param string $path
+	 * @access protected
 	 * @return mixed
 	 */
 	function getConfig($path = false) {
@@ -725,7 +733,7 @@ class auth {
 	 * @access protected
 	 * @return void
 	 */
-	function _setConfigBase($path) {
+	protected function _setConfigBase($path) {
 		$this->configBase = $path;
 	}
 }

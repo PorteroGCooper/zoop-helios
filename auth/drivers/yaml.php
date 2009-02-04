@@ -1,14 +1,14 @@
 <?php
-include_once(dirname(__file__) . "/base.php");
+include_once(dirname(__file__) . '/base.php');
 
-class auth_driver_yaml extends auth_driver_base {
+class AuthDriver_Yaml extends AuthDriver_Base {
 	/**
 	 * path and filename of the yaml file 
 	 * 
 	 * @var mixed
 	 * @access public
 	 */
-	var $file;
+	public $file;
 
 	/**
 	 * UserGroupRole hash  
@@ -16,7 +16,7 @@ class auth_driver_yaml extends auth_driver_base {
 	 * @var mixed
 	 * @access public
 	 */
-	var $ugrhash;
+	public $ugrhash;
 
 	/**
 	 * Read the yaml file into the $this->ugrhash variable 
@@ -36,7 +36,7 @@ class auth_driver_yaml extends auth_driver_base {
 	 * @access public
 	 * @return void
 	 */
-	function test() {
+	public function test() {
 		$this->_readYaml();
 		return true;
 	}
@@ -48,7 +48,7 @@ class auth_driver_yaml extends auth_driver_base {
 	 * @access public
 	 * @return void
 	 */
-	function populateActiveUser($user_id) {
+	public function populateActiveUser($user_id) {
 		$this->_readYaml();
 		$user = $this->ugrhash['users'][$user_id];
 
@@ -57,12 +57,12 @@ class auth_driver_yaml extends auth_driver_base {
 		}
 
 		$groups = array();
-		if ( $this->getConfig('use_groups') ) {
+		if ($this->getConfig('use_groups')) {
 			$groups = $user['groups'];
 		}
 
 		$roles = array();
-		if ( $this->getConfig('use_roles') ) {
+		if ($this->getConfig('use_roles')) {
 			$roles = $user['roles'];
 		}
 

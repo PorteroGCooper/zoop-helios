@@ -1,4 +1,4 @@
-backend: db
+backend: DB
 tables:
    user: users
    group: associations

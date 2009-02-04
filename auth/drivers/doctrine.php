@@ -1,10 +1,10 @@
 <?php
-include_once(dirname(__file__) . "/base.php");
+include_once(dirname(__file__) . '/base.php');
 
-class auth_driver_doctrine extends auth_driver_base {
+class AuthDriver_Doctrine extends AuthDriver_Base {
 	var $userObj;
 
-	function populateActiveUser($user_id) {
+	public function populateActiveUser($user_id) {
 		$userTable = Doctrine::getTable($this->getConfig('models.user'));
 		$user = $userTable->find($user_id);
 
@@ -25,8 +25,8 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @access public
 	 * @return mixed
 	 */
-	function getGroups($user = false) {
-		if (!$user) { $user = $this->auth->getActiveUser(); }
+	public function getGroups($user = false) {
+		if (!$user) $user = $this->auth->getActiveUser();
 
 		$relName = $this->getConfig('models.group');
 		return $user->$relName;
@@ -39,8 +39,8 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @access public
 	 * @return mixed
 	 */
-	function getRoles($user = false) {
-		if (!$user) { $user = $this->auth->getActiveUser(); }
+	public function getRoles($user = false) {
+		if (!$user) $user = $this->auth->getActiveUser();
 		if (!$user) return null;
 
 		$relName = $this->getConfig('models.role');
@@ -53,8 +53,8 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @access public
 	 * @return mixed
 	 */
-	function getActiveUser() {
-		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
+	public function getActiveUser() {
+		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')])) {
 			if (!isset($this->userObj)) {
 				$userTable = Doctrine::getTable($this->getConfig('models.user'));
 				$user_id = $_SESSION['auth'][$this->getConfig('session_user')][$this->getConfig('fields.user.id')];
@@ -62,7 +62,7 @@ class auth_driver_doctrine extends auth_driver_base {
 			}
 			return $this->userObj;
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -74,14 +74,14 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @return void
 	 */
 	function _groupNametoId($name) {
-		$call = "findOneBy" . $this->getConfig('fields.group.name');
+		$call = 'findOneBy' . $this->getConfig('fields.group.name');
 		$groupTable = Doctrine::getTable($this->getConfig('models.group'));
 		$id = $this->getConfig('fields.group.id');
 		$group = $groupTable->$call($name);
 		if ($group) {
 			return $group->$id;
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -93,7 +93,7 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @return array
 	 */
 	function _roleNametoId($name) {
-		$call = "findOneBy" . $this->getConfig('fields.role.name');
+		$call = 'findOneBy' . $this->getConfig('fields.role.name');
 		$roleTable = Doctrine::getTable($this->getConfig('models.role'));
 		$id = $this->getConfig('fields.role.id');
 		$role = $roleTable->$call($name);
@@ -113,7 +113,7 @@ class auth_driver_doctrine extends auth_driver_base {
 	 * @return void
 	 */
 	function _checkPassword($username, $password) {
-		$call = "findOneBy" . $this->getConfig('fields.user.username');
+		$call = 'findOneBy' . $this->getConfig('fields.user.username');
 		$userTable = Doctrine::getTable($this->getConfig('models.user'));
 		$user = $userTable->$call($username);
 
@@ -123,14 +123,14 @@ class auth_driver_doctrine extends auth_driver_base {
 
 		if ($this->getConfig('use_active') ) {
 			$activeField = $this->getConfig('fields.user.active');
-			if ($user->$activeField != $this->getConfig('active_value') ) {
+			if ($user->$activeField != $this->getConfig('active_value')) {
 				return NULL;
 			}
 		}
 
 		$pw = $this->_preparePassword($password);
 
-		if ($user->password == $pw ) {
+		if ($user->password == $pw) {
 			return $user->id;
 		} else {
 			return NULL;
@@ -160,4 +160,3 @@ class auth_driver_doctrine extends auth_driver_base {
 	}
 
 }
-

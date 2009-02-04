@@ -1,9 +1,9 @@
 <?php
 
-class auth_driver_base {
+abstract class AuthDriver_Base {
 	var $auth;
 
-	function __construct($auth) {
+	public function __construct($auth) {
 		$this->auth = $auth;
 	}
 
@@ -17,7 +17,7 @@ class auth_driver_base {
 	 * @param string $path
 	 * @return mixed
 	 */
-	function getConfig($path = false) {
+	public function getConfig($path = false) {
 		return $this->auth->getConfig($path);
 	}
 
@@ -28,14 +28,14 @@ class auth_driver_base {
 	 * @access public
 	 * @return mixed
 	 */
-	function getGroups($user = false) {
-		if (!$user) { $user = $this->auth->getActiveUser(); }
+	public function getGroups($user = false) {
+		if (!$user) $user = $this->auth->getActiveUser();
 
-			if ( isset($user['groups']) && !empty($user['groups']) ) {
-				return $user['groups'];
-			} else {
-				return array();
-			}
+		if (isset($user['groups']) && !empty($user['groups'])) {
+			return $user['groups'];
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -45,60 +45,49 @@ class auth_driver_base {
 	 * @access public
 	 * @return mixed
 	 */
-	function getRoles($user = false) {
-		if (!$user) { $user = $this->auth->getActiveUser(); }
+	public function getRoles($user = false) {
+		if (!$user) $user = $this->auth->getActiveUser();
 
-			if ( isset($user['roles']) && !empty($user['roles']) ) {
-				return $user['roles'];
-			} else {
-				return array();
-			}
-	}
-
-	/**
-	 * Return active user if use is logged in (NULL otherwise).
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	function getActiveUser() {
-		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
-			return $_SESSION['auth'][$this->getConfig('session_user')];
-		} else {
-			return NULL;
-		}
-	}
-
-	/**
-	 * Return active user as array if user is logged in (NULL otherwise).
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	function getActiveUserArray() {
-		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')]) ) {
-			return $_SESSION['auth'][$this->getConfig('session_user')];
+		if (isset($user['roles']) && !empty($user['roles'])) {
+			return $user['roles'];
 		} else {
 			return array();
 		}
+	}
 
+	/**
+	 * Return active user if use is logged in (null otherwise).
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public function getActiveUser() {
+		if (isset($_SESSION['auth'][$this->getConfig('session_user')]) && !empty($_SESSION['auth'][$this->getConfig('session_user')])) {
+			return $_SESSION['auth'][$this->getConfig('session_user')];
+		} else {
+			return null;
+		}
+	}
+
+	public function getActiveUserArray() {
+		// don't call this... cast result of getActiveUser() as an array instead.
+		deprecated("WTF?");
+		return (array)$this->getActiveUser();
 	}
 
 	/**
 	 * Prepare password for comparison by encrypting if enabled 
 	 * 
-	 * @param mixed $password 
+	 * @param string $password 
 	 * @access protected
-	 * @return void
+	 * @return string
 	 */
-	function _preparePassword($password) {
-		if ( $this->getConfig('password_encryption') && $this->getConfig('encryption') ) {
+	protected function _preparePassword($password) {
+		if ($this->getConfig('password_encryption') && $this->getConfig('encryption')) {
 			$encryptFunction = $this->getConfig('encryption');
 			return $encryptFunction($password);
 		} else { 
 			return $password;
 		}
 	}
-
 }
-
