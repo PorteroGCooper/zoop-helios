@@ -3,7 +3,7 @@
 /**
  * Auth 
  * 
- * @Auth 
+ * @ingroup Auth
  * @version $id$
  * @copyright 1997-2008 Portero Inc.
  * @author Steve Francia <steve.francia+zoop@gmail.com> 

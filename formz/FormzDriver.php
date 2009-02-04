@@ -1,7 +1,4 @@
 <?php
-/**
- * @group Formz
- */
 
  // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -14,16 +11,20 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * Interface for formz database connectors.
- *
- * This interface is currently implemented by doctrineDB and
+ * Base class for formz database connectors.
+ * 
+ * This driver is currently implemented by doctrineDB and
  * formDB (a combination of Zoop 1.x forms and forms2).
- *
+ * 
+ * @ingroup Formz
+ * 
+ * @group FormzDriver
+ * 
  * @author Justin Hileman <justin@justinhileman.info>
  * @access public
  * @copyright Supernerd LLC and Contributors
  */
-interface formz_driver_interface {
+abstract class FormzDriver {
 
 	/**
 	 * Return the driver type for this formz driver.
@@ -31,7 +32,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return int Formz::DoctrineDB or Formz::FormDB const.
 	 */
-	function getType();
+	function getType() {
+		
+	}
 
 	/**
 	 * Return the name of the id field for this table.
@@ -39,7 +42,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return string ID field name
 	 */
-	function getIdField();
+	function getIdField() {
+		
+	}
 
 	/**
 	 * Return an array of fields in this class/table/form.
@@ -47,7 +52,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array Field data
 	 */
-	function getFields();
+	function getFields() {
+		
+	}
 
 	/**
 	 * Return all data associated with this form.
@@ -56,7 +63,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array An array of form field values for the record or records.
 	 */
-	function getData($return_formz = false);
+	function getData($return_formz = false) {
+		
+	}
 
 	/**
 	 * Requests all records from the database.
@@ -67,7 +76,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return ??
 	 */
-	function getRecords($limit = false);
+	function getRecords($limit = false) {
+		
+	}
 
 	/**
 	 * Requests the requested record from the database (as would be used in a record).
@@ -77,7 +88,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return mixed Returns record id (if found) or null.
 	 */
-	function getRecord($id = null);
+	function getRecord($id = null) {
+		
+	}
 
 	/**
 	 * Requests the requested record from the database by slug value.
@@ -86,7 +99,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return mixed Returns record id (if found) or null.
 	 */
-	function getRecordBySlug($slug);
+	function getRecordBySlug($slug) {
+		
+	}
 	
 	/**
 	 * Requests the requested record id from the database by slug value.
@@ -95,7 +110,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return mixed Returns record id (if found) or null.
 	 */
-	function getRecordIdBySlug($slug);
+	function getRecordIdBySlug($slug) {
+		
+	}
 
 	/**
 	 * Save an array of POST formatted data to a record.
@@ -105,7 +122,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return int Save status: ID if successful, false if failed.
 	 */
-	function saveRecord($values, $id = null);
+	function saveRecord($values, $id = null) {
+		
+	}
 
 	/**
 	 * Remove a record from the database
@@ -114,7 +133,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool True on success
 	 */
-	function destroyRecord($id = null);
+	function destroyRecord($id = null) {
+		
+	}
 
 	/**
 	 * Create and attach a relation to the current record
@@ -123,7 +144,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function createRelation($values, $id = null);
+	function createRelation($values, $id = null) {
+		
+	}
 
 	/**
 	 * Get foreign fields that should be immutable for this form
@@ -132,7 +155,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function getImmutableForeignFields($foreign_class);
+	function getImmutableForeignFields($foreign_class) {
+		
+	}
 	
 	/**
 	 * Get all db relations.
@@ -140,7 +165,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array Array of relations associated with this class.
 	 */
-	function getTableRelations();
+	function getTableRelations() {
+		
+	}
 
 	/**
 	 * Get the named relation data.
@@ -149,7 +176,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return array relation data as an array.
 	 */
-	function getTableRelation($name);
+	function getTableRelation($name) {
+		
+	}
 
 
 	/**
@@ -160,7 +189,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return $array values
 	 */
-	function getTableRelationValues($fields);
+	function getTableRelationValues($fields) {
+		
+	}
 
 	/**
 	 * Fetches the slug field for this table
@@ -168,7 +199,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return $string slug field
 	 */
-	function getSlugField();
+	function getSlugField() {
+		
+	}
 
 	/**
 	 * Fetches the version field for this table
@@ -176,7 +209,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return $string version field
 	 */
-	function getVersionField();
+	function getVersionField() {
+		
+	}
 
 	/**
 	 * Fetches the timestamp fields (created, updated) for this table
@@ -184,7 +219,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return $array values
 	 */
-	function getTimestampFields();
+	function getTimestampFields() {
+		
+	}
 
 	/**
 	 * Fetches the soft delete field for this table
@@ -192,7 +229,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return $string soft delete field
 	 */
-	function getSoftDeleteField();
+	function getSoftDeleteField() {
+		
+	}
 
 	/**
 	 * Fetches a reference to this driver's Doctrine query or
@@ -201,7 +240,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return &DoctrineQuery
 	 */
-	function &getDoctrineQuery();
+	function &getDoctrineQuery() {
+		
+	}
 
 	/**
 	 * Fetches a reference to this driver's Doctrine record or
@@ -210,7 +251,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return &DoctrineRecord
 	 */	
-	function &getDoctrineRecord();
+	function &getDoctrineRecord() {
+		
+	}
 	
 	/**
 	 * Is this table/form/relation timestampable?
@@ -218,7 +261,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isTimestampable();
+	function isTimestampable() {
+		
+	}
 
 	/**
 	 * Does this table use soft delete?
@@ -226,7 +271,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isSoftDeletable();
+	function isSoftDeletable() {
+		
+	}
 
 	/**
 	 * Does this table use slugs?
@@ -234,7 +281,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isSluggable();
+	function isSluggable() {
+		
+	}
 
 	/**
 	 * Returns true if this table is searchable.
@@ -242,7 +291,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool True if this is searchable.
 	 */
-	function isSearchable();
+	function isSearchable() {
+		
+	}
 
 	/**
 	 * Does this table use versioning?
@@ -250,7 +301,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isVersionable();
+	function isVersionable() {
+		
+	}
 
 	/**
 	 * Returns true if table is a tree 
@@ -258,7 +311,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isTree();
+	function isTree() {
+		
+	}
 	
 	/**
 	 * Returns true if a sort has been applied to this table.
@@ -266,9 +321,13 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isSorted();
+	function isSorted() {
+		
+	}
 	
-	function setParentRecordName($parent);
+	function setParentRecordName($parent) {
+		
+	}
 
 	/**
 	 * Order results by given column and direction.
@@ -278,7 +337,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-	function sort($fieldname, $direction = "ASC");
+	function sort($fieldname, $direction = "ASC") {
+		
+	}
 
 	/**
 	 * Return the total number of pages if the form is paginated according to current page limit.
@@ -290,7 +351,9 @@ interface formz_driver_interface {
 	 * @param int $limit. (default: null)
 	 * @return int Total page count.
 	 */
-	function getPageCount($limit=null);
+	function getPageCount($limit=null) {
+		
+	}
 	
 	/**
 	 * Set the current page number. This is used by the Formz object to set pagination based
@@ -300,7 +363,9 @@ interface formz_driver_interface {
 	 * @param int $pageNumber
 	 * @return void
 	 */
-	function setPage($pageNumber);
+	function setPage($pageNumber) {
+		
+	}
 	
 	/**
 	 * Set record per page for pagination on this Formz object. If none is set, will fall back to
@@ -310,7 +375,9 @@ interface formz_driver_interface {
 	 * @param int $limit
 	 * @return void
 	 */
-	function setLimit($limit);
+	function setLimit($limit) {
+		
+	}
 
 	/**
 	 * Set the search term to check for
@@ -319,7 +386,9 @@ interface formz_driver_interface {
 	 * @param string $query
 	 * @return void
 	 */
-	function search($query);
+	function search($query) {
+		
+	}
 
 	/**
 	 * Returns true if this form uses pagination.
@@ -327,7 +396,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return bool
 	 */
-	function isPaginated();
+	function isPaginated() {
+		
+	}
 	
 	/**
 	 * Enable pagination on this form.
@@ -336,7 +407,9 @@ interface formz_driver_interface {
 	 * @param boolean $value. (default: true)
 	 * @return void
 	 */
-	function setPaginated($value = true);
+	function setPaginated($value = true) {
+		
+	}
 
 	/**
 	 * setValidationOptions
@@ -350,12 +423,16 @@ interface formz_driver_interface {
 	 * @return void
 	 * @see validate
 	 */
-/* 	function setValidationOptions($fieldname, $value); */
+/* 	function setValidationOptions($fieldname, $value) {
+		
+	} */
 
 	/**
 	 * setValidationOption
 	 * Define an individaul validation parameter for this specific field, or these sepecific fields.
-	 * could be something like setValidationOption('name', 'type', 'alphanumeric');
+	 * could be something like setValidationOption('name', 'type', 'alphanumeric') {
+		
+	}
 	 * type needs to be one supported by the validate class
 	 *
 	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
@@ -365,7 +442,9 @@ interface formz_driver_interface {
 	 * @return void
 	 * @see validate
 	 */
-/* 	function setValidationOption($fieldname, $innername, $value); */
+/* 	function setValidationOption($fieldname, $innername, $value) {
+		
+	} */
 
 	/**
 	 * required
@@ -376,7 +455,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return void
 	 */
-/* 	function required($fieldname, $value = true); */
+/* 	function required($fieldname, $value = true) {
+		
+	} */
 
 	/**
 	 * getValue
@@ -386,7 +467,9 @@ interface formz_driver_interface {
 	 * @access public
 	 * @return mixed $value
 	 */
-/* 	function getValue($fieldname); */
+/* 	function getValue($fieldname) {
+		
+	} */
 	
 
 	

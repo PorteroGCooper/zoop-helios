@@ -11,18 +11,19 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * doctrineDB is a Doctrine connector library for formz.
+ * A Doctrine driver library for formz.
  *
  * This Doctrine driver requires Doctrine version 1.1+
  *
- * @ingroup forms
  * @ingroup Formz
+ * @ingroup FormzDriver
+ * 
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class formz_doctrineDB implements formz_driver_interface {
+class FormzDriver_Doctrine extends FormzDriver {
 
 	// Doctrine objects associated with this form.
 	protected $table;
@@ -47,7 +48,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	protected $_joinCount        = 0;
 	
 	// search variables
-	protected $_searchString      = null;
+	protected $_searchString     = null;
 	protected $_searchFields     = null;
 	
 	// value constraints for creating and updating records.
@@ -70,7 +71,7 @@ class formz_doctrineDB implements formz_driver_interface {
 	 * @return void
 	 * @access public
 	 */
-	function formz_doctrineDB($tablename) {
+	function __construct($tablename) {
 		$this->tablename = $tablename;
 		$this->table = Doctrine::getTable($this->tablename);
 		$this->_joinTables['@this'] = 'this';
@@ -1284,56 +1285,5 @@ class formz_doctrineDB implements formz_driver_interface {
 		} else {
 			return null;
 		}
-	}
-	
-/////////////////////////////////////////////////////////
-// LEGACY CODE:                                        //
-// THESE METHODS PROB'LY DON'T BELONG IN THE DRIVER... //
-/////////////////////////////////////////////////////////
-	
-	/**
-	 * setValidationOptions
-	 * Define the validation for this specific field, or these sepecific fields.
-	 * Values of the array other than type are the parameters required/supported by the type of validation.
-	 * type needs to be one supported by the validate class
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param array $value array needs 'type' set.
-	 * @access public
-	 * @return void
-	 * @see validate
-	 */
-	function setValidationOptions($fieldname, $value) {
-		$this->setFieldParam($fieldname, "validation", $value);
-	}
-
-	/**
-	 * setValidationOption
-	 * Define an individaul validation parameter for this specific field, or these sepecific fields.
-	 * could be something like setValidationOption('name', 'type', 'alphanumeric');
-	 * type needs to be one supported by the validate class
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param string $innername
-	 * @param string $value
-	 * @access public
-	 * @return void
-	 * @see validate
-	 */
-	function setValidationOption($fieldname, $innername, $value) {
-		$this->setFieldInnerParam($fieldname, "validation", $innername, $value);
-	}
-
-	/**
-	 * required
-	 * set a field or fields to be required as part of the validation.
-	 *
-	 * @param mixed $fieldname can be the name of a field, or an array of fieldnames.
-	 * @param mixed $value
-	 * @access public
-	 * @return void
-	 */
-	function required($fieldname, $value = true) {
-		$this->setValidationOption($fieldname, 'required',  $value);
 	}
 }

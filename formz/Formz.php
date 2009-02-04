@@ -2,16 +2,17 @@
 
 /**
  * Formz is the next generation Zoop form controller.
- *
+ * 
  * Formz relies on either a Doctrine or a Zoop forms database backend.
  * It creates an easy to use link between a table and a html list,
  * or a record and an html form. It supports full validation of types
  * and requirements.
- *
+ * 
  * @ingroup forms
  * @ingroup Formz
- * @see formz_doctrineDB
- * @see formz_formDB
+ * 
+ * @see FormzDriver_Doctrine
+ * @see FormzDriver_FormDB
  * @author Justin Hileman {@link http://justinhileman.com}
  */
 class Formz {
@@ -20,20 +21,20 @@ class Formz {
 	 * Constants for defining relationships.
 	 *
 	 */
-	const ONE = 1;
+	const ONE  = 1;
 	const MANY = 2;
 
 	/**
 	 * Constants for defining driver types.
 	 *
 	 */
-	const DoctrineDB = 0;
-	const FormDB = 1;
+	const Doctrine   = 0;
+	const FormDB     = 1;
 
 	/**
 	 * Formz database driver object.
 	 *
-	 * At this point, this is either a formDB or a doctrineDB connector.
+	 * At this point, this is either a FormDB or a Doctrine connector.
 	 * 
 	 * @access protected
 	 */
@@ -163,7 +164,7 @@ class Formz {
 	 *
 	 * Accepts a param defining which driver type to use. If the param is not passed,
 	 * it will use the app or framework selected default formz driver. Please pass one
-	 * of the Formz driver type constants to override: Formz::DoctrineDB or Formz::FormDB
+	 * of the Formz driver type constants to override: Formz::Doctrine or Formz::FormDB
 	 *
 	 * @param string $tablename  table name in the database
 	 * @param string $driver_type  OPTIONAL, Driver type to use for this Formz object.
@@ -180,15 +181,15 @@ class Formz {
 		$this->type = Config::get('zoop.formz.type','list');
 		
 		switch ($driver_type) {
-			case Formz::DoctrineDB:
+			case Formz::Doctrine:
 			case 'doctrine':
-				$this->_driver = new Formz_DoctrineDB($tablename);
+				$this->_driver = new FormzDriver_Doctrine($tablename);
 				// Make this driver aware of its table alias
 				$this->_driver->setTableAlias($tablename);
 				break;
 			case Formz::FormDB:
 			case 'forms':
-				$this->_driver = new Formz_FormDB($tablename);
+				$this->_driver = new FormzDriver_FormDB($tablename);
 				break;
 			default:
 				trigger_error($driver_type . " is not a valid Formz type.");
@@ -478,7 +479,7 @@ class Formz {
 	 * Return the driver type for this formz driver.
 	 *
 	 * @access public
-	 * @return int Formz::DoctrineDB or Formz::FormDB const.
+	 * @return int Formz::Doctrine or Formz::FormDB const.
 	 */
 //	function getDriverType() {
 //		return $this->_driver->getType();

@@ -13,16 +13,19 @@
 /**
  * The Formz component.
  *
+ * @group Formz
+ * @endgroup
+ * 
  * @ingroup components
  * @ingroup forms
- * @ingroup formz
  *
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Justin Hileman <justin@justinhileman.info> 
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}/
  */
-class component_formz extends component {
+class Component_Formz extends Component {
+	
 	function __construct() {
 		$this->requireComponent('db');
 		$this->requireComponent('doctrine');
@@ -34,19 +37,22 @@ class component_formz extends component {
 	
 	function getIncludes() {
 		$base = $this->getBasePath();
+		
 		return array(
-			"formz"                  => $base . "/formz.php",
-			"formz_driver_interface" => $base . "/formz_driver.interface.php",
-			"formz_doctrineDB"       => $base . "/formz_doctrineDB.php",
-			"formz_formDB"           => $base . "/formz_formDB.php",
-			"FormzField"             => $base . "/FormzField.php",
-			"FormzFieldCollection"   => $base . "/FormzFieldCollection.php",
+			"Formz"                => $base . "/Formz.php",
 			
-			"table"                  => $base . "/table.php",
-			"record"                 => $base . "/record.php",
-			"field"                  => $base . "/field.php",
-			"cell"                   => $base . "/cell.php",
-			"xml_serializer"         => "XML/Serializer.php"
+			"FormzField"           => $base . "/FormzField.php",
+			"FormzFieldCollection" => $base . "/FormzFieldCollection.php",
+			
+			"FormzDriver"          => $base . "/FormzDriver.php",
+			"FormzDriver_Doctrine" => $base . "/FormzDriver_Doctrine.php",
+			"FormzDriver_FormDB"   => $base . "/FormzDriver_FormDB.php",
+			
+			"table"                => $base . "/table.php",
+			"record"               => $base . "/record.php",
+			"field"                => $base . "/field.php",
+			"cell"                 => $base . "/cell.php",
+			"xml_serializer"       => "XML/Serializer.php"
 		);
 	}
 }

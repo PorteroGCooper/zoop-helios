@@ -1,7 +1,4 @@
 <?php
-/**
- * @group forms
- */
  
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -14,14 +11,17 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * formDB is a forms2 based database connection for Formz.
+ * FormDB is a forms2 based database driver for Formz.
+ *
+ * @ingroup Formz
+ * @ingroup FormzDriver
  *
  * @version $id$
  * @author Justin Hileman <justin@justinhileman.info>
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  * @copyright 1997-2008 Supernerd LLC
  */
-class Formz_FormDB implements formz_driver_interface {
+class FormzDriver_FormDB extends FormzDriver {
 
 	/**
 	 * Name of current table in the database
@@ -116,7 +116,7 @@ class Formz_FormDB implements formz_driver_interface {
 	 * @return NULL
 	 * @access public
 	 */
-	function Formz_FormDB($tablename) {
+	function __construct($tablename) {
 		$this->tablename = strtolower($tablename);
 		$this->initTable($this->tablename);
 /*
