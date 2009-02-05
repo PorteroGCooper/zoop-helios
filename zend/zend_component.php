@@ -35,16 +35,6 @@
 class component_zend extends component {
 	function init() {
 		$dir = Config::get('zoop.zend.dir');
-
-		/**
-		 * @todo Find correct environment variable when you get off the plane.
-		 */
-		$sys = getenv('operating system');
-		if ($sys == 'Windows') {
-			ini_set('include_path', ini_get('include_path').';'. $dir );
-		} else {
-			ini_set('include_path', ini_get('include_path').':'. $dir );
-		}
-
+		ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR .  $dir );
 	}
 }
