@@ -494,18 +494,6 @@ abstract class Component {
 	}
 
 	/**
-	 * defaultContstants
-	 * Returns the default configuration constants.
-	 * Included from the defaultConstants file bundled in the component.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function defaultConstants() {
-		include($this->getBasePath() . "/defaultConstants.php");
-	}
-
-	/**
 	 * Add a dependency for this component.
 	 *
 	 * @code

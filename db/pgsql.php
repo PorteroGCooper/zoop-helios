@@ -284,12 +284,30 @@ function sql_format_date($dbdate, $format, $timezone = NULL)
 		trigger_error("The Formating string that has been passed into the FormatPostgresDate() function is formated incorrectly.
 		It must follow the formating convention from the Date.php class. For Example: D M j, Y becomes %a %b %e, %Y ");
 	}
+	
+	
 	//	this should actually parse in the hours, minutes and seconds too
 	//		but I don't need them right now.
 	$date = &new Date();
 	if($dbdate != 0)
 	{
 		global $tz;
+		
+		
+		// this mess is only used in pgsql... since we're using PDO for everything that matters,
+		// i'm moving this to pgsql specific file... --justin
+		if (!isset($tz)) {
+			/**************
+			find the current timezone.....
+			**************/
+			$tz = date('T');
+			$dst = date('Z');
+			if($dst) {
+				$tz = str_replace('D', 'S', $tz);
+			}
+		}
+		
+		
 		$timeparts = split("-|:| |\\.", $dbdate);
 		$year = $timeparts[0];
 		$month = $timeparts[1];

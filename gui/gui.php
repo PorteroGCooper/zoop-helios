@@ -112,10 +112,7 @@ class gui extends Smarty {
 
 		$guiConfig = Config::get('zoop.gui');
 		$dirs = $guiConfig['directories'];
-		//	set the default for the base template dir
-		if(!defined("gui_base") )
-			define("gui_base", $dirs['base']);
-
+		
 		$this->template_dir = array($dirs['template'], $dirs['base_template']);
 		$this->setCompileDir($dirs['compile']);
 		$this->setCacheDir($dirs['cache']);

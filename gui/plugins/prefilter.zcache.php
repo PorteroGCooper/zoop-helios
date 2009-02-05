@@ -157,10 +157,12 @@ function _zcache_magic($block, &$compiler)
 // 	$id = md5($id); //crc32($id); // so we can accept any charset.
 	$file_name = $compiler->_current_file.'#' . $id;
 
-	if (defined(gui_look))
-		$filenametowrite = $write_path . 'zcache' . DIRECTORY_SEPARATOR . gui_look . DIRECTORY_SEPARATOR . $file_name;
-	else
+
+	if ($look = Config::get('app.gui.look')) {
+		$filenametowrite = $write_path . 'zcache' . DIRECTORY_SEPARATOR . $look . DIRECTORY_SEPARATOR . $file_name;
+	} else {
 		$filenametowrite = $write_path . 'zcache' . DIRECTORY_SEPARATOR . $file_name;
+	}
 
 	require_once SMARTY_CORE_DIR . 'core.write_file.php';
 	smarty_core_write_file( array( 'filename'=>$filenametowrite, 'contents'=>$block['content'], 'create_dirs'=>true ), $compiler );

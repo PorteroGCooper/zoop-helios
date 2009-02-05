@@ -83,13 +83,15 @@ class zcache_driver_cachelite extends zcache_driver {
 	
 	function clearBase($base) 
 	{
-		return rmrf(join_dirs(array(app_cache_dir, "$base")));
+		$dir = Config::get('zoop.cache.cache_dir')
+		return rmrf(join_dirs(array($dir, "$base")));
 	}
 
 	
 	function clearAllCache() 
 	{
-		rmrf(app_cache_dir . "/");
-		mkdirr(app_cache_dir);
+		$dir = Config::get('zoop.cache.cache_dir')
+		rmrf($dir . "/");
+		mkdirr($dir);
 	}
 }

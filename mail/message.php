@@ -42,19 +42,17 @@ class message extends gui
 	function message()
 	{
 		$this->Smarty();
-   		$this->template_dir = gui_base;
-		$this->compile_dir = app_temp_dir . "/gui";
+		
+		$this->template_dir = Config::get('zoop.gui.directories.base');
+		$this->compile_dir = APP_TEMP_DIR . "/gui";
 
-		if (defined("gui_look") )
-		{
-			$this->config_dir = $this->template_dir . "/" . gui_look . "/configs";
-			$this->debug_tpl = "file:" . gui_look . "/debug.tpl";
-			$this->assign("template_root", gui_look);
-		}
-		else
-		{
+		if ($look = Config::get('app.gui.look')) {
+			$this->config_dir = $this->template_dir . "/" . $look . "/configs";
+			$this->debug_tpl = "file:" . $look . "/debug.tpl";
+			$this->assign("template_root", $look);
+		} else {
 			$this->config_dir = $this->template_dir . "/configs";
-			$this->assign("template_root", gui_base);
+			$this->assign("template_root", $this->template_dir);
 		}
 		global $strings;
 		$this->assign("strings", $strings);

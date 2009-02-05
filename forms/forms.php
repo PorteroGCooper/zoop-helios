@@ -55,6 +55,7 @@ class form
 	 */
 	function sql_connect($dbconnname)
 	{
+		// @TODO This will fail miserably if there isn't a default db connection. None of these things are defined...
 		if (!isset($GLOBALS[$dbconnname]) && $dbconnname == 'defaultdb')
 			$GLOBALS[$dbconnname] = &new database(database::makeDSN(db_RDBMS, db_Server, db_Port, db_Username, db_Password, db_Database));
 		elseif (!isset($GLOBALS[$dbconnname]))

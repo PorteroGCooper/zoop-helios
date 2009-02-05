@@ -17,8 +17,11 @@
 */
 class FileStorage extends Storage
 {
-	function FileStorage($basePath = filestorage_root)
+	function FileStorage($basePath = null)
 	{
+		if ($basePath === null) {
+			$basePath = Config::get('zoop.storage.filestorage_root');
+		}
 		$this->basePath = $basePath;
 	}
 	

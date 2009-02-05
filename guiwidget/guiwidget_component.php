@@ -33,7 +33,6 @@ class component_guiwidget extends component {
 		$base = $this->getBasePath();
 		return array(
 			"GuiWidget"    => Config::get('zoop.guiwidget.directories.zoop') . 'GuiWidget.php',
-// 			"GuiContainer" => zoop_guiwidget_dir. 'GuiContainer.php',
 			"WidgetGui"    => $base . "/widgetgui.php"
 		);
 	}

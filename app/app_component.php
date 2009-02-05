@@ -24,15 +24,6 @@
 class Component_App extends Component {
 	function __construct() {
 		$base = $this->getBasePath();
-		
-		//inlude the define_once function
-//		include($this->getBasePath() . "/define.php");
-
-		// here we need the config for app, because error.php, and globals.php need it.
-		// but since this is called in the contructor of zoop, we can't access the global zoop object use it to include the config/app.php file. 
-		// easiest solution... Place the config lines from config/app.php into config.php 
-		// then including the defaults here.
-//		$this->defaultConstants();
 
 		//include errorhandling, as soon as possible
 		include($base . "/error.php");
@@ -67,16 +58,6 @@ class Component_App extends Component {
 			}
 		} else {
 			set_error_handler('error_debug_handler');
-		}
-		
-		/**************
-		find the current timezone.....
-		**************/
-		global $tz;
-		$tz = date('T');
-		$dst = date('Z');
-		if($dst) {
-			$tz = str_replace('D', 'S', $tz);
 		}
 	}
 }
