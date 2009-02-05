@@ -2029,12 +2029,3 @@ if ( false === function_exists('lcfirst') ) {
 		return (string)(strtolower(substr($str,0,1)).substr($str,1));
 	}
 }
-
-/**
- * @todo If we're removing php 4 support, the following should be removed and utils5 should be combined with this file.
- */
-if(version_compare(PHP_VERSION, '5.0', '<')) {
-	include_once(dirname(__FILE__) . '/utils4.php');
-} else {
-	include_once(dirname(__FILE__) . '/utils5.php');
-}

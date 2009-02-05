@@ -136,7 +136,7 @@ class PieChart extends Chart
 			$thisSliceInfo->percentage = round($thisSlice['value'] * 100 / $total, 1);
 			if( isset($thisSlice['url']) )
 				$thisSliceInfo->url = $thisSlice['url'];
-			$sliceInfo[$name] = CloneObject($thisSliceInfo);
+			$sliceInfo[$name] = clone $thisSliceInfo;
 
 			//	move on to the next slice
 			$curTheta += $deltaTheta;

@@ -18,10 +18,11 @@ class GraphicTextStyleStack
 		//	this will make a copy of the current top style in the stack
 		//		to make this work in php5 you will need to explicitly clone the object
 		$numStyles = count($this->styles);
-		if($numStyles == 0)
+		if($numStyles == 0) {
 			$newTopStyle = &new GraphicTextStyle();
-		else
-			$newTopStyle = CloneObject($this->styles[ $numStyles - 1 ]);
+		} else {
+			$newTopStyle = clone $this->styles[$numStyles - 1];
+		}
 		
 		//	now just put the new one onto the top of the stack
 		$this->styles[] = &$newTopStyle;
