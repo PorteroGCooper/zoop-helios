@@ -25,13 +25,10 @@
   * @param       array    $mapfield
   * @return      bool     Returns TRUE on success, FALSE on failure
   */
-function sqlMap($field, $mapfield)
-{
+function sqlMap($field, $mapfield) {
 	$sql = "case $field ";
-	foreach ($mapfield as $key => $value)
-	{
-		if(!is_numeric($key))
-			$key = ticks($key);
+	foreach ($mapfield as $key => $value) {
+		if(!is_numeric($key)) $key = ticks($key);
 		$sql .= "when $key then ". sql_escape_string($value) . " ";
 	}
 	$sql .= "else '' end";
@@ -48,13 +45,11 @@ function sqlMap($field, $mapfield)
 * @param string $tablename the name of the table to insert the array into
 * @return mixed $return the primary key value of the inserted record
 */
-function db_insert_array(&$inArray, &$tablename)
-{
+function db_insert_array(&$inArray, &$tablename) {
 	sql_connect();
 	global $defaultdb;
 
-	foreach ($inArray as $field => $value)
-	{
+	foreach ($inArray as $field => $value) {
 		$fields[] = $defaultdb->escape_identifier($field);
 		$values[] = $defaultdb->escape_string($value);
 	}
@@ -81,13 +76,11 @@ function db_insert_array(&$inArray, &$tablename)
 * @param string $primarykey the name of the primary key field
 * @param string $id of the primary key
 */
-function db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue)
-{
+function db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue) {
 	sql_connect();
 	global $defaultdb;
 
-	foreach ($inArray as $field => $value)
-	{
+	foreach ($inArray as $field => $value) {
 		$updateStr = "";
 		$updateStr .= $defaultdb->escape_identifier($field);
 		$updateStr .= "=";
@@ -117,18 +110,13 @@ function db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue)
 * @param string $id of the primary key
 * @return mixed $return the primary key value of the saved record
 */
-function db_save_array($inArray, $tablename, $primarykey, $primarykeyvalue)
-{
-		if ($primarykeyvalue == "new")
-			$return = db_insert_array($inArray, $tablename);
-		else
-		{
-			db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue);
-			$return = $primarykeyvalue;
-		}
+function db_save_array($inArray, $tablename, $primarykey, $primarykeyvalue) {
+	if ($primarykeyvalue == "new") {
+		$return = db_insert_array($inArray, $tablename);
+	} else {
+		db_update_array($inArray, $tablename, $primarykey, $primarykeyvalue);
+		$return = $primarykeyvalue;
+	}
 
-		return $return;
+	return $return;
 }
-
-
-?>

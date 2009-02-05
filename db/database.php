@@ -1,8 +1,9 @@
 <?php
 /**
-* @package db
-* @subpackage database
-*/
+ * @package db
+ * @subpackage database
+ */
+
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
 //
@@ -14,7 +15,7 @@
 // FOR A PARTICULAR PURPOSE.
 
 /**
- * database
+ * Database
  *
  * @package
  * @version $id$
@@ -25,8 +26,7 @@
  * @author Richard Bateman
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
-class database
-{
+class Database {
 	/**
 	 * db
 	 *
@@ -45,28 +45,29 @@ class database
 	/**
 	 * database
 	 *
-	 * @param mixed $dsn
+	 * @param string $dsn
 	 * @access public
 	 * @return void
 	 */
-	function database($dsn)
-	{
+	public function __construct($dsn) {
 		$options = array(
-			'debug'       => 2
+			'debug' => 2
 		);
-		if (defined('db_persistent'))
-			$options['persistent'] = db_persistent;
+		if (defined('db_persistent')) $options['persistent'] = db_persistent;
 			
 		if (!is_array($dsn)) $dsn = database::makeDSNFromString($dsn);
 		$this->dsn = &$dsn;
+		
 		global $globalTime;
 		logprofile($globalTime, true);
+		
 		$this->db = DB::connect($dsn, $options);
 		logprofile($globalTime, "connect: {$dsn['phptype']}://{$dsn['hostspec']}:{$dsn['port']}/{$dsn['database']}");
-		if(DB::isError($this->db))
-		{
+
+		if (DB::isError($this->db)) {
 			$this->error($this->db);
 		}
+		
 		$this->db->setFetchMode(DB_FETCHMODE_ASSOC);
 	}
 
@@ -74,40 +75,32 @@ class database
 	 * getDSN
 	 *
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
-	function getDSN()
-	{
+	public function getDSN() {
 		return $this->dsn;
 	}
 
 	/**
 	 * verifyQuery
 	 *
-	 * @param mixed $inQuery
+	 * @param string $inQuery
 	 * @access public
 	 * @return void
 	 */
-	function verifyQuery($inQuery)
-	{
-		if(defined("verify_queries") && verify_queries)
-		{
+	public function verifyQuery($inQuery) {
+		if (defined("verify_queries") && verify_queries) {
 			$inQuote = 0;
-			for($i = 0 ; $i < strlen($inQuery); $i++)
-			{
-				if(!$inQuote && $inQuery[$i] == ';')
+			for($i = 0 ; $i < strlen($inQuery); $i++) {
+				if (!$inQuote && $inQuery[$i] == ';') {
 					trigger_error("this query had a ;, and is not safe...");
-				else if($inQuery[$i] == '\'')
-				{
-					if($inQuote)
-					{
+				} elseif ($inQuery[$i] == '\'') {
+					if ($inQuote) {
 						$inQuote = 0;
-					}
-					else
+					} else {
 						$inQuote = 1;
-				}
-				else if($inQuery[$i] == '\\')
-				{
+					}
+				} else if ($inQuery[$i] == '\\') {
 					$i++;
 				}
 			}
@@ -117,28 +110,26 @@ class database
 	/**
 	 * makeDSN
 	 *
-	 * @param mixed $dbtype
-	 * @param mixed $host
-	 * @param mixed $port
-	 * @param mixed $username
-	 * @param mixed $password
-	 * @param mixed $database
+	 * @param string $dbtype
+	 * @param string $host
+	 * @param string $port
+	 * @param string $username
+	 * @param string $password
+	 * @param string $database
 	 * @access public
 	 * @return void
 	 */
-	function makeDSN($dbtype, $host, $port, $username, $password, $database)
-	{
+	public function makeDSN($dbtype, $host, $port, $username, $password, $database) {
 		return array(
-		    'phptype'  => $dbtype,
-		    //'dbsyntax' => false,
-		    'username' => $username,
-		    'password' => $password,
-		    //'protocol' => false,
-		    'hostspec' => $host,
-		    'port'     => $port,
-		    //'socket'   => false,
-		    'database' => $database,
-
+			'phptype'  => $dbtype,
+			//'dbsyntax' => false,
+			'username' => $username,
+			'password' => $password,
+			//'protocol' => false,
+			'hostspec' => $host,
+			'port'     => $port,
+			//'socket'   => false,
+			'database' => $database,
 	   );
 	}
 	
@@ -146,8 +137,10 @@ class database
 	 * Make a DSN config array from a string.
 	 *
 	 * @param string $dsn_string a string of the format mysql://username:password@localhost/dbname
+	 * @access public
+	 * @return void
 	 */
-	function makeDSNFromString($dsn_string) {
+	public function makeDSNFromString($dsn_string) {
 		$default_ports = array(
 			'mysql' => 3306,
 			'pgsql' => 5432
@@ -165,14 +158,14 @@ class database
 		
 		return array(
 			'phptype' => $dsn['scheme'],
-		    //'dbsyntax' => false,
-		    'username' => isset($dsn['user']) ? $dsn['user'] : null,
-		    'password' => isset($dsn['pass']) ? $dsn['pass'] : null,
-		    //'protocol' => false,
-		    'hostspec' => isset($dsn['host']) ? $dsn['host'] : null,
-		    'port'     => $dsn['port'],
-		    //'socket'   => false,
-		    'database' => $dsn['path'],
+			//'dbsyntax' => false,
+			'username' => isset($dsn['user']) ? $dsn['user'] : null,
+			'password' => isset($dsn['pass']) ? $dsn['pass'] : null,
+			//'protocol' => false,
+			'hostspec' => isset($dsn['host']) ? $dsn['host'] : null,
+			'port'     => $dsn['port'],
+			//'socket'   => false,
+			'database' => $dsn['path'],
 		);
 	}
 
@@ -182,10 +175,8 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function begin_transaction( )
-	{
-		if($this->transaction == 0)
-			$this->db->query("BEGIN");
+	public function begin_transaction() {
+		if ($this->transaction == 0) $this->db->query('BEGIN');
 		$this->transaction++;
 	}
 
@@ -195,11 +186,9 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function commit_transaction( )
-	{
+	public function commit_transaction() {
 		$this->transaction--;
-		if($this->transaction == 0)
-			$this->db->query("COMMIT");
+		if ($this->transaction == 0) $this->db->query('COMMIT');
 	}
 
 	/**
@@ -208,24 +197,20 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function rollback_transaction( )
-	{
+	public function rollback_transaction() {
 		$this->transaction--;
-		if($this->transaction == 0)
-			$this->db->query("ROLLBACK");
+		if ($this->transaction == 0) $this->db->query('ROLLBACK');
 	}
 
 	/**
 	 * error
 	 *
-	 * @param mixed $result
+	 * @param object $result
 	 * @access public
 	 * @return void
 	 */
-	function error($result)
-	{
-		while ($this->transaction)
-		{
+	public function error($result) {
+		while ($this->transaction) {
 			sql_rollback_transaction();
 		}
 		//echo substr($inQueryString, 0, 1200) . "<br>" .
@@ -233,9 +218,15 @@ class database
 		trigger_error("PearDB returned an error. The error was " . $result->getMessage());
 		die();
 	}
-	
-	function trusted_query($inQueryString)
-	{
+
+	/**
+	 * trusted_query
+	 *
+	 * @param string
+	 * @access public
+	 * @return object
+	 */	
+	public function trusted_query($inQueryString) {
 		$result = $this->db->query($inQueryString);
 		return $result;
 	}
@@ -244,75 +235,64 @@ class database
 	 * query
 	 *
 	 * @param mixed $inQueryString
-	 * @param mixed $Db
 	 * @access public
-	 * @return void
+	 * @return object
 	 */
-	function &query($inQueryString)
-	{
+	public function &query($inQueryString) {
 		$this->verifyQuery($inQueryString);
 		global $globalTime;
 		logprofile($globalTime, true);
 		$result = &$this->db->query($inQueryString);
 		logprofile($globalTime, $inQueryString);
-		if(DB::isError($result))
-		{
+		if (DB::isError($result)) {
 			$this->error($result);			
 		}
 		return $result;
 	}
 	
-	function &getOne($inQueryString)
-	{
+	public function &getOne($inQueryString) {
 		$this->verifyQuery($inQueryString);
 		global $globalTime;
 		logprofile($globalTime, true);
 		$result = &$this->db->getOne($inQueryString);
 		logprofile($globalTime, $inQueryString);
-		if(DB::isError($result))
-		{
+		if (DB::isError($result)) {
 			$this->error($result);			
 		}
 		return $result;
 	}
 	
-	function &getAll(&$inQueryString, $params = array(), $mode = DB_FETCHMODE_DEFAULT)
-	{
+	public function &getAll(&$inQueryString, $params = array(), $mode = DB_FETCHMODE_DEFAULT) {
 		$this->verifyQuery($inQueryString);
 		global $globalTime;
 		logprofile($globalTime, true);
 		$result = &$this->db->getAll($inQueryString, $params, $mode);
 		logprofile($globalTime, $inQueryString);
-		if(DB::isError($result))
-		{
+		if (DB::isError($result)) {
 			$this->error($result);			
 		}
 		return $result;
 	}
 	
-	function &getCol(&$query)
-	{
+	public function &getCol(&$query) {
 		$this->verifyQuery($query);
 		global $globalTime;
 		logprofile($globalTime, true);
 		$result = &$this->db->getCol($query);
 		logprofile($globalTime, $query);
-		if(DB::isError($result))
-		{
+		if (DB::isError($result)) {
 			$this->error($result);			
 		}
 		return $result;
 	}
 	
-	function &getAssoc($query)
-	{
+	public function &getAssoc($query) {
 		$this->verifyQuery($query);
 		global $globalTime;
 		logprofile($globalTime, true);
 		$result = &$this->db->getAssoc($query);
 		logprofile($globalTime, $query);
-		if(DB::isError($result))
-		{
+		if (DB::isError($result)) {
 			$this->error($result);			
 		}
 		return $result;
@@ -321,56 +301,50 @@ class database
 	/**
 	 * get_fields
 	 *
-	 * @param mixed $table
+	 * @param string $table
 	 * @access public
-	 * @return void
+	 * @return object
 	 */
-	function get_fields($table)
-	{
+	public function get_fields($table) {
 		return $this->db->tableInfo($table);
 	}
 
 	/**
 	 * insert
 	 *
-	 * @param mixed $query
+	 * @param string $query
 	 * @access public
-	 * @return void
+	 * @return object
 	 */
-	function insert($query)
-	{
+	public function insert($query) {
 		return $this->query($query);
 	}
 
 	/**
 	 * fetch_sequence
 	 *
-	 * @param mixed $sequence
+	 * @param string $sequence
 	 * @access public
-	 * @return void
+	 * @return object
 	 */
-	function fetch_sequence( $sequence )
-	{
+	public function fetch_sequence($sequence) {
 		return $this->getOne("select nextval('\"$sequence\"'::text)");
 	}
 
-/**
-* returns true if rows are returned
-*
-* @param string $query the query for the database
-* @return boolean
-*/
-	function check($query)
-	{
+	/**
+	 * returns true if rows are returned
+	 *
+	 * @param string $query the query for the database
+	 * @access public
+	 * @return boolean
+	 */
+	public function check($query) {
 		$result = $this->query($query);
 
-		if($result->numRows() < 1)
-		{
+		if ($result->numRows() < 1) {
 			$result->free();
 			return 0;
-		}
-		else
-		{
+		} else {
 			$result->free();
 			return 1;
 		}
@@ -379,12 +353,11 @@ class database
 	/**
 	 * fetch_into_arrays
 	 *
-	 * @param mixed $query
+	 * @param string $query
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function fetch_into_arrays($query)
-	{
+	public function fetch_into_arrays($query) {
 		$result = $this->getAll($query, array(), DB_FETCHMODE_ASSOC | DB_FETCHMODE_FLIPPED);
 		return $result;
 	}
@@ -392,12 +365,11 @@ class database
 	/**
 	 * fetch_into_arrobjs
 	 *
-	 * @param mixed $query
+	 * @param string $query
 	 * @access public
-	 * @return void
+	 * @return array ?
 	 */
-	function fetch_into_arrobjs($query)
-	{
+	public function fetch_into_arrobjs($query) {
 		bug("this function deprecated, please use a different one...");
 		$result = $this->getAll($query);
 		return $result;
@@ -406,17 +378,15 @@ class database
 	/**
 	 * new_fetch_into_array
 	 *
-	 * @param mixed $query
+	 * @param string $query
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function new_fetch_into_array($query)
-	{
+	public function new_fetch_into_array($query) {
 		return $this->fetch_column($query);
 	}
 	
-	function fetch_column($query)
-	{
+	public function fetch_column($query) {
 		die('hi');
 		$result = &$this->getCol($query);
 		return $result;
@@ -425,36 +395,32 @@ class database
 	/**
 	 * fetch_into_array
 	 *
-	 * @param mixed $inTableName
-	 * @param mixed $inFieldName
+	 * @param string $inTableName
+	 * @param string $inFieldName
 	 * @param string $inExtra
 	 * @access public
-	 * @return void
+	 * @return object ?
 	 */
-	function fetch_into_array($inTableName, $inFieldName, $inExtra = "")
-	{
+	public function fetch_into_array($inTableName, $inFieldName, $inExtra = "") {
 		bug("please change this to a query and use fetch_column");
 		$result = &$this->getCol("SELECT $inFieldName FROM $inTableName $inExtra");
-		return $result;;
+		return $result;
 	}
 
-/**
-* Use this function to get a record from the database. It will be returned as an array with the key as the fieldname and the value as the value.
-*
-* @param string $query the query for the database
-* @return associative array in the form [fieldname] => value;
-*/
-	function fetch_one($inQueryString)
-	{
+	/**
+	 * Use this function to get a record from the database. It will be returned as an array with the key as the fieldname and the value as the value.
+	 *
+	 * @param string $query the query for the database
+	 * @access public
+	 * @return associative array in the form [fieldname] => value;
+	 */
+	public function fetch_one($inQueryString) {
 		$result = &$this->query($inQueryString);
 		$numRows = $result->numRows();
 
-		if($numRows > 1)
-		{
+		if ($numRows > 1) {
 			trigger_error ( "Only one result was expected. " . $numRows . " were returned");
-		}
-		else if($numRows == 0)
-		{
+		} elseif ($numRows == 0) {
 			return(false);
 		}
 
@@ -463,16 +429,17 @@ class database
 
 		return $row;
 	}
-/**
-* Use this function to get a record, or multiple records from the database.
-* It will be returned as a two dimensional array. The first dimension will be an array with the key being the value of the primary key in each record.
-* The second dimension would be identical to that returned from fetch_one but without the primary key.
-*
-* @param string $query the query for the database
-* @return associative array in the form [primarykeyvalue][fieldname] => value;
-*/
-	function fetch_assoc($inQuery)
-	{
+
+	/**
+	 * Use this function to get a record, or multiple records from the database.
+	 * It will be returned as a two dimensional array. The first dimension will be an array with the key being the value of the primary key in each record.
+	 * The second dimension would be identical to that returned from fetch_one but without the primary key.
+	 *
+	 * @param string $query the query for the database
+	 * @access public
+	 * @return associative array in the form [primarykeyvalue][fieldname] => value;
+	 */
+	public function fetch_assoc($inQuery) {
 		$result = $this->getAssoc($inQuery);
 		return $result;
 	}
@@ -480,20 +447,16 @@ class database
 	/**
 	 * fetch_rows
 	 *
-	 * @param mixed $inQuery
+	 * @param string $inQuery
 	 * @param int $inReturnObjects
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &fetch_rows($inQuery, $inReturnObjects = 0)
-	{
+	public function &fetch_rows($inQuery, $inReturnObjects = 0) {
 		$rows = array();
-		if($inReturnObjects)
-		{
+		if ($inReturnObjects) {
 			$rows = &$this->getAll($inQuery, array(), DB_FETCHMODE_OBJECT);
-		}
-		else
-		{
+		} else {
 			$rows = &$this->getAll($inQuery);
 		}
 		return $rows;
@@ -502,46 +465,37 @@ class database
 	/**
 	 * &fetch_map
 	 *
-	 * @param mixed $inQuery
-	 * @param mixed $inKeyField
+	 * @param string $inQuery
+	 * @param string $inKeyField
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &fetch_map($inQuery, $inKeyField)
-	{
+	public function &fetch_map($inQuery, $inKeyField) {
 		$rows = $this->getAll($inQuery);
 		$results = array();
-		foreach($rows as $row)
-		{
-			if( is_array($inKeyField))
-			{
+		foreach ($rows as $row) {
+			if (is_array($inKeyField)) {
 				$cur = &$results;
 
-				foreach( $inKeyField as $val )
-				{
-					$curKey = $row[ $val ];
+				foreach ($inKeyField as $val) {
+					$curKey = $row[$val];
 
-					if( !isset( $cur[ $curKey ] ) )
-					{
-						$cur[ $curKey ] = array();
+					if (!isset($cur[$curKey])) {
+						$cur[$curKey] = array();
 					}
 
 					$cur = &$cur[ $curKey ];
 				}
-				if(count($cur))
-				{
+				if (count($cur)) {
 					echo_r($results);
 					trigger_error("duplicate key $curKey, would silently destroy data");
 				}
 
 				$cur = $row;
-			}
-			else
-			{
-				$mapKey = $row[ $inKeyField ];
+			} else {
+				$mapKey = $row[$inKeyField];
 
-				foreach($row as $key => $val)
-				{
+				foreach ($row as $key => $val) {
 					$results[$mapKey][$key] = $val;
 				}
 			}
@@ -549,40 +503,32 @@ class database
 		return $results;
 	}
 
-
 	/**
 	 * fetch_simple_map
 	 *
-	 * @param mixed $inQuery
-	 * @param mixed $inKeyField
-	 * @param mixed $inValueField
+	 * @param string $inQuery
+	 * @param string $inKeyField
+	 * @param string $inValueField
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function fetch_simple_map($inQuery, $inKeyField, $inValueField)
-	{
+	public function fetch_simple_map($inQuery, $inKeyField, $inValueField) {
 		$rows = $this->getAll($inQuery);
 		$results = array();
 		
-		foreach($rows as $row)
-		//while($row = sql_fetch_array($rows))
-		{
+		foreach ($rows as $row) {
+		//while($row = sql_fetch_array($rows)) {
 			$cur = &$results;
-			if(is_array($inKeyField))
-			{
-				foreach($inKeyField as $key)
-				{
+			if (is_array($inKeyField)) {
+				foreach ($inKeyField as $key) {
 					$cur = &$cur[$row[$key]];
 					$lastKey = $row[$key];
 				}
-			}
-			else
-			{
+			} else {
 				$cur = &$cur[$row[$inKeyField]];
 				$lastKey = $row[$inKeyField];
 			}
-			if(isset($cur) && !empty($lastKey))
-			{
+			if (isset($cur) && !empty($lastKey)) {
 				trigger_error("duplicate key in query: \n $inQuery \n");
 			}
 			$cur = $row[ $inValueField ];
@@ -591,46 +537,38 @@ class database
 		return $results;
 	}
 
-
 	/**
 	 * &fetch_complex_map
 	 *
-	 * @param mixed $inQuery
-	 * @param mixed $inKeyField
+	 * @param string $inQuery
+	 * @param string $inKeyField
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &fetch_complex_map($inQuery, $inKeyField)
-	{
+	public function &fetch_complex_map($inQuery, $inKeyField) {
 		$rows = $this->getAll($inQuery);
 		$results = array();
 
 		//	loop through each row in the result set
 
-		foreach($rows as $row)
-		{
-			if( gettype($inKeyField) == "array")
-			{
+		foreach ($rows as $row) {
+			if ( gettype($inKeyField) == "array") {
 				$cur = &$results;
 
-				foreach( $inKeyField as $val )
-				{
-					$curKey = $row[ $val ];
+				foreach ( $inKeyField as $val ) {
+					$curKey = $row[$val];
 
-					if( !isset( $cur[ $curKey ] ) )
-					{
-						$cur[ $curKey ] = array();
+					if (!isset($cur[$curKey])) {
+						$cur[$curKey] = array();
 					}
 
-					$cur = &$cur[ $curKey ];
+					$cur = &$cur[$curKey];
 				}
 
 				$cur[] = $row;
-			}
-			else
-			{
+			} else {
 				//	get the key for the result map
-				$mapKey = $row[ $inKeyField ];
+				$mapKey = $row[$inKeyField];
 
 				$results[$mapKey][] = $row;
 			}
@@ -639,34 +577,28 @@ class database
 		return $results;
 	}
 
-
 	/**
 	 * fetch_one_cell
 	 *
 	 * @param mixed $inQueryString
 	 * @param int $inField
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
-	function fetch_one_cell($inQueryString, $inField = 0)
-	{
+	public function fetch_one_cell($inQueryString, $inField = 0) {
 		$result = $this->query($inQueryString, array(), DB_FETCHMODE_ORDERED);
 		
 		$numRows = $result->numRows();
-		if($numRows > 1)
-		{
+		if ($numRows > 1) {
 			trigger_error(substr($inQueryString, 0, 150) . "<br>Only one result was expected. " . $numRows . " were returned.<br>");
-		}
-		else if($numRows == 0)
-		{
+		} elseif ($numRows == 0) {
 			$result->free();
 			return(false);
 		}
 
 		$row = $result->fetchRow(DB_FETCHMODE_ORDERED);
 		$result->free();
-		if (!isset($row[$inField]))
-		{
+		if (!isset($row[$inField])) {
 			$row[$inField] = null;
 		}
 
@@ -680,14 +612,12 @@ class database
 	 * @param string $idField
 	 * @param string $parentField
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent")
-	{
+	public function &prepare_tree_query($inQueryString, $idField = "id", $parentField = "parent") {
 		$map = &$this->fetch_map($inQueryString, $idField);
 		$complex = array();
-		foreach($map as $id => $obj)
-		{
+		foreach ($map as $id => $obj) {
 			$complex[$obj[$parentField]][] = &$map[$id];
 		}
 		$answer[$idField] = &$map;
@@ -704,42 +634,30 @@ class database
 	 * @param string $parentField
 	 * @param int $depth
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &better_fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
-	{
-		if(!is_array($inQueryString))
-		{
+	public function &better_fetch_tree($inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1) {
+		if (!is_array($inQueryString)) {
 			//do your own complex mapping...
 			//find the root nodes as you go...
 			$objects = &$this->prepare_tree_query($inQueryString, $idField, $parentField);
-		}
-		else
-		{
+		} else {
 			//php5 clone this
 			$objects = &$inQueryString;
 		}
-		if(is_array($rootNode) && in_array($object[$idField], $rootNode))
-		{
-			foreach($rootNode as $node)
-			{
+		if (is_array($rootNode) && in_array($object[$idField], $rootNode)) {
+			foreach ($rootNode as $node) {
 				$tree[$node] = $objects[$idField][$node];
 			}
-		}
-		else
-		{
+		} else {
 			$tree = $objects[$idField][$rootNode];
 		}
 
-		if(is_array($rootNode))
-		{
-			foreach($rootNode as $node)
-			{
+		if (is_array($rootNode)) {
+			foreach ($rootNode as $node) {
 				$tree[$node]['children'] = $this->__sql_better_append_children($node, $objects, $idField, $parentField, $depth);
 			}
-		}
-		else
-		{
+		} else {
 			$tree['children'] = $this->__sql_better_append_children($rootNode, $objects, $idField, $parentField, $depth);
 		}
 		return $tree;
@@ -753,29 +671,21 @@ class database
 	 * @param string $idField
 	 * @param string $parentField
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	function &fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
-	{
-		if(is_array($inQueryString))
-		{
+	public function &fetch_tree( $inQueryString, $rootNode, $idField = "id", $parentField = "parent") {
+		if (is_array($inQueryString)) {
 			$objects = $inQueryString;
-		}
-		else
-		{
+		} else {
 			$objects = $this->fetch_map($inQueryString, $idField);
 		}
-		if(is_array($rootNode))
-		{
-			foreach($rootNode as $node)
-			{
+		if (is_array($rootNode)) {
+			foreach ($rootNode as $node) {
 				//php 5 need clone here
 				$node = $objects[$node];
 				$tree[] = $this->__sql_append_children($node, $objects, $idField, $parentField);
 			}
-		}
-		else
-		{
+		} else {
 			//php 5 need clone here
 			$rootNode = $objects[$rootNode];
 			$tree = $this->__sql_append_children($rootNode, $objects, $idField, $parentField);
@@ -792,18 +702,14 @@ class database
 	 * @param mixed $idField
 	 * @param mixed $parentField
 	 * @access public
-	 * @return void
+	 * @return array  array of objects
 	 */
-	function &__sql_append_children(&$rootObject, $objects, $idField, $parentField)
-	{
-		foreach($objects as $object)
-		{
-			if(isset($object[$parentField]) && $object[$parentField] == $rootObject[$idField])
-			{
+	function &__sql_append_children(&$rootObject, $objects, $idField, $parentField) {
+		foreach ($objects as $object) {
+			if (isset($object[$parentField]) && $object[$parentField] == $rootObject[$idField]) {
 				$rootObject["children"][$object[$idField]] = $object;
 				$this->__sql_append_children($rootObject["children"][$object[$idField]], $objects, $idField, $parentField);
 			}
-
 		}
 
 		return $rootObject;
@@ -818,19 +724,15 @@ class database
 	 * @param mixed $parentField
 	 * @param mixed $depth
 	 * @access public
-	 * @return void
+	 * @return array  array of objects
 	 */
-	function &__sql_better_append_children(&$rootObjectId, &$objects, $idField, $parentField, $depth = -1)
-	{
-		if($depth != 0)
-		{
+	function &__sql_better_append_children(&$rootObjectId, &$objects, $idField, $parentField, $depth = -1) {
+		if ($depth != 0) {
 			$children = array();
-			if(isset($objects[$parentField][$rootObjectId]))
-			{
-				foreach($objects[$parentField][$rootObjectId] as $object)
-				{
+			if (isset($objects[$parentField][$rootObjectId])) {
+				foreach ($objects[$parentField][$rootObjectId] as $object) {
 					$children[$object[$idField]] = $object;
-					if(isset($objects[$parentField][$object[$idField]]))
+					if (isset($objects[$parentField][$object[$idField]]))
 						$children[$object[$idField]]['children'] = $this->__sql_better_append_children($object[$idField], $objects, $idField, $parentField, $depth - 1);
 				}
 			}
@@ -853,30 +755,22 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function &fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent")
-	{
+	public function &fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent") {
 		//	get the set of rows that we are dealing with.  It shoudld contain all of the rows that could possibly
 		//	end up as nodes in the tree
-		if(is_array($inQueryString))
-		{
+		if (is_array($inQueryString)) {
 			$objects = $inQueryString;
-		}
-		else
-		{
+		} else {
 			//markprofile();
 			$objects = $this->fetch_map($inQueryString, $idField);
 			//markprofile();
 		}
 		//markprofile();
-		if(is_array($rootNode))
-		{
-			foreach($rootNode as $node)
-			{
+		if (is_array($rootNode)) {
+			foreach ($rootNode as $node) {
 				$children[$objects[$node][$idField]] = $objects[$node];
 			}
-		}
-		else
-		{
+		} else {
 			//	get the id of the root node and and set it to the data for the root node
 			//	in our result object (children)
 			$children[$objects[$rootNode][$idField]] = $objects[$rootNode];
@@ -884,14 +778,11 @@ class database
 
 		//fixed point algorithm....
 		$done = false;
-		while(!$done)
-		{
+		while(!$done) {
 			$done = true;
-			foreach($objects as $object)
-			{
+			foreach ($objects as $object) {
 				//	if the db row has a parent and is not already in the tree
-				if(isset($children[$object[$parentField]]) && !isset($children[$object[$idField]]))
-				{
+				if (isset($children[$object[$parentField]]) && !isset($children[$object[$idField]])) {
 					$done = false;
 
 					$children[$object[$idField]] = $object;
@@ -899,10 +790,8 @@ class database
 					//fill in inherited properties from parents....
 					//is this a good idea?
 					//*
-					foreach($keys as $key)
-					{
-						if(!isset($children[$object[$idField]][$key]))
-						{
+					foreach ($keys as $key) {
+						if (!isset($children[$object[$idField]][$key])) {
 							$children[$object[$idField]][$key] = $children[$object[$parentField]][$key];
 						}
 					}
@@ -929,34 +818,25 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function &better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1)
-	{
+	public function &better_fetch_children( $inQueryString, $rootNode, $idField = "id", $parentField = "parent", $depth = -1) {
 		//	get the set of rows that we are dealing with.  It shoudld contain all of the rows that could possibly
 		//	end up as nodes in the tree
-		if(is_array($inQueryString))
-		{
+		if (is_array($inQueryString)) {
 			$objects = $inQueryString;
-		}
-		else
-		{
+		} else {
 			$objects = $this->prepare_tree_query($inQueryString, $idField);
 		}
 
-		if(is_array($rootNode))
-		{
-			foreach($rootNode as $node)
-			{
+		if (is_array($rootNode)) {
+			foreach ($rootNode as $node) {
 				$children[$node] = $objects[$idField][$node];
 			}
-		}
-		else
-		{
+		} else {
 			//	get the id of the root node and and set it to the data for the root node
 			//	in our result object (children)
 			$children[$rootNode] = $objects[$idField][$rootNode];
 		}
-		foreach($children as $id => $node)
-		{
+		foreach ($children as $id => $node) {
 			$this->_fetch_children($children, $objects, $id, $idField, $parentField, $depth);
 		}
 		//markprofile();
@@ -974,12 +854,9 @@ class database
 	 * @access protected
 	 * @return void
 	 */
-	function _fetch_children(&$children, &$objects, $id, $idField, $parentField, $depth = -1)
-	{
-		if(isset($objects[$parentField][$id]) && ($depth != 0))
-		{
-			foreach($objects[$parentField][$id] as $index => $node)
-			{
+	function _fetch_children(&$children, &$objects, $id, $idField, $parentField, $depth = -1) {
+		if (isset($objects[$parentField][$id]) && ($depth != 0)) {
+			foreach ($objects[$parentField][$id] as $index => $node) {
 				$children[$node[$idField]] = $node;
 				$this->_fetch_children($children, $objects, $node[$idField], $idField, $parentField, $depth - 1);
 			}
@@ -996,22 +873,21 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function &fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent")
-	{
+	public function &fetch_parents($inQueryString, $leafNode, $idField = "id", $parentField = "parent") {
 		//	get the set of rows that we are dealing with.  It should contain all of the rows that could possibly
 		//	end up in the parent chain
-		if(!is_array($inQueryString))
+		if (!is_array($inQueryString)) {
 			$objects = $this->fetch_map($inQueryString, $idField);
-		else
+		} else {
 			$objects = $inQueryString['id'];
+		}
 
 		//	set up the first node, we will go up from here
 		$parents[$leafNode] = $objects[$leafNode];
 
 		//	walk up the tree to the root
 		$nextParent = $objects[$leafNode][$parentField];
-		while(isset($objects[$nextParent]) && $objects[$nextParent] != NULL && !isset($parents[$nextParent]))
-		{
+		while(isset($objects[$nextParent]) && $objects[$nextParent] != NULL && !isset($parents[$nextParent])) {
 			$parents[$objects[$nextParent][$idField]] = $objects[$nextParent];
 			$nextParent = $objects[$nextParent][$parentField];
 		}
@@ -1025,12 +901,10 @@ class database
 	 * @access public
 	 * @return void
 	 */
-	function get_table_info($inTable)
-	{
+	function get_table_info($inTable) {
 		$result = $this->db->tableinfo($inTable);
 
-		if(db::isError($result))
-		{
+		if (db::isError($result)) {
 			$this->error($result);
 		}
 		return $result;
@@ -1039,42 +913,37 @@ class database
 	/**
 	 * escape_string
 	 *
-	 * @param mixed $inString
+	 * @param string $inString
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
-	function escape_string($inString)
-	{
+	public function escape_string($inString) {
 		return $this->db->quoteSmart($inString);
 	}
 
 	/**
 	 * escape_identifier
 	 *
-	 * @param mixed $inString
+	 * @param string $inString
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
-	function escape_identifier($inString)
-	{
+	public function escape_identifier($inString) {
 		return $this->db->quoteIdentifier($inString);
 	}
 
 	/**
 	 * escape_tablename
 	 *
-	 * @param mixed $inString
+	 * @param string $inString
 	 * @access public
-	 * @return void
+	 * @return string 
 	 */
-	function escape_tablename($inString)
-	{
+	public function escape_tablename($inString) {
 		$name = explode(".", $inString);
-		foreach($name as $part)
-		{
+		foreach ($name as $part) {
 			$newname[] = $this->db->quoteIdentifier($part);
 		}
 		return implode('.', $newname);
 	}
 }
-?>

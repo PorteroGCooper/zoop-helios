@@ -25,8 +25,7 @@
 
 
 
-if (isset($HTTP_POST_VARS))
-{
+if (isset($HTTP_POST_VARS)) {
     reset ($HTTP_POST_VARS);
 
     while (list($key, $value) = each ($HTTP_POST_VARS)) {
@@ -60,46 +59,36 @@ $DbDatabase = fwDB_Database;
 
 $Db_Link = sql_pconnect( $DbServer, $DbUsername, $DbPassword );
 
-if ( $tmp = sql_error() )
-{
+if ( $tmp = sql_error() ) {
 	LogNow("SQL Error on pconnect: $tmp");
 	echo $tmp;
 }
 
 sql_select_db($DbDatabase, $Db_Link);
 
-	function sql_query( $inQueryString, $onerr = -1, $Db = -1 )
-	{
+	function sql_query( $inQueryString, $onerr = -1, $Db = -1 ) {
 		global $Db_Link;
 		if ($Db == -1) $Db = $Db_Link;
 
-		if (DEBUG == true)
-		{
+		if (DEBUG == true) {
 			LogNow("SQL query: $inQueryString");
 		}
 
 		$result = mssql_query( $inQueryString, $Db );
 		$err = sql_error($Db);
 
-		if (DEBUG == true)
-		{
+		if (DEBUG == true) {
 			$tmpmsg = mssql_get_last_message();
 			LogNow("SQL query return message: $tmpmsg");
 		}
 
-		if($err == "")
-		{
+		if ($err == "") {
 			return $result;
-		}
-		else
-		{
-			if ($onerr != -1)
-			{
+		} else {
+			if ($onerr != -1) {
 				sql_query($onerr);
 				return false;
-			}
-			else
-			{
+			} else {
     			//die($err);
 				LogNow("SQL query Error:  $err");
     			die(substr($inQueryString, 0, 150) . "<br>" . $err);
@@ -107,46 +96,36 @@ sql_select_db($DbDatabase, $Db_Link);
 		}
 	}
 
-	function sql_error( $Db = -1 )
-	{
+	function sql_error($Db = -1) {
 		global $Db_Link;
 		if ($Db == -1) $Db = $Db_Link;
 
 		return( mssql_error($Db) );
 	}
 
-	function sql_num_rows( $resultset )
-	{
+	function sql_num_rows( $resultset ) {
 		global $Db_Link;
 
 		return( mssql_num_rows($resultset) );
 	}
 
-	function sql_fetch_array( $resultset )
-	{
+	function sql_fetch_array( $resultset ) {
 		return( mssql_fetch_array( $resultset ) );
 	}
 
-	function sql_pconnect( $server, $username = "", $password = "" )
-	{
-		if ($username && $password)
-		{
+	function sql_pconnect( $server, $username = "", $password = "" ) {
+		if ($username && $password) {
 			return mssql_pconnect( $server, $username, $password );
 		}
-		elseif ($username)
-		{
+		elseif ($username) {
 			return mssql_pconnect( $server, $username );
-		}
-		else
-		{
+		} else {
 			return mssql_pconnect( $server );
 		}
 	}
 
-	function sql_insert_id( $link = "" )
-	{
-		if (!$link)
-		{
+	function sql_insert_id( $link = "" ) {
+		if (!$link) {
 			global $Db_Link;
 			$link = $Db_Link;
 		}
@@ -154,10 +133,8 @@ sql_select_db($DbDatabase, $Db_Link);
 		return mssql_insert_id( $link );
 	}
 
-	function sql_select_db( $db, $link = "" )
-	{
-		if (!$link)
-		{
+	function sql_select_db( $db, $link = "" ) {
+		if (!$link) {
 			global $Db_Link;
 			$link = $Db_Link;
 		}
@@ -169,25 +146,18 @@ sql_select_db($DbDatabase, $Db_Link);
 	//	Query returns true if rows are returned  //
 	///////////////////////////////////////////////
 
-	function sql_check($query, $onerr = -1, $db = -1)
-	{
+	function sql_check($query, $onerr = -1, $db = -1) {
 		$result = sql_query($query, $onerr, $db);
 
 		$err = sql_error();
 
-		if ($err == "")
-		{
-			if (sql_num_rows($result) < 1)
-			{
+		if ($err == "") {
+			if (sql_num_rows($result) < 1) {
 				return(false);
-			}
-			else
-			{
+			} else {
 				return(1);
 			}
-		}
-		else
-		{
+		} else {
 			echo 3;
 			$Error = 1;
 			$ErrorMessage = $query . "<br>\n" . $err;
@@ -196,8 +166,7 @@ sql_select_db($DbDatabase, $Db_Link);
 		}
 	}
 
-	function sql_fetch_into_arrays($query)
-	{
+	function sql_fetch_into_arrays($query) {
 		global $db_fetch_array;
 		global $db_num_rows;
 
@@ -206,14 +175,11 @@ sql_select_db($DbDatabase, $Db_Link);
 		$result = NULL;
 
 		//	fill in the result arrays
-		for($i = 0; $row = sql_fetch_array($rows); $i++)
-		{
+		for($i = 0; $row = sql_fetch_array($rows); $i++) {
 			reset($row);
-			while(list($key, $val) = each($row))
-			{
+			while(list($key, $val) = each($row)) {
 				$fieldName = trim($key);
-				if (isset($row[$fieldName]))
-				{
+				if (isset($row[$fieldName])) {
 					$result[$fieldName][$i] = $row[$fieldName];
 				}
 				else
@@ -226,14 +192,12 @@ sql_select_db($DbDatabase, $Db_Link);
 		return $result;
 	}
 
-	function sql_fetch_into_array($query)
-	{
+	function sql_fetch_into_array($query) {
 		$rows = sql_query($query);
 
 		$results = array();
 
-		while($row = $db_fetch_array($rows))
-		{
+		while($row = $db_fetch_array($rows)) {
 			$results[] = $row[0];
 		}
 
@@ -241,21 +205,17 @@ sql_select_db($DbDatabase, $Db_Link);
 	}
 
 
-	function sql_fetch_one($inQueryString)
-	{
+	function sql_fetch_one($inQueryString) {
 		$result = sql_query($inQueryString);
 		$err = sql_error();
 
-		if($err == "")
-		{
+		if ($err == "") {
 			$numRows = sql_num_rows($result);
-			if($numRows > 1)
-			{
+			if ($numRows > 1) {
 				die(substr($inQueryString, 0, 150) . "<br>Only one result was expected. " . $numRows . " were returned.<br>");
 			}
 
-			if($numRows == 0)
-			{
+			if ($numRows == 0) {
 				return(false);
 			}
 
@@ -265,31 +225,26 @@ sql_select_db($DbDatabase, $Db_Link);
 			die(substr($inQueryString, 0, 150) . "<br>" . $err);
 	}
 
-	function sql_fetch_one_cell($inQueryString, $inField = 0)
-	{
+	function sql_fetch_one_cell($inQueryString, $inField = 0) {
 		$result = sql_query($inQueryString);
 		$err = sql_error();
 
-		if($err == "")
-		{
+		if ($err == "") {
 
 			$numRows = sql_num_rows($result);
 
 
-			if($numRows > 1)
-			{
+			if ($numRows > 1) {
 				die(substr($inQueryString, 0, 150) . "<br>Only one result was expected. " . $numRows . " were returned.<br>");
 			}
 
-			if($numRows == 0)
-			{
+			if ($numRows == 0) {
 				return(false);
 			}
 
 			$result = sql_fetch_array($result);
 
-			if (!isset($result[$inField]))
-			{
+			if (!isset($result[$inField])) {
 				$result[$inField] = "";
 			}
 
@@ -300,15 +255,13 @@ sql_select_db($DbDatabase, $Db_Link);
 	}
 
 
-	function sql_fetch_map($inQuery, $inKeyField, $inValueField)
-	{
+	function sql_fetch_map($inQuery, $inKeyField, $inValueField) {
 
 		$rows = sql_query($inQuery);
 
 		$results = array();
 
-		while($row = sql_fetch_array($rows))
-		{
+		while($row = sql_fetch_array($rows)) {
 			$key = $row[ $inKeyField ];
 			$results[ $key ] = $row[$inValueField];
 		}
@@ -318,26 +271,21 @@ sql_select_db($DbDatabase, $Db_Link);
 ?>
 <?php
 
-	function mssql_error()
-	{
+	function mssql_error() {
 		$rs = mssql_query("select @@ERROR as ErrorNo");
 		//echo "error?: $rs<BR>";
 
 		$rs2 = mssql_fetch_array( $rs );
 
-		if (!isset($rs2["ErrorNo"]) || $rs2["ErrorNo"] > 0)
-		{
+		if (!isset($rs2["ErrorNo"]) || $rs2["ErrorNo"] > 0) {
 			mssql_free_result( $rs );
 			return mssql_get_last_message();
-		}
-		else
-		{
+		} else {
 			return(false);
 		}
 	}
 
-	function mssql_insert_id( $link = "" )
-	{
+	function mssql_insert_id( $link = "" ) {
 		assert(false);
 		include("includes/sysenv.php");
 
@@ -349,4 +297,3 @@ sql_select_db($DbDatabase, $Db_Link);
 
 		return( $rs2["ID"] );
 	}
-?>

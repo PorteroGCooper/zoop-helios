@@ -40,7 +40,7 @@ class component_db extends component {
 		$includes = array();
 		if(Config::get('zoop.db.use_pdo') && class_exists('PDO')) {
 			$includes['database'] = $this->getBasePath() . '/PDO_database.php';
-		} else	{
+		} else {
 			$includes['db'] = 'DB.php';
 			$includes['database'] =  $this->getBasePath() . "/database.php";
 		}
@@ -49,9 +49,9 @@ class component_db extends component {
 		}
 		
 		return $includes + array(
-				"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
-				"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
-				);
+			"complexupdate" => $this->getBasePath() . "/ComplexUpdate.php",
+			"complexinsert" => $this->getBasePath() . "/ComplexInsert.php"
+		);
 	}
 
 	/**
