@@ -96,7 +96,7 @@
  * @author Justin Hileman {@link http://justinhileman.com}
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  **/
-class CrudZone extends zone {
+class CrudZone extends Zone {
 
 	var $tableName;
 	var $form;
@@ -142,6 +142,10 @@ class CrudZone extends zone {
 	 * @return void;
 	 */
 	final function __construct() {
+		global $zoop;
+		// CrudZone requires Formz to run. Add the formz component (if it hasn't been added already).
+		$zoop->addComponent('formz');
+		
 		if (isset($this->Aliases) && count($this->Aliases)) {
 			$this->addAliases($this->Aliases);
 			$this->Aliases = array();

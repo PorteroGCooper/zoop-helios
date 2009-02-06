@@ -34,14 +34,13 @@ class component_zone extends component {
 
 		$this->requireComponent('doctrine');
 		$this->requireComponent('convert');
-		$this->requireComponent('formz');
 	}
 		
 	function getIncludes() {
 		$base = $this->getBasePath();
 		return array(
 			"zone"          => $base . "/zone.php",
-			"crudZone"      => $base . '/crudZone.php',
+			"CrudZone"      => $base . '/CrudZone.php',
 			"zone_sequence" => $base . "/zone_sequence.php",
 			"zone_zoopfile" => $base . "/zone_zoopfile.php"
 		);

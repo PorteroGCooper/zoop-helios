@@ -84,9 +84,9 @@ class Zoop {
 
 	/**
 	 * @var array $init
-	 * @access public
+	 * @access private
 	 */
-	var $init = array();
+	private $init = array();
 	
 	/**
 	 * @var array $components
@@ -134,6 +134,15 @@ class Zoop {
 			$this->addRequiredComponents($currComponent);
 			$this->addIncludes($currComponent->getIncludes());
 			$this->components[$name] = &$currComponent;
+			
+			// if the rest of the components have been initialized, init and run this one too.
+			if (isset($this->init['zoop']) && $this->init['zoop']) {
+				if (!isset($this->init[$name]) || !$this->init[$name]) {
+					$this->components[$name]->init();
+					$this->components[$name]->run();
+					$this->init[$name] = true;
+				}
+			}
 		}
 	}
 	
@@ -411,8 +420,9 @@ class Zoop {
 			if(!isset($this->init[$name]) || !$this->init[$name]) {
 				$object->init();
 				$this->init[$name] = true;
-			}	
+			}
 		}
+		$this->init['zoop'] = true;
 		spl_autoload_register(array($this,'autoLoad'));
 	}
 

@@ -31,6 +31,11 @@ class component_db extends component {
 	function init() {
 		$dsn = Config::get('zoop.db.connections.' . Config::get('zoop.db.active_connection') . '.dsn', Config::get('zoop.db.dsn'));
 		
+		if (empty($dsn)) {
+			trigger_error('DB configuration not defined. Please configure a database connection at `zoop.db.connections.[active_connection].dsn` or `zoop.db.dsn`', E_USER_ERROR);
+			return;
+		}
+		
 		$rdbms = parse_url($dsn, PHP_URL_SCHEME);
 		include($this->getBasePath() . '/' . $rdbms . '.php');
 		include($this->getBasePath() . '/db_utils.php');
