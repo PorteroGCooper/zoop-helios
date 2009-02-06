@@ -32,7 +32,7 @@ class component_zone extends component {
 			$this->requireComponent('session');
 		}
 
-		$this->requireComponent('doctrine');
+		$this->requireComponent('gui');
 		$this->requireComponent('convert');
 	}
 		
