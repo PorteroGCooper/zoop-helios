@@ -27,11 +27,18 @@
 class Component_Formz extends Component {
 	
 	function __construct() {
-		$this->requireComponent('db');
-		$this->requireComponent('doctrine');
+		
+		switch(Config::get('zoop.formz.driver', 'forms')) {
+			case 'forms':
+				$this->requireComponent('db');
+				break;
+			case 'doctrine':
+				$this->requireComponent('doctrine');
+				break;
+		}
+		
 		$this->requireComponent('gui');
 		$this->requireComponent('guicontrol');
-		$this->requireComponent('cache');
 		$this->requireComponent('validate');
 	}
 	
