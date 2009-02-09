@@ -53,8 +53,8 @@ class Config {
 			
 			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => $info);
 			
-			if (file_exists(self::$configCacheFile) && !is_writable(self::$configCacheFile)) {
-				trigger_error("Unable to write to config cache. Make sure " . self::$configCacheFile . " exists and is writable.");
+			if (!FileUtils::isWritable(self::$configCacheFile)) {
+				Component::envError('Unable to write to config cache file. Make sure ' . CONFIG_CACHE_DIR . ' exists and is writable.');
 			} else {
 				$contents = "<?php \n\n";
 				$contents .= 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n";
