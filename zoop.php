@@ -241,9 +241,7 @@ class Zoop {
 		$this->environmentCache[$name] = $state;
 		
 		$cache_file = CONFIG_CACHE_DIR . '/environment.php';
-		if (!file_exists($cache_file)) {
-			mkdir_r($cache_file);
-		} else if (!is_writable($cache_file)) {
+		if (!FileUtils::isWritable($cache_file)) {
 			trigger_error("Unable to write to environment cache file: $cache_file. Make sure file exists and is writable.");
 			return;
 		}
