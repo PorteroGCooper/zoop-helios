@@ -14,15 +14,16 @@ class Component_Core extends Component {
 		$this->requireComponent('spyc');
 		
 		$base = $this->getBasePath();
-		// include($base . '/Config.php');
 		//include($base . "/error.php");
 		//include($base . "/utils.php");
-		//include($base . "/FileUtils.php");
 	}
 	
 	function getIncludes() {
+		$base = $this->getBasePath();
+		
 		return array(
-			"config" => $this->getBasePath() . "/Config.php"
+			"Config"    => $base . '/Config.php',
+			"FileUtils" => $base . '/FileUtils.php',
 		);
 	}
 	

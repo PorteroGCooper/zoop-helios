@@ -30,7 +30,6 @@ class Component_App extends Component {
 		include($base . "/xmlrpcClasses.php");
 		include($base . "/utils.php");
 		include($base . "/request_utils.php");
-		include($base . "/FileUtils.php");
 		
 		if(isset($_SERVER["HTTP_HOST"])) {
 			//globals.php only deals with http variables.
