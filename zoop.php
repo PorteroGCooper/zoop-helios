@@ -111,9 +111,9 @@ class Zoop {
 		} else {
 			$this->appPath = $appPath;
 		}
-
+		
 		$this->getEnvironmentCache();
-		$this->addComponent('config');
+		$this->addComponent('core');
 	}
 
 
@@ -173,7 +173,7 @@ class Zoop {
 	 * @return void
 	 */
 	function addComponentConfig($name, &$currComponent) {
-		if ($name != 'spyc' && $name != 'config') {
+		if (!in_array($name, array('core', 'spyc', 'config'))) {
 			$this->includeConfig($name);
 			/* can't load config before config component is loaded */
 			$currComponent->loadConfig();
@@ -312,7 +312,7 @@ class Zoop {
 		$this->addComponent('zone');
 		$zone_dir = Config::get('zoop.zone.decorators_directory');
 		$zone_name = "zone_" . str_replace( DIRECTORY_SEPARATOR, "_", $name);
-		$this->addInclude($zone_name,  "$zone_dir" . DIRECTORY_SEPARATOR . "{$name}.php");
+		$this->addInclude($zone_name,  $zone_dir . DIRECTORY_SEPARATOR . "{$name}.php");
 	}
 
 	/**
@@ -697,5 +697,23 @@ abstract class Component {
 	 */
 	function run() {
 		// really shouldn't do anything, unless its the app_component
+	}
+	
+	/**
+	 * Notify user of an environment error and (optionally) terminate app.
+	 * 
+	 * Environment errors are somewhat unique, as it doesn't make sense to show the user a
+	 * backtrace, nor does it usually make sense to continue executing the program. The best
+	 * action is to fail soon, fail noisily, and let the user know how to resolve the situation.
+	 * 
+	 * @access public
+	 * @param string $message
+	 * @return void
+	 */
+	function envError($message, $die = true) {
+		print '<div style="border:1px solid red;margin:1em;padding:1em;color:red;">';
+		print $message;
+		print '</div>';
+		if ($die) die();
 	}
 }
