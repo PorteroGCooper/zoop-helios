@@ -51,10 +51,28 @@ class component_gui extends component {
 	}
 	
 	function checkEnvironment() {
+		$temp_dir = Config::get('zoop.gui.directories.temp');
+		$compile_dir = Config::get('zoop.gui.directories.compile');
+		$cache_dir = Config::get('zoop.gui.directories.cache');
+		
 		// smarty isn't smart enough to make these directories, so we'll make them instead.
-		mkdirr(Config::get('zoop.gui.directories.temp'));
-		mkdirr(Config::get('zoop.gui.directories.compile'));
-		mkdirr(Config::get('zoop.gui.directories.cache'));
+		if (FileUtils::isWritable($temp_dir)) {
+			mkdirr($temp_dir);
+		} else {
+			$this->envError('Unable to write to Gui temp dir. Make sure ' . $temp_dir . ' exists and is writable.');
+		}
+		
+		if (FileUtils::isWritable($compile_dir)) {
+			mkdirr($compile_dir);
+		} else {
+			$this->envError('Unable to write to Gui temp dir. Make sure ' . $compile_dir . ' exists and is writable.');
+		}
+		
+		if (FileUtils::isWritable($cache_dir)) {
+			mkdirr($cache_dir);
+		} else {
+			$this->envError('Unable to write to Gui temp dir. Make sure ' . $cache_dir . ' exists and is writable.');
+		}
 		
 		return true;
 	}
