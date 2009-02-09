@@ -158,8 +158,8 @@ class Zoop {
 	 * @return void
 	 */
 	function instantiateComponent($name) {
-		include($this->path . "/$name/{$name}_component.php");
-		$class = "component_{$name}";
+		include($this->path . '/' . $name . '/component.php');
+		$class = 'Component_' . $name;
 		$currComponent = &new $class();
 		return $currComponent;
 	}
