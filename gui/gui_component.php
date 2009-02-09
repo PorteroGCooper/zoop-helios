@@ -50,18 +50,21 @@ class component_gui extends component {
 		}
 	}
 	
-	function run() {
-		global $gui;
-		
+	function checkEnvironment() {
 		// smarty isn't smart enough to make these directories, so we'll make them instead.
 		mkdirr(Config::get('zoop.gui.directories.temp'));
 		mkdirr(Config::get('zoop.gui.directories.compile'));
 		mkdirr(Config::get('zoop.gui.directories.cache'));
-
-		$gui = new gui();
+		
+		return true;
 	}
 	
 	function getIncludes() {
 		return array("gui" => $this->getBasePath() . "/gui.php");
+	}
+	
+	function run() {
+		global $gui;
+		$gui = new gui();
 	}
 }

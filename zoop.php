@@ -87,6 +87,7 @@ class Zoop {
 	 * @access private
 	 */
 	private $init = array();
+	private $environmentCache = array();
 	
 	/**
 	 * @var array $components
@@ -111,6 +112,7 @@ class Zoop {
 			$this->appPath = $appPath;
 		}
 
+		$this->getEnvironmentCache();
 		$this->addComponent('config');
 	}
 
@@ -138,6 +140,7 @@ class Zoop {
 			// if the rest of the components have been initialized, init and run this one too.
 			if (isset($this->init['zoop']) && $this->init['zoop']) {
 				if (!isset($this->init[$name]) || !$this->init[$name]) {
+					$this->checkComponentEnvironment($name);
 					$this->components[$name]->init();
 					$this->components[$name]->run();
 					$this->init[$name] = true;
@@ -186,9 +189,9 @@ class Zoop {
 	 */
 	private function includeConfig($name) {
 		$name = strtolower($name);
-		$dir = Config::get('zoop.app.directories.config');
-		if (file_exists("$dir/$name.yaml")) {
-			Config::suggest("$dir/$name.yaml");
+		$file = Config::get('zoop.app.directories.config') . '/' . $name . '.yaml';
+		if (file_exists($file)) {
+			Config::suggest($file);
 			return true;
 		} else {
 			return false;
@@ -206,6 +209,59 @@ class Zoop {
 		$components = $currComponent->getRequiredComponents();
 		foreach($components as $newname) {
 			$this->addComponent($newname);
+		}
+	}
+	
+	/**
+	 * Check the environment for a given component.
+	 * 
+	 * Retrieves the cached state, if it exists. Otherwise checks and saves the component environment.
+	 * 
+	 * @access private
+	 * @param string $name
+	 * @return bool Success
+	 */
+	private function checkComponentEnvironment($name) {
+		if (isset($this->environmentCache[$name]) && $this->environmentCache[$name]) {
+			return true;
+		} else {
+			return $this->cacheEnvironment($name, $this->components[$name]->checkEnvironment());
+		}
+	}
+	
+	/**
+	 * Cache component environment state. Used internally by Zoop::checkComponentEnvironment()
+	 * 
+	 * @access private
+	 * @param string $name
+	 * @param bool $state
+	 * @return bool Environment state
+	 */
+	private function cacheEnvironment($name, $state) {
+		$this->environmentCache[$name] = $state;
+		
+		$cache_file = CONFIG_CACHE_DIR . '/environment.php';
+		if (!file_exists($cache_file)) {
+			mkdir_r($cache_file);
+		} else if (!is_writable($cache_file)) {
+			trigger_error("Unable to write to environment cache file: $cache_file. Make sure file exists and is writable.");
+			return;
+		}
+		file_put_contents($cache_file, "<?php \n\n" . '$this->environmentCache = ' . var_export($this->environmentCache, true) . ";\n\n");
+		
+		return $state;
+	}
+	
+	/**
+	 * Load the environment cache file.
+	 * 
+	 * @access private
+	 * @return void
+	 */
+	private function getEnvironmentCache() {
+		$cache_file = CONFIG_CACHE_DIR . '/environment.php';
+		if (file_exists($cache_file)) {
+			include($cache_file);
 		}
 	}
 	
@@ -418,6 +474,7 @@ class Zoop {
 	function init() {
 		foreach($this->components as $name => $object) {
 			if(!isset($this->init[$name]) || !$this->init[$name]) {
+				$this->checkComponentEnvironment($name);
 				$object->init();
 				$this->init[$name] = true;
 			}
@@ -592,11 +649,29 @@ abstract class Component {
 		$config = Config::get('zoop.' . $this->getConfigPath() . $path);
 		return $config;
 	}
+	
+	/**
+	 * Check environment requirements for this component.
+	 * 
+	 * To be overloaded by extending classes.
+	 * 
+	 * This is the correct place to check the existance and writability of cache folders,
+	 * etc. Return true if everything checks out. Note that if this function returns true
+	 * it will not be executed on future page loads (until the config cache is cleared).
+	 * 
+	 * @access public
+	 * @return bool
+	 */
+	function checkEnvironment() {
+		// return true if environment checks out
+		return true;
+	}
 
 	/**
-	 * init
-	 *
-	 * To be overloaded. 
+	 * Initialize this component.
+	 * 
+	 * To be overloaded.
+	 * 
 	 * Some times a component may require some logic before the getIncludes. 
 	 * The init method is a hook to be called before Including the component files
 	 * with the getIncludes method.
@@ -608,7 +683,7 @@ abstract class Component {
 	 * @return void
 	 */
 	function init() {
-		//default init does nothing
+		// default init does nothing
 	}
 
 	/**
@@ -623,6 +698,6 @@ abstract class Component {
 	 * @return void
 	 */
 	function run() {
-		//really shouldn't do anything, unless its the app_component
+		// really shouldn't do anything, unless its the app_component
 	}
 }

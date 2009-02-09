@@ -9,6 +9,7 @@ class Config {
 
 	static $info = array();
 	private static $file;
+	private static $configCacheFile;
 	private static $fileCache;
 	private static $constCache = array();
 	
@@ -20,7 +21,12 @@ class Config {
 	 * @return void
 	 */
 	private static function loadFileCache() {
-		if (defined('CONFIG_FILE_CACHE') && file_exists(CONFIG_FILE_CACHE)) include(CONFIG_FILE_CACHE);
+		if (defined('CONFIG_CACHE_DIR')) {
+			self::$configCacheFile = CONFIG_CACHE_DIR . '/config.php';
+			if (file_exists(self::$configCacheFile)) {
+				 include(self::$configCacheFile);
+			}
+		} 
 	}
 	
 	/**
@@ -46,18 +52,17 @@ class Config {
 			$info = self::_replaceConstantsInArray($info);
 			
 			self::$fileCache[$name] = array('modified' => $last_modified, 'info' => $info);
-			if (defined('CONFIG_FILE_CACHE')) {
-				if (file_exists(CONFIG_FILE_CACHE) && !is_writable(CONFIG_FILE_CACHE)) {
-					trigger_error("Unable to write to config cache. Make sure " . CONFIG_FILE_CACHE . " exists and is writable.");
-				} else {
-					$contents = "<?php \n\n";
-					$contents .= 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n";
-					// add the 'dirty cache' logic.
-					if (!empty(self::$constCache)) {
-						$contents .= 'if (' . implode("\n\t|| ", self::$constCache) . ') { self::$fileCache = array(); }';
-					}
-					file_put_contents(CONFIG_FILE_CACHE, $contents);
+			
+			if (file_exists(self::$configCacheFile) && !is_writable(self::$configCacheFile)) {
+				trigger_error("Unable to write to config cache. Make sure " . self::$configCacheFile . " exists and is writable.");
+			} else {
+				$contents = "<?php \n\n";
+				$contents .= 'self::$fileCache = ' . var_export(self::$fileCache, true) . ";\n\n";
+				// add the 'dirty cache' logic.
+				if (!empty(self::$constCache)) {
+					$contents .= 'if (' . implode("\n\t|| ", self::$constCache) . ') { self::$fileCache = array(); }';
 				}
+				file_put_contents(self::$configCacheFile, $contents);
 			}
 		}
 		

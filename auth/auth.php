@@ -322,9 +322,9 @@ class Auth {
 	 */
 	protected function _loadACL() {
 		if ($acl_file = $this->getConfig('permissions_file')) {
-			$cache_file = APP_DIR . '/' . $this->getConfig('permissions_file_cache');
+			$cache_file = CONFIG_CACHE_DIR . '/' . $this->getConfig('permissions_file_cache');
 			
-			if ($cache_file && file_exists($cache_file) && filemtime($cache_file) > filemtime(APP_DIR . '/' . $acl_file)) {
+			if (file_exists($cache_file) && filemtime($cache_file) > filemtime(APP_DIR . '/' . $acl_file)) {
 				include($cache_file);
 			}
 			

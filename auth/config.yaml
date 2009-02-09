@@ -47,3 +47,6 @@ denied:
     show_login_if_logged_out: 1
     handling: inplace
     template: response/access_denied.tpl
+
+# permissions_file: config/auth/permissions.yaml
+permissions_file_cache: permissions.php

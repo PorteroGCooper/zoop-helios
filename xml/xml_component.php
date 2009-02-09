@@ -20,19 +20,21 @@
  * @license Zope Public License (ZPL) Version 2.1 {@link http://zoopframework.com/license}
  */
 class component_xml extends component {
-	
 	function getIncludes() {
 		$base = $this->getBasePath();
 		
-		$includes = array();
-		if(version_compare(phpversion(), "5.0.0", "<"))
-			$includes = array('xml_tree' => 'XML/Tree.php');
-		return $includes + array(
-						"xmldom"       => $base . "/XmlDom.php",
-						"xmlnode"      => $base . "/XmlNode.php",
-						"xmlnodelist"  => $base . "/XmlNodeList.php",
-						"propertylist" => $base . "/PropertyList.php",
-						"xmlutils"     => $base . "/utils.php",
-					);
+		$includes = array(
+			"xmldom"       => $base . "/XmlDom.php",
+			"xmlnode"      => $base . "/XmlNode.php",
+			"xmlnodelist"  => $base . "/XmlNodeList.php",
+			"propertylist" => $base . "/PropertyList.php",
+			"xmlutils"     => $base . "/utils.php",
+		);
+		
+		// @TODO: Remove this, as there is no longer a reason to support PHP < 5
+		if(version_compare(phpversion(), "5.0.0", "<")) {
+			$includes[] = 'xml_tree' => 'XML/Tree.php';
+		}
+		return $includes;
 	}
 }
