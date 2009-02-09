@@ -32,7 +32,7 @@ abstract class FileUtils {
 			
 			if (!empty($path_chunks)) {
 				$new_path = implode('/', $path_chunks);
-				$ret_val = checkWritePerm($new_path);
+				$ret_val = self::isWritable($new_path);
 			}
 		}
 		return $ret_val;
