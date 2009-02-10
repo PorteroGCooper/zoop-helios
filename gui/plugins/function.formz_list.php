@@ -47,10 +47,10 @@ function smarty_function_formz_list($params, &$smarty) {
 		$form_classes[] = 'formz-' . strtolower($form->tablename);
 	}	
 	if ($form->editable) {
-		$form_action = (isset($form->callback) && $form->callback != '') ? ' action="' . $form->callback .'"' : '';
+		$form_action = (isset($form->callback) && $form->callback != '') ? $form->callback : '';
 		$form_classes[] = 'formz-editable';
 		$form_classes[] = 'formz-list-editable';
-		$html .= '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
+		$html .= '<form action="'. $form_action .'" method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
 	}
 	else {
 		$html .= '<div class="formz formz-list '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_list">';
@@ -69,13 +69,14 @@ function smarty_function_formz_list($params, &$smarty) {
 	if ($searchable && $form->getSearchForms() !== null) {
 		$search_html = '';
 		foreach($form->getSearchForms() as $htmlForm) {
-			$search_html .= '<form class="formz-search-form">';
+			$search_html .= '<form action="" class="formz-search-form"><div class="search-form-content">';
 			if (isset($htmlForm['redirect'])) {
 				$search_html .= '<input id="redirect" name="redirect" type="hidden" value="' . $htmlForm['redirect'] . '" />';
 			}
 			$search_html .=
 				'<input id="search_text" name="q" type="text" value="' . $htmlForm['q'] . '"/>&nbsp;' .
-				'<input id="search_button" type="submit" value="Search" />' . '</form>';
+				'<input id="search_button" type="submit" value="Search" />' .
+				'</div></form>';
 		}
 		if (!empty($search_html)) {
 			$list_actions[] = $search_html;
