@@ -548,7 +548,7 @@ class form2
 		if (!isset($this->id))
 			trigger_error("Forms2 does not have a current record to save");
 		if ($POST === false)
-			$POST = getPost();
+			$POST = POST::get();
 
 		$this->form->setvaluesfrompost($POST);
 		$this->id = $this->form->storeRecord($this->tablename, $this->id);

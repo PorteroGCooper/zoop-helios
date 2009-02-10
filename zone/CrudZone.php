@@ -523,10 +523,10 @@ class CrudZone extends Zone {
 			$this->initUpdateForm();
 		}
 
-		if (getPostText('update') || getPostText('update_and_create')) {
+		if (POST::getText('update') || POST::getText('update_and_create')) {
 			// save the posted values.
 			$id = $this->saveUpdatePost();
-		} else if (getPostText('destroy')) {
+		} else if (POST::getText('destroy')) {
 			// redirect to the destroy page if they're trying to delete this item...
 			$this->zoneRedirect('destroy');
 			return;
@@ -542,7 +542,7 @@ class CrudZone extends Zone {
 	 * @return void
 	 */
 	protected function _postUpdateRedirect() {
-		if (getPostText('update_and_create')) {
+		if (POST::getText('update_and_create')) {
 			BaseRedirect($this->getZoneBasePath() . '/create', HEADER_REDIRECT);
 		} else {
 			BaseRedirect($this->getZoneBasePath(), HEADER_REDIRECT);
@@ -570,13 +570,13 @@ class CrudZone extends Zone {
 				$controls = $GLOBALS['controls'];
 				if ((isset($controls['betterpassword']) && isset($controls['betterpassword'][$post_prefix . $name]))
 					|| (isset($controls['password']) && isset($controls['password'][$post_prefix . $name]))) {
-						if (!getPostIsset($post_prefix . $name)) continue;
+						if (!POST::varIsset($post_prefix . $name)) continue;
 				}
 				
 				switch($field['type']) {
 					case 'boolean':
 					case 'bool':
-						$values[$name] = getPostBool($post_prefix . $name);
+						$values[$name] = POST::getBool($post_prefix . $name);
 						break;
 					case 'relation':
 						if (isset($field['embeddedForm']) && $field['embeddedForm']) {
@@ -584,21 +584,21 @@ class CrudZone extends Zone {
 						} else {
 							switch ($field['rel']['rel_type']) {
 								case Formz::MANY:
-									if (getPostIsset($post_prefix . $name)) {
-										$values[$name] = getPost($post_prefix . $name);
+									if (POST::varIsset($post_prefix . $name)) {
+										$values[$name] = POST::get($post_prefix . $name);
 										if (!is_array($values[$name])) $values[$name] = array();
 									}
 									break;
 								case Formz::ONE:
-									if (getPostIsset($post_prefix . $name) && getPost($post_prefix . $name) !== '') {
-										$values[$name] = getPost($post_prefix . $name);
+									if (POST::varIsset($post_prefix . $name) && POST::get($post_prefix . $name) !== '') {
+										$values[$name] = POST::get($post_prefix . $name);
 									}
 									break;
 							}
 						}
 						break;
 					default:
-						$values[$name] = getPost($post_prefix . $name);
+						$values[$name] = POST::get($post_prefix . $name);
 						break;
 				}
 			}
@@ -661,8 +661,8 @@ class CrudZone extends Zone {
 	function postDestroy() {
 		if (!$this->checkAuth('destroy')) return;
 		
-		if (getPostText('destroy')) {
-			$id = getPostInt($this->form->getIdField());
+		if (POST::getText('destroy')) {
+			$id = POST::getInt($this->form->getIdField());
 			$this->form->destroyRecord($id);
 		}
 		BaseRedirect($this->getZoneBasePath());
@@ -739,7 +739,7 @@ class CrudZone extends Zone {
 	 **/
 	function postAddRelation() {
 		if (!$this->checkAuth('update')) return;
-		if (getPostText('update') || getPostText('update_and_create')) {
+		if (POST::getText('update') || POST::getText('update_and_create')) {
 			$params = $this->getPageParams();
 
 			if (!isset($params[0]) || empty($params[0])) {
@@ -778,37 +778,37 @@ class CrudZone extends Zone {
 					switch($field['type']) {
 						case 'boolean':
 						case 'bool':
-							$values[$name] = getPostBool($name);
+							$values[$name] = POST::getBool($name);
 							break;
 						case 'relation':
 							switch ($field['rel']['rel_type']) {
 								case Formz::MANY:
-									if (getPostIsset($name)) {
-										$values[$name] = getPost($name);
+									if (POST::varIsset($name)) {
+										$values[$name] = POST::get($name);
 										if (!is_array($values[$name])) $values[$name] = array();
 									}
 									break;
 								case Formz::ONE:
-									if (getPostIsset($name) && getPost($name) !== '') {
-										$values[$name] = getPost($name);
+									if (POST::varIsset($name) && POST::get($name) !== '') {
+										$values[$name] = POST::get($name);
 									}
 									break;
 							}
 							break;
 						default:
-							$values[$name] = getPost($name);
+							$values[$name] = POST::get($name);
 							break;
 					}
 				}
 			}
 			$id = $this->form->createRelation($values, $record_id);
-		} else if (getPostText('destroy')) {
+		} else if (POST::getText('destroy')) {
 			// redirect to the destroy page if they're trying to delete this item...
 			$this->zoneRedirect('destroy');
 			return;
 		}
 
-		if (getPostText('update_and_create')) {
+		if (POST::getText('update_and_create')) {
 			BaseRedirect($this->getZonePath(0) . '/create', HEADER_REDIRECT);
 		} else {
 			BaseRedirect($this->getZonePath(0), HEADER_REDIRECT);

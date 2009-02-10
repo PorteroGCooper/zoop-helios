@@ -182,7 +182,7 @@
 		 */
 		function closePosts($inPath)
 		{
-			$action = getPostText("actionField");
+			$action = POST::getText("actionField");
 			
 			if(substr($action,0,3) == "nav")
 			{					

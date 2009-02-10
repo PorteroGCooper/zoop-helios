@@ -29,6 +29,7 @@ class Component_App extends Component {
 		include($base . "/error.php");
 		include($base . "/xmlrpcClasses.php");
 		include($base . "/utils.php");
+		include($base . "/RequestUtils.php");
 		include($base . "/request_utils.php");
 		
 		if(isset($_SERVER["HTTP_HOST"])) {

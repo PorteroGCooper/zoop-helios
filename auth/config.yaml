@@ -34,7 +34,7 @@ encryption: md5
 session_user: activeUser
 
 # specify a param in which to pass the current url for a login redirect
-# grab the redirect url in your login post handler using getGet('redirect')
+# grab the redirect url in your login post handler using GET::getText('redirect')
 login_redirect_param: redirect
 
 locations:

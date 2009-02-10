@@ -1,7 +1,4 @@
 <?php
-/**
- * @package zone
- */
 
 // Copyright (c) 2008 Supernerd LLC and Contributors.
 // All Rights Reserved.
@@ -33,9 +30,10 @@ $GLOBALS['gZoneBasePath'] = null;
  * and will automatically execute
  *
  * rmb 7-20-2001
- * @package zone
+ * 
+ * @group zone
+ * @endgroup
  *
- * @package
  * @version $id$
  * @copyright 1997-2008 Supernerd LLC
  * @author Richard Bateman
@@ -811,7 +809,7 @@ class zone {
 	protected function getRequestedOutputType() {
 		if ($this->getExtension() ) {
 			return $this->getExtension();
-		} elseif ($get = getGetText('output')) {
+		} elseif ($get = GET::getText('output')) {
 			return $get;
 		}
 

@@ -59,7 +59,7 @@ include_once(dirname(__file__) . "/select.php");
  *   }
  *   
  *   function pageBar() {
- *       $id = getGetString('q');
+ *       $id = GET::getString('q');
  *       
  *       // do some magick with the id (a db lookup or something)
  *       $result = array(
@@ -71,7 +71,7 @@ include_once(dirname(__file__) . "/select.php");
  *   }
  *   
  *   function pageBaz() {
- *       $id = getGetString('q');
+ *       $id = GET::getString('q');
  *       
  *       // do some magick with the id (a db lookup or something)
  *       $result = array(

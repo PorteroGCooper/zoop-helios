@@ -629,7 +629,7 @@ class Auth {
 	 * This will be handled by the post handler for the login form using something like:
 	 *
 	 * @code
-	 * if ($redirect_to = getGet('redirect')) {
+	 * if ($redirect_to = GET::getText('redirect')) {
 	 *     BaseRedirect($redirect_to);
 	 * }
 	 * @endcode

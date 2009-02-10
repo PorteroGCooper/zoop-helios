@@ -1290,7 +1290,7 @@ class Formz {
 				break;
 			case 'paginate':
 				if (!$this->isPaginated()) $this->setPaginated();
-				if (!isset($args['page'])) $args['page'] = getGetInt('page');
+				if (!isset($args['page'])) $args['page'] = GET::getInt('page');
 				if (!$args['page']) $args['page']=1;
 				if (!isset($args['type'])) $args['type'] = 'paginate';
 				if (!isset($args['limit'])) $args['limit'] = Config::get('zoop.formz.paginate.limit');
@@ -1305,7 +1305,7 @@ class Formz {
 				if (isset($args['q'])) {
 					$searchForm['q'] = $args['q'];
 				} else {
-					$searchForm['q'] = getGetText('q');
+					$searchForm['q'] = GET::getText('q');
 				}
 				
 				// apply the search!
@@ -1854,7 +1854,7 @@ class Formz {
 	 * @return mixed String value for sort field, or 'false' if sort is unspecified.
 	 */
 	function getSortField() {
-		if ($sort = getGetText('sort')) {
+		if ($sort = GET::getText('sort')) {
 			return $sort;
 		} else {
 			return false;
@@ -1868,7 +1868,7 @@ class Formz {
 	 * @return string 'ASC' or 'DESC'.
 	 */
 	function getSortOrder() {		
-		$order = strtoupper(getGetText('order'));
+		$order = strtoupper(GET::getText('order'));
 		if ($order != 'DESC') {
 			$order = 'ASC';
 		}

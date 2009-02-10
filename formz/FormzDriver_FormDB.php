@@ -798,7 +798,7 @@ class FormzDriver_FormDB extends FormzDriver {
 		if (!isset($this->id))
 			trigger_error("Forms2 does not have a current record to save");
 		if ($values === false)
-			$values = getPost();
+			$values = POST::get();
 
 		$this->setvaluesfrompost($values);
 		$this->id = $this->storeRecord($this->tablename, $this->id);
