@@ -39,9 +39,8 @@ class TextControl extends GuiControl {
 	 * @access protected
 	 * @return string HTML text input
 	 */
-	protected function render() {
-		$type = (isset($this->params['type'])) ? $this->params['type'] : $this->getType();
-		$type = 'type="' . $type . '"';
+	protected function render($foo = false) {
+		$type = 'type="' . $this->getType() . '"';
 		
 		$name_id = $this->getNameIdString();
 		$class = 'class="' . $this->getClass() . '"';

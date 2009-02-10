@@ -213,11 +213,15 @@ class GuiControl {
 	 */
 	function getType() {
 		if (!isset($this->type)) {
-			$type = get_class($this);
-			if (substr($type, -7) == 'Control') {
-				$type = substr($type, 0, -7);
+			if (isset($this->params['type']) && $this->params['type']) {
+				return $this->params['type'];
+			} else {
+				$type = get_class($this);
+				if (substr($type, -7) == 'Control') {
+					$type = substr($type, 0, -7);
+				}
+				$this->type = lcfirst($type);
 			}
-			$this->type = lcfirst($type);
 		}
 		return $this->type;
 	}

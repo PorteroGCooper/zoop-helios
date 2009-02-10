@@ -51,9 +51,9 @@ function smarty_function_formz_form($params, &$smarty) {
 	}
 	
 	if ($form->editable && !$form->embedded) {
-		$form_action = (isset($form->callback) && $form->callback != '') ? ' action="' . $form->callback .'"' : '';
+		$form_action = (isset($form->callback) && $form->callback != '') ? $form->callback : '';
 		$form_classes[] = 'formz-editable';
-		$form_items[] = '<form'. $form_action .' method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
+		$form_items[] = '<form action="'. $form_action .'" method="post" class="'. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
 	} else {
 		$form_items[] = '<div class="formz '. implode(' ', $form_classes) .'" id="formz_'. $tablename . '_' . $record_id .'">';
 	}
@@ -61,7 +61,7 @@ function smarty_function_formz_form($params, &$smarty) {
 
 	if (!Config::get('zoop.formz.disable_csrf_protection')) {
 		// add a form token first.
-		$form_items[] = GuiControl::get('FormToken', 'token')->renderControl();
+		$form_items[] = '<div class="form-item-hidden">' . GuiControl::get('FormToken', 'token')->renderControl() . '</div>';
 	}
 	
 	foreach ($fields as $key => $field) {
@@ -275,7 +275,7 @@ function smarty_function_formz_form($params, &$smarty) {
 		} else {
 			// this is a hidden form element, just render it and get on with things.
 			if ($form->editable) {
-				$form_items[] = $control->renderControl();
+				$form_items[] = '<div class="form-item-hidden">' . $control->renderControl() . '</div>';
 			}
 			continue;
 		}
@@ -300,6 +300,7 @@ function smarty_function_formz_form($params, &$smarty) {
 	// now add the form actions	
 	if (!$form->embedded) {
 		if ($form->editable) {
+			$form_items[] = '<div class="form-actions">';
 			$id_field = $form->getIdField();
 			if ($form->isSluggable()) $slug_field = $form->getSlugField();
 			
@@ -314,6 +315,7 @@ function smarty_function_formz_form($params, &$smarty) {
 					$form_items[] = $control->renderControl();
 				}
 			}
+			$form_items[] = '</div>';
 		} else {
 			// we only want the link actions here.
 			$actions = $form->getActions();

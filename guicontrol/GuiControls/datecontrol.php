@@ -30,6 +30,7 @@ class DateControlControl extends TextControl {
 		$gui->add_js('/zoopfile/gui/js/jquery.date_input.js', 'zoop');
 		$gui->add_css('/zoopfile/gui/css/date_input.css', 'zoop');
 		
+		$this->type = 'text';
 		$this->setParam('size', 20);
 		$this->setParam('maxlength', 20);
 	}
@@ -55,8 +56,7 @@ class DateControlControl extends TextControl {
 	 
 	protected function render() {
 		global $gui;
-		
-		$html = parent::render();
+		$html = parent::render(true);
 		
 		$input_id = $this->getId();
 		$gui->add_jquery('$("#'.$input_id.'").date_input({

@@ -24,7 +24,7 @@ include_once(dirname(__file__) . "/hidden.php");
  */
 class FormTokenControl extends HiddenControl {
 	function initControl() {
-		$this->setParam('type', 'hidden');
+		$this->type = 'hidden';
 	}
 	
 	/**
